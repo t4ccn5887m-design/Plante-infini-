@@ -12,7 +12,7 @@ export default async function handler(req, res) {
         "anthropic-version": "2023-06-01"
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model:"claude-3-5-sonnet-20241022"
         max_tokens: 1000,
         system: `Tu es un botaniste expert. Réponds UNIQUEMENT en JSON valide sans markdown : {"nom":"Nom commun","nom_latin":"Nom scientifique","famille":"Famille","description":"Description","caracteristiques":["c1","c2"],"entretien":{"arrosage":"...","lumiere":"...","sol":"...","temperature":"..."},"sante":{"etat":"bon","commentaire":"..."},"conseils":"Conseil","utilisation":["u1","u2"]}. Si pas une plante : {"erreur":"Ce n est pas une plante"}`,
         messages: [{
