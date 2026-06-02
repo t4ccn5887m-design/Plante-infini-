@@ -129,6 +129,21 @@ function BotanicalDeco({ className = "", size = 48 }) {
   );
 }
 
+function BotanicalFlower({ className = "", size = 40 }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round">
+      <circle cx="32" cy="24" r="5" fill="currentColor" opacity="0.15" stroke="currentColor" />
+      <path d="M32 29v22" />
+      <path d="M32 24c-8-2-14 2-16 10 6-2 12 0 16 6" />
+      <path d="M32 24c8-2 14 2 16 10-6-2-12 0-16 6" />
+      <path d="M26 20c-4 0-7 3-7 7 3-1 6-1 9-3" />
+      <path d="M38 20c4 0 7 3 7 7-3-1-6-1-9-3" />
+      <path d="M32 51c-6 2-10 0-12-4 4 1 8 2 12 0" />
+      <path d="M32 51c6 2 10 0 12-4-4 1-8 2-12 0" />
+    </svg>
+  );
+}
+
 function CoverBotanicalDeco({ className = "" }) {
   return (
     <svg className={className} width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round">
@@ -146,8 +161,8 @@ function HerbariumPlantPage({ plant, pageNum, total, onDelete, className = "" })
     <div className={`herbarium-page ${className}`.trim()}>
       <div className="herbarium-page-lines" />
       <BotanicalDeco className="herbarium-deco herbarium-deco--tl" size={42} />
-      <BotanicalDeco className="herbarium-deco herbarium-deco--tr" size={36} />
-      <BotanicalDeco className="herbarium-deco herbarium-deco--bl" size={32} />
+      <BotanicalFlower className="herbarium-deco herbarium-deco--tr" size={34} />
+      <BotanicalFlower className="herbarium-deco herbarium-deco--bl" size={30} />
       <BotanicalDeco className="herbarium-deco herbarium-deco--br" size={38} />
 
       <div className="herbarium-page-header">
@@ -194,6 +209,7 @@ function HerbariumView({ library, onBack, onDelete, onIdentify }) {
   const [pageAnim, setPageAnim] = useState(null);
   const [userName, setUserName] = useState("Botaniste");
   const [editingName, setEditingName] = useState(false);
+  const touchStartX = useRef(null);
 
   useEffect(() => {
     setUserName(loadUserName());
@@ -201,8 +217,8 @@ function HerbariumView({ library, onBack, onDelete, onIdentify }) {
     setPageIndex(0);
     setPageAnim(null);
 
-    const openTimer = setTimeout(() => setPhase("opening"), 600);
-    const revealTimer = setTimeout(() => setPhase("open"), 2100);
+    const openTimer = setTimeout(() => setPhase("opening"), 800);
+    const revealTimer = setTimeout(() => setPhase("open"), 2200);
     return () => {
       clearTimeout(openTimer);
       clearTimeout(revealTimer);
@@ -237,7 +253,21 @@ function HerbariumView({ library, onBack, onDelete, onIdentify }) {
   const openBook = () => {
     if (phase !== "closed") return;
     setPhase("opening");
-    setTimeout(() => setPhase("open"), 1400);
+    setTimeout(() => setPhase("open"), 1500);
+  };
+
+  const onTouchStart = (e) => {
+    if (phase !== "open" || library.length < 2) return;
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const onTouchEnd = (e) => {
+    if (touchStartX.current == null || phase !== "open") return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(dx) < 48) return;
+    if (dx < 0) turnPage("next");
+    else turnPage("prev");
   };
 
   const pageAnimClass =
@@ -255,7 +285,11 @@ function HerbariumView({ library, onBack, onDelete, onIdentify }) {
   const showPages = phase === "open" || phase === "opening";
 
   return (
-    <div className="herbarium-scene">
+    <div
+      className="herbarium-scene"
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+    >
       <div className="herbarium-topbar">
         <button className="herbarium-back" onClick={onBack} aria-label="Retour">
           <IconBack size={18} />
@@ -282,6 +316,7 @@ function HerbariumView({ library, onBack, onDelete, onIdentify }) {
               <CoverBotanicalDeco className="herbarium-cover-deco herbarium-cover-deco--tl" />
               <CoverBotanicalDeco className="herbarium-cover-deco herbarium-cover-deco--br" />
               <div className="herbarium-cover-border" />
+              <div className="herbarium-cover-seal" aria-hidden="true" />
               <div className="herbarium-cover-inner">
                 <h1 className="herbarium-cover-title">Mon Herbier</h1>
                 <p className="herbarium-cover-subtitle">Collection botanique personnelle</p>
@@ -1377,14 +1412,14 @@ export default function PlanteInfini() {
   /* ── HERBARIUM ── */
   if (screen === "library")
     return (
-      <ScreenWrap className="screen-enter-fast">
+      <div className="herbarium-screen-wrap screen-enter-fast">
         <HerbariumView
           library={library}
           onBack={goHome}
           onDelete={deleteFromLibrary}
           onIdentify={() => openCamera("direct")}
         />
-      </ScreenWrap>
+      </div>
     );
 
   return null;
