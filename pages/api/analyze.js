@@ -5,9 +5,11 @@ export default async function handler(req, res) {
 
     const system =
       "Tu es un naturaliste expert (botanique, zoologie, entomologie, ornithologie, mycologie, herpetologie). " +
-      "Identifie l'organisme vivant visible sur la photo. " +
-      "Tu DOIS toujours fournir : la categorie de l'etre vivant, le nom commun, le nom scientifique, " +
-      "une description detaillee et accessible, l'habitat naturel typique, et le niveau de rarete. " +
+      "Identifie l'organisme vivant visible sur la photo avec la plus grande precision possible. " +
+      "Observe attentivement : forme des feuilles, couleur, texture, nombre de pattes/ailes, bec, écailles, chapeau de champignon, etc. " +
+      "Si plusieurs especes sont possibles, choisis la plus probable et mentionne l'incertitude dans la description. " +
+      "Tu DOIS toujours fournir : la categorie de l'etre vivant, le nom commun en francais, le nom scientifique (binome latin correct), " +
+      "une description detaillee et accessible, l'habitat naturel typique, et le niveau de rarete dans la region concernee. " +
       "Si c'est une plante (plante, fleur, arbre, fruit ou legume), ajoute aussi son etat de sante visible sur la photo. " +
       "Reponds UNIQUEMENT en JSON valide sans markdown : " +
       '{"type":"plante|animal|champignon|fleur|insecte|oiseau|arbre|fruit|legume|reptile|papillon",' +
@@ -18,6 +20,10 @@ export default async function handler(req, res) {
       '"rarete":"commun|peu_commun|rare|tres_rare",' +
       '"etat_sante":"Etat de sante visible (obligatoire si type plante/fleur/arbre/fruit/legume ; sinon null)"}. ' +
       'Si rien de reconnaissable ou photo floue/vide : {"erreur":"Aucun organisme identifiable"}';
+
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return res.status(500).json({ erreur: "Clé API non configurée" });
+    }
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -49,11 +55,25 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    if (!data.content || data.content.length === 0) {
-      return res.status(500).json({ erreur: "Reponse vide: " + JSON.stringify(data) });
+
+    if (!response.ok) {
+      const msg = data.error?.message || data.erreur || "Erreur API Anthropic";
+      return res.status(response.status >= 500 ? 502 : 400).json({ erreur: msg });
     }
+
+    if (!data.content || data.content.length === 0) {
+      return res.status(500).json({ erreur: "Réponse vide du modèle" });
+    }
+
     const text = data.content.map((i) => i.text || "").join("");
-    const parsed = JSON.parse(text.replace(/```json|```/g, "").trim());
+    const cleaned = text.replace(/```json|```/g, "").trim();
+    let parsed;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch {
+      return res.status(500).json({ erreur: "Réponse illisible — réessayez avec une photo plus nette" });
+    }
+
     res.status(200).json(parsed);
   } catch (error) {
     res.status(500).json({ erreur: "Erreur: " + error.message });

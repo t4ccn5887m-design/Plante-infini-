@@ -88,6 +88,79 @@ function defaultAlbumName() {
   return `Album du ${d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}`;
 }
 
+function generateId() {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+function formatLocation(discovery) {
+  if (discovery?.placeName) return discovery.placeName;
+  if (discovery?.latitude != null && discovery?.longitude != null) {
+    return `${discovery.latitude.toFixed(4)}°, ${discovery.longitude.toFixed(4)}°`;
+  }
+  return null;
+}
+
+function getCurrentLocation() {
+  return new Promise((resolve) => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      resolve(null);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        let placeName = null;
+        try {
+          const res = await fetch(
+            `/api/reverse-geocode?lat=${latitude}&lon=${longitude}`
+          );
+          if (res.ok) {
+            const data = await res.json();
+            placeName = data.placeName || null;
+          }
+        } catch {
+          /* ignore */
+        }
+        resolve({ latitude, longitude, placeName });
+      },
+      () => resolve(null),
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 120000 }
+    );
+  });
+}
+
+function computeStats(items) {
+  const uniqueSpecies = new Set(
+    items.map((d) => (d.nom_latin || d.nom || "").toLowerCase()).filter(Boolean)
+  );
+  const rareCount = items.filter(
+    (d) => d.rarete === "rare" || d.rarete === "tres_rare"
+  ).length;
+  const byType = {};
+  items.forEach((d) => {
+    const t = d.type || "plante";
+    byType[t] = (byType[t] || 0) + 1;
+  });
+  const byRarity = { commun: 0, peu_commun: 0, rare: 0, tres_rare: 0 };
+  items.forEach((d) => {
+    const r = d.rarete in byRarity ? d.rarete : "commun";
+    byRarity[r]++;
+  });
+  const now = new Date();
+  const thisMonth = items.filter((d) => {
+    const date = new Date(d.discoveredAt);
+    return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+  }).length;
+  return {
+    total: items.length,
+    uniqueSpecies: uniqueSpecies.size,
+    rareCount,
+    byType,
+    byRarity,
+    thisMonth,
+  };
+}
+
 /* ── Icons ── */
 
 function IconWilderLogo({ size = 72 }) {
@@ -159,6 +232,24 @@ function IconPlus({ size = 20, color = "currentColor" }) {
   );
 }
 
+function IconStats({ size = 20, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 3v18h18" />
+      <path d="M7 16l4-8 4 5 5-9" />
+    </svg>
+  );
+}
+
+function IconLocation({ size = 18, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  );
+}
+
 function IconLeafSmall({ className, style }) {
   return (
     <svg className={className} style={style} width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -214,6 +305,80 @@ function RarityBadge({ rarete }) {
     <span className={`rarity-badge rarity-${key}`}>
       ◆ {RARITY_LABELS[key]}
     </span>
+  );
+}
+
+function LocationCard({ discovery }) {
+  const label = formatLocation(discovery);
+  if (!label) return null;
+  const mapUrl =
+    discovery.latitude != null && discovery.longitude != null
+      ? `https://maps.apple.com/?ll=${discovery.latitude},${discovery.longitude}&q=${encodeURIComponent(discovery.nom || "Découverte")}`
+      : null;
+
+  return (
+    <div className="result-card">
+      <div className="result-card-title">Lieu de découverte</div>
+      <div className="location-card">
+        <IconLocation className="location-card-icon" size={18} color="#F4A261" />
+        <div>
+          <p className="result-card-text">{label}</p>
+          {mapUrl && (
+            <a
+              className="location-map-link"
+              href={mapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Voir sur la carte →
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DiscoveryBody({ data, discovery, showNewBadge, children }) {
+  return (
+    <>
+      {showNewBadge && <span className="discovery-new-badge">Nouvelle découverte !</span>}
+      <h1 className="discovery-name">{data.nom}</h1>
+      {data.nom_latin && <p className="discovery-latin">{data.nom_latin}</p>}
+
+      {data.type && (
+        <span className="discovery-type-chip">
+          {TYPE_LABELS[data.type] || data.type}
+        </span>
+      )}
+
+      <RarityBadge rarete={data.rarete} />
+
+      {data.description && (
+        <div className="result-card">
+          <div className="result-card-title">Description</div>
+          <p className="result-card-text">{data.description}</p>
+        </div>
+      )}
+
+      {data.habitat && (
+        <div className="result-card">
+          <div className="result-card-title">Habitat naturel</div>
+          <p className="result-card-text">{data.habitat}</p>
+        </div>
+      )}
+
+      {data.etat_sante && (
+        <div className="result-card">
+          <div className="result-card-title">État de santé</div>
+          <p className="result-card-text">{data.etat_sante}</p>
+        </div>
+      )}
+
+      {discovery && <LocationCard discovery={discovery} />}
+
+      {children}
+    </>
   );
 }
 
@@ -293,6 +458,9 @@ export default function Wilder() {
   const [creatingAlbum, setCreatingAlbum] = useState(false);
   const [newAlbumName, setNewAlbumName] = useState("");
   const [slogan, setSlogan] = useState(DEFAULT_SLOGAN);
+  const [camError, setCamError] = useState("");
+  const [viewingDiscovery, setViewingDiscovery] = useState(null);
+  const [returnScreen, setReturnScreen] = useState("albums");
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -317,10 +485,14 @@ export default function Wilder() {
 
   const startCamera = useCallback(async () => {
     setCamReady(false);
+    setCamError("");
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
 
-    if (!navigator.mediaDevices?.getUserMedia) return;
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setCamError("Votre navigateur ne supporte pas la caméra.");
+      return;
+    }
 
     const constraints = [
       { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } },
@@ -338,7 +510,10 @@ export default function Wilder() {
       }
     }
 
-    if (!stream) return;
+    if (!stream) {
+      setCamError("Accès à la caméra refusé ou indisponible. Utilisez la galerie ou autorisez la caméra dans les réglages.");
+      return;
+    }
     streamRef.current = stream;
     setCamReady(true);
     await attachStreamToVideo();
@@ -388,20 +563,24 @@ export default function Wilder() {
     setCaptured(imgSrc);
     setScreen("analyzing");
     try {
-      const res = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: base64 }),
-      });
+      const [res, location] = await Promise.all([
+        fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: base64 }),
+        }),
+        getCurrentLocation(),
+      ]);
+
       const data = await res.json();
-      if (data.erreur) {
-        setErrorMsg(data.erreur);
+      if (!res.ok || data.erreur) {
+        setErrorMsg(data.erreur || "Erreur lors de l'analyse");
         setScreen("error");
         return;
       }
 
       const discovery = {
-        id: Date.now().toString(),
+        id: generateId(),
         photo: imgSrc,
         nom: data.nom,
         nom_latin: data.nom_latin || "",
@@ -411,6 +590,7 @@ export default function Wilder() {
         rarete: data.rarete || "commun",
         etat_sante: data.etat_sante || "",
         discoveredAt: new Date().toISOString(),
+        ...(location || {}),
       };
 
       const updated = [discovery, ...loadDiscoveries()];
@@ -476,7 +656,7 @@ export default function Wilder() {
   const createAlbum = (name) => {
     if (!currentDiscovery) return;
     const album = {
-      id: Date.now().toString(),
+      id: generateId(),
       name: name.trim() || defaultAlbumName(),
       createdAt: new Date().toISOString(),
       coverPhoto: currentDiscovery.photo,
@@ -492,7 +672,7 @@ export default function Wilder() {
   const createAlbumFromList = () => {
     const name = newAlbumName.trim() || defaultAlbumName();
     const album = {
-      id: Date.now().toString(),
+      id: generateId(),
       name,
       createdAt: new Date().toISOString(),
       coverPhoto: null,
@@ -513,6 +693,7 @@ export default function Wilder() {
   };
 
   const selectedAlbum = albums.find((a) => a.id === selectedAlbumId);
+  const stats = computeStats(discoveries);
 
   const pageTitle = `Wilder — ${slogan}`;
 
@@ -538,6 +719,11 @@ export default function Wilder() {
             <div className="discovery-counter stagger-2">
               <span className="discovery-counter-num">{discoveries.length}</span>
               <span>découverte{discoveries.length !== 1 ? "s" : ""}</span>
+              {stats.rareCount > 0 && (
+                <span className="discovery-counter-rare">
+                  ◆ {stats.rareCount} rare{stats.rareCount !== 1 ? "s" : ""}
+                </span>
+              )}
             </div>
 
             <button type="button" className="btn-scanner stagger-2" onClick={() => setScreen("camera")}>
@@ -553,10 +739,16 @@ export default function Wilder() {
               </div>
             </div>
 
-            <button type="button" className="btn-albums stagger-3" onClick={() => setScreen("albums")}>
-              <IconAlbums size={20} />
-              Mes Albums
-            </button>
+            <div className="home-nav-row stagger-3">
+              <button type="button" className="btn-albums" onClick={() => setScreen("albums")}>
+                <IconAlbums size={20} />
+                Albums
+              </button>
+              <button type="button" className="btn-stats" onClick={() => setScreen("stats")}>
+                <IconStats size={20} />
+                Stats
+              </button>
+            </div>
           </div>
         </div>
       </>
@@ -627,25 +819,18 @@ export default function Wilder() {
           </div>
 
           {!camReady && (
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "1rem",
-                background: "#0a1812",
-                zIndex: 1,
-              }}
-            >
+            <div className="camera-error-overlay">
               <div style={{ animation: "pulseGlow 2s ease-in-out infinite" }}>
                 <IconCamera size={48} color="#E07A3A" />
               </div>
-              <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.9rem" }}>
-                Autorisez l&apos;accès à la caméra
+              <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.9rem", maxWidth: 280, lineHeight: 1.5 }}>
+                {camError || "Autorisez l\u2019accès à la caméra"}
               </p>
+              {camError && (
+                <button type="button" className="btn-primary" onClick={startCamera}>
+                  Réessayer
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -730,57 +915,26 @@ export default function Wilder() {
               <IconBack size={16} /> Accueil
             </button>
 
-            <span className="discovery-new-badge">Nouvelle découverte !</span>
-            <h1 className="discovery-name">{result.nom}</h1>
-            {result.nom_latin && <p className="discovery-latin">{result.nom_latin}</p>}
+            <DiscoveryBody data={result} discovery={currentDiscovery} showNewBadge>
+              <button
+                type="button"
+                className="btn-primary"
+                style={{ width: "100%", marginTop: "0.5rem" }}
+                onClick={() => !savedToAlbum && setShowAlbumPicker(true)}
+                disabled={savedToAlbum}
+              >
+                {savedToAlbum ? "✓ Ajouté à l'album" : "Ajouter à un album"}
+              </button>
 
-            {result.type && (
-              <span className="discovery-type-chip">
-                {TYPE_LABELS[result.type] || result.type}
-              </span>
-            )}
-
-            <RarityBadge rarete={result.rarete} />
-
-            {result.description && (
-              <div className="result-card">
-                <div className="result-card-title">Description</div>
-                <p className="result-card-text">{result.description}</p>
-              </div>
-            )}
-
-            {result.habitat && (
-              <div className="result-card">
-                <div className="result-card-title">Habitat naturel</div>
-                <p className="result-card-text">{result.habitat}</p>
-              </div>
-            )}
-
-            {result.etat_sante && (
-              <div className="result-card">
-                <div className="result-card-title">État de santé</div>
-                <p className="result-card-text">{result.etat_sante}</p>
-              </div>
-            )}
-
-            <button
-              type="button"
-              className="btn-primary"
-              style={{ width: "100%", marginTop: "0.5rem" }}
-              onClick={() => (savedToAlbum ? undefined : setShowAlbumPicker(true))}
-              disabled={savedToAlbum}
-            >
-              {savedToAlbum ? "✓ Ajouté à l'album" : "Ajouter à un album"}
-            </button>
-
-            <button
-              type="button"
-              className="btn-secondary"
-              style={{ width: "100%", marginTop: "0.75rem" }}
-              onClick={() => setScreen("camera")}
-            >
-              Scanner à nouveau
-            </button>
+              <button
+                type="button"
+                className="btn-secondary"
+                style={{ width: "100%", marginTop: "0.75rem" }}
+                onClick={() => setScreen("camera")}
+              >
+                Scanner à nouveau
+              </button>
+            </DiscoveryBody>
           </div>
 
           {showAlbumPicker && (
@@ -852,15 +1006,171 @@ export default function Wilder() {
           ) : (
             <div className="discovery-grid">
               {items.map((d) => (
-                <div key={d.id} className="discovery-item">
+                <button
+                  key={d.id}
+                  type="button"
+                  className="discovery-item"
+                  onClick={() => {
+                    setViewingDiscovery(d);
+                    setReturnScreen("album-detail");
+                    setScreen("discovery-detail");
+                  }}
+                >
                   <img src={d.photo} alt={d.nom} />
                   <div className="discovery-item-info">
                     <h4>{d.nom}</h4>
                     <p>{d.nom_latin}</p>
-                    <p style={{ fontStyle: "normal", marginTop: 4 }}>{formatDate(d.discoveredAt)}</p>
+                    {(d.rarete === "rare" || d.rarete === "tres_rare") && (
+                      <span className={`discovery-item-rarity rarity-${d.rarete}`}>
+                        {RARITY_LABELS[d.rarete]}
+                      </span>
+                    )}
                   </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </>
+    );
+  }
+
+  /* ── DISCOVERY DETAIL ── */
+  if (screen === "discovery-detail" && viewingDiscovery) {
+    const d = viewingDiscovery;
+    const data = {
+      nom: d.nom,
+      nom_latin: d.nom_latin,
+      type: d.type,
+      description: d.description,
+      habitat: d.habitat,
+      rarete: d.rarete,
+      etat_sante: d.etat_sante,
+    };
+
+    return (
+      <>
+        <Head>
+          <title>{d.nom} — Wilder</title>
+        </Head>
+        <div className="discovery-screen screen-enter-fast">
+          <div className="discovery-hero">
+            <img src={d.photo} alt={d.nom} />
+          </div>
+
+          <div className="discovery-body">
+            <button
+              type="button"
+              className="btn-secondary"
+              style={{ marginBottom: "1rem", padding: "0.5rem 0.85rem" }}
+              onClick={() => {
+                setViewingDiscovery(null);
+                setScreen(returnScreen);
+              }}
+            >
+              <IconBack size={16} /> Retour
+            </button>
+
+            <DiscoveryBody data={data} discovery={d} showNewBadge={false}>
+              <p style={{ fontSize: "0.82rem", color: "var(--text-muted)", marginTop: "0.5rem" }}>
+                Découvert le {formatDate(d.discoveredAt)}
+              </p>
+            </DiscoveryBody>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  /* ── STATS ── */
+  if (screen === "stats") {
+    const typeEntries = Object.entries(stats.byType).sort((a, b) => b[1] - a[1]);
+    const maxTypeCount = typeEntries[0]?.[1] || 1;
+
+    return (
+      <>
+        <Head>
+          <title>Mes Stats — Wilder</title>
+        </Head>
+        <div className="stats-screen screen-enter">
+          <div className="albums-header">
+            <button
+              type="button"
+              className="btn-secondary"
+              style={{ padding: "0.5rem 0.75rem" }}
+              onClick={goHome}
+              aria-label="Retour"
+            >
+              <IconBack size={18} />
+            </button>
+            <h1 className="albums-title">Mes Stats</h1>
+          </div>
+
+          <div className="stats-hero">
+            <p style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
+              Votre aventure nature en chiffres
+            </p>
+            <div className="stats-hero-grid">
+              <div className="stat-card stat-card-highlight">
+                <span className="stat-card-num">{stats.total}</span>
+                <span className="stat-card-label">Découvertes</span>
+              </div>
+              <div className="stat-card">
+                <span className="stat-card-num">{stats.uniqueSpecies}</span>
+                <span className="stat-card-label">Espèces uniques</span>
+              </div>
+              <div className="stat-card stat-card-highlight">
+                <span className="stat-card-num">{stats.rareCount}</span>
+                <span className="stat-card-label">Espèces rares</span>
+              </div>
+              <div className="stat-card">
+                <span className="stat-card-num">{stats.thisMonth}</span>
+                <span className="stat-card-label">Ce mois-ci</span>
+              </div>
+            </div>
+          </div>
+
+          {typeEntries.length > 0 && (
+            <div className="stats-section">
+              <h2 className="stats-section-title">Par catégorie</h2>
+              {typeEntries.map(([type, count]) => (
+                <div key={type} className="stat-bar-row">
+                  <span className="stat-bar-label">{TYPE_LABELS[type] || type}</span>
+                  <div className="stat-bar-track">
+                    <div
+                      className="stat-bar-fill"
+                      style={{ width: `${Math.round((count / maxTypeCount) * 100)}%` }}
+                    />
+                  </div>
+                  <span className="stat-bar-count">{count}</span>
                 </div>
               ))}
+            </div>
+          )}
+
+          <div className="stats-section">
+            <h2 className="stats-section-title">Par rareté</h2>
+            <div className="rarity-stats-grid">
+              {Object.entries(RARITY_LABELS).map(([key, label]) => (
+                <div key={key} className={`rarity-stat-pill rarity-${key}`}>
+                  <span>{label}</span>
+                  <strong>{stats.byRarity[key] || 0}</strong>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {stats.total === 0 && (
+            <div className="albums-empty">
+              <p>Scannez votre première découverte pour voir vos stats !</p>
+              <button
+                type="button"
+                className="btn-primary"
+                style={{ marginTop: "1.5rem" }}
+                onClick={() => setScreen("camera")}
+              >
+                Découvrir
+              </button>
             </div>
           )}
         </div>
