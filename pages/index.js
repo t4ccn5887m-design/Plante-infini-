@@ -11,7 +11,8 @@ import {
   loadSeenBadges,
   saveSeenBadges,
 } from "@/lib/badges";
-import { playDiscoverySound, playTypeSound } from "@/lib/sounds";
+import { playDiscoverySound } from "@/lib/sounds";
+import AnimalSoundQuiz from "@/components/AnimalSoundQuiz";
 import { shareDiscovery } from "@/lib/share";
 import { computeStats } from "@/lib/stats";
 import { isHeritageType } from "@/lib/categories";
@@ -831,6 +832,8 @@ function DiscoveryBody({ data, discovery, showNewBadge, t, lang, onShare, childr
 
       <RarityBadge rarete={data.rarete} t={t} />
 
+      <AnimalSoundQuiz data={data} t={t} />
+
       {data.description && (
         <div className="result-card">
           <div className="result-card-title">{t("discovery.description")}</div>
@@ -1167,6 +1170,7 @@ export default function Wilder() {
         date_construction: data.date_construction || "",
         style_architectural: data.style_architectural || "",
         anecdotes: data.anecdotes || "",
+        fun_fact: data.fun_fact || "",
         discoveredAt: new Date().toISOString(),
         ...(location || {}),
       };
@@ -1291,9 +1295,6 @@ export default function Wilder() {
     setViewingDiscovery(d);
     setReturnScreen(from);
     setScreen("discovery-detail");
-    if (["animal", "oiseau", "insecte", "papillon", "reptile"].includes(d.type)) {
-      playTypeSound(d.type);
-    }
   };
 
   const confettiOverlay = (
@@ -1657,6 +1658,8 @@ export default function Wilder() {
       habitat: d.habitat,
       rarete: d.rarete,
       etat_sante: d.etat_sante,
+      fun_fact: d.fun_fact,
+      anecdotes: d.anecdotes,
     };
 
     return (

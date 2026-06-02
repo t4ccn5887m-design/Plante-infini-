@@ -23,7 +23,8 @@ export default async function handler(req, res) {
       '"histoire":"Histoire du monument ou site (obligatoire si patrimoine ; null si nature)",' +
       '"date_construction":"Date ou epoque de construction (ex. XIIe siecle, 1892 ; null si nature)",' +
       '"style_architectural":"Style architectural ou type de site (obligatoire si monument/architecture ; null si nature)",' +
-      '"anecdotes":"Anecdotes ou faits interessants (obligatoire si patrimoine ; null si nature)"}. ' +
+      '"anecdotes":"Anecdotes ou faits interessants (obligatoire si patrimoine ; null si nature)",' +
+      '"fun_fact":"Un fait amusant et surprenant sur l\'espece (1-2 phrases, ton ludique pour enfants et adultes ; obligatoire si animal|oiseau|insecte|papillon|reptile ; null sinon)"}. ' +
       'Types patrimoine : monument (chateaux, eglises, cathedrales, ruines, tours), ' +
       'architecture (ponts, phares, moulins, abbayes), site_naturel (cascades, grottes, falaises, lacs, rivieres), ' +
       'curiosite (fontaines, statues, fresques, calvaires). ' +
@@ -55,7 +56,8 @@ export default async function handler(req, res) {
                   "Identifie ce qui est visible sur cette photo : etre vivant (nature) ou monument/site (patrimoine). " +
                   "Fournis obligatoirement : la categorie, le nom, la description, l'habitat ou contexte, le niveau de rarete. " +
                   "Si nature : nom scientifique et etat de sante si plante. " +
-                  "Si patrimoine : histoire, date de construction, style architectural et anecdotes.",
+                  "Si patrimoine : histoire, date de construction, style architectural et anecdotes. " +
+                  "Si animal, oiseau, insecte, papillon ou reptile : ajoute un fun_fact surprenant et amusant.",
               },
             ],
           },

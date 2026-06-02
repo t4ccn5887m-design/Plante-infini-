@@ -869,6 +869,204 @@ video {
   color: var(--text-secondary);
 }
 
+/* ── Animal sound quiz ── */
+
+.animal-sound-quiz {
+  margin: 1rem 0 0.25rem;
+}
+
+.btn-sound-listen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.95rem 1.25rem;
+  border: none;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(135deg, #3d8b6e, #2a6b52);
+  box-shadow: 0 4px 18px rgba(61, 139, 110, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-sound-listen:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(61, 139, 110, 0.45);
+}
+
+.animal-sound-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  background: rgba(61, 139, 110, 0.12);
+  border: 1px solid rgba(61, 139, 110, 0.25);
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.animal-sound-status-active {
+  color: #3d8b6e;
+}
+
+.animal-sound-pulse {
+  display: inline-block;
+  animation: sound-pulse 1s ease-in-out infinite;
+}
+
+@keyframes sound-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.75; }
+}
+
+.animal-sound-wave {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 18px;
+}
+
+.animal-sound-wave span {
+  display: block;
+  width: 4px;
+  background: #3d8b6e;
+  border-radius: 2px;
+  animation: sound-wave 0.8s ease-in-out infinite;
+}
+
+.animal-sound-wave span:nth-child(1) { height: 8px; animation-delay: 0s; }
+.animal-sound-wave span:nth-child(2) { height: 14px; animation-delay: 0.15s; }
+.animal-sound-wave span:nth-child(3) { height: 10px; animation-delay: 0.3s; }
+.animal-sound-wave span:nth-child(4) { height: 16px; animation-delay: 0.45s; }
+
+@keyframes sound-wave {
+  0%, 100% { transform: scaleY(0.5); opacity: 0.5; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+
+.animal-sound-error {
+  text-align: center;
+  padding: 0.75rem;
+  border-radius: 16px;
+  background: rgba(196, 95, 40, 0.1);
+  border: 1px solid rgba(196, 95, 40, 0.25);
+}
+
+.animal-sound-error p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.65rem;
+}
+
+.btn-sound-retry {
+  width: 100%;
+  margin-top: 0.65rem;
+}
+
+.animal-sound-quiz-panel {
+  padding: 1.1rem;
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(61, 139, 110, 0.14), rgba(196, 95, 40, 0.08));
+  border: 1px solid rgba(61, 139, 110, 0.22);
+}
+
+.animal-sound-quiz-question {
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 0.85rem;
+  color: var(--text-primary);
+}
+
+.animal-sound-quiz-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+.btn-sound-yes,
+.btn-sound-no {
+  padding: 0.85rem 0.5rem;
+  border: none;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.btn-sound-yes {
+  background: linear-gradient(135deg, #3d8b6e, #2a6b52);
+  color: white;
+}
+
+.btn-sound-no {
+  background: rgba(245, 242, 235, 0.1);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.btn-sound-yes:hover,
+.btn-sound-no:hover {
+  transform: scale(1.03);
+}
+
+.animal-sound-credit {
+  margin-top: 0.75rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.animal-sound-response {
+  text-align: center;
+  padding: 1rem;
+  border-radius: 18px;
+  background: rgba(61, 139, 110, 0.1);
+  border: 1px solid rgba(61, 139, 110, 0.2);
+}
+
+.animal-sound-response-yes p {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #3d8b6e;
+  margin-bottom: 0.25rem;
+}
+
+.animal-sound-funfact {
+  padding: 1rem;
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(196, 95, 40, 0.12), rgba(61, 139, 110, 0.08));
+  border: 1px solid rgba(196, 95, 40, 0.25);
+}
+
+.animal-sound-funfact-badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  margin-bottom: 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: rgba(196, 95, 40, 0.2);
+  color: var(--sunset);
+}
+
+.animal-sound-funfact p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
 .location-card {
   display: flex;
   align-items: flex-start;
