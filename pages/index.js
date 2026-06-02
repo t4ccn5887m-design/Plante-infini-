@@ -556,7 +556,7 @@ export default function Wilder() {
             </div>
 
             <p className="scanner-hint">
-              Pointe vers un animal, une plante, un insecte…
+              Pointe vers un animal, une plante, un insecte, un oiseau ou un champignon…
             </p>
 
             <div className="scanner-bottom">
