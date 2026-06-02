@@ -20,6 +20,7 @@ import { isHeritageType } from "@/lib/categories";
 const DISCOVERIES_KEY = "wilder-discoveries";
 const ALBUMS_KEY = "wilder-albums";
 const THEME_KEY = "wilder-theme";
+const FRANCE_CENTER = [46.603354, 1.888334];
 
 function loadDiscoveries() {
   if (typeof window === "undefined") return [];
@@ -78,11 +79,26 @@ function formatLocation(discovery) {
   return null;
 }
 
+function getAlbumDisplayName(album) {
+  return album.nom || album.name || "Album";
+}
+
+function getAlbumPhotos(album, allDiscoveries) {
+  if (Array.isArray(album.photos) && album.photos.length > 0) return album.photos;
+  const photos = [];
+  for (const id of album.discoveryIds || []) {
+    const d = allDiscoveries.find((x) => x.id === id);
+    if (d?.photo) photos.push(d.photo);
+  }
+  if (photos.length === 0 && album.coverPhoto) photos.push(album.coverPhoto);
+  return photos;
+}
+
 function getAlbumLocation(album, allDiscoveries) {
   if (album.latitude != null && album.longitude != null) {
     return {
-      latitude: album.latitude,
-      longitude: album.longitude,
+      latitude: Number(album.latitude),
+      longitude: Number(album.longitude),
       placeName: album.placeName || null,
     };
   }
@@ -100,11 +116,29 @@ function getAlbumLocation(album, allDiscoveries) {
 }
 
 function getFirstDiscoveryPhoto(album, allDiscoveries) {
-  for (const id of album.discoveryIds || []) {
-    const d = allDiscoveries.find((x) => x.id === id);
-    if (d?.photo) return d.photo;
-  }
-  return album.coverPhoto || null;
+  const photos = getAlbumPhotos(album, allDiscoveries);
+  return photos[0] || null;
+}
+
+function buildAlbumRecord({ name, createdAt, coverPhoto, discoveryIds, location }) {
+  const photos = coverPhoto ? [coverPhoto] : [];
+  return {
+    id: generateId(),
+    name,
+    nom: name,
+    createdAt,
+    date: createdAt,
+    coverPhoto,
+    photos,
+    discoveryIds,
+    ...(location
+      ? {
+          latitude: location.latitude,
+          longitude: location.longitude,
+          placeName: location.placeName || null,
+        }
+      : {}),
+  };
 }
 
 function escapeHtml(str) {
@@ -159,19 +193,32 @@ function getCurrentLocation() {
 async function prepareAlbumsForMap() {
   const discoveries = loadDiscoveries();
   const albums = loadAlbums();
-  const missing = albums.filter((album) => !getAlbumLocation(album, discoveries));
+  const normalized = albums.map((album) => ({
+    ...album,
+    nom: album.nom || album.name,
+    name: album.name || album.nom,
+    date: album.date || album.createdAt,
+    createdAt: album.createdAt || album.date,
+    photos: getAlbumPhotos(album, discoveries),
+  }));
+
+  const missing = normalized.filter((album) => !getAlbumLocation(album, discoveries));
 
   if (missing.length === 0) {
-    return { albums, discoveries };
+    const changed = JSON.stringify(normalized) !== JSON.stringify(albums);
+    if (changed) saveAlbums(normalized);
+    return { albums: normalized, discoveries };
   }
 
   const location = await getCurrentLocation();
   if (!location) {
-    return { albums, discoveries };
+    const changed = JSON.stringify(normalized) !== JSON.stringify(albums);
+    if (changed) saveAlbums(normalized);
+    return { albums: normalized, discoveries };
   }
 
   let offsetIndex = 0;
-  const updated = albums.map((album) => {
+  const updated = normalized.map((album) => {
     if (getAlbumLocation(album, discoveries)) return album;
     const spread = offsetIndex * 0.0008;
     offsetIndex += 1;
@@ -504,19 +551,25 @@ function AlbumMap({ albums, discoveries, onOpenAlbum, t, locale }) {
   return <div ref={containerRef} className="album-map-container" />;
 }
 
-function AlbumsMapView({ albums, discoveries, onSelectAlbum }) {
+function AlbumsMapView({ onSelectAlbum, onLoadedCount, onAlbumsSynced, t }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const onSelectAlbumRef = useRef(onSelectAlbum);
-  const albumsRef = useRef(albums);
+  const onLoadedCountRef = useRef(onLoadedCount);
+  const onAlbumsSyncedRef = useRef(onAlbumsSynced);
+  const albumsRef = useRef([]);
 
   useEffect(() => {
     onSelectAlbumRef.current = onSelectAlbum;
   }, [onSelectAlbum]);
 
   useEffect(() => {
-    albumsRef.current = albums;
-  }, [albums]);
+    onLoadedCountRef.current = onLoadedCount;
+  }, [onLoadedCount]);
+
+  useEffect(() => {
+    onAlbumsSyncedRef.current = onAlbumsSynced;
+  }, [onAlbumsSynced]);
 
   useEffect(() => {
     if (!containerRef.current) return undefined;
@@ -530,6 +583,15 @@ function AlbumsMapView({ albums, discoveries, onSelectAlbum }) {
     };
 
     (async () => {
+      await prepareAlbumsForMap();
+      const storedAlbums = loadAlbums();
+      const storedDiscoveries = loadDiscoveries();
+      console.log("[Wilder] Albums localStorage:", storedAlbums);
+
+      albumsRef.current = storedAlbums;
+      onAlbumsSyncedRef.current?.(storedAlbums);
+      onLoadedCountRef.current?.(0);
+
       const L = (await import("leaflet")).default;
 
       if (cancelled || !containerRef.current) return;
@@ -537,20 +599,31 @@ function AlbumsMapView({ albums, discoveries, onSelectAlbum }) {
       map = L.map(containerRef.current, {
         zoomControl: true,
         attributionControl: true,
-      });
+      }).setView(FRANCE_CENTER, 5);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 19,
       }).addTo(map);
 
-      const bounds = [];
+      L.circleMarker(FRANCE_CENTER, {
+        radius: 10,
+        fillColor: "#e74c3c",
+        color: "#ffffff",
+        weight: 2,
+        fillOpacity: 1,
+      })
+        .addTo(map)
+        .bindPopup("Test — centre de la France");
 
-      albums.forEach((album) => {
-        const loc = getAlbumLocation(album, discoveries);
+      const bounds = [[...FRANCE_CENTER]];
+
+      storedAlbums.forEach((album) => {
+        const loc = getAlbumLocation(album, storedDiscoveries);
         if (!loc) return;
 
-        const photo = getFirstDiscoveryPhoto(album, discoveries);
+        const photo = getFirstDiscoveryPhoto(album, storedDiscoveries);
+        const albumName = getAlbumDisplayName(album);
         const photoHtml = photo
           ? `<img src="${escapeHtml(photo)}" alt="" class="albums-map-marker-img" />`
           : `<div class="albums-map-marker-fallback" aria-hidden="true">
@@ -561,7 +634,7 @@ function AlbumsMapView({ albums, discoveries, onSelectAlbum }) {
 
         const icon = L.divIcon({
           className: "albums-map-marker-wrap",
-          html: `<button type="button" class="albums-map-marker" data-album-id="${escapeHtml(album.id)}" aria-label="${escapeHtml(album.name)}">
+          html: `<button type="button" class="albums-map-marker" data-album-id="${escapeHtml(album.id)}" aria-label="${escapeHtml(albumName)}">
             <span class="albums-map-marker-glow" aria-hidden="true"></span>
             ${photoHtml}
           </button>`,
@@ -573,24 +646,13 @@ function AlbumsMapView({ albums, discoveries, onSelectAlbum }) {
         bounds.push([loc.latitude, loc.longitude]);
       });
 
-      if (bounds.length === 1) {
-        map.setView(bounds[0], 13);
-      } else if (bounds.length > 1) {
+      const albumMarkerCount = Math.max(bounds.length - 1, 0);
+      onLoadedCountRef.current?.(albumMarkerCount);
+
+      if (bounds.length > 2) {
         map.fitBounds(bounds, { padding: [56, 56], maxZoom: 14 });
-      } else if (typeof navigator !== "undefined" && navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            if (cancelled || !map) return;
-            map.setView([pos.coords.latitude, pos.coords.longitude], 11);
-          },
-          () => {
-            if (cancelled || !map) return;
-            map.setView([46.6, 2.4], 5);
-          },
-          { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
-        );
-      } else {
-        map.setView([46.6, 2.4], 5);
+      } else if (bounds.length === 2) {
+        map.setView(bounds[1], 13);
       }
 
       mapRef.current = map;
@@ -623,7 +685,7 @@ function AlbumsMapView({ albums, discoveries, onSelectAlbum }) {
         mapRef.current = null;
       }
     };
-  }, [albums, discoveries]);
+  }, [t]);
 
   return <div ref={containerRef} className="albums-map-container" />;
 }
@@ -972,7 +1034,7 @@ export default function Wilder() {
   const [newAlbumName, setNewAlbumName] = useState("");
   const [albumsViewMode, setAlbumsViewMode] = useState("list");
   const [mapSheetAlbum, setMapSheetAlbum] = useState(null);
-  const [mapAlbumsReady, setMapAlbumsReady] = useState(false);
+  const [mapLoadedCount, setMapLoadedCount] = useState(null);
   const [camError, setCamError] = useState("");
   const [viewingDiscovery, setViewingDiscovery] = useState(null);
   const [returnScreen, setReturnScreen] = useState("albums");
@@ -1082,25 +1144,8 @@ export default function Wilder() {
 
   useEffect(() => {
     if (albumsViewMode !== "map") {
-      setMapAlbumsReady(false);
-      return undefined;
+      setMapLoadedCount(null);
     }
-
-    let cancelled = false;
-    setMapAlbumsReady(false);
-
-    (async () => {
-      const { albums: preparedAlbums, discoveries: preparedDiscoveries } =
-        await prepareAlbumsForMap();
-      if (cancelled) return;
-      setDiscoveries(preparedDiscoveries);
-      setAlbums(preparedAlbums);
-      setMapAlbumsReady(true);
-    })();
-
-    return () => {
-      cancelled = true;
-    };
   }, [albumsViewMode]);
 
   useEffect(() => {
@@ -1229,6 +1274,15 @@ export default function Wilder() {
     if (!album.discoveryIds.includes(currentDiscovery.id)) {
       album.discoveryIds = [currentDiscovery.id, ...album.discoveryIds];
       if (!album.coverPhoto) album.coverPhoto = currentDiscovery.photo;
+      if (album.latitude == null && currentDiscovery.latitude != null) {
+        album.latitude = currentDiscovery.latitude;
+        album.longitude = currentDiscovery.longitude;
+        album.placeName = currentDiscovery.placeName || null;
+      }
+      if (!Array.isArray(album.photos)) album.photos = [];
+      if (currentDiscovery.photo && !album.photos.includes(currentDiscovery.photo)) {
+        album.photos = [currentDiscovery.photo, ...album.photos];
+      }
       allAlbums[idx] = album;
       saveAlbums(allAlbums);
       setAlbums(allAlbums);
@@ -1237,22 +1291,27 @@ export default function Wilder() {
     setSavedToAlbum(true);
   };
 
-  const createAlbum = (name) => {
+  const createAlbum = async (name) => {
     if (!currentDiscovery) return;
-    const album = {
-      id: generateId(),
-      name: name.trim() || defaultAlbumName(t, locale),
-      createdAt: new Date().toISOString(),
+    let location = null;
+    if (currentDiscovery.latitude != null && currentDiscovery.longitude != null) {
+      location = {
+        latitude: currentDiscovery.latitude,
+        longitude: currentDiscovery.longitude,
+        placeName: currentDiscovery.placeName || null,
+      };
+    } else {
+      location = await getCurrentLocation();
+    }
+    const albumName = name.trim() || defaultAlbumName(t, locale);
+    const createdAt = new Date().toISOString();
+    const album = buildAlbumRecord({
+      name: albumName,
+      createdAt,
       coverPhoto: currentDiscovery.photo,
       discoveryIds: [currentDiscovery.id],
-      ...(currentDiscovery.latitude != null && currentDiscovery.longitude != null
-        ? {
-            latitude: currentDiscovery.latitude,
-            longitude: currentDiscovery.longitude,
-            placeName: currentDiscovery.placeName || null,
-          }
-        : {}),
-    };
+      location,
+    });
     const updated = [album, ...loadAlbums()];
     saveAlbums(updated);
     setAlbums(updated);
@@ -1263,14 +1322,14 @@ export default function Wilder() {
   const createAlbumFromList = async () => {
     const name = newAlbumName.trim() || defaultAlbumName(t, locale);
     const location = await getCurrentLocation();
-    const album = {
-      id: generateId(),
+    const createdAt = new Date().toISOString();
+    const album = buildAlbumRecord({
       name,
-      createdAt: new Date().toISOString(),
+      createdAt,
       coverPhoto: null,
       discoveryIds: [],
-      ...(location || {}),
-    };
+      location,
+    });
     const updated = [album, ...loadAlbums()];
     saveAlbums(updated);
     setAlbums(updated);
@@ -1974,11 +2033,6 @@ export default function Wilder() {
     const sortedAlbums = [...albums].sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
-    const locatedAlbums = sortedAlbums.filter((album) => getAlbumLocation(album, discoveries));
-    const mapDiscoveryCount = locatedAlbums.reduce(
-      (sum, album) => sum + (album.discoveryIds?.length || 0),
-      0
-    );
     const isMapView = albumsViewMode === "map";
 
     return (
@@ -2022,23 +2076,17 @@ export default function Wilder() {
           {isMapView ? (
             <>
               <p className="albums-map-stats">
-                {t("albums.map_stats", {
-                  discoveries: mapDiscoveryCount,
-                  places: locatedAlbums.length,
-                })}
+                {mapLoadedCount == null
+                  ? t("albums.map_loading")
+                  : t("albums.map_loaded_count", { count: mapLoadedCount })}
               </p>
-              {!mapAlbumsReady ? (
-                <div className="albums-map-loading" aria-busy="true">
-                  <p>{t("albums.map_loading")}</p>
-                </div>
-              ) : (
-                <AlbumsMapView
-                  key={sortedAlbums.map((a) => `${a.id}:${a.latitude}:${a.longitude}`).join("|")}
-                  albums={sortedAlbums}
-                  discoveries={discoveries}
-                  onSelectAlbum={setMapSheetAlbum}
-                />
-              )}
+              <AlbumsMapView
+                key={albumsViewMode}
+                onLoadedCount={setMapLoadedCount}
+                onAlbumsSynced={setAlbums}
+                onSelectAlbum={setMapSheetAlbum}
+                t={t}
+              />
               {mapSheetAlbum && (
                 <AlbumMapSheet
                   album={mapSheetAlbum}
