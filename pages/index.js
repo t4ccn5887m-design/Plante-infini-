@@ -19,6 +19,22 @@ const TYPE_LABELS = {
   champignon: "Champignon",
 };
 
+const DEFAULT_SLOGAN = "Explore the wild around you";
+
+const SLOGAN_BY_LANG = {
+  fr: "Explorez la nature sauvage autour de vous",
+  es: "Explora la naturaleza salvaje a tu alrededor",
+  it: "Esplora la natura selvaggia intorno a te",
+  de: "Entdecke die wilde Natur um dich herum",
+  pt: "Explore a natureza selvagem ao seu redor",
+  en: DEFAULT_SLOGAN,
+};
+
+function getSloganFromNavigatorLanguage(language) {
+  const code = (language || "en").split("-")[0].toLowerCase();
+  return SLOGAN_BY_LANG[code] || DEFAULT_SLOGAN;
+}
+
 function loadDiscoveries() {
   if (typeof window === "undefined") return [];
   try {
@@ -267,10 +283,15 @@ export default function Wilder() {
   const [pokedexAnim, setPokedexAnim] = useState(true);
   const [creatingAlbum, setCreatingAlbum] = useState(false);
   const [newAlbumName, setNewAlbumName] = useState("");
+  const [slogan, setSlogan] = useState(DEFAULT_SLOGAN);
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
+
+  useEffect(() => {
+    setSlogan(getSloganFromNavigatorLanguage(navigator.language));
+  }, []);
 
   const attachStreamToVideo = useCallback(async () => {
     const video = videoRef.current;
@@ -483,7 +504,7 @@ export default function Wilder() {
 
   const selectedAlbum = albums.find((a) => a.id === selectedAlbumId);
 
-  const pageTitle = "Wilder — Explore the wild around you";
+  const pageTitle = `Wilder — ${slogan}`;
 
   /* ── HOME ── */
   if (screen === "home") {
@@ -491,7 +512,7 @@ export default function Wilder() {
       <>
         <Head>
           <title>{pageTitle}</title>
-          <meta name="description" content="Explore the wild around you" />
+          <meta name="description" content={slogan} />
         </Head>
         <div className="wilder-home screen-enter">
           <div className="wilder-home-bg" />
@@ -501,7 +522,7 @@ export default function Wilder() {
             <div className="wilder-logo-wrap stagger-1">
               <IconWilderLogo />
               <h1 className="wilder-logo-title">Wilder</h1>
-              <p className="wilder-logo-slogan">Explore the wild around you</p>
+              <p className="wilder-logo-slogan">{slogan}</p>
             </div>
 
             <div className="discovery-counter stagger-2">
