@@ -788,6 +788,26 @@ video {
   color: #a8d4b8;
 }
 
+.discovery-type-chip-heritage {
+  background: rgba(180, 140, 60, 0.35);
+  border-color: rgba(180, 140, 60, 0.55);
+  color: #e8d4a8;
+}
+
+.stat-card-heritage {
+  background: linear-gradient(135deg, rgba(180, 140, 60, 0.2), rgba(120, 90, 40, 0.15));
+  border-color: rgba(180, 140, 60, 0.35);
+}
+
+.wilder-map-marker-heritage {
+  background: #8B6914;
+  border-color: #F5E6C0;
+}
+
+.wilder-map-marker-heritage svg {
+  transform: rotate(45deg);
+}
+
 .rarity-badge {
   display: inline-flex;
   align-items: center;
@@ -898,6 +918,201 @@ video {
   font-family: var(--font-display);
   font-size: 1.65rem;
   font-weight: 700;
+}
+
+.albums-view-toggle {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 1.25rem 0.85rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.albums-view-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.albums-view-btn.active {
+  background: rgba(91, 208, 133, 0.15);
+  border-color: rgba(91, 208, 133, 0.45);
+  color: var(--cream);
+}
+
+.albums-screen--map {
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  padding-bottom: 0;
+}
+
+.albums-map-stats {
+  padding: 0.65rem 1.25rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--forest-light);
+  text-align: center;
+  background: rgba(91, 208, 133, 0.08);
+  border-bottom: 1px solid rgba(91, 208, 133, 0.15);
+}
+
+.albums-map-container {
+  flex: 1;
+  min-height: 0;
+  z-index: 0;
+}
+
+.albums-map-loading {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.albums-screen--map .albums-map-container {
+  margin-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+}
+
+.albums-map-marker-wrap {
+  background: transparent;
+  border: none;
+}
+
+.albums-map-marker {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.albums-map-marker-glow {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(91, 208, 133, 0.55) 0%, rgba(91, 208, 133, 0) 70%);
+  animation: markerPulse 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.albums-map-marker-img {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  margin: 4px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2.5px solid var(--cream);
+  box-shadow: 0 0 16px rgba(91, 208, 133, 0.65), 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.albums-map-marker-fallback {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  margin: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--forest-mid), var(--forest-deep));
+  border: 2.5px solid var(--cream);
+  color: rgba(245, 242, 235, 0.5);
+  box-shadow: 0 0 16px rgba(91, 208, 133, 0.45), 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+@keyframes markerPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+.album-map-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 180;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.album-map-sheet {
+  width: 100%;
+  max-width: 480px;
+  max-height: 72vh;
+  overflow-y: auto;
+  background: var(--forest-deep);
+  border-radius: 24px 24px 0 0;
+  padding: 0.75rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.35);
+  animation: slideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.album-map-sheet-handle {
+  width: 40px;
+  height: 4px;
+  margin: 0 auto 1rem;
+  border-radius: 999px;
+  background: rgba(245, 242, 235, 0.25);
+}
+
+.album-map-sheet-title {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.album-map-sheet-meta {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 0.2rem;
+}
+
+.album-map-sheet-place {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.album-map-sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin: 1rem 0 1.15rem;
+}
+
+.album-map-sheet-grid img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.album-map-sheet-open {
+  width: 100%;
 }
 
 .albums-list {

@@ -14,6 +14,7 @@ import {
 import { playDiscoverySound, playTypeSound } from "@/lib/sounds";
 import { shareDiscovery } from "@/lib/share";
 import { computeStats } from "@/lib/stats";
+import { isHeritageType } from "@/lib/categories";
 
 const DISCOVERIES_KEY = "wilder-discoveries";
 const ALBUMS_KEY = "wilder-albums";
@@ -97,6 +98,14 @@ function getAlbumLocation(album, allDiscoveries) {
   return null;
 }
 
+function getFirstDiscoveryPhoto(album, allDiscoveries) {
+  for (const id of album.discoveryIds || []) {
+    const d = allDiscoveries.find((x) => x.id === id);
+    if (d?.photo) return d.photo;
+  }
+  return album.coverPhoto || null;
+}
+
 function escapeHtml(str) {
   return String(str)
     .replace(/&/g, "&amp;")
@@ -104,6 +113,18 @@ function escapeHtml(str) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 }
+
+const LEAF_MARKER_HTML = `<div class="wilder-map-marker" aria-hidden="true">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="#F5F2EB">
+    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+  </svg>
+</div>`;
+
+const CASTLE_MARKER_HTML = `<div class="wilder-map-marker wilder-map-marker-heritage" aria-hidden="true">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="#F5F2EB">
+    <path d="M3 21h18v-2H3v2zM5 19h2v-6H5v6zm4 0h2v-8H9v8zm4 0h2v-4h-2v4zm4 0h2v-8h-2v8zM3 11l9-7 9 7v2H3v-2z"/>
+  </svg>
+</div>`;
 
 function getCurrentLocation() {
   return new Promise((resolve) => {
@@ -132,6 +153,37 @@ function getCurrentLocation() {
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 120000 }
     );
   });
+}
+
+async function prepareAlbumsForMap() {
+  const discoveries = loadDiscoveries();
+  const albums = loadAlbums();
+  const missing = albums.filter((album) => !getAlbumLocation(album, discoveries));
+
+  if (missing.length === 0) {
+    return { albums, discoveries };
+  }
+
+  const location = await getCurrentLocation();
+  if (!location) {
+    return { albums, discoveries };
+  }
+
+  let offsetIndex = 0;
+  const updated = albums.map((album) => {
+    if (getAlbumLocation(album, discoveries)) return album;
+    const spread = offsetIndex * 0.0008;
+    offsetIndex += 1;
+    return {
+      ...album,
+      latitude: location.latitude + spread,
+      longitude: location.longitude + spread * 0.6,
+      placeName: location.placeName || null,
+    };
+  });
+
+  saveAlbums(updated);
+  return { albums: updated, discoveries };
 }
 
 function loadTheme() {
@@ -243,6 +295,17 @@ function IconMap({ size = 20, color = "currentColor" }) {
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z" />
       <path d="M15 5.764v15M9 3.236v15" />
+    </svg>
+  );
+}
+
+function IconList({ size = 20, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="7" height="7" rx="1" />
     </svg>
   );
 }
@@ -367,42 +430,47 @@ function AlbumMap({ albums, discoveries, onOpenAlbum, t, locale }) {
 
       const leafIcon = L.divIcon({
         className: "wilder-map-marker-wrap",
-        html: `<div class="wilder-map-marker" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="#F5F2EB">
-            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
-          </svg>
-        </div>`,
+        html: LEAF_MARKER_HTML,
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -42],
+      });
+
+      const castleIcon = L.divIcon({
+        className: "wilder-map-marker-wrap",
+        html: CASTLE_MARKER_HTML,
         iconSize: [40, 40],
         iconAnchor: [20, 40],
         popupAnchor: [0, -42],
       });
 
       const bounds = [];
-      albums.forEach((album) => {
-        const loc = getAlbumLocation(album, discoveries);
-        if (!loc) return;
+      const placed = new Set();
 
-        const count = album.discoveryIds?.length || 0;
-        const discLabel = count !== 1 ? t("albums.discoveries_plural") : t("albums.discoveries");
-        const cover = album.coverPhoto
-          ? `<img src="${album.coverPhoto}" alt="" class="map-popup-photo" />`
-          : `<div class="map-popup-photo map-popup-photo-empty"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>`;
+      discoveries.forEach((d) => {
+        if (d.latitude == null || d.longitude == null) return;
+        const key = `${d.latitude.toFixed(5)},${d.longitude.toFixed(5)}`;
+        if (placed.has(key)) return;
+        placed.add(key);
+
+        const heritage = isHeritageType(d.type);
+        const icon = heritage ? castleIcon : leafIcon;
+        const typeLabel = getTypeLabel(t, d.type || "plante");
 
         const popupHtml = `
           <div class="map-popup">
-            ${cover}
-            <h3 class="map-popup-title">${escapeHtml(album.name)}</h3>
-            <p class="map-popup-meta">${escapeHtml(formatDate(album.createdAt, locale))}</p>
-            <p class="map-popup-meta">${count} ${discLabel}${loc.placeName ? ` · ${escapeHtml(loc.placeName)}` : ""}</p>
-            <button type="button" class="map-popup-btn" data-album-id="${escapeHtml(album.id)}">${escapeHtml(t("albums.view_album"))}</button>
+            ${d.photo ? `<img src="${escapeHtml(d.photo)}" alt="" class="map-popup-photo" />` : ""}
+            <h3 class="map-popup-title">${escapeHtml(d.nom)}</h3>
+            <p class="map-popup-meta">${escapeHtml(typeLabel)}${d.placeName ? ` · ${escapeHtml(d.placeName)}` : ""}</p>
+            <p class="map-popup-meta">${escapeHtml(formatDate(d.discoveredAt, locale))}</p>
           </div>
         `;
 
-        const marker = L.marker([loc.latitude, loc.longitude], { icon: leafIcon })
+        L.marker([d.latitude, d.longitude], { icon })
           .addTo(map)
           .bindPopup(popupHtml, { maxWidth: 280, className: "wilder-map-popup" });
 
-        bounds.push([loc.latitude, loc.longitude]);
+        bounds.push([d.latitude, d.longitude]);
       });
 
       if (bounds.length === 1) {
@@ -433,6 +501,178 @@ function AlbumMap({ albums, discoveries, onOpenAlbum, t, locale }) {
   }, [albums, discoveries, t, locale]);
 
   return <div ref={containerRef} className="album-map-container" />;
+}
+
+function AlbumsMapView({ albums, discoveries, onSelectAlbum }) {
+  const containerRef = useRef(null);
+  const mapRef = useRef(null);
+  const onSelectAlbumRef = useRef(onSelectAlbum);
+  const albumsRef = useRef(albums);
+
+  useEffect(() => {
+    onSelectAlbumRef.current = onSelectAlbum;
+  }, [onSelectAlbum]);
+
+  useEffect(() => {
+    albumsRef.current = albums;
+  }, [albums]);
+
+  useEffect(() => {
+    if (!containerRef.current) return undefined;
+
+    let map = null;
+    let cancelled = false;
+    let resizeObserver = null;
+
+    const invalidateMapSize = () => {
+      if (map && !cancelled) map.invalidateSize();
+    };
+
+    (async () => {
+      const L = (await import("leaflet")).default;
+
+      if (cancelled || !containerRef.current) return;
+
+      map = L.map(containerRef.current, {
+        zoomControl: true,
+        attributionControl: true,
+      });
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19,
+      }).addTo(map);
+
+      const bounds = [];
+
+      albums.forEach((album) => {
+        const loc = getAlbumLocation(album, discoveries);
+        if (!loc) return;
+
+        const photo = getFirstDiscoveryPhoto(album, discoveries);
+        const photoHtml = photo
+          ? `<img src="${escapeHtml(photo)}" alt="" class="albums-map-marker-img" />`
+          : `<div class="albums-map-marker-fallback" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>
+              </svg>
+            </div>`;
+
+        const icon = L.divIcon({
+          className: "albums-map-marker-wrap",
+          html: `<button type="button" class="albums-map-marker" data-album-id="${escapeHtml(album.id)}" aria-label="${escapeHtml(album.name)}">
+            <span class="albums-map-marker-glow" aria-hidden="true"></span>
+            ${photoHtml}
+          </button>`,
+          iconSize: [52, 52],
+          iconAnchor: [26, 26],
+        });
+
+        L.marker([loc.latitude, loc.longitude], { icon }).addTo(map);
+        bounds.push([loc.latitude, loc.longitude]);
+      });
+
+      if (bounds.length === 1) {
+        map.setView(bounds[0], 13);
+      } else if (bounds.length > 1) {
+        map.fitBounds(bounds, { padding: [56, 56], maxZoom: 14 });
+      } else if (typeof navigator !== "undefined" && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            if (cancelled || !map) return;
+            map.setView([pos.coords.latitude, pos.coords.longitude], 11);
+          },
+          () => {
+            if (cancelled || !map) return;
+            map.setView([46.6, 2.4], 5);
+          },
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
+        );
+      } else {
+        map.setView([46.6, 2.4], 5);
+      }
+
+      mapRef.current = map;
+      requestAnimationFrame(invalidateMapSize);
+      setTimeout(invalidateMapSize, 100);
+      setTimeout(invalidateMapSize, 350);
+
+      if (typeof ResizeObserver !== "undefined" && containerRef.current) {
+        resizeObserver = new ResizeObserver(invalidateMapSize);
+        resizeObserver.observe(containerRef.current);
+      }
+    })();
+
+    const handleMarkerClick = (e) => {
+      const btn = e.target.closest(".albums-map-marker");
+      const albumId = btn?.dataset?.albumId;
+      if (!albumId) return;
+      const album = albumsRef.current.find((a) => a.id === albumId);
+      if (album) onSelectAlbumRef.current(album);
+    };
+
+    containerRef.current.addEventListener("click", handleMarkerClick);
+
+    return () => {
+      cancelled = true;
+      resizeObserver?.disconnect();
+      containerRef.current?.removeEventListener("click", handleMarkerClick);
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, [albums, discoveries]);
+
+  return <div ref={containerRef} className="albums-map-container" />;
+}
+
+function AlbumMapSheet({ album, discoveries, onClose, onOpenAlbum, t, locale }) {
+  const loc = getAlbumLocation(album, discoveries);
+  const items = (album.discoveryIds || [])
+    .map((id) => discoveries.find((d) => d.id === id))
+    .filter(Boolean);
+  const count = items.length;
+
+  return (
+    <div className="album-map-sheet-overlay" onClick={onClose} role="presentation">
+      <div
+        className="album-map-sheet"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-labelledby="album-map-sheet-title"
+      >
+        <div className="album-map-sheet-handle" aria-hidden="true" />
+        <h2 id="album-map-sheet-title" className="album-map-sheet-title">
+          {album.name}
+        </h2>
+        <p className="album-map-sheet-meta">{formatDate(album.createdAt, locale)}</p>
+        {loc?.placeName && (
+          <p className="album-map-sheet-meta album-map-sheet-place">
+            <IconLocation size={14} /> {loc.placeName}
+          </p>
+        )}
+        <p className="album-map-sheet-meta">
+          {count}{" "}
+          {count !== 1 ? t("albums.discoveries_plural") : t("albums.discoveries")}
+        </p>
+        {items.length > 0 && (
+          <div className="album-map-sheet-grid">
+            {items.map((d) => (
+              <img key={d.id} src={d.photo} alt={d.nom} />
+            ))}
+          </div>
+        )}
+        <button
+          type="button"
+          className="btn-primary album-map-sheet-open"
+          onClick={() => onOpenAlbum(album.id)}
+        >
+          {t("albums.open_full_album")}
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function IconLocation({ size = 18, color = "currentColor" }) {
@@ -584,7 +824,7 @@ function DiscoveryBody({ data, discovery, showNewBadge, t, lang, onShare, childr
       {data.nom_latin && <p className="discovery-latin">{data.nom_latin}</p>}
 
       {data.type && (
-        <span className="discovery-type-chip">
+        <span className={`discovery-type-chip${isHeritageType(data.type) ? " discovery-type-chip-heritage" : ""}`}>
           {getTypeLabel(t, data.type)}
         </span>
       )}
@@ -595,6 +835,34 @@ function DiscoveryBody({ data, discovery, showNewBadge, t, lang, onShare, childr
         <div className="result-card">
           <div className="result-card-title">{t("discovery.description")}</div>
           <p className="result-card-text">{data.description}</p>
+        </div>
+      )}
+
+      {data.histoire && (
+        <div className="result-card">
+          <div className="result-card-title">{t("discovery.history")}</div>
+          <p className="result-card-text">{data.histoire}</p>
+        </div>
+      )}
+
+      {data.date_construction && (
+        <div className="result-card">
+          <div className="result-card-title">{t("discovery.construction_date")}</div>
+          <p className="result-card-text">{data.date_construction}</p>
+        </div>
+      )}
+
+      {data.style_architectural && (
+        <div className="result-card">
+          <div className="result-card-title">{t("discovery.architectural_style")}</div>
+          <p className="result-card-text">{data.style_architectural}</p>
+        </div>
+      )}
+
+      {data.anecdotes && (
+        <div className="result-card">
+          <div className="result-card-title">{t("discovery.anecdotes")}</div>
+          <p className="result-card-text">{data.anecdotes}</p>
         </div>
       )}
 
@@ -699,6 +967,9 @@ export default function Wilder() {
   const [pokedexAnim, setPokedexAnim] = useState(true);
   const [creatingAlbum, setCreatingAlbum] = useState(false);
   const [newAlbumName, setNewAlbumName] = useState("");
+  const [albumsViewMode, setAlbumsViewMode] = useState("list");
+  const [mapSheetAlbum, setMapSheetAlbum] = useState(null);
+  const [mapAlbumsReady, setMapAlbumsReady] = useState(false);
   const [camError, setCamError] = useState("");
   const [viewingDiscovery, setViewingDiscovery] = useState(null);
   const [returnScreen, setReturnScreen] = useState("albums");
@@ -807,6 +1078,29 @@ export default function Wilder() {
   }, []);
 
   useEffect(() => {
+    if (albumsViewMode !== "map") {
+      setMapAlbumsReady(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+    setMapAlbumsReady(false);
+
+    (async () => {
+      const { albums: preparedAlbums, discoveries: preparedDiscoveries } =
+        await prepareAlbumsForMap();
+      if (cancelled) return;
+      setDiscoveries(preparedDiscoveries);
+      setAlbums(preparedAlbums);
+      setMapAlbumsReady(true);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [albumsViewMode]);
+
+  useEffect(() => {
     if (screen === "camera") startCamera();
     else stopCamera();
     return stopCamera;
@@ -869,6 +1163,10 @@ export default function Wilder() {
         habitat: data.habitat || "",
         rarete: data.rarete || "commun",
         etat_sante: data.etat_sante || "",
+        histoire: data.histoire || "",
+        date_construction: data.date_construction || "",
+        style_architectural: data.style_architectural || "",
+        anecdotes: data.anecdotes || "",
         discoveredAt: new Date().toISOString(),
         ...(location || {}),
       };
@@ -1444,6 +1742,10 @@ export default function Wilder() {
                 <span className="stat-card-num">{stats.citiesCount}</span>
                 <span className="stat-card-label">{t("stats.cities")}</span>
               </div>
+              <div className="stat-card stat-card-highlight stat-card-heritage">
+                <span className="stat-card-num">{stats.patrimoineCount}</span>
+                <span className="stat-card-label">{t("stats.patrimoine")}</span>
+              </div>
             </div>
           </div>
 
@@ -1628,7 +1930,9 @@ export default function Wilder() {
 
   /* ── MAP ── */
   if (screen === "map") {
-    const locatedAlbums = albums.filter((album) => getAlbumLocation(album, discoveries));
+    const locatedDiscoveries = discoveries.filter(
+      (d) => d.latitude != null && d.longitude != null
+    );
 
     return (
       <>
@@ -1639,10 +1943,10 @@ export default function Wilder() {
           <div className="map-header">
             <h1 className="map-title">{t("map.title")}</h1>
             <p className="map-subtitle">
-              {locatedAlbums.length === 0
+              {locatedDiscoveries.length === 0
                 ? t("map.empty")
-                : t(locatedAlbums.length !== 1 ? "map.places_plural" : "map.places", {
-                    count: locatedAlbums.length,
+                : t(locatedDiscoveries.length !== 1 ? "map.places_plural" : "map.places", {
+                    count: locatedDiscoveries.length,
                   })}
             </p>
           </div>
@@ -1667,81 +1971,152 @@ export default function Wilder() {
     const sortedAlbums = [...albums].sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
+    const locatedAlbums = sortedAlbums.filter((album) => getAlbumLocation(album, discoveries));
+    const mapDiscoveryCount = locatedAlbums.reduce(
+      (sum, album) => sum + (album.discoveryIds?.length || 0),
+      0
+    );
+    const isMapView = albumsViewMode === "map";
 
     return (
       <>
         <Head>
           <title>Mes Albums — Wilder</title>
         </Head>
-        <div className="albums-screen screen-enter with-bottom-nav">
+        <div
+          className={`albums-screen screen-enter with-bottom-nav${isMapView ? " albums-screen--map" : ""}`}
+        >
           <div className="albums-header">
             <h1 className="albums-title">{t("albums.title")}</h1>
           </div>
 
-          <div className="albums-list">
-            {sortedAlbums.length === 0 && !creatingAlbum ? (
-              <div className="albums-empty">
-                <IconAlbums size={48} color="var(--text-muted)" style={{ opacity: 0.4 }} />
-                <p>{t("albums.empty")}</p>
-                <p className="album-examples">{t("albums.examples")}</p>
-              </div>
-            ) : (
-              sortedAlbums.map((album) => {
-                const count = album.discoveryIds.length;
-                return (
-                  <button
-                    key={album.id}
-                    type="button"
-                    className="album-card"
-                    onClick={() => {
-                      setSelectedAlbumId(album.id);
-                      setScreen("album-detail");
-                    }}
-                  >
-                    {album.coverPhoto ? (
-                      <img src={album.coverPhoto} alt="" className="album-cover" />
-                    ) : (
-                      <div className="album-cover album-cover-placeholder">
-                        <IconAlbums size={28} />
-                      </div>
-                    )}
-                    <div className="album-info">
-                      <h3>{album.name}</h3>
-                      <p>
-                        {count}{" "}
-                        {count !== 1 ? t("albums.discoveries_plural") : t("albums.discoveries")} ·{" "}
-                        {formatDate(album.createdAt, locale)}
-                      </p>
-                    </div>
-                  </button>
-                );
-              })
-            )}
-
-            {creatingAlbum ? (
-              <>
-                <input
-                  className="modal-input"
-                  placeholder={defaultAlbumName(t, locale)}
-                  value={newAlbumName}
-                  onChange={(e) => setNewAlbumName(e.target.value)}
-                  autoFocus
-                />
-                <div className="modal-actions">
-                  <button type="button" className="btn-secondary" onClick={() => setCreatingAlbum(false)}>
-                    {t("albums.cancel")}
-                  </button>
-                  <button type="button" className="btn-primary" onClick={createAlbumFromList}>
-                    {t("albums.create")}
-                  </button>
-                </div>
-              </>
-            ) : (
-              <button type="button" className="btn-create-album" onClick={() => setCreatingAlbum(true)}>
-                <IconPlus size={18} /> {t("albums.create")}
-              </button>
-            )}
+          <div className="albums-view-toggle" role="tablist" aria-label={t("albums.title")}>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={!isMapView}
+              className={`albums-view-btn${!isMapView ? " active" : ""}`}
+              onClick={() => {
+                setAlbumsViewMode("list");
+                setMapSheetAlbum(null);
+              }}
+            >
+              <IconList size={18} />
+              {t("albums.view_list")}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={isMapView}
+              className={`albums-view-btn${isMapView ? " active" : ""}`}
+              onClick={() => setAlbumsViewMode("map")}
+            >
+              <IconMap size={18} />
+              {t("albums.view_map")}
+            </button>
           </div>
+
+          {isMapView ? (
+            <>
+              <p className="albums-map-stats">
+                {t("albums.map_stats", {
+                  discoveries: mapDiscoveryCount,
+                  places: locatedAlbums.length,
+                })}
+              </p>
+              {!mapAlbumsReady ? (
+                <div className="albums-map-loading" aria-busy="true">
+                  <p>{t("albums.map_loading")}</p>
+                </div>
+              ) : (
+                <AlbumsMapView
+                  key={sortedAlbums.map((a) => `${a.id}:${a.latitude}:${a.longitude}`).join("|")}
+                  albums={sortedAlbums}
+                  discoveries={discoveries}
+                  onSelectAlbum={setMapSheetAlbum}
+                />
+              )}
+              {mapSheetAlbum && (
+                <AlbumMapSheet
+                  album={mapSheetAlbum}
+                  discoveries={discoveries}
+                  onClose={() => setMapSheetAlbum(null)}
+                  onOpenAlbum={(albumId) => {
+                    setMapSheetAlbum(null);
+                    setSelectedAlbumId(albumId);
+                    setScreen("album-detail");
+                  }}
+                  t={t}
+                  locale={locale}
+                />
+              )}
+            </>
+          ) : (
+            <div className="albums-list">
+              {sortedAlbums.length === 0 && !creatingAlbum ? (
+                <div className="albums-empty">
+                  <IconAlbums size={48} color="var(--text-muted)" style={{ opacity: 0.4 }} />
+                  <p>{t("albums.empty")}</p>
+                  <p className="album-examples">{t("albums.examples")}</p>
+                </div>
+              ) : (
+                sortedAlbums.map((album) => {
+                  const count = album.discoveryIds.length;
+                  return (
+                    <button
+                      key={album.id}
+                      type="button"
+                      className="album-card"
+                      onClick={() => {
+                        setSelectedAlbumId(album.id);
+                        setScreen("album-detail");
+                      }}
+                    >
+                      {album.coverPhoto ? (
+                        <img src={album.coverPhoto} alt="" className="album-cover" />
+                      ) : (
+                        <div className="album-cover album-cover-placeholder">
+                          <IconAlbums size={28} />
+                        </div>
+                      )}
+                      <div className="album-info">
+                        <h3>{album.name}</h3>
+                        <p>
+                          {count}{" "}
+                          {count !== 1 ? t("albums.discoveries_plural") : t("albums.discoveries")} ·{" "}
+                          {formatDate(album.createdAt, locale)}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })
+              )}
+
+              {creatingAlbum ? (
+                <>
+                  <input
+                    className="modal-input"
+                    placeholder={defaultAlbumName(t, locale)}
+                    value={newAlbumName}
+                    onChange={(e) => setNewAlbumName(e.target.value)}
+                    autoFocus
+                  />
+                  <div className="modal-actions">
+                    <button type="button" className="btn-secondary" onClick={() => setCreatingAlbum(false)}>
+                      {t("albums.cancel")}
+                    </button>
+                    <button type="button" className="btn-primary" onClick={createAlbumFromList}>
+                      {t("albums.create")}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <button type="button" className="btn-create-album" onClick={() => setCreatingAlbum(true)}>
+                  <IconPlus size={18} /> {t("albums.create")}
+                </button>
+              )}
+            </div>
+          )}
         </div>
         <BottomNav active="albums" onNavigate={navigateMain} t={t} />
       </>
