@@ -11,7 +11,7 @@ import {
   loadSeenBadges,
   saveSeenBadges,
 } from "@/lib/badges";
-import { playDiscoverySound } from "@/lib/sounds";
+import { playBadgeUnlockSound, playDiscoverySound } from "@/lib/sounds";
 import AnimalSoundQuiz from "@/components/AnimalSoundQuiz";
 import { shareDiscovery } from "@/lib/share";
 import { computeStats } from "@/lib/stats";
@@ -1073,7 +1073,9 @@ export default function Wilder() {
       saveSeenBadges([...seen, ...fresh]);
       setNewBadge(badge);
       setShowConfetti(true);
+      return true;
     }
+    return false;
   }, []);
 
   const attachStreamToVideo = useCallback(async () => {
@@ -1226,8 +1228,11 @@ export default function Wilder() {
       setCurrentDiscovery(discovery);
       setResult(data);
       setScreen("result");
-      playDiscoverySound();
-      checkNewBadges(updated);
+      if (checkNewBadges(updated)) {
+        playBadgeUnlockSound();
+      } else {
+        playDiscoverySound();
+      }
     } catch (e) {
       setErrorMsg("Erreur: " + e.message);
       setScreen("error");
