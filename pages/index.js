@@ -63,21 +63,77 @@ export default function PlanteInfini() {
   const imgContainerRef = useRef(null);
   const selectImgRef = useRef(null);
 
-  const startCamera = useCallback(async () => {
+  const videoStyle = {
+    position: "absolute",
+    inset: 0,
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    display: "block",
+    background: "#111",
+  };
+
+  const attachStreamToVideo = useCallback(async () => {
+    const video = videoRef.current;
+    const stream = streamRef.current;
+    if (!video || !stream) return false;
+    if (video.srcObject !== stream) video.srcObject = stream;
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-      streamRef.current = stream;
-      if (videoRef.current) videoRef.current.srcObject = stream;
-      setCamReady(true);
+      await video.play();
+      return true;
     } catch {
-      setCamReady(false);
+      return false;
     }
   }, []);
 
-  const stopCamera = useCallback(() => {
-    streamRef.current?.getTracks().forEach(t => t.stop());
+  const startCamera = useCallback(async () => {
+    setCamReady(false);
+    streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setCamReady(false);
+      return;
+    }
+
+    const videoConstraints = [
+      { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+      { facingMode: "environment" },
+      true,
+    ];
+
+    let stream = null;
+    for (const video of videoConstraints) {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video, audio: false });
+        break;
+      } catch {
+        /* try next constraint set */
+      }
+    }
+
+    if (!stream) {
+      setCamReady(false);
+      return;
+    }
+
+    streamRef.current = stream;
+    setCamReady(true);
+    await attachStreamToVideo();
+  }, [attachStreamToVideo]);
+
+  const stopCamera = useCallback(() => {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+    const video = videoRef.current;
+    if (video) video.srcObject = null;
+    setCamReady(false);
   }, []);
+
+  useEffect(() => {
+    if (screen !== "home" || !camReady) return;
+    attachStreamToVideo();
+  }, [screen, camReady, attachStreamToVideo]);
 
   useEffect(() => {
     setLibrary(loadLibrary());
@@ -163,10 +219,13 @@ export default function PlanteInfini() {
 
   const takePhoto = useCallback(() => {
     const v = videoRef.current, c = canvasRef.current;
-    if (!v || !c) return;
-    c.width = v.videoWidth;
-    c.height = v.videoHeight;
-    c.getContext("2d").drawImage(v, 0, 0);
+    if (!v || !c || v.readyState < 2) return;
+    const w = v.videoWidth;
+    const h = v.videoHeight;
+    if (!w || !h) return;
+    c.width = w;
+    c.height = h;
+    c.getContext("2d").drawImage(v, 0, 0, w, h);
     handleCapturedImage(c.toDataURL("image/jpeg", 0.8));
   }, [handleCapturedImage]);
 
@@ -315,18 +374,40 @@ export default function PlanteInfini() {
       </div>
 
       <div style={s.cameraWrap}>
-        {camReady ? (
-          <>
-            <video ref={videoRef} autoPlay playsInline muted style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            <canvas ref={canvasRef} style={{ display: "none" }} />
-            <div style={s.viewfinderOverlay}>
-              <div style={s.viewfinderHole}>
-                <ViewfinderCorners />
-              </div>
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          onLoadedMetadata={() => attachStreamToVideo()}
+          style={{
+            ...videoStyle,
+            opacity: camReady ? 1 : 0,
+            pointerEvents: camReady ? "auto" : "none",
+          }}
+        />
+        <canvas ref={canvasRef} style={{ display: "none" }} />
+        {camReady && (
+          <div style={s.viewfinderOverlay}>
+            <div style={s.viewfinderHole}>
+              <ViewfinderCorners />
             </div>
-          </>
-        ) : (
-          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "0.5rem" }}>
+          </div>
+        )}
+        {!camReady && (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "column",
+              gap: "0.5rem",
+              background: "#111",
+              zIndex: 1,
+            }}
+          >
             <div style={{ fontSize: "3rem" }}>📷</div>
             <div style={{ fontSize: "0.85rem", color: "#aaa" }}>Autorisez la caméra</div>
           </div>
