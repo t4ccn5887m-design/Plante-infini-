@@ -4,22 +4,30 @@ export default async function handler(req, res) {
     const { image } = req.body;
 
     const system =
-      "Tu es un naturaliste expert (botanique, zoologie, entomologie, ornithologie, mycologie, herpetologie). " +
-      "Identifie l'organisme vivant visible sur la photo avec la plus grande precision possible. " +
-      "Observe attentivement : forme des feuilles, couleur, texture, nombre de pattes/ailes, bec, écailles, chapeau de champignon, etc. " +
-      "Si plusieurs especes sont possibles, choisis la plus probable et mentionne l'incertitude dans la description. " +
-      "Tu DOIS toujours fournir : la categorie de l'etre vivant, le nom commun en francais, le nom scientifique (binome latin correct), " +
-      "une description detaillee et accessible, l'habitat naturel typique, et le niveau de rarete dans la region concernee. " +
-      "Si c'est une plante (plante, fleur, arbre, fruit ou legume), ajoute aussi son etat de sante visible sur la photo. " +
+      "Tu es un expert en nature ET en patrimoine (botanique, zoologie, entomologie, ornithologie, mycologie, herpetologie, " +
+      "histoire, architecture, sites naturels remarquables). " +
+      "Identifie ce qui est visible sur la photo : soit un etre vivant (plante, animal, insecte, etc.), " +
+      "soit un site ou monument (chateau, eglise, cathedrale, ruine, tour, pont, phare, moulin, abbaye, " +
+      "cascade, grotte, falaise, lac, riviere, fontaine, statue, fresque, calvaire). " +
+      "Pour la nature : observe forme des feuilles, couleur, texture, nombre de pattes/ailes, bec, ecailles, chapeau de champignon, etc. " +
+      "Pour le patrimoine : identifie le monument ou site, son style, son epoque et son contexte historique. " +
+      "Si plusieurs possibilites, choisis la plus probable et mentionne l'incertitude dans la description. " +
       "Reponds UNIQUEMENT en JSON valide sans markdown : " +
-      '{"type":"plante|animal|champignon|fleur|insecte|oiseau|arbre|fruit|legume|reptile|papillon",' +
-      '"nom":"Nom commun en francais",' +
-      '"nom_latin":"Nom scientifique (binome latin)",' +
+      '{"type":"plante|animal|champignon|fleur|insecte|oiseau|arbre|fruit|legume|reptile|papillon|monument|architecture|site_naturel|curiosite",' +
+      '"nom":"Nom en francais (espece ou monument/site)",' +
+      '"nom_latin":"Nom scientifique latin si nature ; null si patrimoine",' +
       '"description":"Description complete et accessible (4-6 phrases)",' +
-      '"habitat":"Habitat naturel typique",' +
+      '"habitat":"Habitat naturel si nature ; contexte geographique si site",' +
       '"rarete":"commun|peu_commun|rare|tres_rare",' +
-      '"etat_sante":"Etat de sante visible (obligatoire si type plante/fleur/arbre/fruit/legume ; sinon null)"}. ' +
-      'Si rien de reconnaissable ou photo floue/vide : {"erreur":"Aucun organisme identifiable"}';
+      '"etat_sante":"Etat de sante visible si plante/fleur/arbre/fruit/legume ; sinon null",' +
+      '"histoire":"Histoire du monument ou site (obligatoire si patrimoine ; null si nature)",' +
+      '"date_construction":"Date ou epoque de construction (ex. XIIe siecle, 1892 ; null si nature)",' +
+      '"style_architectural":"Style architectural ou type de site (obligatoire si monument/architecture ; null si nature)",' +
+      '"anecdotes":"Anecdotes ou faits interessants (obligatoire si patrimoine ; null si nature)"}. ' +
+      'Types patrimoine : monument (chateaux, eglises, cathedrales, ruines, tours), ' +
+      'architecture (ponts, phares, moulins, abbayes), site_naturel (cascades, grottes, falaises, lacs, rivieres), ' +
+      'curiosite (fontaines, statues, fresques, calvaires). ' +
+      'Si rien de reconnaissable ou photo floue/vide : {"erreur":"Aucune decouverte identifiable"}';
 
     if (!process.env.ANTHROPIC_API_KEY) {
       return res.status(500).json({ erreur: "Clé API non configurée" });
@@ -44,9 +52,10 @@ export default async function handler(req, res) {
               {
                 type: "text",
                 text:
-                  "Identifie cet etre vivant avec precision. Fournis obligatoirement : " +
-                  "la categorie, le nom commun, le nom scientifique, la description, l'habitat, " +
-                  "le niveau de rarete, et si c'est une plante son etat de sante.",
+                  "Identifie ce qui est visible sur cette photo : etre vivant (nature) ou monument/site (patrimoine). " +
+                  "Fournis obligatoirement : la categorie, le nom, la description, l'habitat ou contexte, le niveau de rarete. " +
+                  "Si nature : nom scientifique et etat de sante si plante. " +
+                  "Si patrimoine : histoire, date de construction, style architectural et anecdotes.",
               },
             ],
           },
