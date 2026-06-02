@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 
 const LIBRARY_KEY = "plante-infini-library";
+const USERNAME_KEY = "plante-infini-username";
 
 const MODES = [
   { id: "direct", label: "Rapide", hint: "Analyse immédiate de la plante" },
@@ -19,6 +20,28 @@ function loadLibrary() {
 
 function saveLibrary(plants) {
   localStorage.setItem(LIBRARY_KEY, JSON.stringify(plants));
+}
+
+function loadUserName() {
+  if (typeof window === "undefined") return "Botaniste";
+  return localStorage.getItem(USERNAME_KEY) || "Botaniste";
+}
+
+function saveUserName(name) {
+  localStorage.setItem(USERNAME_KEY, name);
+}
+
+function formatDiscoveryDate(iso) {
+  if (!iso) return "—";
+  try {
+    return new Date(iso).toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  } catch {
+    return "—";
+  }
 }
 
 function IconLeaf({ size = 24, color = "currentColor" }) {
@@ -74,6 +97,280 @@ function IconGallery({ size = 20, color = "currentColor" }) {
       <circle cx="8.5" cy="8.5" r="1.5" />
       <path d="m21 15-5-5L5 21" />
     </svg>
+  );
+}
+
+function IconChevronLeft({ size = 20, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  );
+}
+
+function IconChevronRight({ size = 20, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 18l6-6-6-6" />
+    </svg>
+  );
+}
+
+function BotanicalDeco({ className = "", size = 48 }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M32 58V28" />
+      <path d="M32 28C32 28 18 24 14 14C10 4 22 8 32 18" />
+      <path d="M32 28C32 28 46 24 50 14C54 4 42 8 32 18" />
+      <path d="M32 38C32 38 22 36 18 30" />
+      <path d="M32 38C32 38 42 36 46 30" />
+      <circle cx="32" cy="12" r="3" fill="currentColor" opacity="0.3" stroke="none" />
+    </svg>
+  );
+}
+
+function CoverBotanicalDeco({ className = "" }) {
+  return (
+    <svg className={className} width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round">
+      <path d="M32 56V30" />
+      <path d="M32 30C20 26 12 18 16 8C22 14 28 22 32 30" />
+      <path d="M32 30C44 26 52 18 48 8C42 14 36 22 32 30" />
+      <path d="M26 20c-2 4-2 8 0 12" />
+      <path d="M38 20c2 4 2 8 0 12" />
+    </svg>
+  );
+}
+
+function HerbariumPlantPage({ plant, pageNum, total, onDelete, className = "" }) {
+  return (
+    <div className={`herbarium-page ${className}`.trim()}>
+      <div className="herbarium-page-lines" />
+      <BotanicalDeco className="herbarium-deco herbarium-deco--tl" size={42} />
+      <BotanicalDeco className="herbarium-deco herbarium-deco--tr" size={36} />
+      <BotanicalDeco className="herbarium-deco herbarium-deco--bl" size={32} />
+      <BotanicalDeco className="herbarium-deco herbarium-deco--br" size={38} />
+
+      <div className="herbarium-page-header">
+        <span className="herbarium-page-label">Specimen botanique</span>
+        <span className="herbarium-page-num">
+          Planche {pageNum} / {total}
+        </span>
+      </div>
+
+      <div className="herbarium-specimen">
+        <div className="herbarium-specimen-frame">
+          <div className="herbarium-tape herbarium-tape--tl" />
+          <div className="herbarium-tape herbarium-tape--tr" />
+          <img src={plant.photo} alt={plant.nom} />
+          <div className="herbarium-specimen-caption">Spécimen n° {String(pageNum).padStart(3, "0")}</div>
+        </div>
+      </div>
+
+      <h2 className="herbarium-plant-name">{plant.nom}</h2>
+      {plant.nom_latin && <p className="herbarium-plant-latin">{plant.nom_latin}</p>}
+
+      {plant.description && (
+        <div className="herbarium-scientific">
+          <div className="herbarium-scientific-title">Observations &amp; description</div>
+          <p className="herbarium-scientific-text">{plant.description}</p>
+        </div>
+      )}
+
+      <div className="herbarium-date">
+        <span>Découverte le {formatDiscoveryDate(plant.savedAt)}</span>
+        <div className="herbarium-date-line" />
+      </div>
+
+      <button className="herbarium-delete" onClick={() => onDelete(plant.id)}>
+        Retirer de l&apos;herbier
+      </button>
+    </div>
+  );
+}
+
+function HerbariumView({ library, onBack, onDelete, onIdentify }) {
+  const [phase, setPhase] = useState("closed");
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageAnim, setPageAnim] = useState(null);
+  const [userName, setUserName] = useState("Botaniste");
+  const [editingName, setEditingName] = useState(false);
+
+  useEffect(() => {
+    setUserName(loadUserName());
+    setPhase("closed");
+    setPageIndex(0);
+    setPageAnim(null);
+
+    const openTimer = setTimeout(() => setPhase("opening"), 600);
+    const revealTimer = setTimeout(() => setPhase("open"), 2100);
+    return () => {
+      clearTimeout(openTimer);
+      clearTimeout(revealTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (pageIndex >= library.length && library.length > 0) {
+      setPageIndex(Math.max(0, library.length - 1));
+    }
+  }, [library.length, pageIndex]);
+
+  const turnPage = (dir) => {
+    if (pageAnim) return;
+    const next = dir === "next" ? pageIndex + 1 : pageIndex - 1;
+    if (next < 0 || next >= library.length) return;
+
+    setPageAnim(dir === "next" ? "turn-next" : "turn-prev");
+    setTimeout(() => {
+      setPageIndex(next);
+      setPageAnim(dir === "next" ? "enter-next" : "enter-prev");
+      setTimeout(() => setPageAnim(null), 550);
+    }, 650);
+  };
+
+  const handleNameChange = (e) => {
+    const val = e.target.value;
+    setUserName(val);
+    saveUserName(val);
+  };
+
+  const openBook = () => {
+    if (phase !== "closed") return;
+    setPhase("opening");
+    setTimeout(() => setPhase("open"), 1400);
+  };
+
+  const pageAnimClass =
+    pageAnim === "turn-next"
+      ? "herbarium-page--turn-next"
+      : pageAnim === "turn-prev"
+        ? "herbarium-page--turn-prev"
+        : pageAnim === "enter-next"
+          ? "herbarium-page--enter-next"
+          : pageAnim === "enter-prev"
+            ? "herbarium-page--enter-prev"
+            : "";
+
+  const showCover = phase === "closed" || phase === "opening";
+  const showPages = phase === "open" || phase === "opening";
+
+  return (
+    <div className="herbarium-scene">
+      <div className="herbarium-topbar">
+        <button className="herbarium-back" onClick={onBack} aria-label="Retour">
+          <IconBack size={18} />
+        </button>
+        {phase === "open" && library.length > 0 && (
+          <span className="herbarium-nav-indicator">
+            {pageIndex + 1} / {library.length}
+          </span>
+        )}
+        <div style={{ width: 40 }} />
+      </div>
+
+      <div className="herbarium-stage">
+        <div className="herbarium-book-wrap">
+          {showCover && (
+            <div
+              className={`herbarium-cover${phase === "opening" ? " herbarium-cover--opening" : ""}`}
+              onClick={openBook}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === "Enter" && openBook()}
+            >
+              <div className="herbarium-cover-spine" />
+              <CoverBotanicalDeco className="herbarium-cover-deco herbarium-cover-deco--tl" />
+              <CoverBotanicalDeco className="herbarium-cover-deco herbarium-cover-deco--br" />
+              <div className="herbarium-cover-border" />
+              <div className="herbarium-cover-inner">
+                <h1 className="herbarium-cover-title">Mon Herbier</h1>
+                <p className="herbarium-cover-subtitle">Collection botanique personnelle</p>
+                {editingName ? (
+                  <input
+                    className="herbarium-cover-owner"
+                    value={userName}
+                    onChange={handleNameChange}
+                    onBlur={() => setEditingName(false)}
+                    autoFocus
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                ) : (
+                  <button
+                    className="herbarium-cover-owner"
+                    style={{ cursor: "pointer" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditingName(true);
+                    }}
+                  >
+                    de {userName || "Botaniste"}
+                  </button>
+                )}
+              </div>
+              {phase === "closed" && (
+                <div className="herbarium-cover-hint">Toucher pour ouvrir</div>
+              )}
+            </div>
+          )}
+
+          <div className={`herbarium-pages${showPages && phase === "open" ? " herbarium-pages--visible" : ""}`}>
+            {library.length === 0 ? (
+              <div className="herbarium-page">
+                <div className="herbarium-page-lines" />
+                <BotanicalDeco className="herbarium-deco herbarium-deco--tl" size={40} />
+                <BotanicalDeco className="herbarium-deco herbarium-deco--br" size={36} />
+                <div className="herbarium-empty">
+                  <div className="herbarium-empty-icon">
+                    <IconLeaf size={52} />
+                  </div>
+                  <div className="herbarium-empty-title">Herbier vide</div>
+                  <p className="herbarium-empty-text">
+                    Identifiez une plante et sauvegardez-la pour commencer votre collection.
+                  </p>
+                  <button className="herbarium-btn-identify" onClick={onIdentify}>
+                    <IconCamera size={16} />
+                    Identifier une plante
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <HerbariumPlantPage
+                key={library[pageIndex]?.id}
+                plant={library[pageIndex]}
+                pageNum={pageIndex + 1}
+                total={library.length}
+                onDelete={onDelete}
+                className={pageAnimClass}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+
+      {phase === "open" && library.length > 1 && (
+        <div className="herbarium-nav">
+          <button
+            className="herbarium-nav-btn"
+            onClick={() => turnPage("prev")}
+            disabled={pageIndex === 0 || !!pageAnim}
+            aria-label="Page précédente"
+          >
+            <IconChevronLeft size={20} />
+          </button>
+          <span className="herbarium-nav-indicator">
+            {library[pageIndex]?.nom}
+          </span>
+          <button
+            className="herbarium-nav-btn"
+            onClick={() => turnPage("next")}
+            disabled={pageIndex >= library.length - 1 || !!pageAnim}
+            aria-label="Page suivante"
+          >
+            <IconChevronRight size={20} />
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -458,7 +755,7 @@ export default function PlanteInfini() {
                 </div>
                 <div>
                   <div style={{ fontWeight: 600, fontSize: "1rem", marginBottom: "0.2rem" }}>
-                    Ma bibliothèque
+                    Mon Herbier
                     {library.length > 0 && (
                       <span
                         style={{
@@ -475,7 +772,7 @@ export default function PlanteInfini() {
                     )}
                   </div>
                   <div style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
-                    Retrouvez vos plantes sauvegardées
+                    Votre collection botanique personnelle
                   </div>
                 </div>
               </button>
@@ -1069,7 +1366,7 @@ export default function PlanteInfini() {
                 }}
                 onClick={savedNotice ? undefined : saveToLibrary}
               >
-                {savedNotice ? "✓ Sauvegardée dans la bibliothèque" : "Sauvegarder dans la bibliothèque"}
+                {savedNotice ? "✓ Ajoutée à l'herbier" : "Ajouter à l'herbier"}
               </button>
             </div>
           </div>
@@ -1077,128 +1374,16 @@ export default function PlanteInfini() {
       </ScreenWrap>
     );
 
-  /* ── LIBRARY ── */
+  /* ── HERBARIUM ── */
   if (screen === "library")
     return (
-      <ScreenWrap>
-        <div style={{ background: "var(--bg-deep)", minHeight: "100vh", paddingBottom: "3rem" }}>
-          <div
-            style={{
-              padding: "1.5rem",
-              borderBottom: "1px solid var(--border)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <div>
-              <div
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "1.6rem",
-                  fontWeight: 700,
-                }}
-              >
-                Ma bibliothèque
-              </div>
-              {library.length > 0 && (
-                <div style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginTop: "0.15rem" }}>
-                  {library.length} plante{library.length > 1 ? "s" : ""} sauvegardée{library.length > 1 ? "s" : ""}
-                </div>
-              )}
-            </div>
-            <button
-              className="btn-secondary"
-              style={{ padding: "0.5rem 0.85rem", borderRadius: 12 }}
-              onClick={goHome}
-            >
-              <IconBack size={18} />
-            </button>
-          </div>
-
-          {library.length === 0 ? (
-            <div
-              style={{
-                textAlign: "center",
-                padding: "5rem 2rem",
-                color: "var(--text-muted)",
-              }}
-            >
-              <div style={{ marginBottom: "1.25rem", animation: "float 3s ease-in-out infinite" }}>
-                <IconLeaf size={56} color="rgba(52,211,153,0.3)" />
-              </div>
-              <div style={{ fontSize: "1.05rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "0.5rem" }}>
-                Aucune plante sauvegardée
-              </div>
-              <div style={{ fontSize: "0.85rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
-                Analysez une plante et sauvegardez-la pour la retrouver ici.
-              </div>
-              <button className="btn-primary" onClick={() => openCamera("direct")}>
-                Identifier une plante
-              </button>
-            </div>
-          ) : (
-            <div style={{ padding: "1rem", display: "flex", flexDirection: "column", gap: "0.85rem" }}>
-              {library.map((plant, i) => (
-                <div
-                  key={plant.id}
-                  className="lib-card"
-                  style={{ animation: `slideUp 0.4s ease-out ${i * 0.06}s both` }}
-                >
-                  <img
-                    style={{ width: "100%", height: 180, objectFit: "cover" }}
-                    src={plant.photo}
-                    alt={plant.nom}
-                  />
-                  <div style={{ padding: "1.1rem" }}>
-                    <div style={{ fontSize: "1.05rem", fontWeight: 600, marginBottom: "0.2rem" }}>
-                      {plant.nom}
-                    </div>
-                    {plant.nom_latin && (
-                      <div
-                        style={{
-                          fontSize: "0.82rem",
-                          color: "var(--text-muted)",
-                          fontStyle: "italic",
-                          marginBottom: "0.5rem",
-                        }}
-                      >
-                        {plant.nom_latin}
-                      </div>
-                    )}
-                    {plant.description && (
-                      <div
-                        style={{
-                          fontSize: "0.85rem",
-                          lineHeight: 1.65,
-                          color: "var(--text-secondary)",
-                          marginBottom: "0.75rem",
-                        }}
-                      >
-                        {plant.description}
-                      </div>
-                    )}
-                    <button
-                      style={{
-                        background: "rgba(239, 68, 68, 0.08)",
-                        border: "1px solid rgba(239, 68, 68, 0.2)",
-                        color: "#FCA5A5",
-                        padding: "0.4rem 0.85rem",
-                        borderRadius: 20,
-                        fontSize: "0.78rem",
-                        cursor: "pointer",
-                        fontFamily: "var(--font-body)",
-                      }}
-                      onClick={() => deleteFromLibrary(plant.id)}
-                    >
-                      Supprimer
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+      <ScreenWrap className="screen-enter-fast">
+        <HerbariumView
+          library={library}
+          onBack={goHome}
+          onDelete={deleteFromLibrary}
+          onIdentify={() => openCamera("direct")}
+        />
       </ScreenWrap>
     );
 
