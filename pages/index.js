@@ -17,7 +17,16 @@ const TYPE_LABELS = {
   insecte: "Insecte",
   oiseau: "Oiseau",
   champignon: "Champignon",
+  fleur: "Fleur",
+  arbre: "Arbre",
+  fruit: "Fruit",
+  legume: "Légume",
+  reptile: "Reptile",
+  papillon: "Papillon",
 };
+
+const DISCOVERY_MARQUEE =
+  "Plantes • Animaux • Champignons • Fleurs • Insectes • Oiseaux • Arbres • Fruits • Légumes • Reptiles • Papillons • ";
 
 const DEFAULT_SLOGAN = "Explore the wild around you";
 
@@ -400,6 +409,7 @@ export default function Wilder() {
         description: data.description || "",
         habitat: data.habitat || "",
         rarete: data.rarete || "commun",
+        etat_sante: data.etat_sante || "",
         discoveredAt: new Date().toISOString(),
       };
 
@@ -534,8 +544,14 @@ export default function Wilder() {
               <span className="btn-scanner-icon">
                 <IconCamera size={32} color="white" />
               </span>
-              Scanner
+              Découvrir
             </button>
+
+            <div className="discovery-marquee stagger-2" aria-hidden="true">
+              <div className="discovery-marquee-track">
+                <span>{DISCOVERY_MARQUEE}{DISCOVERY_MARQUEE}</span>
+              </div>
+            </div>
 
             <button type="button" className="btn-albums stagger-3" onClick={() => setScreen("albums")}>
               <IconAlbums size={20} />
@@ -737,6 +753,13 @@ export default function Wilder() {
               <div className="result-card">
                 <div className="result-card-title">Habitat naturel</div>
                 <p className="result-card-text">{result.habitat}</p>
+              </div>
+            )}
+
+            {result.etat_sante && (
+              <div className="result-card">
+                <div className="result-card-title">État de santé</div>
+                <p className="result-card-text">{result.etat_sante}</p>
               </div>
             )}
 

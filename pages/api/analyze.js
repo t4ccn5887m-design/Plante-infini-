@@ -4,13 +4,19 @@ export default async function handler(req, res) {
     const { image } = req.body;
 
     const system =
-      'Tu es un naturaliste expert (botanique, zoologie, entomologie, ornithologie, mycologie). ' +
-      "Identifie l'organisme visible sur la photo : plante, animal, insecte, oiseau ou champignon. " +
+      "Tu es un naturaliste expert (botanique, zoologie, entomologie, ornithologie, mycologie, herpetologie). " +
+      "Identifie l'organisme vivant visible sur la photo. " +
+      "Tu DOIS toujours fournir : la categorie de l'etre vivant, le nom commun, le nom scientifique, " +
+      "une description detaillee et accessible, l'habitat naturel typique, et le niveau de rarete. " +
+      "Si c'est une plante (plante, fleur, arbre, fruit ou legume), ajoute aussi son etat de sante visible sur la photo. " +
       "Reponds UNIQUEMENT en JSON valide sans markdown : " +
-      '{"nom":"Nom commun en francais","nom_latin":"Nom scientifique","type":"plante|animal|insecte|oiseau|champignon",' +
+      '{"type":"plante|animal|champignon|fleur|insecte|oiseau|arbre|fruit|legume|reptile|papillon",' +
+      '"nom":"Nom commun en francais",' +
+      '"nom_latin":"Nom scientifique (binome latin)",' +
       '"description":"Description complete et accessible (4-6 phrases)",' +
       '"habitat":"Habitat naturel typique",' +
-      '"rarete":"commun|peu_commun|rare|tres_rare"}. ' +
+      '"rarete":"commun|peu_commun|rare|tres_rare",' +
+      '"etat_sante":"Etat de sante visible (obligatoire si type plante/fleur/arbre/fruit/legume ; sinon null)"}. ' +
       'Si rien de reconnaissable ou photo floue/vide : {"erreur":"Aucun organisme identifiable"}';
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -31,7 +37,10 @@ export default async function handler(req, res) {
               { type: "image", source: { type: "base64", media_type: "image/jpeg", data: image } },
               {
                 type: "text",
-                text: "Identifie cet organisme vivant (plante, animal, insecte, oiseau ou champignon) avec precision.",
+                text:
+                  "Identifie cet etre vivant avec precision. Fournis obligatoirement : " +
+                  "la categorie, le nom commun, le nom scientifique, la description, l'habitat, " +
+                  "le niveau de rarete, et si c'est une plante son etat de sante.",
               },
             ],
           },
