@@ -2,6 +2,12 @@ import { useState, useRef, useEffect, useCallback } from "react";
 
 const LIBRARY_KEY = "plante-infini-library";
 
+const MODES = [
+  { id: "direct", label: "🌿 Rapide", hint: "Analyse immédiate" },
+  { id: "selection", label: "✂️ Sélection", hint: "Recadrez la zone" },
+  { id: "potager", label: "🥕 Potager", hint: "Toutes les plantes" },
+];
+
 function loadLibrary() {
   if (typeof window === "undefined") return [];
   try {
@@ -15,17 +21,47 @@ function saveLibrary(plants) {
   localStorage.setItem(LIBRARY_KEY, JSON.stringify(plants));
 }
 
+function ViewfinderCorners() {
+  const corner = (top, left, right, bottom) => ({
+    position: "absolute",
+    width: 22,
+    height: 22,
+    top,
+    left,
+    right,
+    bottom,
+    borderTop: top !== undefined ? "3px solid #52B788" : undefined,
+    borderBottom: bottom !== undefined ? "3px solid #52B788" : undefined,
+    borderLeft: left !== undefined ? "3px solid #52B788" : undefined,
+    borderRight: right !== undefined ? "3px solid #52B788" : undefined,
+  });
+  return (
+    <>
+      <div style={corner(0, 0, undefined, undefined)} />
+      <div style={corner(0, undefined, 0, undefined)} />
+      <div style={corner(undefined, 0, undefined, 0)} />
+      <div style={corner(undefined, undefined, 0, 0)} />
+    </>
+  );
+}
+
 export default function PlanteInfini() {
   const [screen, setScreen] = useState("home");
+  const [analysisMode, setAnalysisMode] = useState("direct");
   const [captured, setCaptured] = useState(null);
   const [result, setResult] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [camReady, setCamReady] = useState(false);
   const [library, setLibrary] = useState([]);
   const [savedNotice, setSavedNotice] = useState(false);
+  const [selStart, setSelStart] = useState(null);
+  const [selRect, setSelRect] = useState(null);
+
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
+  const imgContainerRef = useRef(null);
+  const selectImgRef = useRef(null);
 
   const startCamera = useCallback(async () => {
     try {
@@ -33,7 +69,9 @@ export default function PlanteInfini() {
       streamRef.current = stream;
       if (videoRef.current) videoRef.current.srcObject = stream;
       setCamReady(true);
-    } catch { setCamReady(false); }
+    } catch {
+      setCamReady(false);
+    }
   }, []);
 
   const stopCamera = useCallback(() => {
@@ -49,10 +87,10 @@ export default function PlanteInfini() {
     if (screen === "home") startCamera();
     else stopCamera();
     return stopCamera;
-  }, [screen]);
+  }, [screen, startCamera, stopCamera]);
 
   const saveToLibrary = useCallback(() => {
-    if (!captured || !result) return;
+    if (!captured || !result || result.plantes) return;
     const entry = {
       id: Date.now().toString(),
       photo: captured,
@@ -74,51 +112,163 @@ export default function PlanteInfini() {
     setLibrary(updated);
   }, []);
 
-  const goHome = () => { setResult(null); setCaptured(null); setErrorMsg(""); setScreen("home"); };
+  const goHome = () => {
+    setResult(null);
+    setCaptured(null);
+    setErrorMsg("");
+    setSelStart(null);
+    setSelRect(null);
+    setScreen("home");
+  };
 
-  const analyze = useCallback(async (base64, imgSrc) => {
+  const analyze = useCallback(async (base64, imgSrc, mode = "single") => {
     setCaptured(imgSrc);
     setScreen("analyzing");
     try {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: base64 })
+        body: JSON.stringify({ image: base64, mode })
       });
       const data = await res.json();
-      if (data.erreur) { setErrorMsg(data.erreur); setScreen("error"); }
-      else { setResult(data); setScreen("result"); }
-    } catch (e) { setErrorMsg("Erreur: " + e.message); setScreen("error"); }
+      if (data.erreur) {
+        setErrorMsg(data.erreur);
+        setScreen("error");
+      } else if (mode === "potager") {
+        setResult(data);
+        setScreen("potager-result");
+      } else {
+        setResult(data);
+        setScreen("result");
+      }
+    } catch (e) {
+      setErrorMsg("Erreur: " + e.message);
+      setScreen("error");
+    }
   }, []);
+
+  const handleCapturedImage = useCallback((dataUrl) => {
+    const base64 = dataUrl.split(",")[1];
+    if (analysisMode === "selection") {
+      setCaptured(dataUrl);
+      setSelStart(null);
+      setSelRect(null);
+      setScreen("select");
+    } else if (analysisMode === "potager") {
+      analyze(base64, dataUrl, "potager");
+    } else {
+      analyze(base64, dataUrl, "single");
+    }
+  }, [analysisMode, analyze]);
 
   const takePhoto = useCallback(() => {
     const v = videoRef.current, c = canvasRef.current;
     if (!v || !c) return;
-    c.width = v.videoWidth; c.height = v.videoHeight;
+    c.width = v.videoWidth;
+    c.height = v.videoHeight;
     c.getContext("2d").drawImage(v, 0, 0);
-    const dataUrl = c.toDataURL("image/jpeg", 0.5);
-    analyze(dataUrl.split(",")[1], dataUrl);
-  }, [analyze]);
+    handleCapturedImage(c.toDataURL("image/jpeg", 0.8));
+  }, [handleCapturedImage]);
 
   const fromGallery = useCallback((file) => {
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = e => analyze(e.target.result.split(",")[1], e.target.result);
+    reader.onload = e => handleCapturedImage(e.target.result);
     reader.readAsDataURL(file);
-  }, [analyze]);
+  }, [handleCapturedImage]);
 
-  const rescan = goHome;
+  const getRelativePos = useCallback((e) => {
+    const rect = imgContainerRef.current.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return {
+      x: Math.max(0, Math.min(clientX - rect.left, rect.width)),
+      y: Math.max(0, Math.min(clientY - rect.top, rect.height)),
+    };
+  }, []);
+
+  const onSelStart = useCallback((e) => {
+    e.preventDefault();
+    const pos = getRelativePos(e);
+    setSelStart(pos);
+    setSelRect({ x: pos.x, y: pos.y, width: 0, height: 0 });
+  }, [getRelativePos]);
+
+  const onSelMove = useCallback((e) => {
+    if (!selStart) return;
+    e.preventDefault();
+    const pos = getRelativePos(e);
+    setSelRect({
+      x: Math.min(selStart.x, pos.x),
+      y: Math.min(selStart.y, pos.y),
+      width: Math.abs(pos.x - selStart.x),
+      height: Math.abs(pos.y - selStart.y),
+    });
+  }, [selStart, getRelativePos]);
+
+  const onSelEnd = useCallback(() => {
+    setSelStart(null);
+  }, []);
+
+  const confirmSelection = useCallback(() => {
+    if (!selRect || selRect.width < 20 || selRect.height < 20) return;
+    const container = imgContainerRef.current;
+    const img = selectImgRef.current;
+    if (!container || !img) return;
+
+    const scaleX = img.naturalWidth / container.clientWidth;
+    const scaleY = img.naturalHeight / container.clientHeight;
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(selRect.width * scaleX);
+    canvas.height = Math.round(selRect.height * scaleY);
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(
+      img,
+      selRect.x * scaleX, selRect.y * scaleY,
+      canvas.width, canvas.height,
+      0, 0, canvas.width, canvas.height
+    );
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+    analyze(dataUrl.split(",")[1], dataUrl, "single");
+  }, [selRect, analyze]);
 
   const s = {
     page: { minHeight: "100vh", fontFamily: "Georgia, serif", background: "#F7F9F5", color: "#1B2B22", display: "flex", flexDirection: "column", alignItems: "center" },
-    home: { minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", padding: "3rem 2rem 4rem" },
-    logo: { fontSize: "1.8rem", fontWeight: "bold", color: "#2D6A4F", marginBottom: "0.3rem" },
-    tag: { fontSize: "0.9rem", color: "#7A9586" },
-    circle: { width: 200, height: 200, borderRadius: "50%", background: "white", border: "2px solid #DCE8DC", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", position: "relative", boxShadow: "0 8px 40px rgba(45,106,79,0.12)", cursor: "pointer" },
+    home: { minHeight: "100vh", width: "100%", maxWidth: 480, display: "flex", flexDirection: "column", alignItems: "center", padding: "1.5rem 1rem 2.5rem", gap: "1.25rem" },
+    logo: { fontSize: "1.6rem", fontWeight: "bold", color: "#2D6A4F" },
+    tag: { fontSize: "0.85rem", color: "#7A9586", marginTop: "0.2rem" },
+    cameraWrap: { position: "relative", width: "100%", aspectRatio: "3/4", borderRadius: 20, overflow: "hidden", background: "#111", boxShadow: "0 8px 40px rgba(45,106,79,0.18)" },
+    viewfinderHole: { position: "relative", width: "72%", height: "58%", boxShadow: "0 0 0 9999px rgba(0,0,0,0.42)" },
+    viewfinderOverlay: { position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" },
+    modeBar: { display: "flex", gap: "0.35rem", background: "#EAF5EE", padding: "0.3rem", borderRadius: 30, width: "100%" },
+    modeBtn: (active) => ({
+      flex: 1, border: "none", borderRadius: 26, padding: "0.55rem 0.4rem", fontSize: "0.72rem",
+      cursor: "pointer", fontFamily: "Georgia, serif", transition: "all 0.2s",
+      background: active ? "#2D6A4F" : "transparent",
+      color: active ? "white" : "#2D6A4F",
+      fontWeight: active ? "bold" : "normal",
+    }),
+    modeHint: { fontSize: "0.75rem", color: "#7A9586", textAlign: "center" },
+    captureBtn: {
+      width: 80, height: 80, borderRadius: "50%", background: "#2D6A4F",
+      border: "5px solid white", boxShadow: "0 0 0 3px #2D6A4F, 0 6px 24px rgba(45,106,79,0.35)",
+      cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+      fontSize: "1.8rem", flexShrink: 0,
+    },
+    captureBtnDisabled: { opacity: 0.4, cursor: "not-allowed" },
+    captureRow: { display: "flex", alignItems: "center", justifyContent: "center", gap: "2rem", width: "100%" },
     btn: { background: "#2D6A4F", color: "white", border: "none", padding: "1rem 2.5rem", borderRadius: "50px", fontSize: "1rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem" },
+    btnSecondary: { background: "white", color: "#2D6A4F", border: "2px solid #2D6A4F", padding: "0.75rem 1.5rem", borderRadius: "50px", fontSize: "0.9rem", cursor: "pointer" },
     gallery: { fontSize: "0.85rem", color: "#7A9586", cursor: "pointer", position: "relative" },
     analyzing: { minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "2rem" },
     ring: { width: 190, height: 190, borderRadius: "50%", overflow: "hidden", border: "3px solid #52B788", boxShadow: "0 0 0 10px #D8EDDF" },
+    selectScreen: { minHeight: "100vh", width: "100%", maxWidth: 600, display: "flex", flexDirection: "column" },
+    selectHeader: { padding: "1.25rem", background: "white", borderBottom: "1px solid #DCE8DC" },
+    selectTitle: { fontSize: "1.3rem", fontWeight: "bold", color: "#2D6A4F" },
+    selectHint: { fontSize: "0.85rem", color: "#7A9586", marginTop: "0.3rem" },
+    selectImgWrap: { position: "relative", flex: 1, margin: "1rem", borderRadius: 16, overflow: "hidden", background: "#111", touchAction: "none", userSelect: "none" },
+    selectRect: { position: "absolute", border: "2px solid #52B788", background: "rgba(82,183,136,0.15)", boxShadow: "0 0 0 9999px rgba(0,0,0,0.45)" },
+    selectActions: { padding: "1rem 1.25rem 2rem", display: "flex", gap: "0.75rem" },
     result: { width: "100%", maxWidth: 600, paddingBottom: "3rem" },
     photo: { width: "100%", height: 280, objectFit: "cover" },
     header: { background: "white", padding: "1.5rem", borderBottom: "1px solid #DCE8DC", position: "relative" },
@@ -151,7 +301,11 @@ export default function PlanteInfini() {
     libLatin: { fontSize: "0.85rem", color: "#7A9586", fontStyle: "italic", marginBottom: "0.5rem" },
     libDesc: { fontSize: "0.85rem", lineHeight: 1.6, color: "#1B2B22" },
     deleteBtn: { marginTop: "0.75rem", background: "none", border: "1px solid #FEE2E2", color: "#991B1B", padding: "0.4rem 0.8rem", borderRadius: 20, fontSize: "0.8rem", cursor: "pointer" },
+    potagerBadge: { display: "inline-block", background: "#D8EDDF", color: "#2D6A4F", padding: "0.3rem 0.8rem", borderRadius: 20, fontSize: "0.8rem", marginBottom: "0.5rem" },
+    plantCount: { fontSize: "0.9rem", color: "#7A9586", marginTop: "0.25rem" },
   };
+
+  const activeMode = MODES.find(m => m.id === analysisMode);
 
   if (screen === "home") return (
     <div style={s.home}>
@@ -159,26 +313,90 @@ export default function PlanteInfini() {
         <div style={s.logo}>🌿 Plante Infini</div>
         <div style={s.tag}>Identifiez n'importe quelle plante</div>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "2rem" }}>
-        <div style={s.circle} onClick={camReady ? takePhoto : undefined}>
-          {camReady ? (
-            <><video ref={videoRef} autoPlay playsInline muted style={{ width: "100%", height: "100%", objectFit: "cover" }} /><canvas ref={canvasRef} style={{ display: "none" }} /></>
-          ) : (
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "2.5rem" }}>📷</div>
-              <div style={{ fontSize: "0.75rem", color: "#7A9586", marginTop: "0.5rem" }}>Autorisez la caméra</div>
+
+      <div style={s.cameraWrap}>
+        {camReady ? (
+          <>
+            <video ref={videoRef} autoPlay playsInline muted style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <canvas ref={canvasRef} style={{ display: "none" }} />
+            <div style={s.viewfinderOverlay}>
+              <div style={s.viewfinderHole}>
+                <ViewfinderCorners />
+              </div>
             </div>
-          )}
-        </div>
-        <button style={s.btn} onClick={camReady ? takePhoto : undefined}>📸 Prendre une photo</button>
+          </>
+        ) : (
+          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "0.5rem" }}>
+            <div style={{ fontSize: "3rem" }}>📷</div>
+            <div style={{ fontSize: "0.85rem", color: "#aaa" }}>Autorisez la caméra</div>
+          </div>
+        )}
       </div>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
-        <label style={s.gallery}>
-          🖼️ Choisir depuis la galerie
+
+      <div style={{ width: "100%" }}>
+        <div style={s.modeBar}>
+          {MODES.map(m => (
+            <button key={m.id} style={s.modeBtn(analysisMode === m.id)} onClick={() => setAnalysisMode(m.id)}>
+              {m.label}
+            </button>
+          ))}
+        </div>
+        <div style={{ ...s.modeHint, marginTop: "0.5rem" }}>{activeMode?.hint}</div>
+      </div>
+
+      <div style={s.captureRow}>
+        <label style={{ ...s.gallery, visibility: "hidden", width: 60 }} aria-hidden>·</label>
+        <button
+          style={{ ...s.captureBtn, ...(!camReady ? s.captureBtnDisabled : {}) }}
+          onClick={camReady ? takePhoto : undefined}
+          aria-label="Prendre une photo"
+        >
+          📸
+        </button>
+        <label style={{ ...s.gallery, width: 60, textAlign: "center" }} title="Galerie">
+          🖼️
           <input type="file" accept="image/*" style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer" }} onChange={e => fromGallery(e.target.files[0])} />
         </label>
-        <button style={s.libBtn} onClick={() => setScreen("library")}>
-          📚 Ma bibliothèque{library.length > 0 ? ` (${library.length})` : ""}
+      </div>
+
+      <button style={s.libBtn} onClick={() => setScreen("library")}>
+        📚 Ma bibliothèque{library.length > 0 ? ` (${library.length})` : ""}
+      </button>
+    </div>
+  );
+
+  if (screen === "select") return (
+    <div style={s.selectScreen}>
+      <div style={s.selectHeader}>
+        <div style={s.selectTitle}>✂️ Sélectionnez la zone</div>
+        <div style={s.selectHint}>Tracez un rectangle autour de la plante à analyser</div>
+      </div>
+      <div
+        ref={imgContainerRef}
+        style={s.selectImgWrap}
+        onMouseDown={onSelStart}
+        onMouseMove={onSelMove}
+        onMouseUp={onSelEnd}
+        onMouseLeave={onSelEnd}
+        onTouchStart={onSelStart}
+        onTouchMove={onSelMove}
+        onTouchEnd={onSelEnd}
+      >
+        {captured && (
+          <img ref={selectImgRef} src={captured} alt="Photo à recadrer" style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} draggable={false} />
+        )}
+        {selRect && selRect.width > 0 && selRect.height > 0 && (
+          <div style={{ ...s.selectRect, left: selRect.x, top: selRect.y, width: selRect.width, height: selRect.height }} />
+        )}
+      </div>
+      <div style={s.selectActions}>
+        <button style={{ ...s.btnSecondary, flex: 1 }} onClick={goHome}>Annuler</button>
+        <button
+          style={{ ...s.btn, flex: 2, justifyContent: "center", opacity: selRect && selRect.width >= 20 && selRect.height >= 20 ? 1 : 0.5 }}
+          onClick={confirmSelection}
+          disabled={!selRect || selRect.width < 20 || selRect.height < 20}
+        >
+          🔍 Analyser cette zone
         </button>
       </div>
     </div>
@@ -189,7 +407,9 @@ export default function PlanteInfini() {
       <div style={s.ring}>{captured && <img src={captured} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}</div>
       <div style={{ textAlign: "center" }}>
         <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#2D6A4F" }}>Analyse en cours…</div>
-        <div style={{ fontSize: "0.85rem", color: "#7A9586" }}>Le botaniste examine votre plante</div>
+        <div style={{ fontSize: "0.85rem", color: "#7A9586" }}>
+          {analysisMode === "potager" ? "Le botaniste parcourt votre potager" : "Le botaniste examine votre plante"}
+        </div>
       </div>
     </div>
   );
@@ -199,7 +419,31 @@ export default function PlanteInfini() {
       <div style={{ fontSize: "3rem" }}>🍃</div>
       <div style={{ fontSize: "1.4rem", fontWeight: "bold" }}>Non reconnu</div>
       <p style={{ color: "#7A9586" }}>{errorMsg}</p>
-      <button style={s.btn} onClick={rescan}>Réessayer</button>
+      <button style={s.btn} onClick={goHome}>Réessayer</button>
+    </div>
+  );
+
+  if (screen === "potager-result" && result?.plantes) return (
+    <div style={s.result}>
+      {captured && <img style={s.photo} src={captured} alt="Potager" />}
+      <div style={s.header}>
+        <button style={s.backBtn} onClick={goHome}>📷 Nouveau scan</button>
+        <div style={s.potagerBadge}>🥕 Mode Potager</div>
+        <div style={s.name}>{result.plantes.length} plante{result.plantes.length > 1 ? "s" : ""} détectée{result.plantes.length > 1 ? "s" : ""}</div>
+        <div style={s.plantCount}>Analyse complète de la photo</div>
+      </div>
+      <div style={s.body}>
+        {result.plantes.map((plante, i) => (
+          <div key={i} style={s.card}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
+              <span style={{ fontSize: "1.2rem" }}>🌱</span>
+              <span style={{ fontSize: "1.1rem", fontWeight: "bold", color: "#1B2B22" }}>{plante.nom}</span>
+              {plante.nom_latin && <span style={{ fontSize: "0.85rem", color: "#7A9586", fontStyle: "italic" }}>{plante.nom_latin}</span>}
+            </div>
+            {plante.description && <div style={s.cardText}>{plante.description}</div>}
+          </div>
+        ))}
+      </div>
     </div>
   );
 
@@ -207,7 +451,7 @@ export default function PlanteInfini() {
     <div style={s.result}>
       {captured && <img style={s.photo} src={captured} alt={result.nom} />}
       <div style={s.header}>
-        <button style={s.backBtn} onClick={rescan}>📷 Nouveau scan</button>
+        <button style={s.backBtn} onClick={goHome}>📷 Nouveau scan</button>
         <div style={s.name}>{result.nom}</div>
         {result.nom_latin && <div style={s.latin}>{result.nom_latin}</div>}
       </div>
@@ -222,15 +466,15 @@ export default function PlanteInfini() {
           <div style={s.card}>
             <div style={s.cardTitle}>Guide d'entretien</div>
             <div style={s.grid}>
-              {[{i:"💧",l:"Arrosage",v:result.entretien.arrosage},{i:"☀️",l:"Lumière",v:result.entretien.lumiere},{i:"🪱",l:"Sol",v:result.entretien.sol},{i:"🌡️",l:"Température",v:result.entretien.temperature}].filter(x=>x.v).map(({i,l,v})=>(
-                <div key={l} style={s.gridItem}><div style={{fontSize:"1.2rem"}}>{i}</div><div style={{fontSize:"0.65rem",color:"#7A9586",textTransform:"uppercase"}}>{l}</div><div style={{fontSize:"0.82rem"}}>{v}</div></div>
+              {[{ i: "💧", l: "Arrosage", v: result.entretien.arrosage }, { i: "☀️", l: "Lumière", v: result.entretien.lumiere }, { i: "🪱", l: "Sol", v: result.entretien.sol }, { i: "🌡️", l: "Température", v: result.entretien.temperature }].filter(x => x.v).map(({ i, l, v }) => (
+                <div key={l} style={s.gridItem}><div style={{ fontSize: "1.2rem" }}>{i}</div><div style={{ fontSize: "0.65rem", color: "#7A9586", textTransform: "uppercase" }}>{l}</div><div style={{ fontSize: "0.82rem" }}>{v}</div></div>
               ))}
             </div>
           </div>
         )}
         {result.conseils && <div style={s.tip}><div style={s.cardTitle}>💡 Conseil du botaniste</div><div style={s.cardText}>{result.conseils}</div></div>}
-        {result.caracteristiques?.length > 0 && <div style={s.card}><div style={s.cardTitle}>Caractéristiques</div><div style={s.tags}>{result.caracteristiques.map((c,i)=><span key={i} style={s.tagItem}>{c}</span>)}</div></div>}
-        {result.utilisation?.length > 0 && <div style={s.card}><div style={s.cardTitle}>Utilisations</div><div style={s.tags}>{result.utilisation.map((u,i)=><span key={i} style={s.tagItem}>{u}</span>)}</div></div>}
+        {result.caracteristiques?.length > 0 && <div style={s.card}><div style={s.cardTitle}>Caractéristiques</div><div style={s.tags}>{result.caracteristiques.map((c, i) => <span key={i} style={s.tagItem}>{c}</span>)}</div></div>}
+        {result.utilisation?.length > 0 && <div style={s.card}><div style={s.cardTitle}>Utilisations</div><div style={s.tags}>{result.utilisation.map((u, i) => <span key={i} style={s.tagItem}>{u}</span>)}</div></div>}
         <button
           style={{ ...s.saveBtn, ...(savedNotice ? s.saveBtnDone : {}) }}
           onClick={savedNotice ? undefined : saveToLibrary}
