@@ -100,6 +100,35 @@ function formatLocation(discovery) {
   return null;
 }
 
+function getAlbumLocation(album, allDiscoveries) {
+  if (album.latitude != null && album.longitude != null) {
+    return {
+      latitude: album.latitude,
+      longitude: album.longitude,
+      placeName: album.placeName || null,
+    };
+  }
+  for (const id of album.discoveryIds || []) {
+    const d = allDiscoveries.find((x) => x.id === id);
+    if (d?.latitude != null && d?.longitude != null) {
+      return {
+        latitude: d.latitude,
+        longitude: d.longitude,
+        placeName: d.placeName || null,
+      };
+    }
+  }
+  return null;
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 function getCurrentLocation() {
   return new Promise((resolve) => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
@@ -239,6 +268,149 @@ function IconStats({ size = 20, color = "currentColor" }) {
       <path d="M7 16l4-8 4 5 5-9" />
     </svg>
   );
+}
+
+function IconHome({ size = 20, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <polyline points="9 22 9 12 15 12 15 22" />
+    </svg>
+  );
+}
+
+function IconMap({ size = 20, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z" />
+      <path d="M15 5.764v15M9 3.236v15" />
+    </svg>
+  );
+}
+
+function BottomNav({ active, onNavigate }) {
+  const items = [
+    { id: "home", label: "Accueil", Icon: IconHome },
+    { id: "albums", label: "Albums", Icon: IconAlbums },
+    { id: "map", label: "Carte", Icon: IconMap },
+    { id: "stats", label: "Stats", Icon: IconStats },
+  ];
+
+  return (
+    <nav className="bottom-nav" aria-label="Navigation principale">
+      {items.map(({ id, label, Icon }) => (
+        <button
+          key={id}
+          type="button"
+          className={`bottom-nav-item${active === id ? " active" : ""}`}
+          onClick={() => onNavigate(id)}
+          aria-current={active === id ? "page" : undefined}
+        >
+          <Icon size={22} />
+          <span>{label}</span>
+        </button>
+      ))}
+    </nav>
+  );
+}
+
+function AlbumMap({ albums, discoveries, onOpenAlbum }) {
+  const containerRef = useRef(null);
+  const mapRef = useRef(null);
+  const onOpenAlbumRef = useRef(onOpenAlbum);
+
+  useEffect(() => {
+    onOpenAlbumRef.current = onOpenAlbum;
+  }, [onOpenAlbum]);
+
+  useEffect(() => {
+    if (!containerRef.current) return undefined;
+
+    let map = null;
+    let cancelled = false;
+
+    (async () => {
+      const L = (await import("leaflet")).default;
+
+      if (cancelled || !containerRef.current) return;
+
+      map = L.map(containerRef.current, {
+        zoomControl: true,
+        attributionControl: true,
+      }).setView([46.6, 2.4], 5);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19,
+      }).addTo(map);
+
+      const leafIcon = L.divIcon({
+        className: "wilder-map-marker-wrap",
+        html: `<div class="wilder-map-marker" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="#F5F2EB">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+          </svg>
+        </div>`,
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -42],
+      });
+
+      const bounds = [];
+      albums.forEach((album) => {
+        const loc = getAlbumLocation(album, discoveries);
+        if (!loc) return;
+
+        const count = album.discoveryIds?.length || 0;
+        const cover = album.coverPhoto
+          ? `<img src="${album.coverPhoto}" alt="" class="map-popup-photo" />`
+          : `<div class="map-popup-photo map-popup-photo-empty"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>`;
+
+        const popupHtml = `
+          <div class="map-popup">
+            ${cover}
+            <h3 class="map-popup-title">${escapeHtml(album.name)}</h3>
+            <p class="map-popup-meta">${escapeHtml(formatDate(album.createdAt))}</p>
+            <p class="map-popup-meta">${count} découverte${count !== 1 ? "s" : ""}${loc.placeName ? ` · ${escapeHtml(loc.placeName)}` : ""}</p>
+            <button type="button" class="map-popup-btn" data-album-id="${escapeHtml(album.id)}">Voir l&apos;album</button>
+          </div>
+        `;
+
+        const marker = L.marker([loc.latitude, loc.longitude], { icon: leafIcon })
+          .addTo(map)
+          .bindPopup(popupHtml, { maxWidth: 280, className: "wilder-map-popup" });
+
+        bounds.push([loc.latitude, loc.longitude]);
+      });
+
+      if (bounds.length === 1) {
+        map.setView(bounds[0], 12);
+      } else if (bounds.length > 1) {
+        map.fitBounds(bounds, { padding: [48, 48], maxZoom: 12 });
+      }
+
+      mapRef.current = map;
+    })();
+
+    const handlePopupClick = (e) => {
+      const btn = e.target.closest(".map-popup-btn");
+      if (!btn?.dataset.albumId) return;
+      onOpenAlbumRef.current(btn.dataset.albumId);
+    };
+
+    containerRef.current.addEventListener("click", handlePopupClick);
+
+    return () => {
+      cancelled = true;
+      containerRef.current?.removeEventListener("click", handlePopupClick);
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, [albums, discoveries]);
+
+  return <div ref={containerRef} className="album-map-container" />;
 }
 
 function IconLocation({ size = 18, color = "currentColor" }) {
@@ -559,6 +731,11 @@ export default function Wilder() {
     setScreen("home");
   };
 
+  const navigateMain = (target) => {
+    if (target === "home") goHome();
+    else setScreen(target);
+  };
+
   const analyze = useCallback(async (base64, imgSrc) => {
     setCaptured(imgSrc);
     setScreen("analyzing");
@@ -661,6 +838,13 @@ export default function Wilder() {
       createdAt: new Date().toISOString(),
       coverPhoto: currentDiscovery.photo,
       discoveryIds: [currentDiscovery.id],
+      ...(currentDiscovery.latitude != null && currentDiscovery.longitude != null
+        ? {
+            latitude: currentDiscovery.latitude,
+            longitude: currentDiscovery.longitude,
+            placeName: currentDiscovery.placeName || null,
+          }
+        : {}),
     };
     const updated = [album, ...loadAlbums()];
     saveAlbums(updated);
@@ -669,14 +853,16 @@ export default function Wilder() {
     setSavedToAlbum(true);
   };
 
-  const createAlbumFromList = () => {
+  const createAlbumFromList = async () => {
     const name = newAlbumName.trim() || defaultAlbumName();
+    const location = await getCurrentLocation();
     const album = {
       id: generateId(),
       name,
       createdAt: new Date().toISOString(),
       coverPhoto: null,
       discoveryIds: [],
+      ...(location || {}),
     };
     const updated = [album, ...loadAlbums()];
     saveAlbums(updated);
@@ -738,18 +924,8 @@ export default function Wilder() {
                 <span>{DISCOVERY_MARQUEE}{DISCOVERY_MARQUEE}</span>
               </div>
             </div>
-
-            <div className="home-nav-row stagger-3">
-              <button type="button" className="btn-albums" onClick={() => setScreen("albums")}>
-                <IconAlbums size={20} />
-                Albums
-              </button>
-              <button type="button" className="btn-stats" onClick={() => setScreen("stats")}>
-                <IconStats size={20} />
-                Stats
-              </button>
-            </div>
           </div>
+          <BottomNav active="home" onNavigate={navigateMain} />
         </div>
       </>
     );
@@ -1092,17 +1268,8 @@ export default function Wilder() {
         <Head>
           <title>Mes Stats — Wilder</title>
         </Head>
-        <div className="stats-screen screen-enter">
+        <div className="stats-screen screen-enter with-bottom-nav">
           <div className="albums-header">
-            <button
-              type="button"
-              className="btn-secondary"
-              style={{ padding: "0.5rem 0.75rem" }}
-              onClick={goHome}
-              aria-label="Retour"
-            >
-              <IconBack size={18} />
-            </button>
             <h1 className="albums-title">Mes Stats</h1>
           </div>
 
@@ -1174,6 +1341,39 @@ export default function Wilder() {
             </div>
           )}
         </div>
+        <BottomNav active="stats" onNavigate={navigateMain} />
+      </>
+    );
+  }
+
+  /* ── MAP ── */
+  if (screen === "map") {
+    const locatedAlbums = albums.filter((album) => getAlbumLocation(album, discoveries));
+
+    return (
+      <>
+        <Head>
+          <title>Carte — Wilder</title>
+        </Head>
+        <div className="map-screen screen-enter">
+          <div className="map-header">
+            <h1 className="map-title">Carte</h1>
+            <p className="map-subtitle">
+              {locatedAlbums.length === 0
+                ? "Créez un album pour voir vos explorations sur la carte"
+                : `${locatedAlbums.length} endroit${locatedAlbums.length !== 1 ? "s" : ""} exploré${locatedAlbums.length !== 1 ? "s" : ""} dans le monde`}
+            </p>
+          </div>
+          <AlbumMap
+            albums={albums}
+            discoveries={discoveries}
+            onOpenAlbum={(albumId) => {
+              setSelectedAlbumId(albumId);
+              setScreen("album-detail");
+            }}
+          />
+          <BottomNav active="map" onNavigate={navigateMain} />
+        </div>
       </>
     );
   }
@@ -1189,17 +1389,8 @@ export default function Wilder() {
         <Head>
           <title>Mes Albums — Wilder</title>
         </Head>
-        <div className="albums-screen screen-enter">
+        <div className="albums-screen screen-enter with-bottom-nav">
           <div className="albums-header">
-            <button
-              type="button"
-              className="btn-secondary"
-              style={{ padding: "0.5rem 0.75rem" }}
-              onClick={goHome}
-              aria-label="Retour"
-            >
-              <IconBack size={18} />
-            </button>
             <h1 className="albums-title">Mes Albums</h1>
           </div>
 
@@ -1268,6 +1459,7 @@ export default function Wilder() {
             )}
           </div>
         </div>
+        <BottomNav active="albums" onNavigate={navigateMain} />
       </>
     );
   }
