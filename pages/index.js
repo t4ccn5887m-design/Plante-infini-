@@ -308,14 +308,21 @@ export default function PlanteInfini() {
       fontWeight: active ? "bold" : "normal",
     }),
     modeHint: { fontSize: "0.75rem", color: "#7A9586", textAlign: "center" },
+    captureFooter: { width: "100%", marginTop: "auto", paddingTop: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" },
     captureBtn: {
-      width: 80, height: 80, borderRadius: "50%", background: "#2D6A4F",
-      border: "5px solid white", boxShadow: "0 0 0 3px #2D6A4F, 0 6px 24px rgba(45,106,79,0.35)",
-      cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-      fontSize: "1.8rem", flexShrink: 0,
+      width: "100%",
+      padding: "1.15rem 1.5rem",
+      borderRadius: 14,
+      background: "#2D6A4F",
+      color: "white",
+      border: "none",
+      boxShadow: "0 6px 24px rgba(45,106,79,0.35)",
+      cursor: "pointer",
+      fontSize: "1.05rem",
+      fontWeight: "bold",
+      fontFamily: "Georgia, serif",
     },
     captureBtnDisabled: { opacity: 0.4, cursor: "not-allowed" },
-    captureRow: { display: "flex", alignItems: "center", justifyContent: "center", gap: "2rem", width: "100%" },
     btn: { background: "#2D6A4F", color: "white", border: "none", padding: "1rem 2.5rem", borderRadius: "50px", fontSize: "1rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem" },
     btnSecondary: { background: "white", color: "#2D6A4F", border: "2px solid #2D6A4F", padding: "0.75rem 1.5rem", borderRadius: "50px", fontSize: "0.9rem", cursor: "pointer" },
     gallery: { fontSize: "0.85rem", color: "#7A9586", cursor: "pointer", position: "relative" },
@@ -425,19 +432,20 @@ export default function PlanteInfini() {
         <div style={{ ...s.modeHint, marginTop: "0.5rem" }}>{activeMode?.hint}</div>
       </div>
 
-      <div style={s.captureRow}>
-        <label style={{ ...s.gallery, visibility: "hidden", width: 60 }} aria-hidden>·</label>
+      <div style={s.captureFooter}>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <label style={s.gallery} title="Galerie">
+            🖼️ Galerie
+            <input type="file" accept="image/*" style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer" }} onChange={e => fromGallery(e.target.files[0])} />
+          </label>
+        </div>
         <button
           style={{ ...s.captureBtn, ...(!camReady ? s.captureBtnDisabled : {}) }}
           onClick={camReady ? takePhoto : undefined}
-          aria-label="Prendre une photo"
+          disabled={!camReady}
         >
-          📸
+          Prendre une photo
         </button>
-        <label style={{ ...s.gallery, width: 60, textAlign: "center" }} title="Galerie">
-          🖼️
-          <input type="file" accept="image/*" style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer" }} onChange={e => fromGallery(e.target.files[0])} />
-        </label>
       </div>
 
       <button style={s.libBtn} onClick={() => setScreen("library")}>
