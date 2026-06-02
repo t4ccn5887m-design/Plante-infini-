@@ -3,9 +3,9 @@ import { useState, useRef, useEffect, useCallback } from "react";
 const LIBRARY_KEY = "plante-infini-library";
 
 const MODES = [
-  { id: "direct", label: "🌿 Rapide", hint: "Analyse immédiate" },
-  { id: "selection", label: "✂️ Sélection", hint: "Recadrez la zone" },
-  { id: "potager", label: "🥕 Potager", hint: "Toutes les plantes" },
+  { id: "direct", label: "Rapide", hint: "Analyse immédiate de la plante" },
+  { id: "selection", label: "Sélection", hint: "Recadrez la zone à analyser" },
+  { id: "potager", label: "Potager", hint: "Détecte toutes les plantes visibles" },
 ];
 
 function loadLibrary() {
@@ -21,27 +21,119 @@ function saveLibrary(plants) {
   localStorage.setItem(LIBRARY_KEY, JSON.stringify(plants));
 }
 
-function ViewfinderCorners() {
-  const corner = (top, left, right, bottom) => ({
-    position: "absolute",
-    width: 22,
-    height: 22,
-    top,
-    left,
-    right,
-    bottom,
-    borderTop: top !== undefined ? "3px solid #52B788" : undefined,
-    borderBottom: bottom !== undefined ? "3px solid #52B788" : undefined,
-    borderLeft: left !== undefined ? "3px solid #52B788" : undefined,
-    borderRight: right !== undefined ? "3px solid #52B788" : undefined,
-  });
+function IconLeaf({ size = 24, color = "currentColor" }) {
   return (
-    <>
-      <div style={corner(0, 0, undefined, undefined)} />
-      <div style={corner(0, undefined, 0, undefined)} />
-      <div style={corner(undefined, 0, undefined, 0)} />
-      <div style={corner(undefined, undefined, 0, 0)} />
-    </>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+      <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+    </svg>
+  );
+}
+
+function IconCamera({ size = 24, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+      <circle cx="12" cy="13" r="3" />
+    </svg>
+  );
+}
+
+function IconBook({ size = 24, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+    </svg>
+  );
+}
+
+function IconGarden({ size = 24, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22v-7" />
+      <path d="M9 22v-4" />
+      <path d="M15 22v-4" />
+      <path d="M12 15c-4-2-6-5-6-9 0 3 2 5 6 5s6-2 6-5c0 4-2 7-6 9z" />
+    </svg>
+  );
+}
+
+function IconBack({ size = 20, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 12H5M12 19l-7-7 7-7" />
+    </svg>
+  );
+}
+
+function IconGallery({ size = 20, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <circle cx="8.5" cy="8.5" r="1.5" />
+      <path d="m21 15-5-5L5 21" />
+    </svg>
+  );
+}
+
+function Particles() {
+  const items = Array.from({ length: 12 }, (_, i) => ({
+    id: i,
+    left: `${8 + (i * 7.5) % 85}%`,
+    delay: `${i * 1.7}s`,
+    duration: `${12 + (i % 4) * 3}s`,
+    size: 2 + (i % 3),
+  }));
+  return (
+    <div className="particles">
+      {items.map((p) => (
+        <div
+          key={p.id}
+          className="particle"
+          style={{
+            left: p.left,
+            bottom: "-10px",
+            width: p.size,
+            height: p.size,
+            animationDuration: p.duration,
+            animationDelay: p.delay,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function Logo({ subtitle }) {
+  return (
+    <div style={{ textAlign: "center" }}>
+      <div className="logo-text">
+        <span className="logo-leaf">🌿</span>
+        Plante Infini
+      </div>
+      {subtitle && <div className="logo-sub">{subtitle}</div>}
+    </div>
+  );
+}
+
+function Viewfinder() {
+  return (
+    <div className="viewfinder-frame">
+      <div className="viewfinder-corner tl" />
+      <div className="viewfinder-corner tr" />
+      <div className="viewfinder-corner bl" />
+      <div className="viewfinder-corner br" />
+      <div className="scan-line" />
+    </div>
+  );
+}
+
+function ScreenWrap({ children, className = "screen-enter" }) {
+  return (
+    <div className={className} style={{ minHeight: "100vh", width: "100%", maxWidth: 480, margin: "0 auto" }}>
+      {children}
+    </div>
   );
 }
 
@@ -70,7 +162,7 @@ export default function PlanteInfini() {
     height: "100%",
     objectFit: "cover",
     display: "block",
-    background: "#111",
+    background: "#060D09",
   };
 
   const attachStreamToVideo = useCallback(async () => {
@@ -131,7 +223,7 @@ export default function PlanteInfini() {
   }, []);
 
   useEffect(() => {
-    if (screen !== "home" || !camReady) return;
+    if (screen !== "camera" || !camReady) return;
     attachStreamToVideo();
   }, [screen, camReady, attachStreamToVideo]);
 
@@ -140,7 +232,7 @@ export default function PlanteInfini() {
   }, []);
 
   useEffect(() => {
-    if (screen === "home") startCamera();
+    if (screen === "camera") startCamera();
     else stopCamera();
     return stopCamera;
   }, [screen, startCamera, stopCamera]);
@@ -177,6 +269,11 @@ export default function PlanteInfini() {
     setScreen("home");
   };
 
+  const openCamera = (mode) => {
+    setAnalysisMode(mode);
+    setScreen("camera");
+  };
+
   const analyze = useCallback(async (base64, imgSrc, mode = "single") => {
     setCaptured(imgSrc);
     setScreen("analyzing");
@@ -184,7 +281,7 @@ export default function PlanteInfini() {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: base64, mode })
+        body: JSON.stringify({ image: base64, mode }),
       });
       const data = await res.json();
       if (data.erreur) {
@@ -203,22 +300,26 @@ export default function PlanteInfini() {
     }
   }, []);
 
-  const handleCapturedImage = useCallback((dataUrl) => {
-    const base64 = dataUrl.split(",")[1];
-    if (analysisMode === "selection") {
-      setCaptured(dataUrl);
-      setSelStart(null);
-      setSelRect(null);
-      setScreen("select");
-    } else if (analysisMode === "potager") {
-      analyze(base64, dataUrl, "potager");
-    } else {
-      analyze(base64, dataUrl, "single");
-    }
-  }, [analysisMode, analyze]);
+  const handleCapturedImage = useCallback(
+    (dataUrl) => {
+      const base64 = dataUrl.split(",")[1];
+      if (analysisMode === "selection") {
+        setCaptured(dataUrl);
+        setSelStart(null);
+        setSelRect(null);
+        setScreen("select");
+      } else if (analysisMode === "potager") {
+        analyze(base64, dataUrl, "potager");
+      } else {
+        analyze(base64, dataUrl, "single");
+      }
+    },
+    [analysisMode, analyze]
+  );
 
   const takePhoto = useCallback(() => {
-    const v = videoRef.current, c = canvasRef.current;
+    const v = videoRef.current,
+      c = canvasRef.current;
     if (!v || !c || v.readyState < 2) return;
     const w = v.videoWidth;
     const h = v.videoHeight;
@@ -229,12 +330,15 @@ export default function PlanteInfini() {
     handleCapturedImage(c.toDataURL("image/jpeg", 0.8));
   }, [handleCapturedImage]);
 
-  const fromGallery = useCallback((file) => {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => handleCapturedImage(e.target.result);
-    reader.readAsDataURL(file);
-  }, [handleCapturedImage]);
+  const fromGallery = useCallback(
+    (file) => {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => handleCapturedImage(e.target.result);
+      reader.readAsDataURL(file);
+    },
+    [handleCapturedImage]
+  );
 
   const getRelativePos = useCallback((e) => {
     const rect = imgContainerRef.current.getBoundingClientRect();
@@ -246,24 +350,30 @@ export default function PlanteInfini() {
     };
   }, []);
 
-  const onSelStart = useCallback((e) => {
-    e.preventDefault();
-    const pos = getRelativePos(e);
-    setSelStart(pos);
-    setSelRect({ x: pos.x, y: pos.y, width: 0, height: 0 });
-  }, [getRelativePos]);
+  const onSelStart = useCallback(
+    (e) => {
+      e.preventDefault();
+      const pos = getRelativePos(e);
+      setSelStart(pos);
+      setSelRect({ x: pos.x, y: pos.y, width: 0, height: 0 });
+    },
+    [getRelativePos]
+  );
 
-  const onSelMove = useCallback((e) => {
-    if (!selStart) return;
-    e.preventDefault();
-    const pos = getRelativePos(e);
-    setSelRect({
-      x: Math.min(selStart.x, pos.x),
-      y: Math.min(selStart.y, pos.y),
-      width: Math.abs(pos.x - selStart.x),
-      height: Math.abs(pos.y - selStart.y),
-    });
-  }, [selStart, getRelativePos]);
+  const onSelMove = useCallback(
+    (e) => {
+      if (!selStart) return;
+      e.preventDefault();
+      const pos = getRelativePos(e);
+      setSelRect({
+        x: Math.min(selStart.x, pos.x),
+        y: Math.min(selStart.y, pos.y),
+        width: Math.abs(pos.x - selStart.x),
+        height: Math.abs(pos.y - selStart.y),
+      });
+    },
+    [selStart, getRelativePos]
+  );
 
   const onSelEnd = useCallback(() => {
     setSelStart(null);
@@ -283,328 +393,814 @@ export default function PlanteInfini() {
     const ctx = canvas.getContext("2d");
     ctx.drawImage(
       img,
-      selRect.x * scaleX, selRect.y * scaleY,
-      canvas.width, canvas.height,
-      0, 0, canvas.width, canvas.height
+      selRect.x * scaleX,
+      selRect.y * scaleY,
+      canvas.width,
+      canvas.height,
+      0,
+      0,
+      canvas.width,
+      canvas.height
     );
     const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
     analyze(dataUrl.split(",")[1], dataUrl, "single");
   }, [selRect, analyze]);
 
-  const s = {
-    page: { minHeight: "100vh", fontFamily: "Georgia, serif", background: "#F7F9F5", color: "#1B2B22", display: "flex", flexDirection: "column", alignItems: "center" },
-    home: { minHeight: "100vh", width: "100%", maxWidth: 480, display: "flex", flexDirection: "column", alignItems: "center", padding: "1.5rem 1rem 2.5rem", gap: "1.25rem" },
-    logo: { fontSize: "1.6rem", fontWeight: "bold", color: "#2D6A4F" },
-    tag: { fontSize: "0.85rem", color: "#7A9586", marginTop: "0.2rem" },
-    cameraWrap: { position: "relative", width: "100%", aspectRatio: "3/4", borderRadius: 20, overflow: "hidden", background: "#111", boxShadow: "0 8px 40px rgba(45,106,79,0.18)" },
-    viewfinderHole: { position: "relative", width: "72%", height: "58%", boxShadow: "0 0 0 9999px rgba(0,0,0,0.42)" },
-    viewfinderOverlay: { position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" },
-    modeBar: { display: "flex", gap: "0.35rem", background: "#EAF5EE", padding: "0.3rem", borderRadius: 30, width: "100%" },
-    modeBtn: (active) => ({
-      flex: 1, border: "none", borderRadius: 26, padding: "0.55rem 0.4rem", fontSize: "0.72rem",
-      cursor: "pointer", fontFamily: "Georgia, serif", transition: "all 0.2s",
-      background: active ? "#2D6A4F" : "transparent",
-      color: active ? "white" : "#2D6A4F",
-      fontWeight: active ? "bold" : "normal",
-    }),
-    modeHint: { fontSize: "0.75rem", color: "#7A9586", textAlign: "center" },
-    captureFooter: { width: "100%", marginTop: "auto", paddingTop: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" },
-    captureBtn: {
-      width: "100%",
-      padding: "1.15rem 1.5rem",
-      borderRadius: 14,
-      background: "#2D6A4F",
-      color: "white",
-      border: "none",
-      boxShadow: "0 6px 24px rgba(45,106,79,0.35)",
-      cursor: "pointer",
-      fontSize: "1.05rem",
-      fontWeight: "bold",
-      fontFamily: "Georgia, serif",
-    },
-    captureBtnDisabled: { opacity: 0.4, cursor: "not-allowed" },
-    btn: { background: "#2D6A4F", color: "white", border: "none", padding: "1rem 2.5rem", borderRadius: "50px", fontSize: "1rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem" },
-    btnSecondary: { background: "white", color: "#2D6A4F", border: "2px solid #2D6A4F", padding: "0.75rem 1.5rem", borderRadius: "50px", fontSize: "0.9rem", cursor: "pointer" },
-    gallery: { fontSize: "0.85rem", color: "#7A9586", cursor: "pointer", position: "relative" },
-    analyzing: { minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "2rem" },
-    ring: { width: 190, height: 190, borderRadius: "50%", overflow: "hidden", border: "3px solid #52B788", boxShadow: "0 0 0 10px #D8EDDF" },
-    selectScreen: { minHeight: "100vh", width: "100%", maxWidth: 600, display: "flex", flexDirection: "column" },
-    selectHeader: { padding: "1.25rem", background: "white", borderBottom: "1px solid #DCE8DC" },
-    selectTitle: { fontSize: "1.3rem", fontWeight: "bold", color: "#2D6A4F" },
-    selectHint: { fontSize: "0.85rem", color: "#7A9586", marginTop: "0.3rem" },
-    selectImgWrap: { position: "relative", flex: 1, margin: "1rem", borderRadius: 16, overflow: "hidden", background: "#111", touchAction: "none", userSelect: "none" },
-    selectRect: { position: "absolute", border: "2px solid #52B788", background: "rgba(82,183,136,0.15)", boxShadow: "0 0 0 9999px rgba(0,0,0,0.45)" },
-    selectActions: { padding: "1rem 1.25rem 2rem", display: "flex", gap: "0.75rem" },
-    result: { width: "100%", maxWidth: 600, paddingBottom: "3rem" },
-    photo: { width: "100%", height: 280, objectFit: "cover" },
-    header: { background: "white", padding: "1.5rem", borderBottom: "1px solid #DCE8DC", position: "relative" },
-    name: { fontSize: "2rem", fontWeight: "bold", color: "#1B2B22" },
-    latin: { fontSize: "0.95rem", color: "#7A9586", fontStyle: "italic" },
-    backBtn: { position: "absolute", top: "1rem", right: "1rem", background: "#D8EDDF", border: "none", borderRadius: "20px", padding: "0.4rem 1rem", color: "#2D6A4F", cursor: "pointer" },
-    body: { padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" },
-    card: { background: "white", borderRadius: 16, padding: "1.2rem", border: "1px solid #DCE8DC" },
-    cardTitle: { fontSize: "0.7rem", fontWeight: "bold", letterSpacing: "0.1em", textTransform: "uppercase", color: "#2D6A4F", marginBottom: "0.7rem" },
-    cardText: { fontSize: "0.9rem", lineHeight: 1.7, color: "#1B2B22" },
-    grid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.7rem" },
-    gridItem: { background: "#F7F9F5", borderRadius: 10, padding: "0.8rem" },
-    tip: { background: "linear-gradient(135deg, #EAF5EE, #F7F9F5)", border: "1px solid #C3DFC9", borderRadius: 16, padding: "1.2rem" },
-    tags: { display: "flex", flexWrap: "wrap", gap: "0.4rem" },
-    tagItem: { background: "#D8EDDF", color: "#2D6A4F", padding: "0.3rem 0.75rem", borderRadius: 20, fontSize: "0.8rem" },
-    health: { display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem 1rem", borderRadius: 30, fontSize: "0.85rem", fontWeight: "bold" },
-    error: { minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1rem", padding: "2rem", textAlign: "center" },
-    libBtn: { background: "white", color: "#2D6A4F", border: "2px solid #2D6A4F", padding: "0.75rem 1.5rem", borderRadius: "50px", fontSize: "0.9rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem" },
-    saveBtn: { background: "#2D6A4F", color: "white", border: "none", padding: "0.75rem 1.5rem", borderRadius: "50px", fontSize: "0.9rem", cursor: "pointer", width: "100%", marginTop: "0.5rem" },
-    saveBtnDone: { background: "#52B788", cursor: "default" },
-    library: { width: "100%", maxWidth: 600, minHeight: "100vh", paddingBottom: "3rem" },
-    libHeader: { background: "white", padding: "1.5rem", borderBottom: "1px solid #DCE8DC", display: "flex", alignItems: "center", justifyContent: "space-between" },
-    libTitle: { fontSize: "1.5rem", fontWeight: "bold", color: "#2D6A4F" },
-    libEmpty: { textAlign: "center", padding: "4rem 2rem", color: "#7A9586" },
-    libList: { padding: "1rem", display: "flex", flexDirection: "column", gap: "1rem" },
-    libItem: { background: "white", borderRadius: 16, overflow: "hidden", border: "1px solid #DCE8DC" },
-    libPhoto: { width: "100%", height: 180, objectFit: "cover" },
-    libBody: { padding: "1rem" },
-    libName: { fontSize: "1.1rem", fontWeight: "bold", color: "#1B2B22", marginBottom: "0.25rem" },
-    libLatin: { fontSize: "0.85rem", color: "#7A9586", fontStyle: "italic", marginBottom: "0.5rem" },
-    libDesc: { fontSize: "0.85rem", lineHeight: 1.6, color: "#1B2B22" },
-    deleteBtn: { marginTop: "0.75rem", background: "none", border: "1px solid #FEE2E2", color: "#991B1B", padding: "0.4rem 0.8rem", borderRadius: 20, fontSize: "0.8rem", cursor: "pointer" },
-    potagerBadge: { display: "inline-block", background: "#D8EDDF", color: "#2D6A4F", padding: "0.3rem 0.8rem", borderRadius: 20, fontSize: "0.8rem", marginBottom: "0.5rem" },
-    plantCount: { fontSize: "0.9rem", color: "#7A9586", marginTop: "0.25rem" },
-  };
+  const activeMode = MODES.find((m) => m.id === analysisMode);
 
-  const activeMode = MODES.find(m => m.id === analysisMode);
+  const healthClass =
+    result?.sante?.etat === "bon"
+      ? "health-good"
+      : result?.sante?.etat === "attention"
+        ? "health-warn"
+        : "health-bad";
 
-  if (screen === "home") return (
-    <div style={s.home}>
-      <div style={{ textAlign: "center" }}>
-        <div style={s.logo}>🌿 Plante Infini</div>
-        <div style={s.tag}>Identifiez n'importe quelle plante</div>
-      </div>
-
-      <div style={s.cameraWrap}>
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          muted
-          onLoadedMetadata={() => attachStreamToVideo()}
-          style={{
-            ...videoStyle,
-            opacity: camReady ? 1 : 0,
-            pointerEvents: camReady ? "auto" : "none",
-          }}
-        />
-        <canvas ref={canvasRef} style={{ display: "none" }} />
-        {camReady && (
-          <div style={s.viewfinderOverlay}>
-            <div style={s.viewfinderHole}>
-              <ViewfinderCorners />
-            </div>
-          </div>
-        )}
-        {!camReady && (
+  /* ── HOME ── */
+  if (screen === "home")
+    return (
+      <div className="home-bg screen-enter">
+        <Particles />
+        <ScreenWrap>
           <div
             style={{
-              position: "absolute",
-              inset: 0,
+              position: "relative",
+              zIndex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              padding: "3rem 1.5rem 2.5rem",
+              gap: "2.5rem",
+              minHeight: "100vh",
+            }}
+          >
+            <div className="stagger-1" style={{ paddingTop: "1rem" }}>
+              <Logo subtitle="Botanique intelligente" />
+            </div>
+
+            <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+              <button className="action-card stagger-2" onClick={() => openCamera("direct")}>
+                <div className="action-icon" style={{ background: "rgba(52, 211, 153, 0.12)" }}>
+                  <IconCamera size={22} color="#34D399" />
+                </div>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: "1rem", marginBottom: "0.2rem" }}>
+                    Identifier une plante
+                  </div>
+                  <div style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
+                    Photographiez ou importez une image
+                  </div>
+                </div>
+              </button>
+
+              <button className="action-card stagger-3" onClick={() => setScreen("library")}>
+                <div className="action-icon" style={{ background: "rgba(212, 175, 55, 0.12)" }}>
+                  <IconBook size={22} color="#D4AF37" />
+                </div>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: "1rem", marginBottom: "0.2rem" }}>
+                    Ma bibliothèque
+                    {library.length > 0 && (
+                      <span
+                        style={{
+                          marginLeft: "0.5rem",
+                          fontSize: "0.75rem",
+                          background: "rgba(212, 175, 55, 0.2)",
+                          color: "#D4AF37",
+                          padding: "0.15rem 0.5rem",
+                          borderRadius: 10,
+                        }}
+                      >
+                        {library.length}
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
+                    Retrouvez vos plantes sauvegardées
+                  </div>
+                </div>
+              </button>
+
+              <button className="action-card gold-accent stagger-4" onClick={() => openCamera("potager")}>
+                <div className="action-icon" style={{ background: "rgba(45, 106, 79, 0.25)" }}>
+                  <IconGarden size={22} color="#40916C" />
+                </div>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: "1rem", marginBottom: "0.2rem" }}>
+                    Mode potager
+                  </div>
+                  <div style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
+                    Analysez toutes les plantes d'un coup
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            <div
+              className="stagger-4"
+              style={{
+                marginTop: "auto",
+                textAlign: "center",
+                fontSize: "0.75rem",
+                color: "var(--text-muted)",
+                letterSpacing: "0.05em",
+              }}
+            >
+              Propulsé par l'intelligence artificielle
+            </div>
+          </div>
+        </ScreenWrap>
+      </div>
+    );
+
+  /* ── CAMERA ── */
+  if (screen === "camera")
+    return (
+      <ScreenWrap>
+        <div
+          style={{
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column",
+            background: "var(--bg-deep)",
+            padding: "1rem 1rem 2rem",
+            gap: "1rem",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <button
+              className="btn-secondary"
+              style={{ padding: "0.5rem 0.85rem", borderRadius: 12 }}
+              onClick={goHome}
+            >
+              <IconBack size={18} />
+            </button>
+            <div style={{ fontWeight: 600, fontSize: "0.9rem", color: "var(--text-secondary)" }}>
+              {analysisMode === "potager" ? "Mode Potager" : "Identification"}
+            </div>
+            <div style={{ width: 36 }} />
+          </div>
+
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              flex: 1,
+              minHeight: "55vh",
+              borderRadius: 20,
+              overflow: "hidden",
+              background: "#060D09",
+              boxShadow: "0 12px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(52,211,153,0.08)",
+            }}
+          >
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              onLoadedMetadata={() => attachStreamToVideo()}
+              style={{
+                ...videoStyle,
+                opacity: camReady ? 1 : 0,
+                pointerEvents: camReady ? "auto" : "none",
+              }}
+            />
+            <canvas ref={canvasRef} style={{ display: "none" }} />
+            {camReady && (
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  pointerEvents: "none",
+                }}
+              >
+                <Viewfinder />
+              </div>
+            )}
+            {!camReady && (
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  gap: "1rem",
+                  background: "#060D09",
+                  zIndex: 1,
+                }}
+              >
+                <div style={{ animation: "pulseGlow 2s ease-in-out infinite" }}>
+                  <IconCamera size={48} color="#34D399" />
+                </div>
+                <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                  Autorisez l'accès à la caméra
+                </div>
+              </div>
+            )}
+          </div>
+
+          {analysisMode !== "potager" && (
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "0.3rem",
+                  background: "rgba(255,255,255,0.04)",
+                  padding: "0.3rem",
+                  borderRadius: 28,
+                  border: "1px solid var(--border)",
+                }}
+              >
+                {MODES.filter((m) => m.id !== "potager").map((m) => (
+                  <button
+                    key={m.id}
+                    className={`mode-pill${analysisMode === m.id ? " active" : ""}`}
+                    onClick={() => setAnalysisMode(m.id)}
+                  >
+                    {m.label}
+                  </button>
+                ))}
+              </div>
+              <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textAlign: "center", marginTop: "0.5rem" }}>
+                {activeMode?.hint}
+              </div>
+            </div>
+          )}
+
+          <div
+            style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              flexDirection: "column",
-              gap: "0.5rem",
-              background: "#111",
-              zIndex: 1,
+              gap: "2.5rem",
+              paddingTop: "0.5rem",
             }}
           >
-            <div style={{ fontSize: "3rem" }}>📷</div>
-            <div style={{ fontSize: "0.85rem", color: "#aaa" }}>Autorisez la caméra</div>
-          </div>
-        )}
-      </div>
+            <label
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "0.3rem",
+                cursor: "pointer",
+                color: "var(--text-muted)",
+                fontSize: "0.72rem",
+                position: "relative",
+              }}
+            >
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 12,
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid var(--border)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <IconGallery size={20} color="var(--text-secondary)" />
+              </div>
+              Galerie
+              <input
+                type="file"
+                accept="image/*"
+                style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer" }}
+                onChange={(e) => fromGallery(e.target.files[0])}
+              />
+            </label>
 
-      <div style={{ width: "100%" }}>
-        <div style={s.modeBar}>
-          {MODES.map(m => (
-            <button key={m.id} style={s.modeBtn(analysisMode === m.id)} onClick={() => setAnalysisMode(m.id)}>
-              {m.label}
+            <button className="capture-ring" onClick={camReady ? takePhoto : undefined} disabled={!camReady}>
+              <div className="capture-ring-inner" />
             </button>
-          ))}
+
+            <div style={{ width: 44 }} />
+          </div>
         </div>
-        <div style={{ ...s.modeHint, marginTop: "0.5rem" }}>{activeMode?.hint}</div>
-      </div>
+      </ScreenWrap>
+    );
 
-      <div style={s.captureFooter}>
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <label style={s.gallery} title="Galerie">
-            🖼️ Galerie
-            <input type="file" accept="image/*" style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer" }} onChange={e => fromGallery(e.target.files[0])} />
-          </label>
-        </div>
-        <button
-          style={{ ...s.captureBtn, ...(!camReady ? s.captureBtnDisabled : {}) }}
-          onClick={camReady ? takePhoto : undefined}
-          disabled={!camReady}
-        >
-          Prendre une photo
-        </button>
-      </div>
-
-      <button style={s.libBtn} onClick={() => setScreen("library")}>
-        📚 Ma bibliothèque{library.length > 0 ? ` (${library.length})` : ""}
-      </button>
-    </div>
-  );
-
-  if (screen === "select") return (
-    <div style={s.selectScreen}>
-      <div style={s.selectHeader}>
-        <div style={s.selectTitle}>✂️ Sélectionnez la zone</div>
-        <div style={s.selectHint}>Tracez un rectangle autour de la plante à analyser</div>
-      </div>
-      <div
-        ref={imgContainerRef}
-        style={s.selectImgWrap}
-        onMouseDown={onSelStart}
-        onMouseMove={onSelMove}
-        onMouseUp={onSelEnd}
-        onMouseLeave={onSelEnd}
-        onTouchStart={onSelStart}
-        onTouchMove={onSelMove}
-        onTouchEnd={onSelEnd}
-      >
-        {captured && (
-          <img ref={selectImgRef} src={captured} alt="Photo à recadrer" style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} draggable={false} />
-        )}
-        {selRect && selRect.width > 0 && selRect.height > 0 && (
-          <div style={{ ...s.selectRect, left: selRect.x, top: selRect.y, width: selRect.width, height: selRect.height }} />
-        )}
-      </div>
-      <div style={s.selectActions}>
-        <button style={{ ...s.btnSecondary, flex: 1 }} onClick={goHome}>Annuler</button>
-        <button
-          style={{ ...s.btn, flex: 2, justifyContent: "center", opacity: selRect && selRect.width >= 20 && selRect.height >= 20 ? 1 : 0.5 }}
-          onClick={confirmSelection}
-          disabled={!selRect || selRect.width < 20 || selRect.height < 20}
-        >
-          🔍 Analyser cette zone
-        </button>
-      </div>
-    </div>
-  );
-
-  if (screen === "analyzing") return (
-    <div style={s.analyzing}>
-      <div style={s.ring}>{captured && <img src={captured} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}</div>
-      <div style={{ textAlign: "center" }}>
-        <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#2D6A4F" }}>Analyse en cours…</div>
-        <div style={{ fontSize: "0.85rem", color: "#7A9586" }}>
-          {analysisMode === "potager" ? "Le botaniste parcourt votre potager" : "Le botaniste examine votre plante"}
-        </div>
-      </div>
-    </div>
-  );
-
-  if (screen === "error") return (
-    <div style={s.error}>
-      <div style={{ fontSize: "3rem" }}>🍃</div>
-      <div style={{ fontSize: "1.4rem", fontWeight: "bold" }}>Non reconnu</div>
-      <p style={{ color: "#7A9586" }}>{errorMsg}</p>
-      <button style={s.btn} onClick={goHome}>Réessayer</button>
-    </div>
-  );
-
-  if (screen === "potager-result" && result?.plantes) return (
-    <div style={s.result}>
-      {captured && <img style={s.photo} src={captured} alt="Potager" />}
-      <div style={s.header}>
-        <button style={s.backBtn} onClick={goHome}>📷 Nouveau scan</button>
-        <div style={s.potagerBadge}>🥕 Mode Potager</div>
-        <div style={s.name}>{result.plantes.length} plante{result.plantes.length > 1 ? "s" : ""} détectée{result.plantes.length > 1 ? "s" : ""}</div>
-        <div style={s.plantCount}>Analyse complète de la photo</div>
-      </div>
-      <div style={s.body}>
-        {result.plantes.map((plante, i) => (
-          <div key={i} style={s.card}>
-            <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
-              <span style={{ fontSize: "1.2rem" }}>🌱</span>
-              <span style={{ fontSize: "1.1rem", fontWeight: "bold", color: "#1B2B22" }}>{plante.nom}</span>
-              {plante.nom_latin && <span style={{ fontSize: "0.85rem", color: "#7A9586", fontStyle: "italic" }}>{plante.nom_latin}</span>}
+  /* ── SELECT ── */
+  if (screen === "select")
+    return (
+      <ScreenWrap>
+        <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--bg-deep)" }}>
+          <div
+            style={{
+              padding: "1.25rem 1.5rem",
+              borderBottom: "1px solid var(--border)",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.75rem",
+            }}
+          >
+            <button
+              className="btn-secondary"
+              style={{ padding: "0.5rem 0.85rem", borderRadius: 12 }}
+              onClick={goHome}
+            >
+              <IconBack size={18} />
+            </button>
+            <div>
+              <div style={{ fontWeight: 600, fontSize: "1.05rem" }}>Sélectionnez la zone</div>
+              <div style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginTop: "0.15rem" }}>
+                Tracez un rectangle autour de la plante
+              </div>
             </div>
-            {plante.description && <div style={s.cardText}>{plante.description}</div>}
           </div>
-        ))}
-      </div>
-    </div>
-  );
+          <div
+            ref={imgContainerRef}
+            style={{
+              position: "relative",
+              flex: 1,
+              margin: "1rem",
+              borderRadius: 16,
+              overflow: "hidden",
+              background: "#060D09",
+              touchAction: "none",
+              userSelect: "none",
+              border: "1px solid var(--border)",
+            }}
+            onMouseDown={onSelStart}
+            onMouseMove={onSelMove}
+            onMouseUp={onSelEnd}
+            onMouseLeave={onSelEnd}
+            onTouchStart={onSelStart}
+            onTouchMove={onSelMove}
+            onTouchEnd={onSelEnd}
+          >
+            {captured && (
+              <img
+                ref={selectImgRef}
+                src={captured}
+                alt="Photo à recadrer"
+                style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+                draggable={false}
+              />
+            )}
+            {selRect && selRect.width > 0 && selRect.height > 0 && (
+              <div
+                style={{
+                  position: "absolute",
+                  left: selRect.x,
+                  top: selRect.y,
+                  width: selRect.width,
+                  height: selRect.height,
+                  border: "2px solid var(--emerald)",
+                  background: "rgba(52, 211, 153, 0.12)",
+                  boxShadow: "0 0 0 9999px rgba(0,0,0,0.55)",
+                  borderRadius: 4,
+                }}
+              />
+            )}
+          </div>
+          <div style={{ padding: "1rem 1.25rem 2rem", display: "flex", gap: "0.75rem" }}>
+            <button className="btn-secondary" style={{ flex: 1 }} onClick={goHome}>
+              Annuler
+            </button>
+            <button
+              className="btn-primary"
+              style={{
+                flex: 2,
+                opacity: selRect && selRect.width >= 20 && selRect.height >= 20 ? 1 : 0.45,
+              }}
+              onClick={confirmSelection}
+              disabled={!selRect || selRect.width < 20 || selRect.height < 20}
+            >
+              Analyser cette zone
+            </button>
+          </div>
+        </div>
+      </ScreenWrap>
+    );
 
-  if (screen === "result" && result) return (
-    <div style={s.result}>
-      {captured && <img style={s.photo} src={captured} alt={result.nom} />}
-      <div style={s.header}>
-        <button style={s.backBtn} onClick={goHome}>📷 Nouveau scan</button>
-        <div style={s.name}>{result.nom}</div>
-        {result.nom_latin && <div style={s.latin}>{result.nom_latin}</div>}
-      </div>
-      <div style={s.body}>
-        {result.sante && (
-          <div style={{ ...s.health, background: result.sante.etat === "bon" ? "#E6F4EC" : result.sante.etat === "attention" ? "#FEF3C7" : "#FEE2E2", color: result.sante.etat === "bon" ? "#1E6B3A" : result.sante.etat === "attention" ? "#92400E" : "#991B1B" }}>
-            {result.sante.etat === "bon" ? "✅" : result.sante.etat === "attention" ? "⚠️" : "❌"} {result.sante.commentaire}
+  /* ── ANALYZING ── */
+  if (screen === "analyzing")
+    return (
+      <ScreenWrap className="screen-enter-fast">
+        <div
+          style={{
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "2rem",
+            background: "var(--bg-deep)",
+            padding: "2rem",
+          }}
+        >
+          <div className="analyze-ring">
+            <div className="analyze-ring-inner">
+              {captured && (
+                <img src={captured} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              )}
+            </div>
           </div>
-        )}
-        {result.description && <div style={s.card}><div style={s.cardTitle}>Description</div><div style={s.cardText}>{result.description}</div></div>}
-        {result.entretien && (
-          <div style={s.card}>
-            <div style={s.cardTitle}>Guide d'entretien</div>
-            <div style={s.grid}>
-              {[{ i: "💧", l: "Arrosage", v: result.entretien.arrosage }, { i: "☀️", l: "Lumière", v: result.entretien.lumiere }, { i: "🪱", l: "Sol", v: result.entretien.sol }, { i: "🌡️", l: "Température", v: result.entretien.temperature }].filter(x => x.v).map(({ i, l, v }) => (
-                <div key={l} style={s.gridItem}><div style={{ fontSize: "1.2rem" }}>{i}</div><div style={{ fontSize: "0.65rem", color: "#7A9586", textTransform: "uppercase" }}>{l}</div><div style={{ fontSize: "0.82rem" }}>{v}</div></div>
+          <div style={{ textAlign: "center" }}>
+            <div
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "1.6rem",
+                fontWeight: 600,
+                color: "var(--text-primary)",
+                marginBottom: "0.5rem",
+              }}
+            >
+              Analyse en cours…
+            </div>
+            <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
+              {analysisMode === "potager"
+                ? "Le botaniste parcourt votre potager"
+                : "Le botaniste examine votre plante"}
+            </div>
+          </div>
+        </div>
+      </ScreenWrap>
+    );
+
+  /* ── ERROR ── */
+  if (screen === "error")
+    return (
+      <ScreenWrap>
+        <div
+          style={{
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "1.25rem",
+            padding: "2rem",
+            textAlign: "center",
+            background: "var(--bg-deep)",
+          }}
+        >
+          <div style={{ fontSize: "3.5rem", animation: "float 3s ease-in-out infinite" }}>🍃</div>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: "1.8rem", fontWeight: 600 }}>
+            Non reconnu
+          </div>
+          <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", maxWidth: 280, lineHeight: 1.6 }}>
+            {errorMsg}
+          </p>
+          <button className="btn-primary" onClick={goHome} style={{ marginTop: "0.5rem" }}>
+            Réessayer
+          </button>
+        </div>
+      </ScreenWrap>
+    );
+
+  /* ── POTAGER RESULT ── */
+  if (screen === "potager-result" && result?.plantes)
+    return (
+      <ScreenWrap>
+        <div style={{ background: "var(--bg-deep)", minHeight: "100vh", paddingBottom: "3rem" }}>
+          {captured && (
+            <div className="photo-hero-wrap">
+              <img className="photo-hero" src={captured} alt="Potager" />
+            </div>
+          )}
+          <div style={{ padding: "1.5rem", marginTop: captured ? "-2rem" : 0, position: "relative", zIndex: 1 }}>
+            <button
+              className="btn-secondary"
+              style={{ marginBottom: "1rem", padding: "0.5rem 0.85rem", borderRadius: 12 }}
+              onClick={goHome}
+            >
+              <IconBack size={18} /> Nouveau scan
+            </button>
+            <div
+              style={{
+                display: "inline-block",
+                background: "rgba(45, 106, 79, 0.25)",
+                color: "var(--emerald)",
+                padding: "0.3rem 0.85rem",
+                borderRadius: 20,
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                marginBottom: "0.75rem",
+                border: "1px solid rgba(52, 211, 153, 0.2)",
+              }}
+            >
+              Mode Potager
+            </div>
+            <div
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "2rem",
+                fontWeight: 700,
+                lineHeight: 1.2,
+                marginBottom: "0.25rem",
+              }}
+            >
+              {result.plantes.length} plante{result.plantes.length > 1 ? "s" : ""} détectée
+              {result.plantes.length > 1 ? "s" : ""}
+            </div>
+            <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: "1.5rem" }}>
+              Analyse complète de la photo
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+              {result.plantes.map((plante, i) => (
+                <div key={i} className="result-card" style={{ animation: `slideUp 0.4s ease-out ${i * 0.08}s both` }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
+                    <IconLeaf size={18} color="#34D399" />
+                    <span style={{ fontSize: "1.05rem", fontWeight: 600 }}>{plante.nom}</span>
+                    {plante.nom_latin && (
+                      <span style={{ fontSize: "0.82rem", color: "var(--text-muted)", fontStyle: "italic" }}>
+                        {plante.nom_latin}
+                      </span>
+                    )}
+                  </div>
+                  {plante.description && (
+                    <div style={{ fontSize: "0.88rem", lineHeight: 1.7, color: "var(--text-secondary)" }}>
+                      {plante.description}
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </div>
-        )}
-        {result.conseils && <div style={s.tip}><div style={s.cardTitle}>💡 Conseil du botaniste</div><div style={s.cardText}>{result.conseils}</div></div>}
-        {result.caracteristiques?.length > 0 && <div style={s.card}><div style={s.cardTitle}>Caractéristiques</div><div style={s.tags}>{result.caracteristiques.map((c, i) => <span key={i} style={s.tagItem}>{c}</span>)}</div></div>}
-        {result.utilisation?.length > 0 && <div style={s.card}><div style={s.cardTitle}>Utilisations</div><div style={s.tags}>{result.utilisation.map((u, i) => <span key={i} style={s.tagItem}>{u}</span>)}</div></div>}
-        <button
-          style={{ ...s.saveBtn, ...(savedNotice ? s.saveBtnDone : {}) }}
-          onClick={savedNotice ? undefined : saveToLibrary}
-        >
-          {savedNotice ? "✓ Sauvegardée dans la bibliothèque" : "📚 Sauvegarder dans la bibliothèque"}
-        </button>
-      </div>
-    </div>
-  );
+        </div>
+      </ScreenWrap>
+    );
 
-  if (screen === "library") return (
-    <div style={s.library}>
-      <div style={s.libHeader}>
-        <div style={s.libTitle}>📚 Ma bibliothèque</div>
-        <button style={s.backBtn} onClick={goHome}>← Retour</button>
-      </div>
-      {library.length === 0 ? (
-        <div style={s.libEmpty}>
-          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🌱</div>
-          <div style={{ fontSize: "1.1rem", fontWeight: "bold", marginBottom: "0.5rem" }}>Aucune plante sauvegardée</div>
-          <div>Analysez une plante et sauvegardez-la pour la retrouver ici.</div>
-        </div>
-      ) : (
-        <div style={s.libList}>
-          {library.map((plant) => (
-            <div key={plant.id} style={s.libItem}>
-              <img style={s.libPhoto} src={plant.photo} alt={plant.nom} />
-              <div style={s.libBody}>
-                <div style={s.libName}>{plant.nom}</div>
-                {plant.nom_latin && <div style={s.libLatin}>{plant.nom_latin}</div>}
-                {plant.description && <div style={s.libDesc}>{plant.description}</div>}
-                <button style={s.deleteBtn} onClick={() => deleteFromLibrary(plant.id)}>
-                  🗑️ Supprimer
-                </button>
-              </div>
+  /* ── RESULT ── */
+  if (screen === "result" && result)
+    return (
+      <ScreenWrap>
+        <div style={{ background: "var(--bg-deep)", minHeight: "100vh", paddingBottom: "3rem" }}>
+          {captured && (
+            <div className="photo-hero-wrap">
+              <img className="photo-hero" src={captured} alt={result.nom} />
             </div>
-          ))}
+          )}
+          <div style={{ padding: "1.5rem", marginTop: captured ? "-2rem" : 0, position: "relative", zIndex: 1 }}>
+            <button
+              className="btn-secondary"
+              style={{ marginBottom: "1rem", padding: "0.5rem 0.85rem", borderRadius: 12 }}
+              onClick={goHome}
+            >
+              <IconBack size={18} /> Nouveau scan
+            </button>
+
+            <div
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "2.2rem",
+                fontWeight: 700,
+                lineHeight: 1.15,
+                marginBottom: "0.25rem",
+              }}
+            >
+              {result.nom}
+            </div>
+            {result.nom_latin && (
+              <div
+                style={{
+                  fontSize: "0.95rem",
+                  color: "var(--text-muted)",
+                  fontStyle: "italic",
+                  marginBottom: "1.25rem",
+                }}
+              >
+                {result.nom_latin}
+              </div>
+            )}
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+              {result.sante && (
+                <div className={`health-badge ${healthClass}`}>
+                  {result.sante.etat === "bon" ? "✓" : result.sante.etat === "attention" ? "!" : "✕"}{" "}
+                  {result.sante.commentaire}
+                </div>
+              )}
+
+              {result.description && (
+                <div className="result-card">
+                  <div className="result-card-title">Description</div>
+                  <div style={{ fontSize: "0.9rem", lineHeight: 1.75, color: "var(--text-secondary)" }}>
+                    {result.description}
+                  </div>
+                </div>
+              )}
+
+              {result.entretien && (
+                <div className="result-card">
+                  <div className="result-card-title">Guide d'entretien</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.65rem" }}>
+                    {[
+                      { i: "💧", l: "Arrosage", v: result.entretien.arrosage },
+                      { i: "☀️", l: "Lumière", v: result.entretien.lumiere },
+                      { i: "🪱", l: "Sol", v: result.entretien.sol },
+                      { i: "🌡️", l: "Température", v: result.entretien.temperature },
+                    ]
+                      .filter((x) => x.v)
+                      .map(({ i, l, v }) => (
+                        <div key={l} className="care-grid-item">
+                          <div style={{ fontSize: "1.1rem", marginBottom: "0.3rem" }}>{i}</div>
+                          <div
+                            style={{
+                              fontSize: "0.62rem",
+                              color: "var(--text-muted)",
+                              textTransform: "uppercase",
+                              letterSpacing: "0.08em",
+                              marginBottom: "0.25rem",
+                            }}
+                          >
+                            {l}
+                          </div>
+                          <div style={{ fontSize: "0.82rem", color: "var(--text-secondary)" }}>{v}</div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+
+              {result.conseils && (
+                <div className="tip-card">
+                  <div className="result-card-title" style={{ color: "var(--gold-light)" }}>
+                    Conseil du botaniste
+                  </div>
+                  <div style={{ fontSize: "0.9rem", lineHeight: 1.75, color: "var(--text-secondary)" }}>
+                    {result.conseils}
+                  </div>
+                </div>
+              )}
+
+              {result.caracteristiques?.length > 0 && (
+                <div className="result-card">
+                  <div className="result-card-title">Caractéristiques</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                    {result.caracteristiques.map((c, i) => (
+                      <span key={i} className="tag-chip">
+                        {c}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {result.utilisation?.length > 0 && (
+                <div className="result-card">
+                  <div className="result-card-title">Utilisations</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                    {result.utilisation.map((u, i) => (
+                      <span key={i} className="tag-chip">
+                        {u}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <button
+                className={`btn-primary${savedNotice ? "" : ""}`}
+                style={{
+                  width: "100%",
+                  marginTop: "0.5rem",
+                  background: savedNotice
+                    ? "linear-gradient(135deg, #40916C, #34D399)"
+                    : undefined,
+                }}
+                onClick={savedNotice ? undefined : saveToLibrary}
+              >
+                {savedNotice ? "✓ Sauvegardée dans la bibliothèque" : "Sauvegarder dans la bibliothèque"}
+              </button>
+            </div>
+          </div>
         </div>
-      )}
-    </div>
-  );
+      </ScreenWrap>
+    );
+
+  /* ── LIBRARY ── */
+  if (screen === "library")
+    return (
+      <ScreenWrap>
+        <div style={{ background: "var(--bg-deep)", minHeight: "100vh", paddingBottom: "3rem" }}>
+          <div
+            style={{
+              padding: "1.5rem",
+              borderBottom: "1px solid var(--border)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <div
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: "1.6rem",
+                  fontWeight: 700,
+                }}
+              >
+                Ma bibliothèque
+              </div>
+              {library.length > 0 && (
+                <div style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginTop: "0.15rem" }}>
+                  {library.length} plante{library.length > 1 ? "s" : ""} sauvegardée{library.length > 1 ? "s" : ""}
+                </div>
+              )}
+            </div>
+            <button
+              className="btn-secondary"
+              style={{ padding: "0.5rem 0.85rem", borderRadius: 12 }}
+              onClick={goHome}
+            >
+              <IconBack size={18} />
+            </button>
+          </div>
+
+          {library.length === 0 ? (
+            <div
+              style={{
+                textAlign: "center",
+                padding: "5rem 2rem",
+                color: "var(--text-muted)",
+              }}
+            >
+              <div style={{ marginBottom: "1.25rem", animation: "float 3s ease-in-out infinite" }}>
+                <IconLeaf size={56} color="rgba(52,211,153,0.3)" />
+              </div>
+              <div style={{ fontSize: "1.05rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "0.5rem" }}>
+                Aucune plante sauvegardée
+              </div>
+              <div style={{ fontSize: "0.85rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+                Analysez une plante et sauvegardez-la pour la retrouver ici.
+              </div>
+              <button className="btn-primary" onClick={() => openCamera("direct")}>
+                Identifier une plante
+              </button>
+            </div>
+          ) : (
+            <div style={{ padding: "1rem", display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+              {library.map((plant, i) => (
+                <div
+                  key={plant.id}
+                  className="lib-card"
+                  style={{ animation: `slideUp 0.4s ease-out ${i * 0.06}s both` }}
+                >
+                  <img
+                    style={{ width: "100%", height: 180, objectFit: "cover" }}
+                    src={plant.photo}
+                    alt={plant.nom}
+                  />
+                  <div style={{ padding: "1.1rem" }}>
+                    <div style={{ fontSize: "1.05rem", fontWeight: 600, marginBottom: "0.2rem" }}>
+                      {plant.nom}
+                    </div>
+                    {plant.nom_latin && (
+                      <div
+                        style={{
+                          fontSize: "0.82rem",
+                          color: "var(--text-muted)",
+                          fontStyle: "italic",
+                          marginBottom: "0.5rem",
+                        }}
+                      >
+                        {plant.nom_latin}
+                      </div>
+                    )}
+                    {plant.description && (
+                      <div
+                        style={{
+                          fontSize: "0.85rem",
+                          lineHeight: 1.65,
+                          color: "var(--text-secondary)",
+                          marginBottom: "0.75rem",
+                        }}
+                      >
+                        {plant.description}
+                      </div>
+                    )}
+                    <button
+                      style={{
+                        background: "rgba(239, 68, 68, 0.08)",
+                        border: "1px solid rgba(239, 68, 68, 0.2)",
+                        color: "#FCA5A5",
+                        padding: "0.4rem 0.85rem",
+                        borderRadius: 20,
+                        fontSize: "0.78rem",
+                        cursor: "pointer",
+                        fontFamily: "var(--font-body)",
+                      }}
+                      onClick={() => deleteFromLibrary(plant.id)}
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </ScreenWrap>
+    );
 
   return null;
 }
