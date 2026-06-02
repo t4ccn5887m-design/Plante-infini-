@@ -1,0 +1,35 @@
+export default async function handler(req, res) {
+  if (req.method !== "POST") return res.status(405).end();
+  try {
+    const { image } = req.body;
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": process.env.ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01"
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-5",
+        max_tokens: 1000,
+        system: "Tu es un botaniste expert. Reponds UNIQUEMENT en JSON valide sans markdown : {\"nom\":\"Nom commun\",\"nom_latin\":\"Nom scientifique\",\"famille\":\"Famille\",\"description\":\"Description\",\"caracteristiques\":[\"c1\",\"c2\"],\"entretien\":{\"arrosage\":\"...\",\"lumiere\":\"...\",\"sol\":\"...\",\"temperature\":\"...\"},\"sante\":{\"etat\":\"bon\",\"commentaire\":\"...\"},\"conseils\":\"Conseil\",\"utilisation\":[\"u1\"]}. Si pas une plante : {\"erreur\":\"Ce n est pas une plante\"}",
+        messages: [{
+          role: "user",
+          content: [
+            { type: "image", source: { type: "base64", media_type: "image/jpeg", data: image } },
+            { type: "text", text: "Analyse cette plante." }
+          ]
+        }]
+      })
+    });
+    const data = await response.json();
+    if (!data.content || data.content.length === 0) {
+      return res.status(500).json({ erreur: "Reponse vide: " + JSON.stringify(data) });
+    }
+    const text = data.content.map(i => i.text || "").join("");
+    const parsed = JSON.parse(text.replace(/```json|```/g, "").trim());
+    res.status(200).json(parsed);
+  } catch (error) {
+    res.status(500).json({ erreur: "Erreur: " + error.message });
+  }
+}
