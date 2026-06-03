@@ -4,8 +4,8 @@
   "description": "Explore the wild around you",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1B3D2F",
-  "theme_color": "#1B3D2F",
+  "background_color": "#1a3a2a",
+  "theme_color": "#1a3a2a",
   "orientation": "portrait-primary",
   "icons": [
     {
