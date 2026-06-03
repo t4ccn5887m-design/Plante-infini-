@@ -23,7 +23,9 @@ NEXT_PUBLIC_SUPABASE_URL=https://votre-projet.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=votre_clé_anon
 ```
 
-Dans le SQL Editor Supabase, exécutez `supabase/migrations/20250603000000_images_bucket.sql` pour créer le bucket public **images** (stockage des photos).
+Dans le SQL Editor Supabase, exécutez les migrations dans `supabase/migrations/` :
+- `20250603000000_images_bucket.sql` — bucket public **images** (photos)
+- `20250603000001_analyses_table.sql` — table **analyses** (découvertes)
 
 L’API `/api/analyze` utilise Claude pour identifier les organismes sur les photos.
 
@@ -34,4 +36,4 @@ L’API `/api/analyze` utilise Claude pour identifier les organismes sur les pho
 - **Résultat** — nom commun/latin, description, habitat, rareté, ajout à un album
 - **Albums** — création, couverture, tri par date
 
-Les données sont stockées localement dans le navigateur (`localStorage`).
+Les découvertes sont stockées dans Supabase (table `analyses`). Les albums restent en `localStorage` pour l’instant.

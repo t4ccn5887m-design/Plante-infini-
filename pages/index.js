@@ -27,12 +27,8 @@ import {
   syncCameraPermissionStatus,
 } from "@/lib/permissions";
 import { compressDataUrl } from "@/lib/compressImage";
-import {
-  loadAlbums,
-  loadDiscoveries,
-  saveAlbums,
-  saveDiscoveries,
-} from "@/lib/discoveriesStorage";
+import { loadAlbums, saveAlbums } from "@/lib/discoveriesStorage";
+import { fetchDiscoveries, insertDiscovery } from "@/lib/analysesStorage";
 import {
   ALBUM_THEMES,
   DEFAULT_ALBUM_THEME,
@@ -178,8 +174,7 @@ const LEAF_MARKER_HTML = `<div class="wilder-map-marker" aria-hidden="true">
   </svg>
 </div>`;
 
-async function prepareAlbumsForMap() {
-  const discoveries = loadDiscoveries();
+async function prepareAlbumsForMap(discoveries) {
   const albums = loadAlbums();
   const normalized = albums.map((album) => ({
     ...album,
@@ -530,7 +525,7 @@ function AlbumMap({ albums, discoveries, onOpenAlbum, t, locale }) {
   return <div ref={containerRef} className="album-map-container" />;
 }
 
-function AlbumsMapView({ onSelectAlbum, onLoadedCount, onAlbumsSynced, t, themeFilter }) {
+function AlbumsMapView({ discoveries, onSelectAlbum, onLoadedCount, onAlbumsSynced, t, themeFilter }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const onSelectAlbumRef = useRef(onSelectAlbum);
@@ -562,12 +557,12 @@ function AlbumsMapView({ onSelectAlbum, onLoadedCount, onAlbumsSynced, t, themeF
     };
 
     (async () => {
-      await prepareAlbumsForMap();
+      await prepareAlbumsForMap(discoveries);
       let storedAlbums = loadAlbums();
       if (themeFilter) {
         storedAlbums = storedAlbums.filter((a) => a.theme === themeFilter);
       }
-      const storedDiscoveries = loadDiscoveries();
+      const storedDiscoveries = discoveries;
 
       albumsRef.current = storedAlbums;
       onAlbumsSyncedRef.current?.(storedAlbums);
@@ -654,7 +649,7 @@ function AlbumsMapView({ onSelectAlbum, onLoadedCount, onAlbumsSynced, t, themeF
         mapRef.current = null;
       }
     };
-  }, [t, themeFilter]);
+  }, [t, themeFilter, discoveries]);
 
   return <div ref={containerRef} className="albums-map-container" />;
 }
@@ -1265,6 +1260,7 @@ function ThemeAlbumsScreen({
                 </p>
                 <AlbumsMapView
                   key={`${themeId}-${albumsViewMode}`}
+                  discoveries={discoveries}
                   themeFilter={themeId}
                   onLoadedCount={setMapLoadedCount}
                   onAlbumsSynced={setAlbums}
@@ -1498,20 +1494,6 @@ export default function Wilder() {
 
   useEffect(() => {
     syncCameraPermissionStatus().catch(() => {});
-    if (isOnboardingComplete()) {
-      setNeedsOnboarding(false);
-      return;
-    }
-    const hasPriorUsage = loadDiscoveries().length > 0;
-    if (hasPriorUsage) {
-      completeOnboarding();
-      if (!loadStoredLocation()) {
-        requestLocationPermission().catch(() => {});
-      }
-      setNeedsOnboarding(false);
-    } else {
-      setNeedsOnboarding(true);
-    }
   }, []);
 
   useEffect(() => {
@@ -1527,16 +1509,44 @@ export default function Wilder() {
   }, [camZoom, camReady]);
 
   useEffect(() => {
-    const items = loadDiscoveries();
-    setDiscoveries(items);
-    setAlbums(loadAlbums());
-    const seen = loadSeenBadges();
-    if (seen.length === 0 && items.length > 0) {
-      saveSeenBadges(computeUnlockedBadgeIds(items));
-    }
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const items = await fetchDiscoveries();
+        if (cancelled) return;
+
+        setDiscoveries(items);
+        setAlbums(loadAlbums());
+
+        const seen = loadSeenBadges();
+        if (seen.length === 0 && items.length > 0) {
+          saveSeenBadges(computeUnlockedBadgeIds(items));
+        }
+
+        if (isOnboardingComplete()) {
+          setNeedsOnboarding(false);
+        } else if (items.length > 0) {
+          completeOnboarding();
+          if (!loadStoredLocation()) {
+            requestLocationPermission().catch(() => {});
+          }
+          setNeedsOnboarding(false);
+        } else {
+          setNeedsOnboarding(true);
+        }
+      } catch (e) {
+        console.error("[Wilder] Chargement Supabase:", e);
+        if (!cancelled) setAlbums(loadAlbums());
+      }
+    })();
+
     const onFirstTouch = () => warmUpSounds();
     window.addEventListener("pointerdown", onFirstTouch, { once: true });
-    return () => window.removeEventListener("pointerdown", onFirstTouch);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("pointerdown", onFirstTouch);
+    };
   }, []);
 
   useEffect(() => {
@@ -1639,22 +1649,15 @@ export default function Wilder() {
         ...(location || {}),
       };
 
-      const updated = [discovery, ...loadDiscoveries()];
-      const saveResult = saveDiscoveries(updated);
+      const saveResult = await insertDiscovery(discovery);
       if (!saveResult.ok) {
-        console.warn("[Wilder] Sauvegarde localStorage échouée:", saveResult.error);
-        if (saveResult.error === "QuotaExceededError") {
-          setErrorMsg(
-            lang === "fr"
-              ? "Mémoire pleine — supprimez d'anciennes découvertes ou libérez de l'espace"
-              : t("error.analyze")
-          );
-        } else {
-          setErrorMsg(t("error.analyze"));
-        }
+        console.warn("[Wilder] Sauvegarde Supabase échouée:", saveResult.error);
+        setErrorMsg(t("error.analyze"));
         setScreen("error");
         return;
       }
+
+      const updated = [discovery, ...discoveries];
       setDiscoveries(updated);
       setCurrentDiscovery(discovery);
       setResult(data);
@@ -1669,7 +1672,7 @@ export default function Wilder() {
       setErrorMsg("Erreur: " + e.message);
       setScreen("error");
     }
-  }, [t, checkNewBadges, lang]);
+  }, [t, checkNewBadges, lang, discoveries]);
 
   const handleCapturedImage = useCallback(
     (dataUrl) => {
@@ -1824,7 +1827,7 @@ export default function Wilder() {
 
   const getAlbumDiscoveries = (album) => {
     const ids = new Set(album.discoveryIds);
-    return loadDiscoveries()
+    return discoveries
       .filter((d) => ids.has(d.id))
       .sort((a, b) => new Date(b.discoveredAt) - new Date(a.discoveredAt));
   };

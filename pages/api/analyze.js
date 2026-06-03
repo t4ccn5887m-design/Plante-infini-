@@ -11,6 +11,8 @@ function extensionForMediaType(mediaType) {
 }
 
 async function uploadDiscoveryImage(base64Data, mediaType) {
+  if (!supabase) throw new Error("Supabase non configuré");
+
   const ext = extensionForMediaType(mediaType);
   const path = `${Date.now()}-${randomUUID()}.${ext}`;
   const buffer = Buffer.from(base64Data, "base64");
@@ -129,11 +131,6 @@ export default async function handler(req, res) {
     if (parsed.erreur) {
       return res.status(422).json(parsed);
     }
-
-    const { error: logError } = await supabase
-      .from("analyses")
-      .insert([{ result: text, created_at: new Date().toISOString() }]);
-    if (logError) console.warn("[Wilder] Supabase log:", logError.message);
 
     let photo;
     try {
