@@ -33,6 +33,16 @@ import {
   saveAlbums,
   saveDiscoveries,
 } from "@/lib/discoveriesStorage";
+import {
+  ALBUM_THEMES,
+  DEFAULT_ALBUM_THEME,
+  getHerbariumDiscoveries,
+  getRootAlbums,
+  getSubAlbums,
+  isThemeScreen,
+  NAV_THEMES,
+  THEME_META,
+} from "@/lib/themes";
 
 const THEME_KEY = "wilder-theme";
 const FRANCE_CENTER = [46.603354, 1.888334];
@@ -122,7 +132,15 @@ function getFirstDiscoveryPhoto(album, allDiscoveries) {
   return photos[0] || null;
 }
 
-function buildAlbumRecord({ name, createdAt, coverPhoto, discoveryIds, location }) {
+function buildAlbumRecord({
+  name,
+  createdAt,
+  coverPhoto,
+  discoveryIds,
+  location,
+  theme = DEFAULT_ALBUM_THEME,
+  parentId = null,
+}) {
   const photos = coverPhoto ? [coverPhoto] : [];
   return {
     id: generateId(),
@@ -133,6 +151,8 @@ function buildAlbumRecord({ name, createdAt, coverPhoto, discoveryIds, location 
     coverPhoto,
     photos,
     discoveryIds,
+    theme,
+    ...(parentId ? { parentId } : {}),
     ...(location
       ? {
           latitude: location.latitude,
@@ -394,16 +414,15 @@ function ThemeToggle({ theme, onToggle, t }) {
 }
 
 function BottomNav({ active, onNavigate, t }) {
-  const items = [
-    { id: "home", label: t("nav.home"), Icon: IconHome },
-    { id: "albums", label: t("nav.albums"), Icon: IconAlbums },
-    { id: "map", label: t("nav.map"), Icon: IconMap },
-    { id: "stats", label: t("nav.stats"), Icon: IconStats },
-  ];
+  const items = NAV_THEMES.map((id) => ({
+    id,
+    emoji: THEME_META[id].emoji,
+    label: t(THEME_META[id].navKey),
+  }));
 
   return (
-    <nav className="bottom-nav" aria-label="Navigation principale">
-      {items.map(({ id, label, Icon }) => (
+    <nav className="bottom-nav bottom-nav--themes" aria-label="Navigation principale">
+      {items.map(({ id, emoji, label }) => (
         <button
           key={id}
           type="button"
@@ -411,8 +430,10 @@ function BottomNav({ active, onNavigate, t }) {
           onClick={() => onNavigate(id)}
           aria-current={active === id ? "page" : undefined}
         >
-          <Icon size={22} />
-          <span>{label}</span>
+          <span className="bottom-nav-emoji" aria-hidden="true">
+            {emoji}
+          </span>
+          <span className="bottom-nav-label">{label}</span>
         </button>
       ))}
     </nav>
@@ -524,7 +545,7 @@ function AlbumMap({ albums, discoveries, onOpenAlbum, t, locale }) {
   return <div ref={containerRef} className="album-map-container" />;
 }
 
-function AlbumsMapView({ onSelectAlbum, onLoadedCount, onAlbumsSynced, t }) {
+function AlbumsMapView({ onSelectAlbum, onLoadedCount, onAlbumsSynced, t, themeFilter }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const onSelectAlbumRef = useRef(onSelectAlbum);
@@ -557,7 +578,10 @@ function AlbumsMapView({ onSelectAlbum, onLoadedCount, onAlbumsSynced, t }) {
 
     (async () => {
       await prepareAlbumsForMap();
-      const storedAlbums = loadAlbums();
+      let storedAlbums = loadAlbums();
+      if (themeFilter) {
+        storedAlbums = storedAlbums.filter((a) => a.theme === themeFilter);
+      }
       const storedDiscoveries = loadDiscoveries();
 
       albumsRef.current = storedAlbums;
@@ -645,7 +669,7 @@ function AlbumsMapView({ onSelectAlbum, onLoadedCount, onAlbumsSynced, t }) {
         mapRef.current = null;
       }
     };
-  }, [t]);
+  }, [t, themeFilter]);
 
   return <div ref={containerRef} className="albums-map-container" />;
 }
@@ -916,64 +940,403 @@ function DiscoveryBody({ data, discovery, showNewBadge, t, lang, onShare, childr
   );
 }
 
-function AlbumPickerModal({ albums, onSelect, onCreate, onClose, t, locale }) {
+function ThemeAlbumPickerModal({ albums, onSelect, onCreate, onClose, t, locale }) {
+  const [step, setStep] = useState("theme");
+  const [pickedTheme, setPickedTheme] = useState(null);
   const [newName, setNewName] = useState("");
   const [creating, setCreating] = useState(false);
 
+  const themeAlbums = pickedTheme
+    ? albums.filter((a) => a.theme === pickedTheme && !a.parentId)
+    : [];
+
   const handleCreate = () => {
     const name = newName.trim() || defaultAlbumName(t, locale);
-    onCreate(name);
+    onCreate(name, pickedTheme);
     setNewName("");
     setCreating(false);
+    onClose();
   };
 
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
-        <h2>{t("albums.add_to")}</h2>
-        {albums.map((a) => (
-          <button key={a.id} type="button" className="modal-album-option" onClick={() => onSelect(a.id)}>
-            {a.coverPhoto ? (
-              <img src={a.coverPhoto} alt="" width={48} height={48} style={{ borderRadius: 8, objectFit: "cover" }} />
-            ) : (
-              <div className="album-cover album-cover-placeholder" style={{ width: 48, height: 48 }}>
-                <IconAlbums size={22} />
-              </div>
-            )}
-            <div>
-              <strong>{a.name}</strong>
-              <p style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginTop: 2 }}>
-                {a.discoveryIds.length}{" "}
-                {a.discoveryIds.length !== 1 ? t("albums.discoveries_plural") : t("albums.discoveries")}
-              </p>
-            </div>
-          </button>
-        ))}
-        {creating ? (
+        {step === "theme" ? (
           <>
-            <input
-              className="modal-input"
-              placeholder={defaultAlbumName(t, locale)}
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              autoFocus
-            />
-            <div className="modal-actions">
-              <button type="button" className="btn-secondary" onClick={() => setCreating(false)}>
-                {t("albums.cancel")}
-              </button>
-              <button type="button" className="btn-primary" onClick={handleCreate}>
-                {t("albums.create")}
-              </button>
+            <h2>{t("themes.pick_theme")}</h2>
+            <div className="theme-picker-grid">
+              {ALBUM_THEMES.map((themeId) => (
+                <button
+                  key={themeId}
+                  type="button"
+                  className="theme-picker-btn"
+                  onClick={() => {
+                    setPickedTheme(themeId);
+                    setStep("album");
+                  }}
+                >
+                  <span className="theme-picker-emoji">{THEME_META[themeId].emoji}</span>
+                  <span>{t(`themes.${themeId}.title`)}</span>
+                </button>
+              ))}
             </div>
+            <button type="button" className="btn-secondary" style={{ width: "100%", marginTop: "0.5rem" }} onClick={onClose}>
+              {t("albums.cancel")}
+            </button>
           </>
         ) : (
-          <button type="button" className="btn-create-album" onClick={() => setCreating(true)}>
-            <IconPlus size={18} /> {t("albums.new")}
-          </button>
+          <>
+            <button
+              type="button"
+              className="theme-picker-back"
+              onClick={() => {
+                setStep("theme");
+                setCreating(false);
+                setNewName("");
+              }}
+            >
+              <IconBack size={16} /> {THEME_META[pickedTheme].emoji} {t(`themes.${pickedTheme}.title`)}
+            </button>
+            <h2>{t("albums.add_to")}</h2>
+            {themeAlbums.map((a) => (
+              <button key={a.id} type="button" className="modal-album-option" onClick={() => onSelect(a.id)}>
+                {a.coverPhoto ? (
+                  <img src={a.coverPhoto} alt="" width={48} height={48} style={{ borderRadius: 8, objectFit: "cover" }} />
+                ) : (
+                  <div className="album-cover album-cover-placeholder" style={{ width: 48, height: 48 }}>
+                    <IconAlbums size={22} />
+                  </div>
+                )}
+                <div>
+                  <strong>{a.name}</strong>
+                  <p style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginTop: 2 }}>
+                    {a.discoveryIds.length}{" "}
+                    {a.discoveryIds.length !== 1 ? t("albums.discoveries_plural") : t("albums.discoveries")}
+                  </p>
+                </div>
+              </button>
+            ))}
+            {creating ? (
+              <>
+                <input
+                  className="modal-input"
+                  placeholder={defaultAlbumName(t, locale)}
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  autoFocus
+                />
+                <div className="modal-actions">
+                  <button type="button" className="btn-secondary" onClick={() => setCreating(false)}>
+                    {t("albums.cancel")}
+                  </button>
+                  <button type="button" className="btn-primary" onClick={handleCreate}>
+                    {t("albums.create")}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <button type="button" className="btn-create-album" onClick={() => setCreating(true)}>
+                <IconPlus size={18} /> {t("albums.new")}
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>
+  );
+}
+
+function HerbariumView({ albums, discoveries, onOpenDiscovery, t, locale }) {
+  const plants = getHerbariumDiscoveries(albums, discoveries);
+  if (plants.length === 0) {
+    return (
+      <div className="albums-empty herbarium-empty">
+        <span className="herbarium-empty-icon" aria-hidden="true">
+          📖
+        </span>
+        <p>{t("themes.jardin.herbarium_empty")}</p>
+      </div>
+    );
+  }
+  return (
+    <div className="herbarium-grid">
+      {plants.map((d) => (
+        <button
+          key={d.id}
+          type="button"
+          className="herbarium-card"
+          onClick={() => onOpenDiscovery(d)}
+        >
+          <div className="herbarium-card-frame">
+            <img src={d.photo} alt={d.nom} />
+          </div>
+          <h3>{d.nom}</h3>
+          <p className="herbarium-latin">{d.nom_latin || "—"}</p>
+          <p className="herbarium-date">{formatDate(d.discoveredAt, locale)}</p>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function JuniorsDiscoveryCard({ discovery, onClick, t, typeLabel, rarityLabel }) {
+  const emoji = THEME_META.juniors.emoji;
+  return (
+    <button type="button" className="juniors-discovery-card" onClick={onClick}>
+      <img src={discovery.photo} alt={discovery.nom} />
+      <div className="juniors-discovery-body">
+        <span className="juniors-discovery-badge">{emoji} {t("themes.juniors.fun_title")}</span>
+        <h4>{discovery.nom}</h4>
+        <p className="juniors-discovery-type">{typeLabel(discovery.type)}</p>
+        {discovery.fun_fact && (
+          <p className="juniors-discovery-fact">
+            💡 {discovery.fun_fact.slice(0, 120)}
+            {discovery.fun_fact.length > 120 ? "…" : ""}
+          </p>
+        )}
+        {(discovery.rarete === "rare" || discovery.rarete === "tres_rare") && (
+          <span className={`discovery-item-rarity rarity-${discovery.rarete}`}>
+            ⭐ {rarityLabel(discovery.rarete)}
+          </span>
+        )}
+      </div>
+    </button>
+  );
+}
+
+function ThemeAlbumsScreen({
+  themeId,
+  albums,
+  discoveries,
+  albumsViewMode,
+  setAlbumsViewMode,
+  jardinTab,
+  setJardinTab,
+  creatingAlbum,
+  setCreatingAlbum,
+  newAlbumName,
+  setNewAlbumName,
+  mapSheetAlbum,
+  setMapSheetAlbum,
+  mapLoadedCount,
+  setMapLoadedCount,
+  setAlbums,
+  setSelectedAlbumId,
+  setReturnScreen,
+  setScreen,
+  openDiscoveryDetail,
+  createAlbumFromList,
+  t,
+  locale,
+  theme,
+  onToggleTheme,
+  navigateMain,
+}) {
+  const isJuniors = themeId === "juniors";
+  const isJardin = themeId === "jardin";
+  const isRandos = themeId === "randos";
+  const isMapView = albumsViewMode === "map";
+  const rootAlbums = getRootAlbums(albums, themeId).sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
+  const showMapToggle = isRandos || !isJardin || jardinTab === "albums";
+
+  return (
+    <>
+      <Head>
+        <title>
+          {t(`themes.${themeId}.title`)} — Wilder
+        </title>
+      </Head>
+      <div
+        className={`albums-screen screen-enter with-bottom-nav theme-screen theme-screen--${themeId}${isJuniors ? " theme-screen--juniors" : ""}${isMapView ? " albums-screen--map" : ""}`}
+      >
+        <div className="albums-header">
+          <h1 className="albums-title">
+            {THEME_META[themeId].emoji} {t(`themes.${themeId}.title`)}
+          </h1>
+          <ThemeToggle theme={theme} onToggle={onToggleTheme} t={t} />
+        </div>
+        <p className="theme-screen-subtitle">{t(`themes.${themeId}.subtitle`)}</p>
+
+        {isJardin && (
+          <div className="jardin-tabs" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={jardinTab === "albums"}
+              className={`jardin-tab${jardinTab === "albums" ? " active" : ""}`}
+              onClick={() => setJardinTab("albums")}
+            >
+              📁 {t("themes.jardin.tab_albums")}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={jardinTab === "herbier"}
+              className={`jardin-tab${jardinTab === "herbier" ? " active" : ""}`}
+              onClick={() => setJardinTab("herbier")}
+            >
+              📖 {t("themes.jardin.herbarium")}
+            </button>
+          </div>
+        )}
+
+        {isJardin && jardinTab === "herbier" ? (
+          <>
+            <p className="theme-herbarium-intro">{t("themes.jardin.herbarium_subtitle")}</p>
+            <HerbariumView
+              albums={albums}
+              discoveries={discoveries}
+              onOpenDiscovery={(d) => openDiscoveryDetail(d, themeId)}
+              t={t}
+              locale={locale}
+            />
+          </>
+        ) : (
+          <>
+            {showMapToggle && (
+              <div className="albums-view-toggle" role="tablist" aria-label={t(`themes.${themeId}.title`)}>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={!isMapView}
+                  className={`albums-view-btn${!isMapView ? " active" : ""}`}
+                  onClick={() => {
+                    setAlbumsViewMode("list");
+                    setMapSheetAlbum(null);
+                  }}
+                >
+                  <IconList size={18} />
+                  {t("albums.view_list")}
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={isMapView}
+                  className={`albums-view-btn${isMapView ? " active" : ""}`}
+                  onClick={() => setAlbumsViewMode("map")}
+                >
+                  <IconMap size={18} />
+                  {t("albums.view_map")}
+                </button>
+              </div>
+            )}
+
+            {isMapView ? (
+              <>
+                <p className="albums-map-stats">
+                  {mapLoadedCount == null
+                    ? t("albums.map_loading")
+                    : mapLoadedCount === 0
+                      ? t("albums.map_empty")
+                      : t("albums.map_loaded_count", { count: mapLoadedCount })}
+                </p>
+                <AlbumsMapView
+                  key={`${themeId}-${albumsViewMode}`}
+                  themeFilter={themeId}
+                  onLoadedCount={setMapLoadedCount}
+                  onAlbumsSynced={setAlbums}
+                  onSelectAlbum={setMapSheetAlbum}
+                  t={t}
+                />
+                {mapSheetAlbum && (
+                  <AlbumMapSheet
+                    album={mapSheetAlbum}
+                    discoveries={discoveries}
+                    onClose={() => setMapSheetAlbum(null)}
+                    onOpenAlbum={(albumId) => {
+                      setMapSheetAlbum(null);
+                      setReturnScreen(themeId);
+                      setSelectedAlbumId(albumId);
+                      setScreen("album-detail");
+                    }}
+                    t={t}
+                    locale={locale}
+                  />
+                )}
+              </>
+            ) : (
+              <div className="albums-list">
+                {rootAlbums.length === 0 && !creatingAlbum ? (
+                  <div className="albums-empty">
+                    <span style={{ fontSize: "2.5rem", opacity: 0.5 }} aria-hidden="true">
+                      {THEME_META[themeId].emoji}
+                    </span>
+                    <p>{t("albums.empty")}</p>
+                    <p className="album-examples">{t(`themes.${themeId}.empty_examples`)}</p>
+                  </div>
+                ) : (
+                  rootAlbums.map((album) => {
+                    const count = album.discoveryIds.length;
+                    const coverPhoto = getFirstDiscoveryPhoto(album, discoveries);
+                    const subCount = getSubAlbums(albums, album.id).length;
+                    return (
+                      <button
+                        key={album.id}
+                        type="button"
+                        className="album-card"
+                        onClick={() => {
+                          setReturnScreen(themeId);
+                          setSelectedAlbumId(album.id);
+                          setScreen("album-detail");
+                        }}
+                      >
+                        {coverPhoto ? (
+                          <img src={coverPhoto} alt="" className="album-cover" />
+                        ) : (
+                          <div className="album-cover album-cover-placeholder">
+                            <IconAlbums size={28} />
+                          </div>
+                        )}
+                        <div className="album-info">
+                          <h3>{getAlbumDisplayName(album)}</h3>
+                          <p>
+                            {count}{" "}
+                            {count !== 1 ? t("albums.discoveries_plural") : t("albums.discoveries")}
+                            {subCount > 0 && ` · ${subCount} ${t("themes.sub_albums").toLowerCase()}`} ·{" "}
+                            {formatDate(album.createdAt, locale)}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })
+                )}
+
+                {creatingAlbum ? (
+                  <>
+                    <input
+                      className="modal-input"
+                      placeholder={defaultAlbumName(t, locale)}
+                      value={newAlbumName}
+                      onChange={(e) => setNewAlbumName(e.target.value)}
+                      autoFocus
+                    />
+                    <div className="modal-actions">
+                      <button type="button" className="btn-secondary" onClick={() => setCreatingAlbum(false)}>
+                        {t("albums.cancel")}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-primary"
+                        onClick={() => createAlbumFromList(themeId)}
+                      >
+                        {t("albums.create")}
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <button type="button" className="btn-create-album" onClick={() => setCreatingAlbum(true)}>
+                    <IconPlus size={18} /> {t("albums.create")}
+                  </button>
+                )}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+      <BottomNav active={themeId} onNavigate={navigateMain} t={t} />
+    </>
   );
 }
 
@@ -999,7 +1362,10 @@ export default function Wilder() {
   const [camLoading, setCamLoading] = useState(false);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [viewingDiscovery, setViewingDiscovery] = useState(null);
-  const [returnScreen, setReturnScreen] = useState("albums");
+  const [returnScreen, setReturnScreen] = useState("jardin");
+  const [jardinTab, setJardinTab] = useState("albums");
+  const [creatingSubAlbum, setCreatingSubAlbum] = useState(false);
+  const [newSubAlbumName, setNewSubAlbumName] = useState("");
   const [lang] = useState(() => detectLang());
   const [theme, setTheme] = useState("dark");
   const [showConfetti, setShowConfetti] = useState(false);
@@ -1144,7 +1510,11 @@ export default function Wilder() {
 
   const navigateMain = (target) => {
     if (target === "home") goHome();
-    else setScreen(target);
+    else {
+      if (target === "randos") setAlbumsViewMode("map");
+      else setAlbumsViewMode("list");
+      setScreen(target);
+    }
   };
 
   const analyze = useCallback(async (base64, imgSrc) => {
@@ -1282,7 +1652,7 @@ export default function Wilder() {
     setSavedToAlbum(true);
   };
 
-  const createAlbum = async (name) => {
+  const createAlbum = async (name, theme = DEFAULT_ALBUM_THEME) => {
     if (!currentDiscovery) return;
     let location = null;
     if (currentDiscovery.latitude != null && currentDiscovery.longitude != null) {
@@ -1302,6 +1672,7 @@ export default function Wilder() {
       coverPhoto: currentDiscovery.photo,
       discoveryIds: [currentDiscovery.id],
       location,
+      theme,
     });
     const updated = [album, ...loadAlbums()];
     saveAlbums(updated);
@@ -1310,7 +1681,7 @@ export default function Wilder() {
     setSavedToAlbum(true);
   };
 
-  const createAlbumFromList = async () => {
+  const createAlbumFromList = async (themeId) => {
     const name = newAlbumName.trim() || defaultAlbumName(t, locale);
     const location = await getCurrentLocation();
     const createdAt = new Date().toISOString();
@@ -1320,12 +1691,33 @@ export default function Wilder() {
       coverPhoto: null,
       discoveryIds: [],
       location,
+      theme: themeId,
     });
     const updated = [album, ...loadAlbums()];
     saveAlbums(updated);
     setAlbums(updated);
     setNewAlbumName("");
     setCreatingAlbum(false);
+  };
+
+  const createSubAlbum = async (parentAlbum) => {
+    const name = newSubAlbumName.trim() || defaultAlbumName(t, locale);
+    const location = await getCurrentLocation();
+    const createdAt = new Date().toISOString();
+    const album = buildAlbumRecord({
+      name,
+      createdAt,
+      coverPhoto: null,
+      discoveryIds: [],
+      location,
+      theme: parentAlbum.theme || DEFAULT_ALBUM_THEME,
+      parentId: parentAlbum.id,
+    });
+    const updated = [album, ...loadAlbums()];
+    saveAlbums(updated);
+    setAlbums(updated);
+    setNewSubAlbumName("");
+    setCreatingSubAlbum(false);
   };
 
   const getAlbumDiscoveries = (album) => {
@@ -1410,6 +1802,10 @@ export default function Wilder() {
               <button type="button" className="btn-home-secondary" onClick={() => setScreen("trophies")}>
                 <IconTrophy size={18} />
                 {t("home.trophies")}
+              </button>
+              <button type="button" className="btn-home-secondary" onClick={() => setScreen("stats")}>
+                <IconStats size={18} />
+                {t("home.stats")}
               </button>
               <button type="button" className="btn-home-secondary" onClick={() => setScreen("about")}>
                 <IconInfo size={18} />
@@ -1627,7 +2023,7 @@ export default function Wilder() {
           </div>
 
           {showAlbumPicker && (
-            <AlbumPickerModal
+            <ThemeAlbumPickerModal
               albums={albums}
               onSelect={addToAlbum}
               onCreate={createAlbum}
@@ -1645,12 +2041,19 @@ export default function Wilder() {
   /* ── ALBUM DETAIL ── */
   if (screen === "album-detail" && selectedAlbum) {
     const items = getAlbumDiscoveries(selectedAlbum);
+    const albumTheme = selectedAlbum.theme || DEFAULT_ALBUM_THEME;
+    const isJuniorsAlbum = albumTheme === "juniors";
+    const subAlbums = getSubAlbums(albums, selectedAlbum.id);
+    const backScreen = isThemeScreen(returnScreen) ? returnScreen : albumTheme;
+
     return (
       <>
         <Head>
           <title>{selectedAlbum.name} — Wilder</title>
         </Head>
-        <div className="albums-screen screen-enter-fast">
+        <div
+          className={`albums-screen screen-enter-fast${isJuniorsAlbum ? " theme-screen--juniors" : ""}`}
+        >
           <div className="album-detail-header">
             {selectedAlbum.coverPhoto ? (
               <img src={selectedAlbum.coverPhoto} alt="" className="album-detail-cover" />
@@ -1669,14 +2072,17 @@ export default function Wilder() {
               style={{ position: "absolute", top: "1rem", left: "1rem", zIndex: 2 }}
               onClick={() => {
                 setSelectedAlbumId(null);
-                setScreen("albums");
+                setCreatingSubAlbum(false);
+                setScreen(backScreen);
               }}
               aria-label="Retour"
             >
               <IconBack size={20} color="white" />
             </button>
             <div className="album-detail-title-wrap">
-              <h1>{selectedAlbum.name}</h1>
+              <h1>
+                {THEME_META[albumTheme]?.emoji} {selectedAlbum.name}
+              </h1>
               <p>
                 {items.length}{" "}
                 {items.length !== 1 ? t("albums.discoveries_plural") : t("albums.discoveries")} ·{" "}
@@ -1684,6 +2090,55 @@ export default function Wilder() {
               </p>
             </div>
           </div>
+
+          {subAlbums.length > 0 && (
+            <div className="sub-albums-section">
+              <h2 className="sub-albums-title">{t("themes.sub_albums")}</h2>
+              <div className="sub-albums-list">
+                {subAlbums.map((sub) => (
+                  <button
+                    key={sub.id}
+                    type="button"
+                    className="sub-album-chip"
+                    onClick={() => {
+                      setReturnScreen(backScreen);
+                      setSelectedAlbumId(sub.id);
+                    }}
+                  >
+                    📁 {getAlbumDisplayName(sub)} ({sub.discoveryIds.length})
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {creatingSubAlbum ? (
+            <div className="sub-album-create" style={{ padding: "0 1.25rem" }}>
+              <input
+                className="modal-input"
+                placeholder={t("themes.new_sub_album")}
+                value={newSubAlbumName}
+                onChange={(e) => setNewSubAlbumName(e.target.value)}
+                autoFocus
+              />
+              <div className="modal-actions">
+                <button type="button" className="btn-secondary" onClick={() => setCreatingSubAlbum(false)}>
+                  {t("albums.cancel")}
+                </button>
+                <button type="button" className="btn-primary" onClick={() => createSubAlbum(selectedAlbum)}>
+                  {t("albums.create")}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="btn-create-sub-album"
+              onClick={() => setCreatingSubAlbum(true)}
+            >
+              <IconPlus size={16} /> {t("themes.create_sub_album")}
+            </button>
+          )}
 
           {items.length === 0 ? (
             <div className="albums-empty">
@@ -1697,6 +2152,19 @@ export default function Wilder() {
                 {t("albums.scan")}
               </button>
             </div>
+          ) : isJuniorsAlbum ? (
+            <div className="juniors-discovery-list">
+              {items.map((d) => (
+                <JuniorsDiscoveryCard
+                  key={d.id}
+                  discovery={d}
+                  onClick={() => openDiscoveryDetail(d, backScreen)}
+                  t={t}
+                  typeLabel={typeLabel}
+                  rarityLabel={rarityLabel}
+                />
+              ))}
+            </div>
           ) : (
             <div className="discovery-grid">
               {items.map((d) => (
@@ -1704,7 +2172,10 @@ export default function Wilder() {
                   key={d.id}
                   type="button"
                   className="discovery-item"
-                  onClick={() => openDiscoveryDetail(d, "album-detail")}
+                  onClick={() => {
+                    setReturnScreen(backScreen);
+                    openDiscoveryDetail(d, "album-detail");
+                  }}
                 >
                   <img src={d.photo} alt={d.nom} />
                   <div className="discovery-item-info">
@@ -1739,13 +2210,16 @@ export default function Wilder() {
       fun_fact: d.fun_fact,
       anecdotes: d.anecdotes,
     };
+    const isJuniorsView = returnScreen === "juniors";
 
     return (
       <>
         <Head>
           <title>{d.nom} — Wilder</title>
         </Head>
-        <div className="discovery-screen screen-enter-fast">
+        <div
+          className={`discovery-screen screen-enter-fast${isJuniorsView ? " discovery-screen--juniors" : ""}`}
+        >
           <div className="discovery-hero">
             <img src={d.photo} alt={d.nom} />
           </div>
@@ -1757,17 +2231,42 @@ export default function Wilder() {
               style={{ marginBottom: "1rem", padding: "0.5rem 0.85rem" }}
               onClick={() => {
                 setViewingDiscovery(null);
-                setScreen(returnScreen);
+                setScreen(returnScreen === "album-detail" ? "album-detail" : returnScreen);
               }}
             >
               <IconBack size={16} /> {t("discovery.back")}
             </button>
 
-            <DiscoveryBody data={data} discovery={d} showNewBadge={false} t={t} lang={lang}>
-              <p style={{ fontSize: "0.82rem", color: "var(--text-muted)", marginTop: "0.5rem" }}>
-                {t("discovery.discovered_on")} {formatDate(d.discoveredAt, locale)}
-              </p>
-            </DiscoveryBody>
+            {isJuniorsView ? (
+              <div className="juniors-detail-card">
+                <span className="juniors-detail-emoji" aria-hidden="true">
+                  🐛✨
+                </span>
+                <h2 className="juniors-detail-title">{t("themes.juniors.fun_title")}</h2>
+                <p className="juniors-detail-learn">{t("themes.juniors.fun_learn")}</p>
+                <h3 className="juniors-detail-name">{d.nom}</h3>
+                <p className="juniors-detail-latin">{d.nom_latin}</p>
+                <span className="juniors-detail-type">{typeLabel(d.type)}</span>
+                {d.fun_fact && (
+                  <div className="juniors-fun-fact-box">
+                    <strong>💡 {t("themes.juniors.fun_fact_label")}</strong>
+                    <p>{d.fun_fact}</p>
+                  </div>
+                )}
+                {d.description && (
+                  <p className="juniors-detail-desc">{d.description.slice(0, 200)}</p>
+                )}
+                <p className="juniors-detail-date">
+                  📅 {t("discovery.discovered_on")} {formatDate(d.discoveredAt, locale)}
+                </p>
+              </div>
+            ) : (
+              <DiscoveryBody data={data} discovery={d} showNewBadge={false} t={t} lang={lang}>
+                <p style={{ fontSize: "0.82rem", color: "var(--text-muted)", marginTop: "0.5rem" }}>
+                  {t("discovery.discovered_on")} {formatDate(d.discoveredAt, locale)}
+                </p>
+              </DiscoveryBody>
+            )}
           </div>
         </div>
       </>
@@ -1788,7 +2287,7 @@ export default function Wilder() {
         <Head>
           <title>{t("stats.title")} — Wilder</title>
         </Head>
-        <div className="stats-screen screen-enter with-bottom-nav">
+        <div className="stats-screen screen-enter">
           <div className="albums-header">
             <h1 className="albums-title">{t("stats.title")}</h1>
             <ThemeToggle theme={theme} onToggle={toggleTheme} t={t} />
@@ -1904,7 +2403,14 @@ export default function Wilder() {
             </div>
           )}
         </div>
-        <BottomNav active="stats" onNavigate={navigateMain} t={t} />
+        <button
+          type="button"
+          className="btn-secondary stats-back-home"
+          style={{ margin: "1rem 1.25rem 2rem" }}
+          onClick={goHome}
+        >
+          <IconBack size={16} /> {t("discovery.home")}
+        </button>
       </>
     );
   }
@@ -2009,190 +2515,37 @@ export default function Wilder() {
     );
   }
 
-  /* ── MAP ── */
-  if (screen === "map") {
-    const locatedDiscoveries = discoveries.filter(
-      (d) => d.latitude != null && d.longitude != null
-    );
-
+  /* ── THEMATIC SCREENS (Potager, Randos, Jardin, Juniors) ── */
+  if (isThemeScreen(screen)) {
     return (
-      <>
-        <Head>
-          <title>Carte — Wilder</title>
-        </Head>
-        <div className="map-screen screen-enter">
-          <div className="map-header">
-            <h1 className="map-title">{t("map.title")}</h1>
-            <p className="map-subtitle">
-              {locatedDiscoveries.length === 0
-                ? t("map.empty")
-                : t(locatedDiscoveries.length !== 1 ? "map.places_plural" : "map.places", {
-                    count: locatedDiscoveries.length,
-                  })}
-            </p>
-          </div>
-          <AlbumMap
-            albums={albums}
-            discoveries={discoveries}
-            onOpenAlbum={(albumId) => {
-              setSelectedAlbumId(albumId);
-              setScreen("album-detail");
-            }}
-            t={t}
-            locale={locale}
-          />
-          <BottomNav active="map" onNavigate={navigateMain} t={t} />
-        </div>
-      </>
-    );
-  }
-
-  /* ── ALBUMS LIST ── */
-  if (screen === "albums") {
-    const sortedAlbums = [...albums].sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    );
-    const isMapView = albumsViewMode === "map";
-
-    return (
-      <>
-        <Head>
-          <title>Mes Albums — Wilder</title>
-        </Head>
-        <div
-          className={`albums-screen screen-enter with-bottom-nav${isMapView ? " albums-screen--map" : ""}`}
-        >
-          <div className="albums-header">
-            <h1 className="albums-title">{t("albums.title")}</h1>
-          </div>
-
-          <div className="albums-view-toggle" role="tablist" aria-label={t("albums.title")}>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={!isMapView}
-              className={`albums-view-btn${!isMapView ? " active" : ""}`}
-              onClick={() => {
-                setAlbumsViewMode("list");
-                setMapSheetAlbum(null);
-              }}
-            >
-              <IconList size={18} />
-              {t("albums.view_list")}
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={isMapView}
-              className={`albums-view-btn${isMapView ? " active" : ""}`}
-              onClick={() => setAlbumsViewMode("map")}
-            >
-              <IconMap size={18} />
-              {t("albums.view_map")}
-            </button>
-          </div>
-
-          {isMapView ? (
-            <>
-              <p className="albums-map-stats">
-                {mapLoadedCount == null
-                  ? t("albums.map_loading")
-                  : mapLoadedCount === 0
-                    ? t("albums.map_empty")
-                    : t("albums.map_loaded_count", { count: mapLoadedCount })}
-              </p>
-              <AlbumsMapView
-                key={albumsViewMode}
-                onLoadedCount={setMapLoadedCount}
-                onAlbumsSynced={setAlbums}
-                onSelectAlbum={setMapSheetAlbum}
-                t={t}
-              />
-              {mapSheetAlbum && (
-                <AlbumMapSheet
-                  album={mapSheetAlbum}
-                  discoveries={discoveries}
-                  onClose={() => setMapSheetAlbum(null)}
-                  onOpenAlbum={(albumId) => {
-                    setMapSheetAlbum(null);
-                    setSelectedAlbumId(albumId);
-                    setScreen("album-detail");
-                  }}
-                  t={t}
-                  locale={locale}
-                />
-              )}
-            </>
-          ) : (
-            <div className="albums-list">
-              {sortedAlbums.length === 0 && !creatingAlbum ? (
-                <div className="albums-empty">
-                  <IconAlbums size={48} color="var(--text-muted)" style={{ opacity: 0.4 }} />
-                  <p>{t("albums.empty")}</p>
-                  <p className="album-examples">{t("albums.examples")}</p>
-                </div>
-              ) : (
-                sortedAlbums.map((album) => {
-                  const count = album.discoveryIds.length;
-                  const coverPhoto = getFirstDiscoveryPhoto(album, discoveries);
-                  return (
-                    <button
-                      key={album.id}
-                      type="button"
-                      className="album-card"
-                      onClick={() => {
-                        setSelectedAlbumId(album.id);
-                        setScreen("album-detail");
-                      }}
-                    >
-                      {coverPhoto ? (
-                        <img src={coverPhoto} alt="" className="album-cover" />
-                      ) : (
-                        <div className="album-cover album-cover-placeholder">
-                          <IconAlbums size={28} />
-                        </div>
-                      )}
-                      <div className="album-info">
-                        <h3>{getAlbumDisplayName(album)}</h3>
-                        <p>
-                          {count}{" "}
-                          {count !== 1 ? t("albums.discoveries_plural") : t("albums.discoveries")} ·{" "}
-                          {formatDate(album.createdAt, locale)}
-                        </p>
-                      </div>
-                    </button>
-                  );
-                })
-              )}
-
-              {creatingAlbum ? (
-                <>
-                  <input
-                    className="modal-input"
-                    placeholder={defaultAlbumName(t, locale)}
-                    value={newAlbumName}
-                    onChange={(e) => setNewAlbumName(e.target.value)}
-                    autoFocus
-                  />
-                  <div className="modal-actions">
-                    <button type="button" className="btn-secondary" onClick={() => setCreatingAlbum(false)}>
-                      {t("albums.cancel")}
-                    </button>
-                    <button type="button" className="btn-primary" onClick={createAlbumFromList}>
-                      {t("albums.create")}
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <button type="button" className="btn-create-album" onClick={() => setCreatingAlbum(true)}>
-                  <IconPlus size={18} /> {t("albums.create")}
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-        <BottomNav active="albums" onNavigate={navigateMain} t={t} />
-      </>
+      <ThemeAlbumsScreen
+        themeId={screen}
+        albums={albums}
+        discoveries={discoveries}
+        albumsViewMode={albumsViewMode}
+        setAlbumsViewMode={setAlbumsViewMode}
+        jardinTab={jardinTab}
+        setJardinTab={setJardinTab}
+        creatingAlbum={creatingAlbum}
+        setCreatingAlbum={setCreatingAlbum}
+        newAlbumName={newAlbumName}
+        setNewAlbumName={setNewAlbumName}
+        mapSheetAlbum={mapSheetAlbum}
+        setMapSheetAlbum={setMapSheetAlbum}
+        mapLoadedCount={mapLoadedCount}
+        setMapLoadedCount={setMapLoadedCount}
+        setAlbums={setAlbums}
+        setSelectedAlbumId={setSelectedAlbumId}
+        setReturnScreen={setReturnScreen}
+        setScreen={setScreen}
+        openDiscoveryDetail={openDiscoveryDetail}
+        createAlbumFromList={createAlbumFromList}
+        t={t}
+        locale={locale}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        navigateMain={navigateMain}
+      />
     );
   }
 
