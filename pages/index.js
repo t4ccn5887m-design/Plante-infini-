@@ -23,7 +23,6 @@ import {
   isOnboardingComplete,
   syncCameraPermissionStatus,
 } from "@/lib/permissions";
-import { compressDataUrl } from "@/lib/compressImage";
 import { loadAlbums, saveAlbums } from "@/lib/discoveriesStorage";
 import { fetchDiscoveries, insertDiscovery } from "@/lib/analysesStorage";
 import {
@@ -75,6 +74,32 @@ function defaultAlbumName(t, locale) {
 
 function generateId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+const DISCOVERY_TYPE_EMOJI = {
+  plante: "🌿",
+  animal: "🦊",
+  champignon: "🍄",
+  fleur: "🌸",
+  insecte: "🐛",
+  oiseau: "🐦",
+  arbre: "🌳",
+  fruit: "🍎",
+  legume: "🥕",
+  reptile: "🦎",
+  papillon: "🦋",
+};
+
+function DiscoveryPhoto({ discovery, className, alt }) {
+  if (discovery?.photo) {
+    return <img src={discovery.photo} alt={alt ?? discovery.nom} className={className} />;
+  }
+  const emoji = DISCOVERY_TYPE_EMOJI[discovery?.type] || "🌿";
+  return (
+    <div className={`discovery-photo-placeholder${className ? ` ${className}` : ""}`} aria-hidden="true">
+      {emoji}
+    </div>
+  );
 }
 
 function formatLocation(discovery) {
@@ -656,7 +681,7 @@ function AlbumMapSheet({ album, discoveries, onClose, onOpenAlbum, t, locale }) 
         {items.length > 0 && (
           <div className="album-map-sheet-grid">
             {items.map((d) => (
-              <img key={d.id} src={d.photo} alt={d.nom} />
+              <DiscoveryPhoto key={d.id} discovery={d} className="album-map-sheet-thumb" />
             ))}
           </div>
         )}
@@ -1064,7 +1089,7 @@ function HerbariumView({ albums, discoveries, onOpenDiscovery, t, locale }) {
           onClick={() => onOpenDiscovery(d)}
         >
           <div className="herbarium-card-frame">
-            <img src={d.photo} alt={d.nom} />
+            <DiscoveryPhoto discovery={d} />
           </div>
           <h3>{d.nom}</h3>
           <p className="herbarium-latin">{d.nom_latin || "—"}</p>
@@ -1079,7 +1104,7 @@ function JuniorsDiscoveryCard({ discovery, onClick, t, typeLabel, rarityLabel })
   const emoji = THEME_META.juniors.emoji;
   return (
     <button type="button" className="juniors-discovery-card" onClick={onClick}>
-      <img src={discovery.photo} alt={discovery.nom} />
+      <DiscoveryPhoto discovery={discovery} />
       <div className="juniors-discovery-body">
         <span className="juniors-discovery-badge">{emoji} {t("themes.juniors.fun_title")}</span>
         <h4>{discovery.nom}</h4>
@@ -1581,14 +1606,8 @@ export default function Wilder() {
         return;
       }
 
-      const photo =
-        typeof data.photo === "string" && data.photo.startsWith("http")
-          ? data.photo
-          : await compressDataUrl(imgSrc);
-
       const discovery = {
         id: generateId(),
-        photo,
         nom: data.nom,
         nom_latin: data.nom_latin || "",
         famille: data.famille || "",
@@ -1694,6 +1713,7 @@ export default function Wilder() {
 
   const addToAlbum = (albumId) => {
     if (!currentDiscovery) return;
+    const sessionPhoto = captured || currentDiscovery.photo;
     const allAlbums = loadAlbums();
     const idx = allAlbums.findIndex((a) => a.id === albumId);
     if (idx === -1) return;
@@ -1702,15 +1722,15 @@ export default function Wilder() {
     const ids = Array.isArray(album.discoveryIds) ? album.discoveryIds : [];
     if (!ids.includes(currentDiscovery.id)) {
       album.discoveryIds = [currentDiscovery.id, ...ids];
-      if (!album.coverPhoto) album.coverPhoto = currentDiscovery.photo;
+      if (!album.coverPhoto && sessionPhoto) album.coverPhoto = sessionPhoto;
       if (album.latitude == null && currentDiscovery.latitude != null) {
         album.latitude = currentDiscovery.latitude;
         album.longitude = currentDiscovery.longitude;
         album.placeName = currentDiscovery.placeName || null;
       }
       if (!Array.isArray(album.photos)) album.photos = [];
-      if (currentDiscovery.photo && !album.photos.includes(currentDiscovery.photo)) {
-        album.photos = [currentDiscovery.photo, ...album.photos];
+      if (sessionPhoto && !album.photos.includes(sessionPhoto)) {
+        album.photos = [sessionPhoto, ...album.photos];
       }
       allAlbums[idx] = album;
       saveAlbums(allAlbums);
@@ -1735,7 +1755,7 @@ export default function Wilder() {
     const album = buildAlbumRecord({
       name: albumName,
       createdAt,
-      coverPhoto: currentDiscovery.photo,
+      coverPhoto: captured || currentDiscovery.photo,
       discoveryIds: [currentDiscovery.id],
       location,
       theme,
@@ -2266,7 +2286,7 @@ export default function Wilder() {
                     openDiscoveryDetail(d, "album-detail");
                   }}
                 >
-                  <img src={d.photo} alt={d.nom} />
+                  <DiscoveryPhoto discovery={d} />
                   <div className="discovery-item-info">
                     <h4>{d.nom}</h4>
                     <p>{d.nom_latin}</p>
@@ -2318,7 +2338,7 @@ export default function Wilder() {
           className={`discovery-screen screen-enter-fast${isJuniorsView ? " discovery-screen--juniors" : ""}`}
         >
           <div className="discovery-hero">
-            <img src={d.photo} alt={d.nom} />
+            <DiscoveryPhoto discovery={d} />
           </div>
 
           <div className="discovery-body">
