@@ -1,127 +1,72 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="Wilder">
   <defs>
-    <radialGradient id="bg" cx="50%" cy="42%" r="65%">
-      <stop offset="0%" stop-color="#234a38"/>
-      <stop offset="100%" stop-color="#1a3a2a"/>
+    <radialGradient id="wilder-bg" cx="50%" cy="36%" r="78%">
+      <stop offset="0%" stop-color="#3D7A5C"/>
+      <stop offset="48%" stop-color="#2D5A45"/>
+      <stop offset="100%" stop-color="#1B3D2F"/>
     </radialGradient>
-    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f5e6a3" stop-opacity="0.95"/>
-      <stop offset="45%" stop-color="#d4af37" stop-opacity="0.75"/>
-      <stop offset="100%" stop-color="#b8860b" stop-opacity="0.85"/>
+    <linearGradient id="wilder-sun" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F4A261"/>
+      <stop offset="100%" stop-color="#E07A3A"/>
     </linearGradient>
-    <linearGradient id="goldSoft" x1="20%" y1="0%" x2="80%" y2="100%">
-      <stop offset="0%" stop-color="#fff8dc" stop-opacity="0.5"/>
-      <stop offset="100%" stop-color="#d4af37" stop-opacity="0.25"/>
+    <linearGradient id="wilder-ring" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F5F2EB" stop-opacity="0.35"/>
+      <stop offset="35%" stop-color="#F5F2EB"/>
+      <stop offset="100%" stop-color="#F5F2EB" stop-opacity="0.55"/>
     </linearGradient>
-    <filter id="goldGlow" x="-8%" y="-8%" width="116%" height="116%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
   </defs>
 
-  <!-- Fond forêt profonde -->
-  <rect width="512" height="512" fill="#1a3a2a"/>
-  <rect width="512" height="512" fill="url(#bg)"/>
+  <!-- Fond forêt (coins arrondis type app store) -->
+  <rect width="512" height="512" rx="112" fill="url(#wilder-bg)"/>
 
-  <!-- Branches issues des pointes du W (arrière-plan) -->
-  <g stroke="#4a8f6a" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.85">
-    <!-- Branche gauche (pointe supérieure gauche) -->
-    <path d="M148 168 C118 138, 98 118, 88 98"/>
-    <path d="M88 98 C78 88, 72 78, 68 62"/>
-    <path d="M88 98 C98 82, 112 72, 128 68"/>
-    <!-- Branche droite (pointe supérieure droite) -->
-    <path d="M364 168 C394 138, 414 118, 424 98"/>
-    <path d="M424 98 C434 88, 440 78, 444 62"/>
-    <path d="M424 98 C414 82, 400 72, 384 68"/>
-    <!-- Branche centrale haute -->
-    <path d="M256 188 C256 148, 256 118, 256 92"/>
-    <path d="M256 92 C246 78, 236 68, 224 58"/>
-    <path d="M256 92 C266 78, 276 68, 288 58"/>
-  </g>
+  <!-- Lueur douce -->
+  <ellipse cx="256" cy="128" rx="200" ry="72" fill="#F5F2EB" opacity="0.06"/>
 
-  <!-- Feuilles sur les branches des pointes -->
-  <g fill="#3d8f5c">
-    <ellipse cx="68" cy="58" rx="14" ry="22" transform="rotate(-35 68 58)"/>
-    <ellipse cx="128" cy="64" rx="12" ry="20" transform="rotate(25 128 64)"/>
-    <ellipse cx="444" cy="58" rx="14" ry="22" transform="rotate(35 444 58)"/>
-    <ellipse cx="384" cy="64" rx="12" ry="20" transform="rotate(-25 384 64)"/>
-    <ellipse cx="224" cy="54" rx="11" ry="18" transform="rotate(-20 224 54)"/>
-    <ellipse cx="288" cy="54" rx="11" ry="18" transform="rotate(20 288 54)"/>
-  </g>
-
-  <!-- Contour doré (glow) du W -->
+  <!-- Anneau « objectif » — explorer & identifier -->
+  <circle cx="256" cy="256" r="168" stroke="url(#wilder-ring)" stroke-width="14" fill="none"/>
   <path
-    d="M118 362 L168 168 L256 298 L344 168 L394 362
-       M148 168 C118 138, 98 118, 88 98
-       M364 168 C394 138, 414 118, 424 98
-       M256 188 C256 148, 256 118, 256 92"
-    stroke="url(#goldSoft)"
-    stroke-width="18"
+    d="M256 88 A168 168 0 0 1 412 210"
+    stroke="url(#wilder-sun)"
+    stroke-width="22"
     stroke-linecap="round"
-    stroke-linejoin="round"
     fill="none"
-    filter="url(#goldGlow)"
-    opacity="0.55"
   />
 
-  <!-- Lettre W élégante -->
+  <!-- W stylisé — paysage & marque -->
   <path
-    d="M118 362 L168 168 L256 298 L344 168 L394 362"
-    stroke="#ffffff"
-    stroke-width="28"
+    d="M112 372 L160 188 L256 300 L352 188 L400 372"
+    stroke="#F5F2EB"
+    stroke-width="34"
     stroke-linecap="round"
     stroke-linejoin="round"
     fill="none"
   />
 
-  <!-- Contour doré fin sur le W -->
+  <!-- Feuille (flore) dans le creux gauche -->
   <path
-    d="M118 362 L168 168 L256 298 L344 168 L394 362"
-    stroke="url(#gold)"
-    stroke-width="4"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    fill="none"
-    opacity="0.9"
+    d="M188 278 C172 252 176 224 198 210 C218 198 234 210 238 232 C242 254 228 272 208 280 C200 284 192 282 188 278 Z"
+    fill="#3D7A5C"
   />
+  <path d="M198 210 L198 276" stroke="#1B3D2F" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
 
-  <!-- Branche avec feuilles sortant du W (côté droit) -->
-  <g>
-    <path d="M338 248 C378 238, 408 228, 432 212" stroke="#5a9f72" stroke-width="6" stroke-linecap="round" fill="none"/>
-    <path d="M408 228 C418 210, 428 198, 442 188" stroke="#5a9f72" stroke-width="4.5" stroke-linecap="round" fill="none"/>
-    <ellipse cx="442" cy="184" rx="16" ry="24" fill="#3d8f5c" transform="rotate(30 442 184)"/>
-    <ellipse cx="418" cy="206" rx="13" ry="20" fill="#4a9f6a" transform="rotate(-15 418 206)"/>
-    <ellipse cx="392" cy="232" rx="12" ry="18" fill="#2d6b48" transform="rotate(20 392 232)"/>
-  </g>
+  <!-- Point découverte (coucher de soleil / scan) -->
+  <circle cx="256" cy="196" r="26" fill="url(#wilder-sun)"/>
+  <circle cx="256" cy="196" r="10" fill="#F5F2EB" opacity="0.55"/>
 
-  <!-- Feuille verte à l'intérieur du W (gauche) -->
-  <g>
-    <path
-      d="M188 268 C178 248, 182 228, 198 218 C214 208, 228 214, 232 230 C236 246, 224 262, 206 270 C196 274, 190 272, 188 268 Z"
-      fill="#3d8f5c"
-    />
-    <path d="M198 218 L198 268" stroke="#2d6b48" stroke-width="3" stroke-linecap="round"/>
-    <path d="M198 240 C206 236, 214 234, 222 236" stroke="#2d6b48" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
-  </g>
+  <!-- Branche & feuilles (nature vivante) -->
+  <path
+    d="M338 268 C372 258 400 242 418 220"
+    stroke="#3D7A5C"
+    stroke-width="7"
+    stroke-linecap="round"
+    fill="none"
+  />
+  <ellipse cx="422" cy="214" rx="15" ry="23" fill="#3D7A5C" transform="rotate(32 422 214)"/>
+  <ellipse cx="396" cy="238" rx="12" ry="19" fill="#2D5A45" transform="rotate(-12 396 238)"/>
 
-  <!-- Petite fleur au centre du W -->
-  <g transform="translate(256 248)">
-    <circle cx="0" cy="0" r="10" fill="#f5c542"/>
-    <ellipse cx="0" cy="-16" rx="9" ry="14" fill="#ffffff" opacity="0.95"/>
-    <ellipse cx="14" cy="-4" rx="9" ry="14" fill="#ffffff" opacity="0.95" transform="rotate(72 14 -4)"/>
-    <ellipse cx="9" cy="12" rx="9" ry="14" fill="#ffffff" opacity="0.95" transform="rotate(144 9 12)"/>
-    <ellipse cx="-9" cy="12" rx="9" ry="14" fill="#ffffff" opacity="0.95" transform="rotate(216 -9 12)"/>
-    <ellipse cx="-14" cy="-4" rx="9" ry="14" fill="#ffffff" opacity="0.95" transform="rotate(288 -14 -4)"/>
-    <circle cx="0" cy="-16" r="4" fill="#e8a0bf" opacity="0.85"/>
-    <circle cx="14" cy="-4" r="4" fill="#e8a0bf" opacity="0.85"/>
-    <circle cx="9" cy="12" r="4" fill="#e8a0bf" opacity="0.85"/>
-    <circle cx="-9" cy="12" r="4" fill="#e8a0bf" opacity="0.85"/>
-    <circle cx="-14" cy="-4" r="4" fill="#e8a0bf" opacity="0.85"/>
-  </g>
-
-  <!-- Reflet doré subtil en haut -->
-  <ellipse cx="256" cy="120" rx="180" ry="60" fill="url(#goldSoft)" opacity="0.12"/>
+  <!-- Repères cardinaux discrets — carte & rando -->
+  <circle cx="256" cy="84" r="9" fill="#F5F2EB" opacity="0.45"/>
+  <circle cx="428" cy="256" r="7" fill="#F5F2EB" opacity="0.3"/>
+  <circle cx="84" cy="256" r="7" fill="#F5F2EB" opacity="0.3"/>
+  <circle cx="256" cy="428" r="7" fill="#F4A261" opacity="0.65"/>
 </svg>
