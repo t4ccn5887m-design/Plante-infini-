@@ -1,8 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { createT, detectLang } from "@/lib/i18n";
 
-const DISMISS_KEY = "wilder-install-dismissed";
-
 function isStandalone() {
   if (typeof window === "undefined") return false;
   return (
@@ -18,6 +16,7 @@ function isIOSDevice() {
 
 export default function InstallBanner() {
   const [visible, setVisible] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showIOSInstructions, setShowIOSInstructions] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
@@ -25,7 +24,7 @@ export default function InstallBanner() {
   const t = useMemo(() => createT(lang), [lang]);
 
   useEffect(() => {
-    if (isStandalone() || localStorage.getItem(DISMISS_KEY)) return;
+    if (isStandalone() || dismissed) return;
 
     const ios = isIOSDevice();
     setIsIOS(ios);
@@ -43,11 +42,11 @@ export default function InstallBanner() {
       clearTimeout(timer);
       window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
     };
-  }, []);
+  }, [dismissed]);
 
   const dismiss = () => {
+    setDismissed(true);
     setVisible(false);
-    localStorage.setItem(DISMISS_KEY, "1");
   };
 
   const handleInstall = async () => {
@@ -61,8 +60,8 @@ export default function InstallBanner() {
     deferredPrompt.prompt();
     await deferredPrompt.userChoice;
     setDeferredPrompt(null);
+    setDismissed(true);
     setVisible(false);
-    localStorage.setItem(DISMISS_KEY, "1");
   };
 
   if (!visible) return null;

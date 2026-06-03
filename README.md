@@ -1,8 +1,8 @@
 # Wilder
 
-**Explore the wild around you** — application de découverte de la nature.
+**Explore the wild around you** — identification naturelle par photo.
 
-Scannez plantes, animaux, insectes, oiseaux et champignons avec votre appareil photo. Chaque identification est enregistrée comme une découverte, avec animation façon Pokédex, et peut être rangée dans vos albums personnels.
+Prenez une photo, Claude analyse l’image, le résultat s’affiche. Aucune sauvegarde (pas de base de données, pas de stockage local des découvertes).
 
 ## Démarrage
 
@@ -19,19 +19,13 @@ Créez un fichier `.env.local` à la racine :
 
 ```
 ANTHROPIC_API_KEY=votre_clé_api
-NEXT_PUBLIC_SUPABASE_URL=https://votre-projet.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=votre_clé_anon
 ```
 
-Dans le SQL Editor Supabase, exécutez la migration `supabase/migrations/20250603000001_analyses_table.sql` — table **analyses** (`result` jsonb + `created_at`, sans stockage d’images).
+L’API `/api/analyze` envoie la photo à Claude et renvoie l’identification en JSON.
 
-L’API `/api/analyze` utilise Claude pour identifier les organismes sur les photos.
+## Parcours
 
-## Fonctionnalités
-
-- **Accueil** — fond nature, logo, compteur de découvertes, bouton Scanner, albums, feuilles animées
-- **Scanner** — caméra plein écran, cadre de visée, capture ou galerie
-- **Résultat** — nom commun/latin, description, habitat, rareté, ajout à un album
-- **Albums** — création, couverture, tri par date
-
-Les découvertes sont stockées dans Supabase (table `analyses`). Les albums restent en `localStorage` pour l’instant.
+1. **Accueil** — logo, bouton Scanner
+2. **Caméra** — capture plein écran
+3. **Analyse** — appel `/api/analyze`
+4. **Résultat** — fiche espèce (nom, description, rareté, etc.)

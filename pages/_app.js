@@ -1,4 +1,3 @@
-import "leaflet/dist/leaflet.css";
 import "@/styles/globals.css";
 import { useEffect } from "react";
 import InstallBanner from "@/components/InstallBanner";
