@@ -104,7 +104,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ erreur: "Image manquante" });
     }
 
-    const imageData = image.replace(/\s/g, "");
+    const rawImage = image.replace(/^data:image\/[^;]+;base64,/, "");
+    const imageData = rawImage.replace(/\s/g, "");
     const mediaType = imageMediaType(imageData);
 
     if (!process.env.ANTHROPIC_API_KEY) {
@@ -149,29 +150,13 @@ export default async function handler(req, res) {
     try {
       photo = await uploadDiscoveryImage(imageData, mediaType);
     } catch (uploadError) {
-      console.error("[Wilder] Storage upload catch — error object:", uploadError);
-      console.error("[Wilder] Storage upload catch — details:", {
+      console.error("[Wilder] Storage upload failed — analyse conservée sans photo distante:", {
         message: uploadError?.message,
-        error: uploadError?.error,
         statusCode: uploadError?.statusCode,
-        name: uploadError?.name,
-        stack: uploadError?.stack,
-        cause: uploadError?.cause,
-        keys: uploadError ? Object.getOwnPropertyNames(uploadError) : [],
-        json: (() => {
-          try {
-            return JSON.stringify(uploadError, Object.getOwnPropertyNames(uploadError ?? {}));
-          } catch {
-            return String(uploadError);
-          }
-        })(),
-      });
-      return res.status(500).json({
-        erreur: "Impossible d'enregistrer la photo — vérifiez le bucket Supabase « images »",
       });
     }
 
-    res.status(200).json({ ...parsed, photo });
+    res.status(200).json({ ...parsed, ...(photo ? { photo } : {}) });
   } catch (error) {
     console.error("[Wilder] analyze error:", error);
     res.status(500).json({ erreur: "Erreur: " + error.message });
