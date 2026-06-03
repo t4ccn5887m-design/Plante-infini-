@@ -40,6 +40,7 @@ import {
   getRootAlbums,
   getSubAlbums,
   isThemeScreen,
+  BOTTOM_NAV_EMOJI,
   NAV_THEMES,
   THEME_META,
 } from "@/lib/themes";
@@ -416,7 +417,7 @@ function ThemeToggle({ theme, onToggle, t }) {
 function BottomNav({ active, onNavigate, t }) {
   const items = NAV_THEMES.map((id) => ({
     id,
-    emoji: THEME_META[id].emoji,
+    emoji: BOTTOM_NAV_EMOJI[id],
     label: t(THEME_META[id].navKey),
   }));
 
