@@ -12,14 +12,18 @@ on conflict (id) do update set
   file_size_limit = excluded.file_size_limit,
   allowed_mime_types = excluded.allowed_mime_types;
 
--- Lecture publique
-create policy "images_public_read"
+-- Politiques Storage (idempotent — à exécuter dans le SQL Editor si upload refusé)
+drop policy if exists "images_public_read" on storage.objects;
+drop policy if exists "images_anon_insert" on storage.objects;
+drop policy if exists "Public read" on storage.objects;
+drop policy if exists "Public upload" on storage.objects;
+
+create policy "Public read"
 on storage.objects for select
 to public
 using (bucket_id = 'images');
 
--- Upload via clé anon (API Next.js)
-create policy "images_anon_insert"
+create policy "Public upload"
 on storage.objects for insert
-to anon, authenticated
+to public
 with check (bucket_id = 'images');

@@ -24,7 +24,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=votre_clé_anon
 ```
 
 Dans le SQL Editor Supabase, exécutez les migrations dans `supabase/migrations/` :
-- `20250603000000_images_bucket.sql` — bucket public **images** (photos)
+- `20250603000000_images_bucket.sql` — bucket public **images** (photos + policies)
+
+Si l’upload Storage échoue (RLS), exécutez aussi `supabase/fix-images-policies.sql` (même contenu que les policies de la migration images).
 - `20250603000001_analyses_table.sql` — table **analyses** (découvertes)
 
 L’API `/api/analyze` utilise Claude pour identifier les organismes sur les photos.
