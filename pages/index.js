@@ -870,6 +870,10 @@ function DiscoveryBody({ data, discovery, showNewBadge, t, lang, onShare, childr
       {showNewBadge && <span className="discovery-new-badge">{t("discovery.new")}</span>}
       <h1 className="discovery-name">{data.nom}</h1>
       {data.nom_latin && <p className="discovery-latin">{data.nom_latin}</p>}
+      {data.famille && <p className="discovery-family">{data.famille}</p>}
+      {data.identification_note && (
+        <p className="discovery-id-note">{data.identification_note}</p>
+      )}
 
       {data.type && (
         <span className={`discovery-type-chip${isHeritageType(data.type) ? " discovery-type-chip-heritage" : ""}`}>
@@ -927,6 +931,48 @@ function DiscoveryBody({ data, discovery, showNewBadge, t, lang, onShare, childr
         <div className="result-card">
           <div className="result-card-title">{t("discovery.health")}</div>
           <p className="result-card-text">{data.etat_sante}</p>
+        </div>
+      )}
+
+      {data.soins_traitement && (
+        <div className="result-card">
+          <div className="result-card-title">{t("discovery.care_treatment")}</div>
+          <p className="result-card-text">{data.soins_traitement}</p>
+        </div>
+      )}
+
+      {data.guide_entretien && (
+        <div className="result-card">
+          <div className="result-card-title">{t("discovery.care_guide")}</div>
+          <p className="result-card-text">{data.guide_entretien}</p>
+        </div>
+      )}
+
+      {data.conseils_expert && (
+        <div className="result-card">
+          <div className="result-card-title">{t("discovery.expert_tips")}</div>
+          <p className="result-card-text">{data.conseils_expert}</p>
+        </div>
+      )}
+
+      {data.comportement && (
+        <div className="result-card">
+          <div className="result-card-title">{t("discovery.behavior")}</div>
+          <p className="result-card-text">{data.comportement}</p>
+        </div>
+      )}
+
+      {data.dangerosite && (
+        <div className="result-card">
+          <div className="result-card-title">{t("discovery.danger")}</div>
+          <p className="result-card-text">{data.dangerosite}</p>
+        </div>
+      )}
+
+      {data.infos_utiles && (
+        <div className="result-card">
+          <div className="result-card-title">{t("discovery.useful_info")}</div>
+          <p className="result-card-text">{data.infos_utiles}</p>
         </div>
       )}
 
@@ -1549,11 +1595,19 @@ export default function Wilder() {
         photo: photoStored,
         nom: data.nom,
         nom_latin: data.nom_latin || "",
+        famille: data.famille || "",
         type: data.type || "plante",
         description: data.description || "",
+        identification_note: data.identification_note || "",
         habitat: data.habitat || "",
         rarete: data.rarete || "commun",
         etat_sante: data.etat_sante || "",
+        soins_traitement: data.soins_traitement || "",
+        guide_entretien: data.guide_entretien || "",
+        conseils_expert: data.conseils_expert || "",
+        comportement: data.comportement || "",
+        dangerosite: data.dangerosite || "",
+        infos_utiles: data.infos_utiles || "",
         histoire: data.histoire || "",
         date_construction: data.date_construction || "",
         style_architectural: data.style_architectural || "",
@@ -2203,11 +2257,19 @@ export default function Wilder() {
     const data = {
       nom: d.nom,
       nom_latin: d.nom_latin,
+      famille: d.famille,
       type: d.type,
       description: d.description,
+      identification_note: d.identification_note,
       habitat: d.habitat,
       rarete: d.rarete,
       etat_sante: d.etat_sante,
+      soins_traitement: d.soins_traitement,
+      guide_entretien: d.guide_entretien,
+      conseils_expert: d.conseils_expert,
+      comportement: d.comportement,
+      dangerosite: d.dangerosite,
+      infos_utiles: d.infos_utiles,
       fun_fact: d.fun_fact,
       anecdotes: d.anecdotes,
     };
