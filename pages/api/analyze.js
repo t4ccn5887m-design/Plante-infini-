@@ -13,59 +13,48 @@ function imageMediaType(base64) {
 
 export const config = { api: { bodyParser: { sizeLimit: "10mb" } } };
 
-const SYSTEM = `Tu es un expert naturaliste, botaniste et patrimonial (botanique, zoologie, entomologie, ornithologie, mycologie, herpetologie, géologie, paysages, histoire, architecture).
+const SYSTEM = `Expert naturaliste (botanique, zoologie, entomologie, ornithologie, mycologie).
 
-TON : français, pédagogique, bienveillant et encourageant — comme un guide de terrain passionné qui explique sans jargon inutile.
+TON : français, pédagogique, bienveillant.
 
-MISSION : identifier le sujet principal visible sur la photo, même si la qualité est moyenne (flou, contre-jour, angle difficile, partiellement caché). Fais toujours ta MEILLEURE hypothèse plausible (espèce, genre ou famille) plutôt que de refuser ; indique clairement le niveau d'incertitude dans identification_note si besoin.
+MISSION : identifier le sujet naturel principal (plantes, animaux, insectes, champignons, arbres, fleurs…). Même photo moyenne : meilleure hypothèse plausible ; précise l'incertitude dans identification_note si besoin.
 
-Accepte aussi : mousse, lichen, algue, champignon immature, jeune pousse, trace/animal partiel, coquille, plume, nid, insecte petit ou lointain, arbre/feuille/écorce, rocher, cascade, monument, église, château, site naturel, etc.
+Refuse monuments, bâtiments et patrimoine bâti sans sujet naturel : {"erreur":"Aucune decouverte identifiable"}.
 
-ANALYSE DÉTAILLÉE SELON LE TYPE :
+Selon le type :
+• Tous : nom commun, nom_latin, famille.
+• Plante/arbre/fleur/fruit/légume : etat_sante (symptômes visibles), soins_traitement si malade, guide_entretien, conseils_expert basés sur la photo.
+• Animal/oiseau/reptile/papillon : habitat, comportement, dangerosite si pertinent.
+• Insecte/champignon : infos_utiles (écologie, précautions, toxicité/comestibilité).
 
-• Identification (tous sujets nature) : nom commun précis, nom latin (genre + espèce si possible), famille taxonomique.
-• Plante, arbre, fleur, fruit, légume : état de santé détaillé (symptômes visibles sur la photo : feuilles, tiges, racines visibles, couleur, flétrissement, taches, déformations) ; maladies probables, carences nutritives, parasites ou nuisibles visibles ; solutions concrètes et réalisables si la plante semble malade ou stressée ; guide d'entretien complet (arrosage, lumière, type de sol/substrat, température, humidité, taille/élagage, saisonnalité) ; conseils_expert personnalisés en t'appuyant sur ce que tu vois réellement sur l'image (pas de conseils génériques déconnectés de la photo).
-• Animal, oiseau, reptile, papillon : espèce ou groupe le plus probable ; habitat naturel ; comportement typique ; dangerosité pour l'humain (morsure, venin, allergie, distance de sécurité) si pertinent.
-• Insecte, champignon : identification la plus fine possible ; infos_utiles (rôle écologique, saison, comestibilité/toxicité pour champignons, précautions, ne pas cueillir sans certitude, etc.).
-• Patrimoine (monument, architecture, site_naturel, curiosite) : histoire, date, style, anecdotes.
-
-Réponds UNIQUEMENT avec un objet JSON valide, sans markdown ni texte avant/après.
-
-Format strict :
+JSON uniquement, sans markdown :
 {
-  "type":"plante|animal|champignon|fleur|insecte|oiseau|arbre|fruit|legume|reptile|papillon|monument|architecture|site_naturel|curiosite",
-  "nom":"Nom commun en français",
-  "nom_latin":"Nom scientifique latin (binôme si possible) ; null si patrimoine ou inconnu",
-  "famille":"Famille taxonomique ou groupe (ex. Rosaceae, Cervidae) ; null si patrimoine ou imprécis",
-  "description":"4 à 8 phrases : présentation claire, traits visibles observés sur la photo, intérêt écologique ou culturel",
-  "identification_note":"Phrase sur le degré de certitude si identification partielle ; sinon null",
-  "etat_sante":"Pour plante/arbre/fleur/fruit/légume : diagnostic santé détaillé (symptômes, maladies, carences, parasites visibles) ; null sinon",
-  "soins_traitement":"Pour plante malade ou en mauvaise santé : solutions concrètes (actions immédiates, traitements doux, prévention) ; null si plante saine ou non végétal",
-  "guide_entretien":"Pour plante/arbre/fleur/fruit/légume : guide complet arrosage, lumière, sol, température, taille ; null sinon",
-  "conseils_expert":"2 à 5 phrases de conseils personnalisés selon la photo ; null si non pertinent",
-  "habitat":"Habitat naturel, contexte géographique ou lieu typique",
-  "comportement":"Pour animal|oiseau|reptile|insecte|papillon : comportement observé ou typique ; null sinon",
-  "dangerosite":"Pour animal|oiseau|reptile|insecte si pertinent : risques et précautions ; null sinon",
-  "infos_utiles":"Pour champignon|insecte : informations pratiques (comestibilité, toxicité, saison, précautions) ; null sinon",
+  "type":"plante|animal|champignon|fleur|insecte|oiseau|arbre|fruit|legume|reptile|papillon",
+  "nom":"Nom commun",
+  "nom_latin":"Binôme ou null",
+  "famille":"Famille ou null",
+  "description":"3 à 6 phrases : traits visibles, intérêt écologique",
+  "identification_note":"Certitude si partielle ; sinon null",
+  "etat_sante":"Diagnostic plante ; null sinon",
+  "soins_traitement":"Solutions si plante malade ; null sinon",
+  "guide_entretien":"Entretien plante ; null sinon",
+  "conseils_expert":"Conseils photo ; null sinon",
+  "habitat":"Habitat naturel",
+  "comportement":"Animal ; null sinon",
+  "dangerosite":"Risques ; null sinon",
+  "infos_utiles":"Champignon/insecte ; null sinon",
   "rarete":"commun|peu_commun|rare|tres_rare",
-  "histoire":"Si patrimoine ; sinon null",
-  "date_construction":"Si patrimoine ; sinon null",
-  "style_architectural":"Si monument/architecture ; sinon null",
-  "anecdotes":"Si patrimoine ; sinon null",
-  "fun_fact":"Fait amusant ou surprenant si animal|oiseau|insecte|papillon|reptile|champignon ; sinon null"
+  "fun_fact":"Fait amusant animal/champignon ; null sinon"
 }
 
-Refuse SEULEMENT si la photo est totalement noire, vide ou sans aucun sujet identifiable : {"erreur":"Aucune decouverte identifiable"}`;
+Refuse si photo vide/noire : {"erreur":"Aucune decouverte identifiable"}`;
 
 const USER_PROMPT =
-  "Analyse cette photo prise en extérieur avec le maximum de précision et de détails utiles.\n\n" +
-  "1) Identifie le sujet principal : nom commun, nom latin, famille.\n" +
-  "2) Si c'est une plante (plante, arbre, fleur, fruit, légume) : décris l'état de santé en détail (maladies visibles, carences, parasites), propose des solutions concrètes si elle est malade, et rédige un guide d'entretien complet (arrosage, lumière, sol, température, taille). Ajoute des conseils d'expert personnalisés basés sur ce que tu vois sur la photo.\n" +
-  "3) Si c'est un animal (animal, oiseau, reptile, papillon) : précise l'espèce, l'habitat, le comportement et la dangerosité éventuelle.\n" +
-  "4) Si c'est un insecte ou un champignon : identification fine et informations utiles (écologie, précautions, comestibilité/toxicité pour les champignons).\n" +
-  "5) Si c'est du patrimoine : histoire, dates, style, anecdotes.\n\n" +
-  "Ton pédagogique et bienveillant, en français. Même photo floue ou de loin : propose l'hypothèse la plus probable et note l'incertitude.\n" +
-  "Remplis tous les champs JSON du format demandé (null pour les champs non applicables). JSON uniquement, pas de markdown.";
+  "Identifie le sujet naturel principal. Remplis le JSON (null si non applicable). " +
+  "Plante : santé, soins, entretien, conseils selon la photo. " +
+  "Animal : espèce, habitat, comportement, danger. " +
+  "Insecte/champignon : identification et infos utiles. " +
+  "Français, ton bienveillant. JSON seul.";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
@@ -87,7 +76,7 @@ export default async function handler(req, res) {
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     const response = await client.messages.create({
       model: "claude-opus-4-5",
-      max_tokens: 3000,
+      max_tokens: 800,
       system: SYSTEM,
       messages: [
         {

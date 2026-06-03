@@ -15,7 +15,6 @@ import { playBadgeUnlockSound, playDiscoverySound, warmUpSounds } from "@/lib/so
 import AnimalSoundQuiz from "@/components/AnimalSoundQuiz";
 import { shareDiscovery } from "@/lib/share";
 import { computeStats } from "@/lib/stats";
-import { isHeritageType } from "@/lib/categories";
 import OnboardingScreen from "@/components/OnboardingScreen";
 import {
   acquireCameraStream,
@@ -25,6 +24,7 @@ import {
   isOnboardingComplete,
   loadStoredLocation,
   requestLocationPermission,
+  syncCameraPermissionStatus,
 } from "@/lib/permissions";
 import { compressDataUrl } from "@/lib/compressImage";
 import {
@@ -175,12 +175,6 @@ function escapeHtml(str) {
 const LEAF_MARKER_HTML = `<div class="wilder-map-marker" aria-hidden="true">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="#F5F2EB">
     <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
-  </svg>
-</div>`;
-
-const CASTLE_MARKER_HTML = `<div class="wilder-map-marker wilder-map-marker-heritage" aria-hidden="true">
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="#F5F2EB">
-    <path d="M3 21h18v-2H3v2zM5 19h2v-6H5v6zm4 0h2v-8H9v8zm4 0h2v-4h-2v4zm4 0h2v-8h-2v8zM3 11l9-7 9 7v2H3v-2z"/>
   </svg>
 </div>`;
 
@@ -479,14 +473,6 @@ function AlbumMap({ albums, discoveries, onOpenAlbum, t, locale }) {
         popupAnchor: [0, -42],
       });
 
-      const castleIcon = L.divIcon({
-        className: "wilder-map-marker-wrap",
-        html: CASTLE_MARKER_HTML,
-        iconSize: [40, 40],
-        iconAnchor: [20, 40],
-        popupAnchor: [0, -42],
-      });
-
       const bounds = [];
       const placed = new Set();
 
@@ -496,8 +482,6 @@ function AlbumMap({ albums, discoveries, onOpenAlbum, t, locale }) {
         if (placed.has(key)) return;
         placed.add(key);
 
-        const heritage = isHeritageType(d.type);
-        const icon = heritage ? castleIcon : leafIcon;
         const typeLabel = getTypeLabel(t, d.type || "plante");
 
         const popupHtml = `
@@ -509,7 +493,7 @@ function AlbumMap({ albums, discoveries, onOpenAlbum, t, locale }) {
           </div>
         `;
 
-        L.marker([d.latitude, d.longitude], { icon })
+        L.marker([d.latitude, d.longitude], { icon: leafIcon })
           .addTo(map)
           .bindPopup(popupHtml, { maxWidth: 280, className: "wilder-map-popup" });
 
@@ -876,7 +860,7 @@ function DiscoveryBody({ data, discovery, showNewBadge, t, lang, onShare, childr
       )}
 
       {data.type && (
-        <span className={`discovery-type-chip${isHeritageType(data.type) ? " discovery-type-chip-heritage" : ""}`}>
+        <span className="discovery-type-chip">
           {getTypeLabel(t, data.type)}
         </span>
       )}
@@ -1407,7 +1391,10 @@ export default function Wilder() {
   const [mapLoadedCount, setMapLoadedCount] = useState(null);
   const [camError, setCamError] = useState("");
   const [camLoading, setCamLoading] = useState(false);
-  const [needsOnboarding, setNeedsOnboarding] = useState(false);
+  const [needsOnboarding, setNeedsOnboarding] = useState(
+    () => typeof window !== "undefined" && !isOnboardingComplete()
+  );
+  const [camZoom, setCamZoom] = useState(1);
   const [viewingDiscovery, setViewingDiscovery] = useState(null);
   const [returnScreen, setReturnScreen] = useState("jardin");
   const [jardinTab, setJardinTab] = useState("albums");
@@ -1424,8 +1411,11 @@ export default function Wilder() {
   const rarityLabel = useCallback((r) => getRarityLabel(t, r), [t]);
 
   const videoRef = useRef(null);
+  const videoWrapRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
+  const pinchRef = useRef({ dist: 0, zoom: 1 });
+  const hardwareZoomRef = useRef({ min: 1, max: 1, step: 0.1, supported: false });
 
   useEffect(() => {
     const savedTheme = loadTheme();
@@ -1482,6 +1472,19 @@ export default function Wilder() {
     }
 
     streamRef.current = stream;
+    const track = stream.getVideoTracks()[0];
+    const caps = track?.getCapabilities?.();
+    if (caps?.zoom) {
+      hardwareZoomRef.current = {
+        min: caps.zoom.min ?? 1,
+        max: caps.zoom.max ?? 1,
+        step: caps.zoom.step ?? 0.1,
+        supported: true,
+      };
+    } else {
+      hardwareZoomRef.current = { min: 1, max: 1, step: 0.1, supported: false };
+    }
+    setCamZoom(1);
     setCamReady(true);
     await attachStreamToVideo();
   }, [attachStreamToVideo, t]);
@@ -1494,6 +1497,7 @@ export default function Wilder() {
   }, []);
 
   useEffect(() => {
+    syncCameraPermissionStatus().catch(() => {});
     if (isOnboardingComplete()) {
       setNeedsOnboarding(false);
       return;
@@ -1505,8 +1509,22 @@ export default function Wilder() {
         requestLocationPermission().catch(() => {});
       }
       setNeedsOnboarding(false);
+    } else {
+      setNeedsOnboarding(true);
     }
   }, []);
+
+  useEffect(() => {
+    const hw = hardwareZoomRef.current;
+    const track = streamRef.current?.getVideoTracks()[0];
+    if (hw.supported && track) {
+      if (videoWrapRef.current) videoWrapRef.current.style.setProperty("--cam-zoom", "1");
+      const target = hw.min + (hw.max - hw.min) * ((camZoom - 1) / 3);
+      track.applyConstraints({ advanced: [{ zoom: target }] }).catch(() => {});
+    } else if (videoWrapRef.current) {
+      videoWrapRef.current.style.setProperty("--cam-zoom", String(camZoom));
+    }
+  }, [camZoom, camReady]);
 
   useEffect(() => {
     const items = loadDiscoveries();
@@ -1663,11 +1681,36 @@ export default function Wilder() {
     const w = v.videoWidth;
     const h = v.videoHeight;
     if (!w || !h) return;
+    const zoom = Math.max(1, camZoom);
+    const useCrop = !hardwareZoomRef.current.supported && zoom > 1;
     c.width = w;
     c.height = h;
-    c.getContext("2d").drawImage(v, 0, 0, w, h);
+    const ctx = c.getContext("2d");
+    if (useCrop) {
+      const sw = w / zoom;
+      const sh = h / zoom;
+      ctx.drawImage(v, (w - sw) / 2, (h - sh) / 2, sw, sh, 0, 0, w, h);
+    } else {
+      ctx.drawImage(v, 0, 0, w, h);
+    }
     handleCapturedImage(c.toDataURL("image/jpeg", 0.85));
-  }, [handleCapturedImage]);
+  }, [handleCapturedImage, camZoom]);
+
+  const onPinchStart = useCallback((e) => {
+    if (e.touches.length !== 2) return;
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    pinchRef.current = { dist: Math.hypot(dx, dy), zoom: camZoom };
+  }, [camZoom]);
+
+  const onPinchMove = useCallback((e) => {
+    if (e.touches.length !== 2 || pinchRef.current.dist <= 0) return;
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const dist = Math.hypot(dx, dy);
+    const ratio = dist / pinchRef.current.dist;
+    setCamZoom(Math.min(4, Math.max(1, pinchRef.current.zoom * ratio)));
+  }, []);
 
   const fromGallery = useCallback(
     (file) => {
@@ -1887,7 +1930,13 @@ export default function Wilder() {
       <>
         <Head><title>Scanner — Wilder</title></Head>
         <div className="scanner-screen screen-enter-fast">
-          <div className="scanner-video-wrap">
+          <div
+            ref={videoWrapRef}
+            className="scanner-video-wrap"
+            onTouchStart={onPinchStart}
+            onTouchMove={onPinchMove}
+            style={{ "--cam-zoom": camZoom }}
+          >
             <video
               ref={videoRef}
               autoPlay
@@ -1909,6 +1958,19 @@ export default function Wilder() {
             <div className="scanner-center">
               {camReady && <Viewfinder />}
             </div>
+
+            {camReady && (
+              <input
+                type="range"
+                className="cam-zoom-slider"
+                min={1}
+                max={4}
+                step={0.1}
+                value={camZoom}
+                onChange={(e) => setCamZoom(Number(e.target.value))}
+                aria-label={t("scanner.zoom")}
+              />
+            )}
 
             <p className="scanner-hint">{t("scanner.hint")}</p>
 
@@ -2048,11 +2110,10 @@ export default function Wilder() {
           <div className="discovery-body">
             <button
               type="button"
-              className="btn-secondary"
-              style={{ marginBottom: "1rem", padding: "0.5rem 0.85rem" }}
+              className="btn-secondary discovery-home-btn"
               onClick={goHome}
             >
-              <IconBack size={16} /> {t("discovery.home")}
+              ← {t("discovery.home")}
             </button>
 
             <DiscoveryBody data={result} discovery={currentDiscovery} showNewBadge t={t} lang={lang}>
@@ -2073,6 +2134,15 @@ export default function Wilder() {
                 onClick={() => setScreen("camera")}
               >
                 {t("discovery.scan_again")}
+              </button>
+
+              <button
+                type="button"
+                className="btn-secondary discovery-home-btn"
+                style={{ width: "100%", marginTop: "0.75rem" }}
+                onClick={goHome}
+              >
+                ← {t("discovery.home")}
               </button>
             </DiscoveryBody>
           </div>
@@ -2384,10 +2454,6 @@ export default function Wilder() {
               <div className="stat-card">
                 <span className="stat-card-num">{stats.citiesCount}</span>
                 <span className="stat-card-label">{t("stats.cities")}</span>
-              </div>
-              <div className="stat-card stat-card-highlight stat-card-heritage">
-                <span className="stat-card-num">{stats.patrimoineCount}</span>
-                <span className="stat-card-label">{t("stats.patrimoine")}</span>
               </div>
             </div>
           </div>
