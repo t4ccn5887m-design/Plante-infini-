@@ -1586,14 +1586,13 @@ export default function Wilder() {
     setCaptured(imgSrc);
     setScreen("analyzing");
     try {
-      const [res, location, photoStored] = await Promise.all([
+      const [res, location] = await Promise.all([
         fetch("/api/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ image: base64 }),
         }),
         getCurrentLocation(),
-        compressDataUrl(imgSrc),
       ]);
 
       const { data, parseError } = await parseApiResponse(res);
@@ -1608,9 +1607,14 @@ export default function Wilder() {
         return;
       }
 
+      const photo =
+        typeof data.photo === "string" && data.photo.startsWith("http")
+          ? data.photo
+          : await compressDataUrl(imgSrc);
+
       const discovery = {
         id: generateId(),
-        photo: photoStored,
+        photo,
         nom: data.nom,
         nom_latin: data.nom_latin || "",
         famille: data.famille || "",

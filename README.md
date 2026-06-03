@@ -19,7 +19,11 @@ Créez un fichier `.env.local` à la racine :
 
 ```
 ANTHROPIC_API_KEY=votre_clé_api
+NEXT_PUBLIC_SUPABASE_URL=https://votre-projet.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=votre_clé_anon
 ```
+
+Dans le SQL Editor Supabase, exécutez `supabase/migrations/20250603000000_images_bucket.sql` pour créer le bucket public **images** (stockage des photos).
 
 L’API `/api/analyze` utilise Claude pour identifier les organismes sur les photos.
 
