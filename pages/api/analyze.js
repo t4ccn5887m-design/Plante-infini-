@@ -1,11 +1,15 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { createClient } from "@supabase/supabase-js";
 import { parseClaudeJson } from "@/lib/parseAnalysis";
+import { supabase } from "@/lib/supabase";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+function imageMediaType(base64) {
+  const head = base64.replace(/\s/g, "").slice(0, 12);
+  if (head.startsWith("iVBOR")) return "image/png";
+  if (head.startsWith("/9j/")) return "image/jpeg";
+  if (head.startsWith("R0lGOD")) return "image/gif";
+  if (head.startsWith("UklGR")) return "image/webp";
+  return "image/jpeg";
+}
 
 export const config = { api: { bodyParser: { sizeLimit: "10mb" } } };
 
@@ -43,6 +47,9 @@ export default async function handler(req, res) {
       return res.status(400).json({ erreur: "Image manquante" });
     }
 
+    const imageData = image.replace(/\s/g, "");
+    const mediaType = imageMediaType(imageData);
+
     if (!process.env.ANTHROPIC_API_KEY) {
       return res.status(500).json({ erreur: "Clé API non configurée" });
     }
@@ -56,7 +63,7 @@ export default async function handler(req, res) {
         {
           role: "user",
           content: [
-            { type: "image", source: { type: "base64", media_type: "image/jpeg", data: image } },
+            { type: "image", source: { type: "base64", media_type: mediaType, data: imageData } },
             {
               type: "text",
               text:
@@ -91,7 +98,11 @@ export default async function handler(req, res) {
       return res.status(422).json(parsed);
     }
 
-    await supabase.from("analyses").insert([{ result: text, created_at: new Date() }]);
+    const { error: logError } = await supabase
+      .from("analyses")
+      .insert([{ result: text, created_at: new Date().toISOString() }]);
+    if (logError) console.warn("[Wilder] Supabase log:", logError.message);
+
     res.status(200).json(parsed);
   } catch (error) {
     console.error("[Wilder] analyze error:", error);
