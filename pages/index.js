@@ -11,11 +11,21 @@ import {
   loadSeenBadges,
   saveSeenBadges,
 } from "@/lib/badges";
-import { playBadgeUnlockSound, playDiscoverySound } from "@/lib/sounds";
+import { playBadgeUnlockSound, playDiscoverySound, warmUpSounds } from "@/lib/sounds";
 import AnimalSoundQuiz from "@/components/AnimalSoundQuiz";
 import { shareDiscovery } from "@/lib/share";
 import { computeStats } from "@/lib/stats";
 import { isHeritageType } from "@/lib/categories";
+import OnboardingScreen from "@/components/OnboardingScreen";
+import {
+  acquireCameraStream,
+  completeOnboarding,
+  getCurrentLocation,
+  isCameraGranted,
+  isOnboardingComplete,
+  loadStoredLocation,
+  requestLocationPermission,
+} from "@/lib/permissions";
 
 const DISCOVERIES_KEY = "wilder-discoveries";
 const ALBUMS_KEY = "wilder-albums";
@@ -160,35 +170,6 @@ const CASTLE_MARKER_HTML = `<div class="wilder-map-marker wilder-map-marker-heri
     <path d="M3 21h18v-2H3v2zM5 19h2v-6H5v6zm4 0h2v-8H9v8zm4 0h2v-4h-2v4zm4 0h2v-8h-2v8zM3 11l9-7 9 7v2H3v-2z"/>
   </svg>
 </div>`;
-
-function getCurrentLocation() {
-  return new Promise((resolve) => {
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      resolve(null);
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const { latitude, longitude } = pos.coords;
-        let placeName = null;
-        try {
-          const res = await fetch(
-            `/api/reverse-geocode?lat=${latitude}&lon=${longitude}`
-          );
-          if (res.ok) {
-            const data = await res.json();
-            placeName = data.placeName || null;
-          }
-        } catch {
-          /* ignore */
-        }
-        resolve({ latitude, longitude, placeName });
-      },
-      () => resolve(null),
-      { enableHighAccuracy: true, timeout: 8000, maximumAge: 120000 }
-    );
-  });
-}
 
 async function prepareAlbumsForMap() {
   const discoveries = loadDiscoveries();
@@ -586,11 +567,9 @@ function AlbumsMapView({ onSelectAlbum, onLoadedCount, onAlbumsSynced, t }) {
       await prepareAlbumsForMap();
       const storedAlbums = loadAlbums();
       const storedDiscoveries = loadDiscoveries();
-      console.log("[Wilder] Albums localStorage:", storedAlbums);
 
       albumsRef.current = storedAlbums;
       onAlbumsSyncedRef.current?.(storedAlbums);
-      onLoadedCountRef.current?.(0);
 
       const L = (await import("leaflet")).default;
 
@@ -606,17 +585,7 @@ function AlbumsMapView({ onSelectAlbum, onLoadedCount, onAlbumsSynced, t }) {
         maxZoom: 19,
       }).addTo(map);
 
-      L.circleMarker(FRANCE_CENTER, {
-        radius: 10,
-        fillColor: "#e74c3c",
-        color: "#ffffff",
-        weight: 2,
-        fillOpacity: 1,
-      })
-        .addTo(map)
-        .bindPopup("Test — centre de la France");
-
-      const bounds = [[...FRANCE_CENTER]];
+      const bounds = [];
 
       storedAlbums.forEach((album) => {
         const loc = getAlbumLocation(album, storedDiscoveries);
@@ -646,13 +615,12 @@ function AlbumsMapView({ onSelectAlbum, onLoadedCount, onAlbumsSynced, t }) {
         bounds.push([loc.latitude, loc.longitude]);
       });
 
-      const albumMarkerCount = Math.max(bounds.length - 1, 0);
-      onLoadedCountRef.current?.(albumMarkerCount);
+      onLoadedCountRef.current?.(bounds.length);
 
-      if (bounds.length > 2) {
+      if (bounds.length > 1) {
         map.fitBounds(bounds, { padding: [56, 56], maxZoom: 14 });
-      } else if (bounds.length === 2) {
-        map.setView(bounds[1], 13);
+      } else if (bounds.length === 1) {
+        map.setView(bounds[0], 13);
       }
 
       mapRef.current = map;
@@ -707,7 +675,7 @@ function AlbumMapSheet({ album, discoveries, onClose, onOpenAlbum, t, locale }) 
       >
         <div className="album-map-sheet-handle" aria-hidden="true" />
         <h2 id="album-map-sheet-title" className="album-map-sheet-title">
-          {album.name}
+          {getAlbumDisplayName(album)}
         </h2>
         <p className="album-map-sheet-meta">{formatDate(album.createdAt, locale)}</p>
         {loc?.placeName && (
@@ -1036,6 +1004,8 @@ export default function Wilder() {
   const [mapSheetAlbum, setMapSheetAlbum] = useState(null);
   const [mapLoadedCount, setMapLoadedCount] = useState(null);
   const [camError, setCamError] = useState("");
+  const [camLoading, setCamLoading] = useState(false);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [viewingDiscovery, setViewingDiscovery] = useState(null);
   const [returnScreen, setReturnScreen] = useState("albums");
   const [lang] = useState(() => detectLang());
@@ -1094,34 +1064,18 @@ export default function Wilder() {
   const startCamera = useCallback(async () => {
     setCamReady(false);
     setCamError("");
+    setCamLoading(true);
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
 
-    if (!navigator.mediaDevices?.getUserMedia) {
-      setCamError(t("scanner.camera_error"));
+    const { ok, stream, error } = await acquireCameraStream();
+    setCamLoading(false);
+
+    if (!ok || !stream) {
+      setCamError(error === "unsupported" ? t("scanner.camera_error") : t("scanner.camera_denied"));
       return;
     }
 
-    const constraints = [
-      { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } },
-      { facingMode: "environment" },
-      true,
-    ];
-
-    let stream = null;
-    for (const video of constraints) {
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ video, audio: false });
-        break;
-      } catch {
-        /* next */
-      }
-    }
-
-    if (!stream) {
-      setCamError(t("scanner.camera_denied"));
-      return;
-    }
     streamRef.current = stream;
     setCamReady(true);
     await attachStreamToVideo();
@@ -1135,6 +1089,21 @@ export default function Wilder() {
   }, []);
 
   useEffect(() => {
+    if (isOnboardingComplete()) {
+      setNeedsOnboarding(false);
+      return;
+    }
+    const hasPriorUsage = loadDiscoveries().length > 0;
+    if (hasPriorUsage) {
+      completeOnboarding();
+      if (!loadStoredLocation()) {
+        requestLocationPermission().catch(() => {});
+      }
+      setNeedsOnboarding(false);
+    }
+  }, []);
+
+  useEffect(() => {
     const items = loadDiscoveries();
     setDiscoveries(items);
     setAlbums(loadAlbums());
@@ -1142,6 +1111,9 @@ export default function Wilder() {
     if (seen.length === 0 && items.length > 0) {
       saveSeenBadges(computeUnlockedBadgeIds(items));
     }
+    const onFirstTouch = () => warmUpSounds();
+    window.addEventListener("pointerdown", onFirstTouch, { once: true });
+    return () => window.removeEventListener("pointerdown", onFirstTouch);
   }, []);
 
   useEffect(() => {
@@ -1370,6 +1342,18 @@ export default function Wilder() {
     </>
   );
 
+  if (needsOnboarding) {
+    return (
+      <>
+        <Head>
+          <title>Wilder</title>
+          <meta name="description" content={slogan} />
+        </Head>
+        <OnboardingScreen t={t} onComplete={() => setNeedsOnboarding(false)} />
+      </>
+    );
+  }
+
   /* ── HOME ── */
   if (screen === "home") {
     return (
@@ -1495,17 +1479,33 @@ export default function Wilder() {
 
           {!camReady && (
             <div className="camera-error-overlay">
-              <div style={{ animation: "pulseGlow 2s ease-in-out infinite" }}>
-                <IconCamera size={48} color="#E07A3A" />
-              </div>
-              <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.9rem", maxWidth: 280, lineHeight: 1.5 }}>
-                {camError || t("scanner.allow_camera")}
-              </p>
-              {camError && (
-                <button type="button" className="btn-primary" onClick={startCamera}>
-                  {t("scanner.retry")}
-                </button>
-              )}
+              {camLoading ? (
+                <>
+                  <div className="camera-loading-spinner" aria-hidden="true" />
+                  <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.9rem" }}>
+                    {t("scanner.loading_camera")}
+                  </p>
+                </>
+              ) : camError ? (
+                <>
+                  <div style={{ animation: "pulseGlow 2s ease-in-out infinite" }}>
+                    <IconCamera size={48} color="#E07A3A" />
+                  </div>
+                  <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.9rem", maxWidth: 280, lineHeight: 1.5 }}>
+                    {camError}
+                  </p>
+                  <button type="button" className="btn-primary" onClick={startCamera}>
+                    {t("scanner.retry")}
+                  </button>
+                </>
+              ) : isCameraGranted() ? (
+                <>
+                  <div className="camera-loading-spinner" aria-hidden="true" />
+                  <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.9rem" }}>
+                    {t("scanner.loading_camera")}
+                  </p>
+                </>
+              ) : null}
             </div>
           )}
         </div>
@@ -2083,7 +2083,9 @@ export default function Wilder() {
               <p className="albums-map-stats">
                 {mapLoadedCount == null
                   ? t("albums.map_loading")
-                  : t("albums.map_loaded_count", { count: mapLoadedCount })}
+                  : mapLoadedCount === 0
+                    ? t("albums.map_empty")
+                    : t("albums.map_loaded_count", { count: mapLoadedCount })}
               </p>
               <AlbumsMapView
                 key={albumsViewMode}
@@ -2118,6 +2120,7 @@ export default function Wilder() {
               ) : (
                 sortedAlbums.map((album) => {
                   const count = album.discoveryIds.length;
+                  const coverPhoto = getFirstDiscoveryPhoto(album, discoveries);
                   return (
                     <button
                       key={album.id}
@@ -2128,15 +2131,15 @@ export default function Wilder() {
                         setScreen("album-detail");
                       }}
                     >
-                      {album.coverPhoto ? (
-                        <img src={album.coverPhoto} alt="" className="album-cover" />
+                      {coverPhoto ? (
+                        <img src={coverPhoto} alt="" className="album-cover" />
                       ) : (
                         <div className="album-cover album-cover-placeholder">
                           <IconAlbums size={28} />
                         </div>
                       )}
                       <div className="album-info">
-                        <h3>{album.name}</h3>
+                        <h3>{getAlbumDisplayName(album)}</h3>
                         <p>
                           {count}{" "}
                           {count !== 1 ? t("albums.discoveries_plural") : t("albums.discoveries")} ·{" "}
