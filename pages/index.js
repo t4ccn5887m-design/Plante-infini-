@@ -26,36 +26,28 @@ import {
   loadStoredLocation,
   requestLocationPermission,
 } from "@/lib/permissions";
+import { compressDataUrl } from "@/lib/compressImage";
+import {
+  loadAlbums,
+  loadDiscoveries,
+  saveAlbums,
+  saveDiscoveries,
+} from "@/lib/discoveriesStorage";
 
-const DISCOVERIES_KEY = "wilder-discoveries";
-const ALBUMS_KEY = "wilder-albums";
 const THEME_KEY = "wilder-theme";
 const FRANCE_CENTER = [46.603354, 1.888334];
 
-function loadDiscoveries() {
-  if (typeof window === "undefined") return [];
-  try {
-    return JSON.parse(localStorage.getItem(DISCOVERIES_KEY) || "[]");
-  } catch {
-    return [];
+async function parseApiResponse(res) {
+  const text = await res.text();
+  if (!text.trim()) {
+    return { data: null, parseError: true };
   }
-}
-
-function saveDiscoveries(items) {
-  localStorage.setItem(DISCOVERIES_KEY, JSON.stringify(items));
-}
-
-function loadAlbums() {
-  if (typeof window === "undefined") return [];
   try {
-    return JSON.parse(localStorage.getItem(ALBUMS_KEY) || "[]");
+    return { data: JSON.parse(text), parseError: false };
   } catch {
-    return [];
+    console.error("[Wilder] Réponse API non-JSON:", text.slice(0, 300));
+    return { data: null, parseError: true };
   }
-}
-
-function saveAlbums(items) {
-  localStorage.setItem(ALBUMS_KEY, JSON.stringify(items));
 }
 
 function formatDate(iso, locale) {
@@ -1159,16 +1151,22 @@ export default function Wilder() {
     setCaptured(imgSrc);
     setScreen("analyzing");
     try {
-      const [res, location] = await Promise.all([
+      const [res, location, photoStored] = await Promise.all([
         fetch("/api/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ image: base64 }),
         }),
         getCurrentLocation(),
+        compressDataUrl(imgSrc),
       ]);
 
-      const data = await res.json();
+      const { data, parseError } = await parseApiResponse(res);
+      if (parseError || !data) {
+        setErrorMsg(t("error.analyze"));
+        setScreen("error");
+        return;
+      }
       if (!res.ok || data.erreur) {
         setErrorMsg(data.erreur || t("error.analyze"));
         setScreen("error");
@@ -1177,7 +1175,7 @@ export default function Wilder() {
 
       const discovery = {
         id: generateId(),
-        photo: imgSrc,
+        photo: photoStored,
         nom: data.nom,
         nom_latin: data.nom_latin || "",
         type: data.type || "plante",
@@ -1195,7 +1193,21 @@ export default function Wilder() {
       };
 
       const updated = [discovery, ...loadDiscoveries()];
-      saveDiscoveries(updated);
+      const saveResult = saveDiscoveries(updated);
+      if (!saveResult.ok) {
+        console.warn("[Wilder] Sauvegarde localStorage échouée:", saveResult.error);
+        if (saveResult.error === "QuotaExceededError") {
+          setErrorMsg(
+            lang === "fr"
+              ? "Mémoire pleine — supprimez d'anciennes découvertes ou libérez de l'espace"
+              : t("error.analyze")
+          );
+        } else {
+          setErrorMsg(t("error.analyze"));
+        }
+        setScreen("error");
+        return;
+      }
       setDiscoveries(updated);
       setCurrentDiscovery(discovery);
       setResult(data);
@@ -1206,10 +1218,11 @@ export default function Wilder() {
         playDiscoverySound();
       }
     } catch (e) {
+      console.error("[Wilder] analyze:", e);
       setErrorMsg("Erreur: " + e.message);
       setScreen("error");
     }
-  }, [t, checkNewBadges]);
+  }, [t, checkNewBadges, lang]);
 
   const handleCapturedImage = useCallback(
     (dataUrl) => {
@@ -1248,8 +1261,9 @@ export default function Wilder() {
     if (idx === -1) return;
 
     const album = allAlbums[idx];
-    if (!album.discoveryIds.includes(currentDiscovery.id)) {
-      album.discoveryIds = [currentDiscovery.id, ...album.discoveryIds];
+    const ids = Array.isArray(album.discoveryIds) ? album.discoveryIds : [];
+    if (!ids.includes(currentDiscovery.id)) {
+      album.discoveryIds = [currentDiscovery.id, ...ids];
       if (!album.coverPhoto) album.coverPhoto = currentDiscovery.photo;
       if (album.latitude == null && currentDiscovery.latitude != null) {
         album.latitude = currentDiscovery.latitude;

@@ -1,34 +1,37 @@
+import { parseClaudeJson } from "@/lib/parseAnalysis";
+
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
   try {
     const { image } = req.body;
 
+    if (!image || typeof image !== "string") {
+      return res.status(400).json({ erreur: "Image manquante" });
+    }
+
     const system =
-      "Tu es un expert en nature ET en patrimoine (botanique, zoologie, entomologie, ornithologie, mycologie, herpetologie, " +
-      "histoire, architecture, sites naturels remarquables). " +
-      "Identifie ce qui est visible sur la photo : soit un etre vivant (plante, animal, insecte, etc.), " +
-      "soit un site ou monument (chateau, eglise, cathedrale, ruine, tour, pont, phare, moulin, abbaye, " +
-      "cascade, grotte, falaise, lac, riviere, fontaine, statue, fresque, calvaire). " +
-      "Pour la nature : observe forme des feuilles, couleur, texture, nombre de pattes/ailes, bec, ecailles, chapeau de champignon, etc. " +
-      "Pour le patrimoine : identifie le monument ou site, son style, son epoque et son contexte historique. " +
-      "Si plusieurs possibilites, choisis la plus probable et mentionne l'incertitude dans la description. " +
-      "Reponds UNIQUEMENT en JSON valide sans markdown : " +
-      '{"type":"plante|animal|champignon|fleur|insecte|oiseau|arbre|fruit|legume|reptile|papillon|monument|architecture|site_naturel|curiosite",' +
-      '"nom":"Nom en francais (espece ou monument/site)",' +
+      "Tu es un expert naturaliste et patrimonial (botanique, zoologie, entomologie, ornithologie, mycologie, herpetologie, " +
+      "géologie, paysages, histoire, architecture). " +
+      "MISSION : identifier le sujet principal visible sur la photo, même si la qualité est moyenne (flou, contre-jour, angle difficile, partiellement caché). " +
+      "Fais toujours ta MEILLEURE hypothèse plausible (espèce, genre ou famille) plutôt que de refuser : précise le niveau d'incertitude dans la description. " +
+      "Accepte aussi : mousse, lichen, algue, champignon immature, jeune pousse, trace/animal partiel, coquille, plume, nid, " +
+      "insecte petit ou lointain, arbre/feuille/bark, rocher remarquable, cascade, rivière, lac, falaise, prairie, " +
+      "monument, église, château, pont, statue, ruine, site naturel. " +
+      "Observe couleurs, textures, formes, nombre de pattes/ailes, bec, écailles, chapeau de champignon, feuilles, etc. " +
+      "Réponds UNIQUEMENT avec un objet JSON valide, sans markdown ni texte avant/après. " +
+      'Format strict : {"type":"plante|animal|champignon|fleur|insecte|oiseau|arbre|fruit|legume|reptile|papillon|monument|architecture|site_naturel|curiosite",' +
+      '"nom":"Nom en français",' +
       '"nom_latin":"Nom scientifique latin si nature ; null si patrimoine",' +
-      '"description":"Description complete et accessible (4-6 phrases)",' +
-      '"habitat":"Habitat naturel si nature ; contexte geographique si site",' +
+      '"description":"4-6 phrases accessibles ; mentionne si identification approximative",' +
+      '"habitat":"Habitat ou contexte géographique typique",' +
       '"rarete":"commun|peu_commun|rare|tres_rare",' +
-      '"etat_sante":"Etat de sante visible si plante/fleur/arbre/fruit/legume ; sinon null",' +
-      '"histoire":"Histoire du monument ou site (obligatoire si patrimoine ; null si nature)",' +
-      '"date_construction":"Date ou epoque de construction (ex. XIIe siecle, 1892 ; null si nature)",' +
-      '"style_architectural":"Style architectural ou type de site (obligatoire si monument/architecture ; null si nature)",' +
-      '"anecdotes":"Anecdotes ou faits interessants (obligatoire si patrimoine ; null si nature)",' +
-      '"fun_fact":"Un fait amusant et surprenant sur l\'espece (1-2 phrases, ton ludique pour enfants et adultes ; obligatoire si animal|oiseau|insecte|papillon|reptile ; null sinon)"}. ' +
-      'Types patrimoine : monument (chateaux, eglises, cathedrales, ruines, tours), ' +
-      'architecture (ponts, phares, moulins, abbayes), site_naturel (cascades, grottes, falaises, lacs, rivieres), ' +
-      'curiosite (fontaines, statues, fresques, calvaires). ' +
-      'Si rien de reconnaissable ou photo floue/vide : {"erreur":"Aucune decouverte identifiable"}';
+      '"etat_sante":"Si plante/arbre visible ; sinon null",' +
+      '"histoire":"Si patrimoine ; sinon null",' +
+      '"date_construction":"Si patrimoine ; sinon null",' +
+      '"style_architectural":"Si monument/architecture ; sinon null",' +
+      '"anecdotes":"Si patrimoine ; sinon null",' +
+      '"fun_fact":"Fait amusant si animal|oiseau|insecte|papillon|reptile ; sinon null"}. ' +
+      'Refuse SEULEMENT si la photo est totalement noire, vide ou sans aucun sujet (pas de ciel seul) : {"erreur":"Aucune decouverte identifiable"}';
 
     if (!process.env.ANTHROPIC_API_KEY) {
       return res.status(500).json({ erreur: "Clé API non configurée" });
@@ -53,11 +56,13 @@ export default async function handler(req, res) {
               {
                 type: "text",
                 text:
-                  "Identifie ce qui est visible sur cette photo : etre vivant (nature) ou monument/site (patrimoine). " +
-                  "Fournis obligatoirement : la categorie, le nom, la description, l'habitat ou contexte, le niveau de rarete. " +
-                  "Si nature : nom scientifique et etat de sante si plante. " +
-                  "Si patrimoine : histoire, date de construction, style architectural et anecdotes. " +
-                  "Si animal, oiseau, insecte, papillon ou reptile : ajoute un fun_fact surprenant et amusant.",
+                  "Analyse cette photo prise en extérieur. Identifie le sujet principal (nature vivante ou patrimoine/site). " +
+                  "Même photo floue, zoomée, de loin ou en angle : propose l'identification la plus probable. " +
+                  "Remplis tous les champs JSON du format demandé. " +
+                  "Nature : nom commun, nom latin si possible, description, habitat, rareté, état de santé si végétal. " +
+                  "Patrimoine : histoire, date, style, anecdotes. " +
+                  "Animaux/oiseaux/insectes/reptiles/papillons : ajoute fun_fact. " +
+                  "JSON uniquement, pas de markdown.",
               },
             ],
           },
@@ -65,7 +70,14 @@ export default async function handler(req, res) {
       }),
     });
 
-    const data = await response.json();
+    const responseText = await response.text();
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      console.error("[Wilder] Réponse Anthropic non-JSON:", responseText.slice(0, 300));
+      return res.status(502).json({ erreur: "Réponse API invalide — réessayez" });
+    }
 
     if (!response.ok) {
       const msg = data.error?.message || data.erreur || "Erreur API Anthropic";
@@ -77,16 +89,22 @@ export default async function handler(req, res) {
     }
 
     const text = data.content.map((i) => i.text || "").join("");
-    const cleaned = text.replace(/```json|```/g, "").trim();
-    let parsed;
-    try {
-      parsed = JSON.parse(cleaned);
-    } catch {
-      return res.status(500).json({ erreur: "Réponse illisible — réessayez avec une photo plus nette" });
+    const parsed = parseClaudeJson(text);
+
+    if (!parsed) {
+      console.error("[Wilder] Texte brut non parsable:", text.slice(0, 500));
+      return res.status(500).json({
+        erreur: "Réponse illisible — réessayez (la photo a peut-être été identifiée mais mal formatée)",
+      });
+    }
+
+    if (parsed.erreur) {
+      return res.status(422).json(parsed);
     }
 
     res.status(200).json(parsed);
   } catch (error) {
+    console.error("[Wilder] analyze error:", error);
     res.status(500).json({ erreur: "Erreur: " + error.message });
   }
 }
