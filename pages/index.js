@@ -77,6 +77,14 @@ function generateId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
+function formatLocation(discovery) {
+  if (discovery?.placeName) return discovery.placeName;
+  if (discovery?.latitude != null && discovery?.longitude != null) {
+    return `${discovery.latitude.toFixed(4)}°, ${discovery.longitude.toFixed(4)}°`;
+  }
+  return null;
+}
+
 function getAlbumDisplayName(album) {
   return album.nom || album.name || "Album";
 }
@@ -92,6 +100,27 @@ function getAlbumPhotos(album, allDiscoveries) {
   return photos;
 }
 
+function getAlbumLocation(album, allDiscoveries) {
+  if (album.latitude != null && album.longitude != null) {
+    return {
+      latitude: Number(album.latitude),
+      longitude: Number(album.longitude),
+      placeName: album.placeName || null,
+    };
+  }
+  for (const id of album.discoveryIds || []) {
+    const d = allDiscoveries.find((x) => x.id === id);
+    if (d?.latitude != null && d?.longitude != null) {
+      return {
+        latitude: d.latitude,
+        longitude: d.longitude,
+        placeName: d.placeName || null,
+      };
+    }
+  }
+  return null;
+}
+
 function getFirstDiscoveryPhoto(album, allDiscoveries) {
   const photos = getAlbumPhotos(album, allDiscoveries);
   return photos[0] || null;
@@ -102,6 +131,7 @@ function buildAlbumRecord({
   createdAt,
   coverPhoto,
   discoveryIds,
+  location,
   theme = DEFAULT_ALBUM_THEME,
   parentId = null,
 }) {
@@ -117,6 +147,13 @@ function buildAlbumRecord({
     discoveryIds,
     theme,
     ...(parentId ? { parentId } : {}),
+    ...(location
+      ? {
+          latitude: location.latitude,
+          longitude: location.longitude,
+          placeName: location.placeName || null,
+        }
+      : {}),
   };
 }
 
@@ -128,7 +165,13 @@ function escapeHtml(str) {
     .replace(/"/g, "&quot;");
 }
 
-function normalizeAlbumsForDisplay(discoveries) {
+const LEAF_MARKER_HTML = `<div class="wilder-map-marker" aria-hidden="true">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="#F5F2EB">
+    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+  </svg>
+</div>`;
+
+async function prepareAlbumsForMap(discoveries) {
   const albums = loadAlbums();
   const normalized = albums.map((album) => ({
     ...album,
@@ -357,6 +400,101 @@ function BottomNav({ active, onNavigate, t }) {
   );
 }
 
+function AlbumMap({ albums, discoveries, onOpenAlbum, t, locale }) {
+  const containerRef = useRef(null);
+  const mapRef = useRef(null);
+  const onOpenAlbumRef = useRef(onOpenAlbum);
+
+  useEffect(() => {
+    onOpenAlbumRef.current = onOpenAlbum;
+  }, [onOpenAlbum]);
+
+  useEffect(() => {
+    if (!containerRef.current) return undefined;
+
+    let map = null;
+    let cancelled = false;
+
+    (async () => {
+      const L = (await import("leaflet")).default;
+
+      if (cancelled || !containerRef.current) return;
+
+      map = L.map(containerRef.current, {
+        zoomControl: true,
+        attributionControl: true,
+      }).setView([46.6, 2.4], 5);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19,
+      }).addTo(map);
+
+      const leafIcon = L.divIcon({
+        className: "wilder-map-marker-wrap",
+        html: LEAF_MARKER_HTML,
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -42],
+      });
+
+      const bounds = [];
+      const placed = new Set();
+
+      discoveries.forEach((d) => {
+        if (d.latitude == null || d.longitude == null) return;
+        const key = `${d.latitude.toFixed(5)},${d.longitude.toFixed(5)}`;
+        if (placed.has(key)) return;
+        placed.add(key);
+
+        const typeLabel = getTypeLabel(t, d.type || "plante");
+
+        const popupHtml = `
+          <div class="map-popup">
+            ${d.photo ? `<img src="${escapeHtml(d.photo)}" alt="" class="map-popup-photo" />` : ""}
+            <h3 class="map-popup-title">${escapeHtml(d.nom)}</h3>
+            <p class="map-popup-meta">${escapeHtml(typeLabel)}${d.placeName ? ` · ${escapeHtml(d.placeName)}` : ""}</p>
+            <p class="map-popup-meta">${escapeHtml(formatDate(d.discoveredAt, locale))}</p>
+          </div>
+        `;
+
+        L.marker([d.latitude, d.longitude], { icon: leafIcon })
+          .addTo(map)
+          .bindPopup(popupHtml, { maxWidth: 280, className: "wilder-map-popup" });
+
+        bounds.push([d.latitude, d.longitude]);
+      });
+
+      if (bounds.length === 1) {
+        map.setView(bounds[0], 12);
+      } else if (bounds.length > 1) {
+        map.fitBounds(bounds, { padding: [48, 48], maxZoom: 12 });
+      }
+
+      mapRef.current = map;
+    })();
+
+    const handlePopupClick = (e) => {
+      const btn = e.target.closest(".map-popup-btn");
+      if (!btn?.dataset.albumId) return;
+      onOpenAlbumRef.current(btn.dataset.albumId);
+    };
+
+    containerRef.current.addEventListener("click", handlePopupClick);
+
+    return () => {
+      cancelled = true;
+      containerRef.current?.removeEventListener("click", handlePopupClick);
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, [albums, discoveries, t, locale]);
+
+  return <div ref={containerRef} className="album-map-container" />;
+}
+
 function AlbumsMapView({ discoveries, onSelectAlbum, onLoadedCount, onAlbumsSynced, t, themeFilter }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
@@ -389,7 +527,7 @@ function AlbumsMapView({ discoveries, onSelectAlbum, onLoadedCount, onAlbumsSync
     };
 
     (async () => {
-      normalizeAlbumsForDisplay(discoveries);
+      await prepareAlbumsForMap(discoveries);
       let storedAlbums = loadAlbums();
       if (themeFilter) {
         storedAlbums = storedAlbums.filter((a) => a.theme === themeFilter);
@@ -414,6 +552,34 @@ function AlbumsMapView({ discoveries, onSelectAlbum, onLoadedCount, onAlbumsSync
       }).addTo(map);
 
       const bounds = [];
+
+      storedAlbums.forEach((album) => {
+        const loc = getAlbumLocation(album, storedDiscoveries);
+        if (!loc) return;
+
+        const photo = getFirstDiscoveryPhoto(album, storedDiscoveries);
+        const albumName = getAlbumDisplayName(album);
+        const photoHtml = photo
+          ? `<img src="${escapeHtml(photo)}" alt="" class="albums-map-marker-img" />`
+          : `<div class="albums-map-marker-fallback" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>
+              </svg>
+            </div>`;
+
+        const icon = L.divIcon({
+          className: "albums-map-marker-wrap",
+          html: `<button type="button" class="albums-map-marker" data-album-id="${escapeHtml(album.id)}" aria-label="${escapeHtml(albumName)}">
+            <span class="albums-map-marker-glow" aria-hidden="true"></span>
+            ${photoHtml}
+          </button>`,
+          iconSize: [52, 52],
+          iconAnchor: [26, 26],
+        });
+
+        L.marker([loc.latitude, loc.longitude], { icon }).addTo(map);
+        bounds.push([loc.latitude, loc.longitude]);
+      });
 
       onLoadedCountRef.current?.(bounds.length);
 
@@ -459,6 +625,7 @@ function AlbumsMapView({ discoveries, onSelectAlbum, onLoadedCount, onAlbumsSync
 }
 
 function AlbumMapSheet({ album, discoveries, onClose, onOpenAlbum, t, locale }) {
+  const loc = getAlbumLocation(album, discoveries);
   const items = (album.discoveryIds || [])
     .map((id) => discoveries.find((d) => d.id === id))
     .filter(Boolean);
@@ -477,6 +644,11 @@ function AlbumMapSheet({ album, discoveries, onClose, onOpenAlbum, t, locale }) 
           {getAlbumDisplayName(album)}
         </h2>
         <p className="album-map-sheet-meta">{formatDate(album.createdAt, locale)}</p>
+        {loc?.placeName && (
+          <p className="album-map-sheet-meta album-map-sheet-place">
+            <IconLocation size={14} /> {loc.placeName}
+          </p>
+        )}
         <p className="album-map-sheet-meta">
           {count}{" "}
           {count !== 1 ? t("albums.discoveries_plural") : t("albums.discoveries")}
@@ -497,6 +669,15 @@ function AlbumMapSheet({ album, discoveries, onClose, onOpenAlbum, t, locale }) 
         </button>
       </div>
     </div>
+  );
+}
+
+function IconLocation({ size = 18, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
   );
 }
 
@@ -555,6 +736,37 @@ function RarityBadge({ rarete, t }) {
     <span className={`rarity-badge rarity-${key}`}>
       ◆ {getRarityLabel(t, key)}
     </span>
+  );
+}
+
+function LocationCard({ discovery, t }) {
+  const label = formatLocation(discovery);
+  if (!label) return null;
+  const mapUrl =
+    discovery.latitude != null && discovery.longitude != null
+      ? `https://maps.apple.com/?ll=${discovery.latitude},${discovery.longitude}&q=${encodeURIComponent(discovery.nom || "Wilder")}`
+      : null;
+
+  return (
+    <div className="result-card">
+      <div className="result-card-title">{t("discovery.location")}</div>
+      <div className="location-card">
+        <IconLocation className="location-card-icon" size={18} color="#F4A261" />
+        <div>
+          <p className="result-card-text">{label}</p>
+          {mapUrl && (
+            <a
+              className="location-map-link"
+              href={mapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t("discovery.map_link")}
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -712,6 +924,8 @@ function DiscoveryBody({ data, discovery, showNewBadge, t, lang, onShare, childr
           <p className="result-card-text">{data.infos_utiles}</p>
         </div>
       )}
+
+      {discovery && <LocationCard discovery={discovery} t={t} />}
 
       {discovery && onShare !== false && (
         <ShareButton discovery={discovery} t={t} lang={lang} />
@@ -1367,9 +1581,13 @@ export default function Wilder() {
         return;
       }
 
-      const photo = await compressDataUrl(imgSrc);
+      const photo =
+        typeof data.photo === "string" && data.photo.startsWith("http")
+          ? data.photo
+          : await compressDataUrl(imgSrc);
 
       const discovery = {
+        id: generateId(),
         photo,
         nom: data.nom,
         nom_latin: data.nom_latin || "",
@@ -1401,8 +1619,6 @@ export default function Wilder() {
         setScreen("error");
         return;
       }
-
-      if (saveResult.id) discovery.id = saveResult.id;
 
       const updated = [discovery, ...discoveries];
       setDiscoveries(updated);
@@ -1487,6 +1703,11 @@ export default function Wilder() {
     if (!ids.includes(currentDiscovery.id)) {
       album.discoveryIds = [currentDiscovery.id, ...ids];
       if (!album.coverPhoto) album.coverPhoto = currentDiscovery.photo;
+      if (album.latitude == null && currentDiscovery.latitude != null) {
+        album.latitude = currentDiscovery.latitude;
+        album.longitude = currentDiscovery.longitude;
+        album.placeName = currentDiscovery.placeName || null;
+      }
       if (!Array.isArray(album.photos)) album.photos = [];
       if (currentDiscovery.photo && !album.photos.includes(currentDiscovery.photo)) {
         album.photos = [currentDiscovery.photo, ...album.photos];
@@ -1501,6 +1722,14 @@ export default function Wilder() {
 
   const createAlbum = async (name, theme = DEFAULT_ALBUM_THEME) => {
     if (!currentDiscovery) return;
+    const location =
+      currentDiscovery.latitude != null && currentDiscovery.longitude != null
+        ? {
+            latitude: currentDiscovery.latitude,
+            longitude: currentDiscovery.longitude,
+            placeName: currentDiscovery.placeName || null,
+          }
+        : null;
     const albumName = name.trim() || defaultAlbumName(t, locale);
     const createdAt = new Date().toISOString();
     const album = buildAlbumRecord({
@@ -1508,6 +1737,7 @@ export default function Wilder() {
       createdAt,
       coverPhoto: currentDiscovery.photo,
       discoveryIds: [currentDiscovery.id],
+      location,
       theme,
     });
     const updated = [album, ...loadAlbums()];
