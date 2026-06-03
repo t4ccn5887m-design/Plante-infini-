@@ -1,44 +1,5 @@
-import { randomUUID } from "crypto";
 import Anthropic from "@anthropic-ai/sdk";
 import { parseClaudeJson } from "@/lib/parseAnalysis";
-import { supabase } from "@/lib/supabase";
-
-function extensionForMediaType(mediaType) {
-  if (mediaType === "image/png") return "png";
-  if (mediaType === "image/webp") return "webp";
-  if (mediaType === "image/gif") return "gif";
-  return "jpg";
-}
-
-async function uploadDiscoveryImage(base64Data, mediaType) {
-  if (!supabase) throw new Error("Supabase non configuré");
-
-  const ext = extensionForMediaType(mediaType);
-  const path = `${Date.now()}-${randomUUID()}.${ext}`;
-  const buffer = Buffer.from(base64Data, "base64");
-
-  const { error } = await supabase.storage.from("images").upload(path, buffer, {
-    contentType: mediaType,
-    upsert: false,
-  });
-  if (error) {
-    console.error("[Wilder] Supabase upload failed:", {
-      path,
-      mediaType,
-      bufferSize: buffer.length,
-      message: error.message,
-      error: error.error,
-      statusCode: error.statusCode,
-      name: error.name,
-      cause: error.cause,
-      full: error,
-    });
-    throw error;
-  }
-
-  const { data } = supabase.storage.from("images").getPublicUrl(path);
-  return data.publicUrl;
-}
 
 function imageMediaType(base64) {
   const head = base64.replace(/\s/g, "").slice(0, 12);
@@ -146,17 +107,7 @@ export default async function handler(req, res) {
       return res.status(422).json(parsed);
     }
 
-    let photo;
-    try {
-      photo = await uploadDiscoveryImage(imageData, mediaType);
-    } catch (uploadError) {
-      console.error("[Wilder] Storage upload failed — analyse conservée sans photo distante:", {
-        message: uploadError?.message,
-        statusCode: uploadError?.statusCode,
-      });
-    }
-
-    res.status(200).json({ ...parsed, ...(photo ? { photo } : {}) });
+    res.status(200).json(parsed);
   } catch (error) {
     console.error("[Wilder] analyze error:", error);
     res.status(500).json({ erreur: "Erreur: " + error.message });

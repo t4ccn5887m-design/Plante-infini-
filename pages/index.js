@@ -1367,13 +1367,9 @@ export default function Wilder() {
         return;
       }
 
-      const photo =
-        typeof data.photo === "string" && data.photo.startsWith("http")
-          ? data.photo
-          : await compressDataUrl(imgSrc);
+      const photo = await compressDataUrl(imgSrc);
 
       const discovery = {
-        id: generateId(),
         photo,
         nom: data.nom,
         nom_latin: data.nom_latin || "",
