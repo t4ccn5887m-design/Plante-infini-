@@ -1657,6 +1657,8 @@ export default function Wilder() {
         return;
       }
 
+      if (saveResult.id) discovery.id = saveResult.id;
+
       const updated = [discovery, ...discoveries];
       setDiscoveries(updated);
       setCurrentDiscovery(discovery);
