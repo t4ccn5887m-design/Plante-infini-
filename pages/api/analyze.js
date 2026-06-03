@@ -21,7 +21,20 @@ async function uploadDiscoveryImage(base64Data, mediaType) {
     contentType: mediaType,
     upsert: false,
   });
-  if (error) throw error;
+  if (error) {
+    console.error("[Wilder] Supabase upload failed:", {
+      path,
+      mediaType,
+      bufferSize: buffer.length,
+      message: error.message,
+      error: error.error,
+      statusCode: error.statusCode,
+      name: error.name,
+      cause: error.cause,
+      full: error,
+    });
+    throw error;
+  }
 
   const { data } = supabase.storage.from("images").getPublicUrl(path);
   return data.publicUrl;
@@ -136,7 +149,23 @@ export default async function handler(req, res) {
     try {
       photo = await uploadDiscoveryImage(imageData, mediaType);
     } catch (uploadError) {
-      console.error("[Wilder] Storage upload:", uploadError);
+      console.error("[Wilder] Storage upload catch — error object:", uploadError);
+      console.error("[Wilder] Storage upload catch — details:", {
+        message: uploadError?.message,
+        error: uploadError?.error,
+        statusCode: uploadError?.statusCode,
+        name: uploadError?.name,
+        stack: uploadError?.stack,
+        cause: uploadError?.cause,
+        keys: uploadError ? Object.getOwnPropertyNames(uploadError) : [],
+        json: (() => {
+          try {
+            return JSON.stringify(uploadError, Object.getOwnPropertyNames(uploadError ?? {}));
+          } catch {
+            return String(uploadError);
+          }
+        })(),
+      });
       return res.status(500).json({
         erreur: "Impossible d'enregistrer la photo — vérifiez le bucket Supabase « images »",
       });
