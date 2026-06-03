@@ -774,6 +774,16 @@ video {
   animation: pokedexReveal 0.8s ease-out 0.35s both;
 }
 
+.discovery-home-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0.85rem;
+}
+
 .discovery-new-badge {
   display: inline-block;
   padding: 0.35rem 0.9rem;
