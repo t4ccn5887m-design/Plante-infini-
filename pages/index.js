@@ -17,9 +17,20 @@ import { shareDiscovery } from "@/lib/share";
 import { computeStats } from "@/lib/stats";
 import { isHeritageType } from "@/lib/categories";
 import OnboardingScreen from "@/components/OnboardingScreen";
+import FloatingScannerButton from "@/components/FloatingScannerButton";
 import PotagerView from "@/components/PotagerView";
+import PotagerScanResult from "@/components/PotagerScanResult";
+import { upsertPotagerPlantFromDiscovery } from "@/lib/potagerPlant";
+import { recordPotagerWatering } from "@/lib/potagerEngagement";
 import EspacesVertsView from "@/components/EspacesVertsView";
 import EspaceVertPlantList from "@/components/EspaceVertPlantList";
+import JardinScanResult from "@/components/JardinScanResult";
+import { CARE_SCAN, applyCareToDiscovery } from "@/lib/espaceVertPlant";
+import {
+  discoveryToScanResult,
+  getDefaultJardinAlbumId,
+} from "@/lib/espaceVertGarden";
+import { inferHealthFromEtatSante } from "@/lib/potagerHealth";
 import RandosView, { RandosStartButton, RandosActiveBar } from "@/components/RandosView";
 import RandoNatureAlerts from "@/components/RandoNatureAlerts";
 import RandoJournal from "@/components/RandoJournal";
@@ -421,6 +432,42 @@ function ThemeToggle({ theme, onToggle, t }) {
     >
       {isDark ? <IconSun size={20} /> : <IconMoon size={20} />}
     </button>
+  );
+}
+
+function RecentDiscoveries({ discoveries, onOpen, t, typeLabel }) {
+  const recent = useMemo(
+    () =>
+      [...discoveries]
+        .sort((a, b) => new Date(b.discoveredAt) - new Date(a.discoveredAt))
+        .slice(0, 8),
+    [discoveries]
+  );
+
+  if (recent.length === 0) {
+    return <p className="home-recent-empty">{t("home.recent_empty")}</p>;
+  }
+
+  return (
+    <ul className="home-recent-list">
+      {recent.map((d) => (
+        <li key={d.id}>
+          <button type="button" className="home-recent-item" onClick={() => onOpen(d)}>
+            {d.photo ? (
+              <img src={d.photo} alt="" width={52} height={52} />
+            ) : (
+              <span className="home-recent-item-placeholder" aria-hidden="true">
+                🌿
+              </span>
+            )}
+            <span className="home-recent-item-text">
+              <strong>{d.nom}</strong>
+              <span>{typeLabel(d.type)}</span>
+            </span>
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -1088,8 +1135,6 @@ function ThemeAlbumsScreen({
   discoveries,
   albumsViewMode,
   setAlbumsViewMode,
-  jardinTab,
-  setJardinTab,
   creatingAlbum,
   setCreatingAlbum,
   newAlbumName,
@@ -1111,6 +1156,7 @@ function ThemeAlbumsScreen({
   onToggleTheme,
   navigateMain,
   onStartScan,
+  onOpenJardinPlant,
   onStartRando,
   activeRandoAlbumId,
   randoTrack,
@@ -1133,7 +1179,7 @@ function ThemeAlbumsScreen({
   const rootAlbums = getRootAlbums(albums, themeId).sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
-  const showMapToggle = !isRandos && (!isJardin || jardinTab === "albums");
+  const showMapToggle = !isRandos && !isJardin;
 
   return (
     <>
@@ -1143,7 +1189,7 @@ function ThemeAlbumsScreen({
         </title>
       </Head>
       <div
-        className={`albums-screen screen-enter with-bottom-nav theme-screen theme-screen--${themeId}${isJuniors ? " theme-screen--juniors" : ""}${isMapView ? " albums-screen--map" : ""}`}
+        className={`albums-screen screen-enter with-bottom-nav${isPotager || isJardin ? "" : " with-scanner-fab"} theme-screen theme-screen--${themeId}${isJuniors ? " theme-screen--juniors" : ""}${isMapView ? " albums-screen--map" : ""}`}
       >
         <div className="albums-header">
           <h1 className="albums-title">
@@ -1151,32 +1197,19 @@ function ThemeAlbumsScreen({
           </h1>
           <ThemeToggle theme={theme} onToggle={onToggleTheme} t={t} />
         </div>
-        <p className="theme-screen-subtitle">{t(`themes.${themeId}.subtitle`)}</p>
+        {!isPotager && !isJardin && (
+          <p className="theme-screen-subtitle">{t(`themes.${themeId}.subtitle`)}</p>
+        )}
 
         {isPotager ? (
-          <PotagerView
-            discoveries={discoveries}
-            onOpenDiscovery={(d) => openDiscoveryDetail(d, themeId)}
-            onStartScan={onStartScan}
-            t={t}
-            lang={lang}
-          />
+          <PotagerView onStartScan={onStartScan} t={t} lang={lang} />
         ) : isJardin ? (
           <EspacesVertsView
             albums={albums}
             discoveries={discoveries}
-            herbariumPlants={getHerbariumDiscoveries(albums, discoveries)}
-            jardinTab={jardinTab}
-            setJardinTab={setJardinTab}
-            onOpenAlbum={(albumId) => {
-              setReturnScreen(themeId);
-              setSelectedAlbumId(albumId);
-              setScreen("album-detail");
-            }}
-            onCreateSpace={(data) => createAlbumFromList(themeId, data)}
-            onOpenDiscovery={(d) => openDiscoveryDetail(d, themeId)}
+            onStartScan={onStartScan}
+            onOpenPlant={onOpenJardinPlant}
             t={t}
-            locale={locale}
           />
         ) : isRandos ? (
           <>
@@ -1439,6 +1472,9 @@ function ThemeAlbumsScreen({
           </>
         )}
       </div>
+      {!(isRandos && activeRandoAlbumId) && !isPotager && !isJardin && (
+        <FloatingScannerButton onClick={onStartScan} t={t} />
+      )}
       <BottomNav active={themeId} onNavigate={navigateMain} t={t} />
       {isRandos && randoJournalAlbumId && (() => {
         const journalAlbum = albums.find((a) => a.id === randoJournalAlbumId);
@@ -1480,7 +1516,6 @@ export default function Wilder() {
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [viewingDiscovery, setViewingDiscovery] = useState(null);
   const [returnScreen, setReturnScreen] = useState("jardin");
-  const [jardinTab, setJardinTab] = useState("albums");
   const [creatingSubAlbum, setCreatingSubAlbum] = useState(false);
   const [newSubAlbumName, setNewSubAlbumName] = useState("");
   const [lang] = useState(() => detectLang());
@@ -1493,6 +1528,7 @@ export default function Wilder() {
   const [randoJournalAlbumId, setRandoJournalAlbumId] = useState(null);
   const [rescanDiscoveryId, setRescanDiscoveryId] = useState(null);
   const [scanTargetAlbumId, setScanTargetAlbumId] = useState(null);
+  const [jardinPlantDiscovery, setJardinPlantDiscovery] = useState(null);
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -1762,6 +1798,7 @@ export default function Wilder() {
   const navigateMain = (target) => {
     if (target === "home") goHome();
     else {
+      setReturnScreen(target);
       if (target === "randos") setAlbumsViewMode("list");
       else setAlbumsViewMode("list");
       setScreen(target);
@@ -1825,7 +1862,8 @@ export default function Wilder() {
       if (rescanDiscoveryId) {
         const prev = loadDiscoveries().find((d) => d.id === rescanDiscoveryId);
         if (prev) {
-          discovery = {
+          discovery = applyCareToDiscovery(
+            {
             ...prev,
             photo: photoStored,
             nom: data.nom,
@@ -1835,6 +1873,10 @@ export default function Wilder() {
             habitat: data.habitat || prev.habitat || "",
             rarete: data.rarete || prev.rarete || "commun",
             etat_sante: data.etat_sante || "",
+            health: inferHealthFromEtatSante(data.etat_sante) || prev.health,
+            soins_traitement: data.soins_traitement || prev.soins_traitement || "",
+            guide_entretien: data.guide_entretien || prev.guide_entretien || "",
+            conseils_expert: data.conseils_expert || prev.conseils_expert || "",
             histoire: data.histoire || prev.histoire || "",
             date_construction: data.date_construction || prev.date_construction || "",
             style_architectural:
@@ -1842,7 +1884,10 @@ export default function Wilder() {
             anecdotes: data.anecdotes || prev.anecdotes || "",
             fun_fact: data.fun_fact || prev.fun_fact || "",
             ...(location || {}),
-          };
+            },
+            CARE_SCAN,
+            now
+          );
           updated = loadDiscoveries().map((d) => (d.id === rescanDiscoveryId ? discovery : d));
         }
       }
@@ -1858,6 +1903,10 @@ export default function Wilder() {
           habitat: data.habitat || "",
           rarete: data.rarete || "commun",
           etat_sante: data.etat_sante || "",
+          health: inferHealthFromEtatSante(data.etat_sante),
+          soins_traitement: data.soins_traitement || "",
+          guide_entretien: data.guide_entretien || "",
+          conseils_expert: data.conseils_expert || "",
           histoire: data.histoire || "",
           date_construction: data.date_construction || "",
           style_architectural: data.style_architectural || "",
@@ -1865,6 +1914,7 @@ export default function Wilder() {
           fun_fact: data.fun_fact || "",
           discoveredAt: now,
           plantedAt: now,
+          lastScannedAt: now,
           ...(location || {}),
         };
         updated = [discovery, ...loadDiscoveries()];
@@ -1971,6 +2021,12 @@ export default function Wilder() {
     addToAlbum(scanTargetAlbumId);
     setScanTargetAlbumId(null);
   }, [screen, scanTargetAlbumId, currentDiscovery?.id, savedToAlbum]);
+
+  useEffect(() => {
+    if (screen !== "result" || returnScreen !== "potager" || !currentDiscovery || !result) return;
+    upsertPotagerPlantFromDiscovery(currentDiscovery, result);
+    recordPotagerWatering();
+  }, [screen, returnScreen, currentDiscovery?.id, result]);
 
   const createAlbum = async (name, theme = DEFAULT_ALBUM_THEME) => {
     if (!currentDiscovery) return;
@@ -2090,53 +2146,56 @@ export default function Wilder() {
           <meta name="description" content={slogan} />
         </Head>
         <div className="wilder-home screen-enter">
-          <ThemeToggle theme={theme} onToggle={toggleTheme} t={t} />
-          <div className="wilder-home-bg" />
-          <div className="wilder-home-overlay" />
-          <FallingLeaves />
+          <div className="wilder-home-bg" aria-hidden="true" />
+          <div className="wilder-home-overlay" aria-hidden="true" />
           <div className="wilder-home-content">
-            <div className="wilder-logo-wrap stagger-1">
-              <IconWilderLogo />
+            <header className="wilder-home-header stagger-1">
               <h1 className="wilder-logo-title">Wilder</h1>
               <p className="wilder-logo-slogan">{slogan}</p>
-            </div>
+            </header>
 
-            <div className="discovery-counter stagger-2">
-              <span className="discovery-counter-num">{discoveries.length}</span>
-              <span>{discoveries.length !== 1 ? t("home.discoveries_plural") : t("home.discoveries")}</span>
-              {stats.rareCount > 0 && (
-                <span className="discovery-counter-rare">
-                  ◆ {stats.rareCount}{" "}
-                  {stats.rareCount !== 1 ? t("home.rare_plural") : t("home.rare")}
+            <div className="wilder-home-main stagger-2">
+              <div className="discovery-counter">
+                <span className="discovery-counter-num">{discoveries.length}</span>
+                <span>
+                  {discoveries.length !== 1
+                    ? t("home.discoveries_plural")
+                    : t("home.discoveries")}
                 </span>
-              )}
-            </div>
+                {stats.rareCount > 0 && (
+                  <span className="discovery-counter-rare">
+                    ◆ {stats.rareCount}{" "}
+                    {stats.rareCount !== 1 ? t("home.rare_plural") : t("home.rare")}
+                  </span>
+                )}
+              </div>
 
-            <button type="button" className="btn-scanner stagger-2" onClick={() => setScreen("camera")}>
-              <span className="btn-scanner-icon">
-                <IconCamera size={32} color="white" />
-              </span>
-              {t("home.discover")}
-            </button>
+              <button
+                type="button"
+                className="btn-scanner btn-scanner--hero"
+                onClick={() => setScreen("camera")}
+              >
+                <span className="btn-scanner-icon">
+                  <IconCamera size={32} color="white" />
+                </span>
+                {t("home.discover")}
+              </button>
 
-            <div className="home-secondary-row stagger-2">
-              <button type="button" className="btn-home-secondary" onClick={() => setScreen("trophies")}>
-                <IconTrophy size={18} />
-                {t("home.trophies")}
-              </button>
-              <button type="button" className="btn-home-secondary" onClick={() => setScreen("stats")}>
-                <IconStats size={18} />
-                {t("home.stats")}
-              </button>
-              <button type="button" className="btn-home-secondary" onClick={() => setScreen("about")}>
-                <IconInfo size={18} />
+              <button
+                type="button"
+                className="home-about-link"
+                onClick={() => setScreen("about")}
+              >
                 {t("home.about")}
               </button>
             </div>
 
             <div className="discovery-marquee stagger-2" aria-hidden="true">
               <div className="discovery-marquee-track">
-                <span>{marquee}{marquee}</span>
+                <span>
+                  {marquee}
+                  {marquee}
+                </span>
               </div>
             </div>
           </div>
@@ -2387,9 +2446,86 @@ export default function Wilder() {
     );
   }
 
+  /* ── JARDIN PLANT DETAIL ── */
+  if (screen === "jardin-plant" && jardinPlantDiscovery) {
+    const plantResult = discoveryToScanResult(jardinPlantDiscovery);
+    return (
+      <>
+        <Head>
+          <title>
+            {jardinPlantDiscovery.nom} — {t("themes.jardin.title")}
+          </title>
+        </Head>
+        <div className="jardin-scan-screen screen-enter-fast">
+          <JardinScanResult
+            result={plantResult}
+            photo={jardinPlantDiscovery.photo}
+            t={t}
+            saved={false}
+            onBack={() => {
+              setJardinPlantDiscovery(null);
+              setScreen("jardin");
+            }}
+          />
+        </div>
+      </>
+    );
+  }
+
   /* ── RESULT ── */
   if (screen === "result" && result) {
     const inRando = Boolean(activeRandoAlbumId);
+    const inPotager = returnScreen === "potager" && !inRando;
+    const inJardin = returnScreen === "jardin" && !inRando;
+
+    if (inPotager) {
+      return (
+        <>
+          <Head>
+            <title>{result.nom} — {t("themes.potager.title")}</title>
+          </Head>
+          <div className="potager-scan-screen screen-enter-fast">
+            <PotagerScanResult
+              result={result}
+              t={t}
+              onBack={() => {
+                setResult(null);
+                setCaptured(null);
+                setCurrentDiscovery(null);
+                setScreen("potager");
+              }}
+            />
+          </div>
+          {confettiOverlay}
+        </>
+      );
+    }
+
+    if (inJardin) {
+      return (
+        <>
+          <Head>
+            <title>
+              {result.nom} — {t("themes.jardin.title")}
+            </title>
+          </Head>
+          <div className="jardin-scan-screen screen-enter-fast">
+            <JardinScanResult
+              result={result}
+              photo={captured}
+              t={t}
+              onBack={() => {
+                setResult(null);
+                setCaptured(null);
+                setCurrentDiscovery(null);
+                setScreen("jardin");
+              }}
+            />
+          </div>
+          {confettiOverlay}
+        </>
+      );
+    }
 
     return (
       <>
@@ -2619,51 +2755,31 @@ export default function Wilder() {
             ))}
 
           {isJardinAlbum ? (
-            <div className="ev-detail-plants">
-              <EspaceVertPlantList
-                plants={items}
-                locale={locale}
-                t={t}
-                onScanPlant={(d) => {
-                  setRescanDiscoveryId(d.id);
-                  setScanTargetAlbumId(null);
+            <div className="jardin-detail-wrap">
+              <button
+                type="button"
+                className="jardin-scan-cta"
+                onClick={() => {
+                  setRescanDiscoveryId(null);
+                  setScanTargetAlbumId(selectedAlbum.id);
                   setReturnScreen("album-detail");
                   setScreen("camera");
                 }}
+              >
+                <span className="jardin-scan-cta-emoji" aria-hidden="true">
+                  📸
+                </span>
+                <span className="jardin-scan-cta-label">{t("themes.jardin.scan_cta")}</span>
+              </button>
+              <EspaceVertPlantList
+                plants={items}
+                t={t}
                 onOpenDiscovery={(d) => {
+                  setJardinPlantDiscovery(d);
                   setReturnScreen("album-detail");
-                  openDiscoveryDetail(d, "album-detail");
+                  setScreen("jardin-plant");
                 }}
               />
-              {items.length === 0 ? (
-                <button
-                  type="button"
-                  className="btn-primary ev-detail-scan-main"
-                  onClick={() => {
-                    setRescanDiscoveryId(null);
-                    setScanTargetAlbumId(selectedAlbum.id);
-                    setReturnScreen("album-detail");
-                    setScreen("camera");
-                  }}
-                >
-                  {t("albums.scan")}
-                </button>
-              ) : (
-                <div className="ev-detail-add-bar">
-                  <button
-                    type="button"
-                    className="ev-add-btn"
-                    onClick={() => {
-                      setRescanDiscoveryId(null);
-                      setScanTargetAlbumId(selectedAlbum.id);
-                      setReturnScreen("album-detail");
-                      setScreen("camera");
-                    }}
-                  >
-                    {t("albums.scan")}
-                  </button>
-                </div>
-              )}
             </div>
           ) : items.length === 0 ? (
             <div className="albums-empty">
@@ -2809,6 +2925,7 @@ export default function Wilder() {
 
   /* ── STATS ── */
   if (screen === "stats") {
+    const stats = computeStats(discoveries);
     const typeEntries = Object.entries(stats.byType).sort((a, b) => b[1] - a[1]);
     const maxTypeCount = typeEntries[0]?.[1] || 1;
     const monthLabels = stats.monthKeys.map((key) => {
@@ -3058,8 +3175,10 @@ export default function Wilder() {
         discoveries={discoveries}
         albumsViewMode={albumsViewMode}
         setAlbumsViewMode={setAlbumsViewMode}
-        jardinTab={jardinTab}
-        setJardinTab={setJardinTab}
+        onOpenJardinPlant={(d) => {
+          setJardinPlantDiscovery(d);
+          setScreen("jardin-plant");
+        }}
         creatingAlbum={creatingAlbum}
         setCreatingAlbum={setCreatingAlbum}
         newAlbumName={newAlbumName}
@@ -3080,7 +3199,29 @@ export default function Wilder() {
         theme={theme}
         onToggleTheme={toggleTheme}
         navigateMain={navigateMain}
-        onStartScan={() => setScreen("camera")}
+        onStartScan={() => {
+          if (isThemeScreen(screen)) setReturnScreen(screen);
+          if (screen === "jardin") {
+            let albumId = getDefaultJardinAlbumId(albums);
+            if (!albumId) {
+              const createdAt = new Date().toISOString();
+              const album = buildAlbumRecord({
+                name: t("themes.jardin.default_space"),
+                createdAt,
+                coverPhoto: null,
+                discoveryIds: [],
+                location: null,
+                theme: "jardin",
+              });
+              const updated = [album, ...loadAlbums()];
+              saveAlbums(updated);
+              setAlbums(updated);
+              albumId = album.id;
+            }
+            setScanTargetAlbumId(albumId);
+          }
+          setScreen("camera");
+        }}
         onStartRando={startRando}
         activeRandoAlbumId={activeRandoAlbumId}
         randoTrack={randoTrack}

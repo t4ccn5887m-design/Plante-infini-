@@ -206,7 +206,153 @@ video {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2.5rem 1.5rem calc(5.5rem + env(safe-area-inset-bottom));
+  padding: 0 1.5rem calc(5.5rem + env(safe-area-inset-bottom));
+}
+
+.wilder-home-header {
+  text-align: center;
+  width: 100%;
+  flex-shrink: 0;
+  padding-top: calc(1.5rem + env(safe-area-inset-top, 0px));
+}
+
+.wilder-home-header .wilder-logo-title {
+  font-size: clamp(2.75rem, 11vw, 3.5rem);
+  margin: 0;
+}
+
+.wilder-home-header .wilder-logo-slogan {
+  margin-top: 0.55rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.wilder-home-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 1.35rem;
+  padding: 0.5rem 0;
+}
+
+.wilder-home-main .discovery-counter {
+  margin-bottom: 0;
+}
+
+.home-about-link {
+  background: none;
+  border: none;
+  color: var(--cream-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0.2rem 0.5rem;
+  transition: color 0.15s ease;
+}
+
+.home-about-link:hover,
+.home-about-link:active {
+  color: var(--cream);
+}
+
+.home-recent {
+  width: 100%;
+  flex-shrink: 0;
+  max-height: 42vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.home-recent-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cream-muted);
+  margin: 0 0 0.65rem 0.25rem;
+}
+
+.home-recent-empty {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--cream-muted);
+  text-align: center;
+  padding: 0.75rem 0.5rem 1rem;
+}
+
+.home-recent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.home-recent-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid rgba(245, 242, 235, 0.14);
+  border-radius: 12px;
+  background: rgba(15, 36, 25, 0.45);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  text-align: left;
+  color: var(--cream);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.home-recent-item:hover,
+.home-recent-item:active {
+  background: rgba(245, 242, 235, 0.1);
+  border-color: rgba(245, 242, 235, 0.22);
+}
+
+.home-recent-item img,
+.home-recent-item-placeholder {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.home-recent-item-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: rgba(245, 242, 235, 0.08);
+}
+
+.home-recent-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.home-recent-item-text strong {
+  font-size: 0.98rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.home-recent-item-text span {
+  font-size: 0.78rem;
+  color: var(--cream-muted);
 }
 
 .wilder-logo-wrap {
@@ -285,7 +431,9 @@ video {
   max-width: 100%;
   overflow: hidden;
   mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-  margin-bottom: 1.5rem;
+  margin-top: auto;
+  margin-bottom: 0.35rem;
+  flex-shrink: 0;
 }
 
 .discovery-marquee-track {
@@ -330,6 +478,74 @@ video {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.btn-scanner--hero {
+  width: min(280px, 78vw);
+  height: min(280px, 78vw);
+  margin: 0;
+  font-size: 1.65rem;
+  gap: 0.5rem;
+  box-shadow:
+    0 12px 48px var(--sunset-glow),
+    0 0 0 8px rgba(224, 122, 58, 0.22),
+    inset 0 2px 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn-scanner-emoji {
+  font-size: 3.25rem;
+  line-height: 1;
+}
+
+.btn-scanner-label {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+/* ── Scanner FAB (onglets thématiques) ── */
+
+.scanner-fab {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(4.35rem + env(safe-area-inset-bottom));
+  z-index: 102;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 11.5rem;
+  padding: 0.85rem 1.75rem;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  background: linear-gradient(145deg, var(--sunset) 0%, #c45f28 100%);
+  color: white;
+  font-size: 1.15rem;
+  font-weight: 800;
+  box-shadow:
+    0 6px 28px var(--sunset-glow),
+    0 0 0 4px rgba(224, 122, 58, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.scanner-fab:hover {
+  transform: translateX(-50%) scale(1.03);
+}
+
+.scanner-fab:active {
+  transform: translateX(-50%) scale(0.98);
+}
+
+.scanner-fab-emoji {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.scanner-fab-label {
+  letter-spacing: 0.02em;
 }
 
 .btn-albums {
@@ -2072,15 +2288,16 @@ video {
 /* ── Mes Espaces Verts ── */
 
 .theme-screen--jardin {
-  background: linear-gradient(180deg, var(--bg-deep) 0%, #122a1e 55%, var(--forest-deep) 100%);
+  background: linear-gradient(180deg, #f8fdf6 0%, #eef8eb 45%, #fff9f0 100%);
 }
 
 .theme-screen--jardin .albums-title {
-  color: var(--cream);
+  color: #1a4d2e;
 }
 
-.theme-screen--jardin .theme-screen-subtitle {
-  margin-bottom: 0.5rem;
+.theme-screen--jardin .albums-header .theme-toggle {
+  color: #1a4d2e;
+  border-color: rgba(26, 77, 46, 0.2);
 }
 
 .ev-view {
@@ -2464,7 +2681,11 @@ video {
 }
 
 [data-theme="light"] .theme-screen--jardin {
-  background: linear-gradient(180deg, var(--bg-deep) 0%, #dce8e0 100%);
+  background: linear-gradient(180deg, #f8fdf6 0%, #eef8eb 100%);
+}
+
+[data-theme="light"] .theme-screen--jardin .albums-title {
+  color: #1a4d2e;
 }
 
 [data-theme="light"] .ev-card {
@@ -2631,21 +2852,129 @@ video {
   text-align: right;
 }
 
-.ev-plant-scan-btn {
-  margin: 0 1rem 1rem;
-  padding: 0.65rem 1rem;
-  border: 1px solid var(--forest-mid);
-  border-radius: 0.65rem;
-  background: rgba(45, 90, 61, 0.25);
-  color: var(--cream);
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
+.ev-plant-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+  padding: 0 1rem 1rem;
 }
 
-.ev-plant-scan-btn:hover {
-  background: rgba(45, 90, 61, 0.45);
+.ev-plant-care-btn {
+  padding: 0.55rem 0.4rem;
+  border: 1px solid var(--forest-mid);
+  border-radius: 0.65rem;
+  background: rgba(45, 90, 61, 0.2);
+  color: var(--cream);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  line-height: 1.2;
+}
+
+.ev-plant-care-btn:hover {
+  background: rgba(45, 90, 61, 0.4);
+  border-color: rgba(224, 122, 58, 0.4);
+}
+
+.ev-plant-care-btn--water {
+  border-color: rgba(96, 165, 250, 0.35);
+}
+
+.ev-plant-care-btn--maintain {
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+.ev-detail-score-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 1rem 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: rgba(45, 90, 61, 0.2);
+  border: 1px solid rgba(245, 242, 235, 0.1);
+}
+
+.ev-detail-score-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.ev-detail-score-value {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ev-detail-score-value.ev-score-ring--high {
+  color: #4ade80;
+}
+
+.ev-detail-score-value.ev-score-ring--mid {
+  color: var(--sunset-light);
+}
+
+.ev-detail-score-value.ev-score-ring--low {
+  color: var(--text-secondary);
+}
+
+.ev-detail-score-max {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-left: 0.15rem;
+}
+
+.ev-surprise-banner {
+  margin: 0 1rem 1rem;
+  padding: 1rem 1rem 0.9rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(224, 122, 58, 0.22), rgba(45, 90, 61, 0.35));
+  border: 1px solid rgba(224, 122, 58, 0.35);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+}
+
+.ev-surprise-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+}
+
+.ev-surprise-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.ev-surprise-title {
+  flex: 1;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--cream);
+}
+
+.ev-surprise-dismiss {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+
+.ev-surprise-body {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
 }
 
 .ev-plant-empty {
@@ -2681,9 +3010,17 @@ video {
   border-color: rgba(45, 90, 61, 0.15);
 }
 
-[data-theme="light"] .ev-plant-scan-btn {
+[data-theme="light"] .ev-plant-care-btn {
   color: var(--forest-deep);
   background: rgba(45, 90, 61, 0.08);
+}
+
+[data-theme="light"] .ev-surprise-banner {
+  background: linear-gradient(135deg, rgba(224, 122, 58, 0.12), rgba(45, 90, 61, 0.1));
+}
+
+[data-theme="light"] .ev-surprise-title {
+  color: var(--forest-deep);
 }
 
 .theme-herbarium-intro {
@@ -2941,6 +3278,10 @@ video {
 
 .with-bottom-nav {
   padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+}
+
+.with-scanner-fab {
+  padding-bottom: calc(8.75rem + env(safe-area-inset-bottom));
 }
 
 /* ── Map screen ── */
@@ -3489,11 +3830,508 @@ video {
 /* ── Mon Potager ── */
 
 .theme-screen--potager {
-  background: linear-gradient(180deg, var(--bg-deep) 0%, #0a1f14 55%, var(--forest-deep) 100%);
+  background: linear-gradient(180deg, #f8fdf4 0%, #eef9e8 45%, #fff8ee 100%);
 }
 
 .theme-screen--potager .albums-title {
-  color: var(--cream);
+  color: #1a4d2e;
+}
+
+.theme-screen--potager .albums-header .theme-toggle {
+  color: #1a4d2e;
+  border-color: rgba(26, 77, 46, 0.2);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Mon Potager (simple) ── */
+
+.potager-simple {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 11rem);
+  padding: 0 1.15rem 1.25rem;
+  gap: 1.25rem;
+}
+
+.potager-scan-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  width: 100%;
+  min-height: 4.25rem;
+  padding: 1rem 1.25rem;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ff9a3c 0%, #f07020 100%);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(240, 112, 32, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.potager-scan-cta:active {
+  transform: scale(0.98);
+}
+
+.potager-scan-cta-emoji {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.potager-plant-list {
+  flex: 1;
+  min-height: 0;
+}
+
+.potager-plant-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.potager-plant-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.15rem;
+  border-radius: 14px;
+  background: #fff;
+  border: 2px solid rgba(46, 125, 70, 0.12);
+  box-shadow: 0 2px 8px rgba(26, 77, 46, 0.06);
+}
+
+.potager-plant-row-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a3d28;
+  line-height: 1.3;
+}
+
+.potager-list-health {
+  flex-shrink: 0;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
+}
+
+.potager-list-health--good {
+  background: #2ecc71;
+}
+
+.potager-list-health--warning {
+  background: #f39c12;
+}
+
+.potager-list-health--critical {
+  background: #e74c3c;
+}
+
+.potager-plant-list-empty {
+  margin: 0;
+  padding: 1.25rem 1rem;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: #4a6b55;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 14px;
+}
+
+.potager-weather-line {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #2d5a3d;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 12px;
+  border: 1px solid rgba(46, 125, 70, 0.15);
+  flex-shrink: 0;
+}
+
+/* Scan result (3 blocs) */
+
+.potager-scan-screen {
+  min-height: 100dvh;
+  background: linear-gradient(180deg, #f8fdf4 0%, #fff8ee 100%);
+  padding: 1rem 1.15rem 2rem;
+}
+
+.potager-scan-result {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 2rem);
+  max-width: 28rem;
+  margin: 0 auto;
+}
+
+.potager-scan-back {
+  align-self: flex-start;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+  border: none;
+  background: none;
+  color: #2d6a4f;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.potager-scan-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.75rem;
+  text-align: center;
+  padding: 1rem 0 2rem;
+}
+
+.potager-scan-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 6vw, 2.25rem);
+  font-weight: 700;
+  color: #1a4d2e;
+  line-height: 1.2;
+}
+
+.potager-scan-health {
+  margin: 0;
+  font-size: clamp(1.35rem, 5vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.35;
+  padding: 1rem 1.25rem;
+  border-radius: 16px;
+}
+
+.potager-scan-health--good {
+  background: rgba(46, 204, 113, 0.15);
+  color: #1e7a45;
+}
+
+.potager-scan-health--warning {
+  background: rgba(243, 156, 18, 0.18);
+  color: #9a5f00;
+}
+
+.potager-scan-health--critical {
+  background: rgba(231, 76, 60, 0.15);
+  color: #a8281a;
+}
+
+.potager-scan-action {
+  margin: 0;
+  font-size: clamp(1.15rem, 4.5vw, 1.4rem);
+  line-height: 1.45;
+  color: #2d4a38;
+  padding: 0 0.5rem;
+}
+
+.potager-scan-saved {
+  margin: 0;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #3d7a52;
+}
+
+/* ── Mes Espaces Verts (simple) ── */
+
+.jardin-simple {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 10rem);
+  padding: 0 1.15rem 1.5rem;
+  gap: 1.25rem;
+}
+
+.jardin-scan-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  width: 100%;
+  min-height: 4.25rem;
+  padding: 1rem 1.25rem;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ff9a3c 0%, #f07020 100%);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(240, 112, 32, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.jardin-scan-cta:active {
+  transform: scale(0.98);
+}
+
+.jardin-scan-cta-emoji {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.jardin-plant-list ul,
+.jardin-plant-list-inner {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.jardin-plant-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 16px;
+  background: #fff;
+  border: 2px solid rgba(46, 125, 70, 0.12);
+  box-shadow: 0 2px 10px rgba(26, 77, 46, 0.07);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.jardin-plant-row:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(26, 77, 46, 0.1);
+}
+
+.jardin-plant-row-photo-wrap {
+  flex-shrink: 0;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #e8f4ea;
+}
+
+.jardin-plant-row-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.jardin-plant-row-photo--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.jardin-plant-row-name {
+  flex: 1;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #1a3d28;
+  line-height: 1.3;
+}
+
+.jardin-list-health {
+  flex-shrink: 0;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
+}
+
+.jardin-list-health--good {
+  background: #2ecc71;
+}
+
+.jardin-list-health--warning {
+  background: #f39c12;
+}
+
+.jardin-list-health--critical {
+  background: #e74c3c;
+}
+
+.jardin-plant-list-empty {
+  margin: 0;
+  padding: 1.35rem 1rem;
+  font-size: 1.1rem;
+  line-height: 1.55;
+  color: #3d5c48;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  border: 1px dashed rgba(46, 125, 70, 0.25);
+}
+
+.jardin-detail-wrap {
+  padding: 0 1.15rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.jardin-scan-screen {
+  min-height: 100dvh;
+  background: linear-gradient(180deg, #f8fdf6 0%, #fff9f0 100%);
+  padding: 1rem 1.15rem 2rem;
+}
+
+.jardin-scan-result {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 2rem);
+  gap: 1rem;
+}
+
+.jardin-scan-back {
+  align-self: flex-start;
+  margin-bottom: 0.25rem;
+  padding: 0.5rem 0;
+  border: none;
+  background: none;
+  color: #2d5a3d;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.jardin-scan-photo-wrap {
+  border-radius: 18px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: #e8f4ea;
+  box-shadow: 0 8px 24px rgba(26, 77, 46, 0.12);
+}
+
+.jardin-scan-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.jardin-scan-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.jardin-scan-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 6vw, 2.35rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: #1a3d28;
+}
+
+.jardin-scan-latin {
+  margin: -0.35rem 0 0;
+  font-size: 1rem;
+  font-style: italic;
+  color: #5a7a65;
+}
+
+.jardin-scan-story {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #2d4a38;
+  white-space: pre-wrap;
+  padding: 1rem 1.1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  border: 1px solid rgba(46, 125, 70, 0.12);
+}
+
+.jardin-scan-health {
+  margin: 0;
+  font-size: clamp(1.4rem, 5vw, 1.85rem);
+  font-weight: 700;
+  text-align: center;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+}
+
+.jardin-scan-health--good {
+  background: rgba(46, 204, 113, 0.15);
+  color: #1e7a45;
+}
+
+.jardin-scan-health--warning {
+  background: rgba(243, 156, 18, 0.18);
+  color: #9a5f00;
+}
+
+.jardin-scan-health--critical {
+  background: rgba(231, 76, 60, 0.15);
+  color: #a8281a;
+}
+
+.jardin-scan-action-card {
+  padding: 1.1rem 1.15rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fff8ee 0%, #fff 100%);
+  border: 2px solid rgba(240, 112, 32, 0.25);
+  box-shadow: 0 4px 16px rgba(240, 112, 32, 0.1);
+}
+
+.jardin-scan-action-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #c45a10;
+}
+
+.jardin-scan-action {
+  margin: 0;
+  font-size: clamp(1.15rem, 4.5vw, 1.4rem);
+  line-height: 1.45;
+  font-weight: 600;
+  color: #2d4a38;
+}
+
+.jardin-scan-saved {
+  margin: 0.5rem 0 0;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #3d7a52;
 }
 
 .potager-view {
