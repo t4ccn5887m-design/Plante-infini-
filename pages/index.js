@@ -79,6 +79,7 @@ import {
   isThemeScreen,
   normalizeAlbumTheme,
   NAV_THEMES,
+  resolveScanBackScreen,
   THEME_META,
 } from "@/lib/themes";
 
@@ -1311,7 +1312,7 @@ export default function Wilder() {
   const [camZoom, setCamZoom] = useState(1);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [viewingDiscovery, setViewingDiscovery] = useState(null);
-  const [returnScreen, setReturnScreen] = useState("jardin");
+  const [returnScreen, setReturnScreen] = useState("home");
   const [creatingSubAlbum, setCreatingSubAlbum] = useState(false);
   const [newSubAlbumName, setNewSubAlbumName] = useState("");
   const [lang] = useState(() => detectLang());
@@ -1568,6 +1569,79 @@ export default function Wilder() {
     setScreen("randos");
   }, [activeRandoAlbumId, randoTrack]);
 
+  const clearScanSession = useCallback(() => {
+    setResult(null);
+    setCaptured(null);
+    setCurrentDiscovery(null);
+    setSavedToAlbum(false);
+    setShowAlbumPicker(false);
+    setAlbumPickerStartTheme(null);
+    setOrganizeSaved({});
+    setRescanDiscoveryId(null);
+    setScanTargetAlbumId(null);
+  }, []);
+
+  const startScan = useCallback(
+    (origin, { albumId: targetAlbumId } = {}) => {
+      setReturnScreen(origin);
+      setRescanDiscoveryId(null);
+      if (targetAlbumId) {
+        setScanTargetAlbumId(targetAlbumId);
+      } else if (origin === "jardin") {
+        let albumId = getDefaultJardinAlbumId(albums);
+        if (!albumId) {
+          const createdAt = new Date().toISOString();
+          const album = buildAlbumRecord({
+            name: t("themes.jardin.default_space"),
+            createdAt,
+            coverPhoto: null,
+            discoveryIds: [],
+            location: null,
+            theme: "jardin",
+          });
+          const updated = [album, ...loadAlbums()];
+          saveAlbums(updated);
+          setAlbums(updated);
+          albumId = album.id;
+        }
+        setScanTargetAlbumId(albumId);
+      } else if (origin === "juniors") {
+        let albumId = getDefaultAnimauxAlbumId(albums);
+        if (!albumId) {
+          const createdAt = new Date().toISOString();
+          const album = buildAlbumRecord({
+            name: t("themes.juniors.default_album"),
+            createdAt,
+            coverPhoto: null,
+            discoveryIds: [],
+            location: null,
+            theme: "juniors",
+          });
+          const updated = [album, ...loadAlbums()];
+          saveAlbums(updated);
+          setAlbums(updated);
+          albumId = album.id;
+        }
+        setScanTargetAlbumId(albumId);
+      } else {
+        setScanTargetAlbumId(null);
+      }
+      setScreen("camera");
+    },
+    [albums, t]
+  );
+
+  const resultBackLabel = useCallback(() => {
+    if (activeRandoAlbumId) return t("themes.randos.resume");
+    if (returnScreen === "album-detail") return t("scanner.back");
+    if (returnScreen === "home") return t("discovery.home");
+    if (returnScreen === "potager") return t("themes.potager.back_to_garden");
+    if (returnScreen === "randos") return t("themes.randos.back_to_list");
+    if (returnScreen === "jardin") return t("themes.jardin.back_to_garden");
+    if (returnScreen === "juniors") return t("themes.juniors.back_to_animaux");
+    return t("discovery.home");
+  }, [activeRandoAlbumId, returnScreen, t]);
+
   const resumeRando = useCallback(() => {
     setShowRandoMap(false);
     setResult(null);
@@ -1581,50 +1655,28 @@ export default function Wilder() {
       setScreen("randos");
       return;
     }
-    const back =
-      returnScreen === "album-detail" || isThemeScreen(returnScreen) ? returnScreen : "home";
-    setResult(null);
-    setCaptured(null);
-    setCurrentDiscovery(null);
+    const back = resolveScanBackScreen(returnScreen);
+    clearScanSession();
     setErrorMsg("");
-    setSavedToAlbum(false);
-    setShowAlbumPicker(false);
-    setRescanDiscoveryId(null);
-    setScanTargetAlbumId(null);
     setScreen(back);
-  }, [activeRandoAlbumId, returnScreen]);
+  }, [activeRandoAlbumId, returnScreen, clearScanSession]);
 
   const goHome = () => {
-    setResult(null);
-    setCaptured(null);
-    setCurrentDiscovery(null);
+    clearScanSession();
     setErrorMsg("");
-    setSavedToAlbum(false);
-    setShowAlbumPicker(false);
-    setAlbumPickerStartTheme(null);
-    setOrganizeSaved({});
     setShowRandoMap(false);
-    setRescanDiscoveryId(null);
-    setScanTargetAlbumId(null);
     setScreen("home");
   };
 
-  const leaveResult = () => {
-    if (returnScreen === "album-detail") {
-      setResult(null);
-      setCaptured(null);
-      setCurrentDiscovery(null);
-      setSavedToAlbum(false);
-      setShowAlbumPicker(false);
-      setAlbumPickerStartTheme(null);
-      setOrganizeSaved({});
-      setRescanDiscoveryId(null);
-      setScanTargetAlbumId(null);
-      setScreen("album-detail");
-      return;
+  const leaveResult = useCallback(() => {
+    const back = resolveScanBackScreen(returnScreen);
+    clearScanSession();
+    if (back === "home") {
+      setErrorMsg("");
+      setShowRandoMap(false);
     }
-    goHome();
-  };
+    setScreen(back);
+  }, [returnScreen, clearScanSession]);
 
   const navigateMain = (target) => {
     if (target === "home") goHome();
@@ -1657,6 +1709,7 @@ export default function Wilder() {
     setRandoTrack(initialTrack);
     setShowRandoMap(false);
     setActiveRandoAlbumId(album.id);
+    setReturnScreen("randos");
     setScreen("camera");
   }, [t, locale]);
 
@@ -2197,7 +2250,7 @@ export default function Wilder() {
               <button
                 type="button"
                 className="btn-scanner btn-scanner--hero"
-                onClick={() => setScreen("camera")}
+                onClick={() => startScan("home")}
               >
                 <span className="btn-scanner-icon">
                   <IconCamera size={32} color="white" />
@@ -2569,12 +2622,7 @@ export default function Wilder() {
               organizeHint={getOrganizeHint()}
               onOrganizeDestination={handleOrganizeDestination}
               onScanAgain={scanAgainFromResult}
-              onBack={() => {
-                setResult(null);
-                setCaptured(null);
-                setCurrentDiscovery(null);
-                setScreen("potager");
-              }}
+              onBack={leaveResult}
             />
           </div>
           {resultAlbumPicker}
@@ -2601,12 +2649,7 @@ export default function Wilder() {
               organizeHint={getOrganizeHint()}
               onOrganizeDestination={handleOrganizeDestination}
               onScanAgain={scanAgainFromResult}
-              onBack={() => {
-                setResult(null);
-                setCaptured(null);
-                setCurrentDiscovery(null);
-                setScreen("jardin");
-              }}
+              onBack={leaveResult}
             />
           </div>
           {resultAlbumPicker}
@@ -2633,12 +2676,7 @@ export default function Wilder() {
               organizeHint={getOrganizeHint()}
               onOrganizeDestination={handleOrganizeDestination}
               onScanAgain={scanAgainFromResult}
-              onBack={() => {
-                setResult(null);
-                setCaptured(null);
-                setCurrentDiscovery(null);
-                setScreen("juniors");
-              }}
+              onBack={leaveResult}
             />
           </div>
           {resultAlbumPicker}
@@ -2701,11 +2739,7 @@ export default function Wilder() {
               onClick={inRando ? resumeRando : leaveResult}
             >
               <IconBack size={16} />{" "}
-              {inRando
-                ? t("themes.randos.resume")
-                : returnScreen === "album-detail"
-                  ? t("scanner.back")
-                  : t("discovery.home")}
+              {resultBackLabel()}
             </button>
 
             <DiscoveryBody
@@ -2891,12 +2925,7 @@ export default function Wilder() {
               <button
                 type="button"
                 className="jardin-scan-cta"
-                onClick={() => {
-                  setRescanDiscoveryId(null);
-                  setScanTargetAlbumId(selectedAlbum.id);
-                  setReturnScreen("album-detail");
-                  setScreen("camera");
-                }}
+                onClick={() => startScan("album-detail", { albumId: selectedAlbum.id })}
               >
                 <span className="jardin-scan-cta-emoji" aria-hidden="true">
                   📸
@@ -2922,7 +2951,7 @@ export default function Wilder() {
                 type="button"
                 className="btn-primary"
                 style={{ marginTop: "1.5rem" }}
-                onClick={() => setScreen("camera")}
+                onClick={() => startScan("album-detail")}
               >
                 {t("albums.scan")}
               </button>
@@ -3198,7 +3227,7 @@ export default function Wilder() {
                 type="button"
                 className="btn-primary"
                 style={{ marginTop: "1.5rem" }}
-                onClick={() => setScreen("camera")}
+                onClick={() => startScan("home")}
               >
                 {t("home.discover")}
               </button>
@@ -3370,48 +3399,7 @@ export default function Wilder() {
         theme={theme}
         onToggleTheme={toggleTheme}
         navigateMain={navigateMain}
-        onStartScan={() => {
-          if (isThemeScreen(screen)) setReturnScreen(screen);
-          if (screen === "jardin") {
-            let albumId = getDefaultJardinAlbumId(albums);
-            if (!albumId) {
-              const createdAt = new Date().toISOString();
-              const album = buildAlbumRecord({
-                name: t("themes.jardin.default_space"),
-                createdAt,
-                coverPhoto: null,
-                discoveryIds: [],
-                location: null,
-                theme: "jardin",
-              });
-              const updated = [album, ...loadAlbums()];
-              saveAlbums(updated);
-              setAlbums(updated);
-              albumId = album.id;
-            }
-            setScanTargetAlbumId(albumId);
-          }
-          if (screen === "juniors") {
-            let albumId = getDefaultAnimauxAlbumId(albums);
-            if (!albumId) {
-              const createdAt = new Date().toISOString();
-              const album = buildAlbumRecord({
-                name: t("themes.juniors.default_album"),
-                createdAt,
-                coverPhoto: null,
-                discoveryIds: [],
-                location: null,
-                theme: "juniors",
-              });
-              const updated = [album, ...loadAlbums()];
-              saveAlbums(updated);
-              setAlbums(updated);
-              albumId = album.id;
-            }
-            setScanTargetAlbumId(albumId);
-          }
-          setScreen("camera");
-        }}
+        onStartScan={() => startScan(screen)}
         onStartRando={startRando}
         activeRandoAlbumId={activeRandoAlbumId}
         randoTrack={randoTrack}
