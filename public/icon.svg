@@ -1,72 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="Wilder">
-  <defs>
-    <radialGradient id="wilder-bg" cx="50%" cy="36%" r="78%">
-      <stop offset="0%" stop-color="#3D7A5C"/>
-      <stop offset="48%" stop-color="#2D5A45"/>
-      <stop offset="100%" stop-color="#1B3D2F"/>
-    </radialGradient>
-    <linearGradient id="wilder-sun" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#F4A261"/>
-      <stop offset="100%" stop-color="#E07A3A"/>
-    </linearGradient>
-    <linearGradient id="wilder-ring" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#F5F2EB" stop-opacity="0.35"/>
-      <stop offset="35%" stop-color="#F5F2EB"/>
-      <stop offset="100%" stop-color="#F5F2EB" stop-opacity="0.55"/>
-    </linearGradient>
-  </defs>
+  <rect width="512" height="512" rx="112" fill="#1a3a2a"/>
 
-  <!-- Fond forêt (coins arrondis type app store) -->
-  <rect width="512" height="512" rx="112" fill="url(#wilder-bg)"/>
-
-  <!-- Lueur douce -->
-  <ellipse cx="256" cy="128" rx="200" ry="72" fill="#F5F2EB" opacity="0.06"/>
-
-  <!-- Anneau « objectif » — explorer & identifier -->
-  <circle cx="256" cy="256" r="168" stroke="url(#wilder-ring)" stroke-width="14" fill="none"/>
+  <!-- Œil stylisé — blanc cassé -->
   <path
-    d="M256 88 A168 168 0 0 1 412 210"
-    stroke="url(#wilder-sun)"
-    stroke-width="22"
+    d="M88 256c0-72 68-128 168-128s168 56 168 128-68 128-168 128-168-56-168-128z"
+    fill="#F5F2EB"
+  />
+
+  <!-- Iris feuille -->
+  <path
+    d="M256 148c-52 56-52 152 0 208 52-56 52-152 0-208z"
+    fill="#4CAF7A"
+  />
+  <path
+    d="M256 168v168"
+    stroke="#1a3a2a"
+    stroke-width="10"
     stroke-linecap="round"
-    fill="none"
+    opacity="0.35"
   />
-
-  <!-- W stylisé — paysage & marque -->
-  <path
-    d="M112 372 L160 188 L256 300 L352 188 L400 372"
-    stroke="#F5F2EB"
-    stroke-width="34"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    fill="none"
-  />
-
-  <!-- Feuille (flore) dans le creux gauche -->
-  <path
-    d="M188 278 C172 252 176 224 198 210 C218 198 234 210 238 232 C242 254 228 272 208 280 C200 284 192 282 188 278 Z"
-    fill="#3D7A5C"
-  />
-  <path d="M198 210 L198 276" stroke="#1B3D2F" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
-
-  <!-- Point découverte (coucher de soleil / scan) -->
-  <circle cx="256" cy="196" r="26" fill="url(#wilder-sun)"/>
-  <circle cx="256" cy="196" r="10" fill="#F5F2EB" opacity="0.55"/>
-
-  <!-- Branche & feuilles (nature vivante) -->
-  <path
-    d="M338 268 C372 258 400 242 418 220"
-    stroke="#3D7A5C"
-    stroke-width="7"
-    stroke-linecap="round"
-    fill="none"
-  />
-  <ellipse cx="422" cy="214" rx="15" ry="23" fill="#3D7A5C" transform="rotate(32 422 214)"/>
-  <ellipse cx="396" cy="238" rx="12" ry="19" fill="#2D5A45" transform="rotate(-12 396 238)"/>
-
-  <!-- Repères cardinaux discrets — carte & rando -->
-  <circle cx="256" cy="84" r="9" fill="#F5F2EB" opacity="0.45"/>
-  <circle cx="428" cy="256" r="7" fill="#F5F2EB" opacity="0.3"/>
-  <circle cx="84" cy="256" r="7" fill="#F5F2EB" opacity="0.3"/>
-  <circle cx="256" cy="428" r="7" fill="#F4A261" opacity="0.65"/>
 </svg>
