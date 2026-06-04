@@ -99,7 +99,7 @@ export default async function handler(req, res) {
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     const response = await client.messages.create({
       model: "claude-opus-4-5",
-      max_tokens: 1400,
+      max_tokens: 4096,
       system: SYSTEM,
       messages: [
         {

@@ -13,6 +13,10 @@ import {
 } from "@/lib/badges";
 import { playBadgeUnlockSound, playDiscoverySound, warmUpSounds } from "@/lib/sounds";
 import AnimalSoundQuiz from "@/components/AnimalSoundQuiz";
+import AnalyzeLoadingScreen from "@/components/AnalyzeLoadingScreen";
+import DiscoveryAnalysisSections, {
+  discoveryToAnalysisData,
+} from "@/components/DiscoveryAnalysisSections";
 import { shareDiscovery } from "@/lib/share";
 import { computeStats } from "@/lib/stats";
 import { isHeritageType } from "@/lib/categories";
@@ -911,54 +915,7 @@ function DiscoveryBody({ data, discovery, showNewBadge, t, lang, onShare, childr
 
       <AnimalSoundQuiz data={data} t={t} />
 
-      {data.description && (
-        <div className="result-card">
-          <div className="result-card-title">{t("discovery.description")}</div>
-          <p className="result-card-text">{data.description}</p>
-        </div>
-      )}
-
-      {data.histoire && (
-        <div className="result-card">
-          <div className="result-card-title">{t("discovery.history")}</div>
-          <p className="result-card-text">{data.histoire}</p>
-        </div>
-      )}
-
-      {data.date_construction && (
-        <div className="result-card">
-          <div className="result-card-title">{t("discovery.construction_date")}</div>
-          <p className="result-card-text">{data.date_construction}</p>
-        </div>
-      )}
-
-      {data.style_architectural && (
-        <div className="result-card">
-          <div className="result-card-title">{t("discovery.architectural_style")}</div>
-          <p className="result-card-text">{data.style_architectural}</p>
-        </div>
-      )}
-
-      {data.anecdotes && (
-        <div className="result-card">
-          <div className="result-card-title">{t("discovery.anecdotes")}</div>
-          <p className="result-card-text">{data.anecdotes}</p>
-        </div>
-      )}
-
-      {data.habitat && (
-        <div className="result-card">
-          <div className="result-card-title">{t("discovery.habitat")}</div>
-          <p className="result-card-text">{data.habitat}</p>
-        </div>
-      )}
-
-      {data.etat_sante && (
-        <div className="result-card">
-          <div className="result-card-title">{t("discovery.health")}</div>
-          <p className="result-card-text">{data.etat_sante}</p>
-        </div>
-      )}
+      <DiscoveryAnalysisSections data={data} t={t} />
 
       {discovery && <LocationCard discovery={discovery} t={t} />}
 
@@ -1425,6 +1382,7 @@ export default function Wilder() {
   const [mapLoadedCount, setMapLoadedCount] = useState(null);
   const [camError, setCamError] = useState("");
   const [camLoading, setCamLoading] = useState(false);
+  const [camZoom, setCamZoom] = useState(1);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [viewingDiscovery, setViewingDiscovery] = useState(null);
   const [returnScreen, setReturnScreen] = useState("jardin");
@@ -1444,8 +1402,11 @@ export default function Wilder() {
   const [animalDiscovery, setAnimalDiscovery] = useState(null);
 
   const videoRef = useRef(null);
+  const videoWrapRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
+  const pinchRef = useRef({ dist: 0, zoom: 1 });
+  const hardwareZoomRef = useRef({ min: 1, max: 1, step: 0.1, supported: false });
   const locationWatchStopRef = useRef(null);
 
   const t = useMemo(() => createT(lang), [lang]);
@@ -1527,6 +1488,19 @@ export default function Wilder() {
     }
 
     streamRef.current = stream;
+    const track = stream.getVideoTracks()[0];
+    const caps = track?.getCapabilities?.();
+    if (caps?.zoom) {
+      hardwareZoomRef.current = {
+        min: caps.zoom.min ?? 1,
+        max: caps.zoom.max ?? 1,
+        step: caps.zoom.step ?? 0.1,
+        supported: true,
+      };
+    } else {
+      hardwareZoomRef.current = { min: 1, max: 1, step: 0.1, supported: false };
+    }
+    setCamZoom(1);
     setCamReady(true);
     await attachStreamToVideo();
   }, [attachStreamToVideo, t]);
@@ -1552,6 +1526,18 @@ export default function Wilder() {
       setNeedsOnboarding(false);
     }
   }, []);
+
+  useEffect(() => {
+    const hw = hardwareZoomRef.current;
+    const track = streamRef.current?.getVideoTracks()[0];
+    if (hw.supported && track) {
+      if (videoWrapRef.current) videoWrapRef.current.style.setProperty("--cam-zoom", "1");
+      const target = hw.min + (hw.max - hw.min) * ((camZoom - 1) / 3);
+      track.applyConstraints({ advanced: [{ zoom: target }] }).catch(() => {});
+    } else if (videoWrapRef.current) {
+      videoWrapRef.current.style.setProperty("--cam-zoom", String(camZoom));
+    }
+  }, [camZoom, camReady]);
 
   useEffect(() => {
     const items = loadDiscoveries();
@@ -1781,8 +1767,11 @@ export default function Wilder() {
             photo: photoStored,
             nom: data.nom,
             nom_latin: data.nom_latin || prev.nom_latin || "",
+            famille: data.famille || prev.famille || "",
             type: data.type || prev.type || "plante",
             description: data.description || prev.description || "",
+            identification_note: data.identification_note || prev.identification_note || "",
+            age_approximatif: data.age_approximatif || prev.age_approximatif || "",
             habitat: data.habitat || prev.habitat || "",
             rarete: data.rarete || prev.rarete || "commun",
             etat_sante: data.etat_sante || "",
@@ -1796,6 +1785,8 @@ export default function Wilder() {
               data.style_architectural || prev.style_architectural || "",
             anecdotes: data.anecdotes || prev.anecdotes || "",
             fun_fact: data.fun_fact || prev.fun_fact || "",
+            dangerosite: data.dangerosite || prev.dangerosite || "",
+            infos_utiles: data.infos_utiles || prev.infos_utiles || "",
             comportement: data.comportement || prev.comportement || "",
             alimentation: data.alimentation || prev.alimentation || "",
             espece_protegee: data.espece_protegee ?? prev.espece_protegee ?? null,
@@ -1815,8 +1806,11 @@ export default function Wilder() {
           photo: photoStored,
           nom: data.nom,
           nom_latin: data.nom_latin || "",
+          famille: data.famille || "",
           type: data.type || "plante",
           description: data.description || "",
+          identification_note: data.identification_note || "",
+          age_approximatif: data.age_approximatif || "",
           habitat: data.habitat || "",
           rarete: data.rarete || "commun",
           etat_sante: data.etat_sante || "",
@@ -1829,6 +1823,8 @@ export default function Wilder() {
           style_architectural: data.style_architectural || "",
           anecdotes: data.anecdotes || "",
           fun_fact: data.fun_fact || "",
+          dangerosite: data.dangerosite || "",
+          infos_utiles: data.infos_utiles || "",
           comportement: data.comportement || "",
           alimentation: data.alimentation || "",
           espece_protegee: data.espece_protegee ?? null,
@@ -1888,11 +1884,37 @@ export default function Wilder() {
     const w = v.videoWidth;
     const h = v.videoHeight;
     if (!w || !h) return;
+    const zoom = Math.max(1, camZoom);
+    const useCrop = !hardwareZoomRef.current.supported && zoom > 1;
     c.width = w;
     c.height = h;
-    c.getContext("2d").drawImage(v, 0, 0, w, h);
+    const ctx = c.getContext("2d");
+    if (useCrop) {
+      const sw = w / zoom;
+      const sh = h / zoom;
+      ctx.drawImage(v, (w - sw) / 2, (h - sh) / 2, sw, sh, 0, 0, w, h);
+    } else {
+      ctx.drawImage(v, 0, 0, w, h);
+    }
     handleCapturedImage(c.toDataURL("image/jpeg", 0.85));
-  }, [handleCapturedImage]);
+  }, [handleCapturedImage, camZoom]);
+
+  const onPinchStart = useCallback((e) => {
+    if (e.touches.length !== 2) return;
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    pinchRef.current = { dist: Math.hypot(dx, dy), zoom: camZoom };
+  }, [camZoom]);
+
+  const onPinchMove = useCallback((e) => {
+    if (e.touches.length !== 2 || pinchRef.current.dist <= 0) return;
+    e.preventDefault();
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const dist = Math.hypot(dx, dy);
+    const ratio = dist / pinchRef.current.dist;
+    setCamZoom(Math.min(4, Math.max(1, pinchRef.current.zoom * ratio)));
+  }, []);
 
   const fromGallery = useCallback(
     (file) => {
@@ -2243,7 +2265,13 @@ export default function Wilder() {
       <>
         <Head><title>Scanner — Wilder</title></Head>
         <div className="scanner-screen screen-enter-fast">
-          <div className="scanner-video-wrap">
+          <div
+            ref={videoWrapRef}
+            className="scanner-video-wrap"
+            onTouchStart={onPinchStart}
+            onTouchMove={onPinchMove}
+            style={{ "--cam-zoom": camZoom }}
+          >
             <video
               ref={videoRef}
               autoPlay
@@ -2297,6 +2325,19 @@ export default function Wilder() {
             <div className="scanner-center">
               {camReady && <Viewfinder />}
             </div>
+
+            {camReady && (
+              <input
+                type="range"
+                className="cam-zoom-slider"
+                min={1}
+                max={4}
+                step={0.1}
+                value={camZoom}
+                onChange={(e) => setCamZoom(Number(e.target.value))}
+                aria-label={t("scanner.zoom")}
+              />
+            )}
 
             <p className="scanner-hint">{t("scanner.hint")}</p>
 
@@ -2376,21 +2417,7 @@ export default function Wilder() {
     return (
       <>
         <Head><title>Analyse… — Wilder</title></Head>
-        <div className="analyze-screen screen-enter-fast">
-          <div className="analyze-ring">
-            <div className="analyze-ring-inner">
-              {captured && <img src={captured} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
-            </div>
-          </div>
-          <div style={{ textAlign: "center" }}>
-            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", marginBottom: "0.4rem" }}>
-              {t("analyze.title")}
-            </h2>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>
-              {t("analyze.subtitle")}
-            </p>
-          </div>
-        </div>
+        <AnalyzeLoadingScreen captured={captured} t={t} />
       </>
     );
   }
@@ -2937,12 +2964,8 @@ export default function Wilder() {
       nom: d.nom,
       nom_latin: d.nom_latin,
       type: d.type,
-      description: d.description,
-      habitat: d.habitat,
       rarete: d.rarete,
-      etat_sante: d.etat_sante,
-      fun_fact: d.fun_fact,
-      anecdotes: d.anecdotes,
+      ...discoveryToAnalysisData(d),
     };
     const isJuniorsView = returnScreen === "juniors";
 

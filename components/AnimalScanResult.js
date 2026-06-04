@@ -1,4 +1,5 @@
-import { buildAnimalStory, isProtectedSpecies } from "@/lib/animaux";
+import { isProtectedSpecies } from "@/lib/animaux";
+import DiscoveryAnalysisSections from "@/components/DiscoveryAnalysisSections";
 
 export default function AnimalScanResult({
   result,
@@ -7,7 +8,6 @@ export default function AnimalScanResult({
   onBack,
   saved = true,
 }) {
-  const story = buildAnimalStory(result);
   const protectedSpecies = isProtectedSpecies(result);
 
   return (
@@ -33,7 +33,7 @@ export default function AnimalScanResult({
           <p className="animaux-scan-latin">{result.nom_latin}</p>
         )}
 
-        {story && <div className="animaux-scan-story">{story}</div>}
+        <DiscoveryAnalysisSections data={result} t={t} />
 
         <p
           className={`animaux-scan-protection animaux-scan-protection--${
@@ -45,12 +45,6 @@ export default function AnimalScanResult({
             : t("themes.juniors.common")}
         </p>
 
-        {result.region_saison && (
-          <div className="animaux-scan-region-card">
-            <p className="animaux-scan-region-label">{t("themes.juniors.region_label")}</p>
-            <p className="animaux-scan-region">{result.region_saison}</p>
-          </div>
-        )}
       </div>
 
       {saved && (

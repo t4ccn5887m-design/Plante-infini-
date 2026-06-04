@@ -814,15 +814,124 @@ video {
   inset: 0;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   background: #000;
   z-index: 50;
+  overflow: hidden;
 }
 
 .analyze-preview-photo {
-  flex: 1;
+  position: absolute;
+  inset: 0;
   width: 100%;
+  height: 100%;
   object-fit: cover;
-  opacity: 0.55;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.analyze-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.analyze-ring {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  flex-shrink: 0;
+}
+
+.analyze-ring::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, var(--emerald), var(--gold), var(--emerald));
+  animation: spin 2s linear infinite;
+  z-index: -1;
+}
+
+.analyze-ring-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--bg-deep);
+}
+
+.analyze-ring-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.analyze-pulse-dots {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.analyze-pulse-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sunset-light);
+  animation: analyzeDotPulse 1.2s ease-in-out infinite;
+}
+
+.analyze-pulse-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.analyze-pulse-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes analyzeDotPulse {
+  0%,
+  100% {
+    transform: scale(0.75);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
+.analyze-status-text {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: white;
+  margin: 0;
+  max-width: 280px;
+  line-height: 1.45;
+  animation: analyzeStatusFade 0.45s ease-out;
+}
+
+@keyframes analyzeStatusFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .analyze-status {
@@ -1063,6 +1172,8 @@ video {
   font-size: 0.92rem;
   line-height: 1.7;
   color: var(--text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 /* ── Animal sound quiz ── */

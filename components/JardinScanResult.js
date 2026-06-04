@@ -1,6 +1,6 @@
 import { HEALTH, inferHealthFromEtatSante } from "@/lib/potagerHealth";
-import { buildJardinStory } from "@/lib/espaceVertGarden";
 import { getJardinActionLabel } from "@/lib/espaceVertAction";
+import DiscoveryAnalysisSections from "@/components/DiscoveryAnalysisSections";
 
 export default function JardinScanResult({
   result,
@@ -11,7 +11,6 @@ export default function JardinScanResult({
 }) {
   const health = inferHealthFromEtatSante(result?.etat_sante);
   const action = getJardinActionLabel(result, t);
-  const story = buildJardinStory(result);
 
   const healthClass =
     health === HEALTH.critical
@@ -43,7 +42,7 @@ export default function JardinScanResult({
           <p className="jardin-scan-latin">{result.nom_latin}</p>
         )}
 
-        {story && <div className="jardin-scan-story">{story}</div>}
+        <DiscoveryAnalysisSections data={result} t={t} />
 
         <p className={`jardin-scan-health jardin-scan-health--${healthClass}`}>
           {t(`themes.jardin.health_status_${health}`)}

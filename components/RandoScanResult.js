@@ -1,5 +1,6 @@
 import { HEALTH, inferHealthFromEtatSante } from "@/lib/potagerHealth";
 import { getTypeLabel } from "@/lib/i18n";
+import DiscoveryAnalysisSections from "@/components/DiscoveryAnalysisSections";
 
 const PLANT_TYPES = new Set(["plante", "arbre", "fleur", "herbe"]);
 
@@ -15,12 +16,6 @@ export default function RandoScanResult({ result, photo, t, onBack, onScanAgain,
       : health === HEALTH.warning
         ? "warning"
         : "good";
-
-  const description =
-    result?.description?.trim() ||
-    result?.habitat?.trim() ||
-    result?.fun_fact?.trim() ||
-    "";
 
   return (
     <div className="rando-scan-result screen-enter">
@@ -44,7 +39,7 @@ export default function RandoScanResult({ result, photo, t, onBack, onScanAgain,
         <h1 className="rando-scan-name">{result.nom}</h1>
         {result.nom_latin && <p className="rando-scan-latin">{result.nom_latin}</p>}
 
-        {description && <p className="rando-scan-desc">{description}</p>}
+        <DiscoveryAnalysisSections data={result} t={t} />
 
         {showHealth && health && (
           <p className={`rando-scan-health rando-scan-health--${healthClass}`}>

@@ -1,5 +1,6 @@
 import { HEALTH, inferHealthFromEtatSante } from "@/lib/potagerHealth";
 import { getPotagerActionLabel } from "@/lib/potagerAction";
+import DiscoveryAnalysisSections from "@/components/DiscoveryAnalysisSections";
 
 export default function PotagerScanResult({ result, t, onBack }) {
   const health = inferHealthFromEtatSante(result?.etat_sante);
@@ -25,6 +26,8 @@ export default function PotagerScanResult({ result, t, onBack }) {
 
       <div className="potager-scan-content">
         <h1 className="potager-scan-name">{result.nom}</h1>
+
+        <DiscoveryAnalysisSections data={result} t={t} />
 
         <p className={`potager-scan-health potager-scan-health--${healthClass}`}>
           {t(`themes.potager.health_status_${health}`)}
