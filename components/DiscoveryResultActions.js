@@ -82,7 +82,8 @@ export default function DiscoveryResultActions({
           className="discovery-result-btn discovery-result-btn--organize"
           onClick={() => setOrganizeOpen(true)}
         >
-          <span className="discovery-result-btn-label">{t("discovery.organize_in")}</span>
+          <span aria-hidden="true">📂</span>
+          <span>{t("discovery.organize_in")}</span>
           {organizeHint ? (
             <span className="discovery-result-btn-hint">{organizeHint}</span>
           ) : null}
@@ -94,7 +95,7 @@ export default function DiscoveryResultActions({
           onClick={onScanAgain}
         >
           <span aria-hidden="true">📸</span>
-          {scanAgainLabel || t("discovery.scan_again")}
+          <span>{scanAgainLabel || t("discovery.scan_again")}</span>
         </button>
 
         <button
@@ -103,7 +104,8 @@ export default function DiscoveryResultActions({
           onClick={handleShare}
           disabled={sharing || !discovery}
         >
-          {sharing ? t("discovery.share_generating") : t("discovery.share")}
+          <span aria-hidden="true">📤</span>
+          <span>{sharing ? t("discovery.share_generating") : t("discovery.share")}</span>
         </button>
       </div>
 

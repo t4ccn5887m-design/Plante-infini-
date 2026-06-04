@@ -58,16 +58,16 @@ export default function JardinScanResult({
           <p className="jardin-scan-action-label">{t("themes.jardin.action_label")}</p>
           <p className="jardin-scan-action">{action}</p>
         </div>
-
-        <DiscoveryResultActions
-          discovery={discovery}
-          t={t}
-          lang={lang}
-          organizeHint={organizeHint}
-          onOrganizeDestination={onOrganizeDestination}
-          onScanAgain={onScanAgain}
-        />
       </div>
+
+      <DiscoveryResultActions
+        discovery={discovery}
+        t={t}
+        lang={lang}
+        organizeHint={organizeHint}
+        onOrganizeDestination={onOrganizeDestination}
+        onScanAgain={onScanAgain}
+      />
 
       {saved && (
         <p className="jardin-scan-saved" aria-live="polite">

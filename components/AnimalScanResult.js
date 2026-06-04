@@ -50,16 +50,16 @@ export default function AnimalScanResult({
             ? t("themes.juniors.protected")
             : t("themes.juniors.common")}
         </p>
-
-        <DiscoveryResultActions
-          discovery={discovery}
-          t={t}
-          lang={lang}
-          organizeHint={organizeHint}
-          onOrganizeDestination={onOrganizeDestination}
-          onScanAgain={onScanAgain}
-        />
       </div>
+
+      <DiscoveryResultActions
+        discovery={discovery}
+        t={t}
+        lang={lang}
+        organizeHint={organizeHint}
+        onOrganizeDestination={onOrganizeDestination}
+        onScanAgain={onScanAgain}
+      />
 
       {saved && (
         <p className="animaux-scan-saved" aria-live="polite">

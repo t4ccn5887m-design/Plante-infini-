@@ -1570,6 +1570,8 @@ export default function Wilder() {
 
   const resumeRando = useCallback(() => {
     setShowRandoMap(false);
+    setResult(null);
+    setCaptured(null);
     setScreen("camera");
   }, []);
 
@@ -1896,13 +1898,14 @@ export default function Wilder() {
     if (!currentDiscovery) return null;
     return {
       ...currentDiscovery,
+      photo: captured || currentDiscovery.photo,
       nom: result?.nom || currentDiscovery.nom,
       nom_latin: result?.nom_latin || currentDiscovery.nom_latin,
       description: result?.description || currentDiscovery.description || "",
       type: result?.type || currentDiscovery.type,
       rarete: result?.rarete || currentDiscovery.rarete,
     };
-  }, [currentDiscovery, result]);
+  }, [currentDiscovery, result, captured]);
 
   const getOrganizeHint = useCallback(() => {
     if (organizeSaved.potager || returnScreen === "potager") return t("discovery.saved_potager");
@@ -2559,6 +2562,7 @@ export default function Wilder() {
           <div className="potager-scan-screen screen-enter-fast">
             <PotagerScanResult
               result={result}
+              photo={captured}
               discovery={shareDiscoveryPayload}
               t={t}
               lang={lang}
@@ -2660,7 +2664,7 @@ export default function Wilder() {
               lang={lang}
               organizeHint={getOrganizeHint()}
               onOrganizeDestination={handleOrganizeDestination}
-              onScanAgain={resumeRando}
+              onScanAgain={scanAgainFromResult}
               scanAgainLabel={t("themes.randos.scan_again")}
               onBack={resumeRando}
               onEndRando={endRando}

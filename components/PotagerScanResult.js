@@ -5,6 +5,7 @@ import DiscoveryResultActions from "@/components/DiscoveryResultActions";
 
 export default function PotagerScanResult({
   result,
+  photo,
   discovery,
   t,
   lang,
@@ -34,6 +35,12 @@ export default function PotagerScanResult({
         ← {t("themes.potager.back_to_garden")}
       </button>
 
+      {photo && (
+        <div className="potager-scan-photo-wrap">
+          <img src={photo} alt="" className="potager-scan-photo" />
+        </div>
+      )}
+
       <div className="potager-scan-content">
         <h1 className="potager-scan-name">{result.nom}</h1>
 
@@ -44,16 +51,16 @@ export default function PotagerScanResult({
         </p>
 
         <p className="potager-scan-action">{action}</p>
-
-        <DiscoveryResultActions
-          discovery={discovery}
-          t={t}
-          lang={lang}
-          organizeHint={organizeHint}
-          onOrganizeDestination={onOrganizeDestination}
-          onScanAgain={onScanAgain}
-        />
       </div>
+
+      <DiscoveryResultActions
+        discovery={discovery}
+        t={t}
+        lang={lang}
+        organizeHint={organizeHint}
+        onOrganizeDestination={onOrganizeDestination}
+        onScanAgain={onScanAgain}
+      />
 
       <p className="sr-only" aria-live="polite">
         ✓ {t("themes.potager.saved_auto")}
