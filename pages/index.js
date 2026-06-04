@@ -18,6 +18,7 @@ import { computeStats } from "@/lib/stats";
 import { isHeritageType } from "@/lib/categories";
 import OnboardingScreen from "@/components/OnboardingScreen";
 import PotagerView from "@/components/PotagerView";
+import RandosView, { RandosStartButton } from "@/components/RandosView";
 import {
   acquireCameraStream,
   completeOnboarding,
@@ -1134,6 +1135,7 @@ function ThemeAlbumsScreen({
   onToggleTheme,
   navigateMain,
   onStartScan,
+  onStartRando,
 }) {
   const isPotager = themeId === "potager";
   const isJuniors = themeId === "juniors";
@@ -1143,7 +1145,7 @@ function ThemeAlbumsScreen({
   const rootAlbums = getRootAlbums(albums, themeId).sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
-  const showMapToggle = isRandos || !isJardin || jardinTab === "albums";
+  const showMapToggle = !isRandos && (!isJardin || jardinTab === "albums");
 
   return (
     <>
@@ -1171,6 +1173,82 @@ function ThemeAlbumsScreen({
             t={t}
             lang={lang}
           />
+        ) : isRandos ? (
+          <>
+            <div className="albums-view-toggle" role="tablist" aria-label={t(`themes.${themeId}.title`)}>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={!isMapView}
+                className={`albums-view-btn${!isMapView ? " active" : ""}`}
+                onClick={() => {
+                  setAlbumsViewMode("list");
+                  setMapSheetAlbum(null);
+                }}
+              >
+                <IconList size={18} />
+                {t("albums.view_list")}
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={isMapView}
+                className={`albums-view-btn${isMapView ? " active" : ""}`}
+                onClick={() => setAlbumsViewMode("map")}
+              >
+                <IconMap size={18} />
+                {t("albums.view_map")}
+              </button>
+            </div>
+
+            {isMapView ? (
+              <>
+                <p className="albums-map-stats">
+                  {mapLoadedCount == null
+                    ? t("albums.map_loading")
+                    : mapLoadedCount === 0
+                      ? t("albums.map_empty")
+                      : t("albums.map_loaded_count", { count: mapLoadedCount })}
+                </p>
+                <AlbumsMapView
+                  key={`${themeId}-${albumsViewMode}`}
+                  themeFilter={themeId}
+                  onLoadedCount={setMapLoadedCount}
+                  onAlbumsSynced={setAlbums}
+                  onSelectAlbum={setMapSheetAlbum}
+                  t={t}
+                />
+                {mapSheetAlbum && (
+                  <AlbumMapSheet
+                    album={mapSheetAlbum}
+                    discoveries={discoveries}
+                    onClose={() => setMapSheetAlbum(null)}
+                    onOpenAlbum={(albumId) => {
+                      setMapSheetAlbum(null);
+                      setReturnScreen(themeId);
+                      setSelectedAlbumId(albumId);
+                      setScreen("album-detail");
+                    }}
+                    t={t}
+                    locale={locale}
+                  />
+                )}
+              </>
+            ) : (
+              <RandosView
+                albums={albums}
+                discoveries={discoveries}
+                locale={locale}
+                t={t}
+                onOpenAlbum={(albumId) => {
+                  setReturnScreen(themeId);
+                  setSelectedAlbumId(albumId);
+                  setScreen("album-detail");
+                }}
+              />
+            )}
+            <RandosStartButton t={t} onStartRando={onStartRando} />
+          </>
         ) : (
           <>
             {isJardin && (
@@ -1386,6 +1464,7 @@ export default function Wilder() {
   const [theme, setTheme] = useState("dark");
   const [showConfetti, setShowConfetti] = useState(false);
   const [newBadge, setNewBadge] = useState(null);
+  const [activeRandoAlbumId, setActiveRandoAlbumId] = useState(null);
 
   const t = useMemo(() => createT(lang), [lang]);
   const locale = useMemo(() => getLocale(lang), [lang]);
@@ -1521,17 +1600,37 @@ export default function Wilder() {
     setErrorMsg("");
     setSavedToAlbum(false);
     setShowAlbumPicker(false);
+    setActiveRandoAlbumId(null);
     setScreen("home");
   };
 
   const navigateMain = (target) => {
     if (target === "home") goHome();
     else {
-      if (target === "randos") setAlbumsViewMode("map");
+      if (target !== "randos") setActiveRandoAlbumId(null);
+      if (target === "randos") setAlbumsViewMode("list");
       else setAlbumsViewMode("list");
       setScreen(target);
     }
   };
+
+  const startRando = useCallback(async () => {
+    const location = await getCurrentLocation();
+    const createdAt = new Date().toISOString();
+    const album = buildAlbumRecord({
+      name: defaultAlbumName(t, locale),
+      createdAt,
+      coverPhoto: null,
+      discoveryIds: [],
+      location,
+      theme: "randos",
+    });
+    const updated = [album, ...loadAlbums()];
+    saveAlbums(updated);
+    setAlbums(updated);
+    setActiveRandoAlbumId(album.id);
+    setScreen("camera");
+  }, [t, locale]);
 
   const analyze = useCallback(async (base64, imgSrc) => {
     setCaptured(imgSrc);
@@ -1667,6 +1766,11 @@ export default function Wilder() {
     setShowAlbumPicker(false);
     setSavedToAlbum(true);
   };
+
+  useEffect(() => {
+    if (screen !== "result" || !activeRandoAlbumId || !currentDiscovery || savedToAlbum) return;
+    addToAlbum(activeRandoAlbumId);
+  }, [screen, activeRandoAlbumId, currentDiscovery?.id, savedToAlbum]);
 
   const createAlbum = async (name, theme = DEFAULT_ALBUM_THEME) => {
     if (!currentDiscovery) return;
@@ -2563,6 +2667,7 @@ export default function Wilder() {
         onToggleTheme={toggleTheme}
         navigateMain={navigateMain}
         onStartScan={() => setScreen("camera")}
+        onStartRando={startRando}
       />
     );
   }
