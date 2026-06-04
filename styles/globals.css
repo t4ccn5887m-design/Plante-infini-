@@ -3541,6 +3541,253 @@ video {
   border-color: rgba(248, 113, 113, 0.35) !important;
 }
 
+.potager-community {
+  margin: 0 0 1.25rem;
+  padding: 1rem;
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(27, 61, 47, 0.55) 0%, rgba(20, 40, 30, 0.75) 100%);
+  border: 1px solid rgba(61, 122, 92, 0.35);
+}
+
+.potager-community-head {
+  margin-bottom: 0.85rem;
+}
+
+.potager-community-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--sunset-light);
+}
+
+.potager-community-subtitle {
+  margin: 0.25rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.potager-community-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+}
+
+.potager-community-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 4.25rem;
+  padding: 0.65rem 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--cream);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.potager-community-btn:hover {
+  border-color: rgba(224, 122, 58, 0.45);
+  background: rgba(224, 122, 58, 0.12);
+  transform: translateY(-1px);
+}
+
+.potager-community-btn--alert {
+  border-color: rgba(255, 180, 80, 0.3);
+}
+
+.potager-community-btn--alert:hover {
+  border-color: rgba(255, 160, 60, 0.55);
+  background: rgba(255, 140, 50, 0.15);
+}
+
+.potager-community-btn-icon {
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.potager-community-toast {
+  margin: 0.65rem 0 0;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  background: rgba(74, 222, 128, 0.15);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  font-size: 0.78rem;
+  color: #b8f5d0;
+}
+
+.potager-community-location,
+.potager-community-loading,
+.potager-community-empty,
+.potager-community-offline {
+  margin: 0.75rem 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.potager-community-location-btn {
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid rgba(61, 122, 92, 0.5);
+  border-radius: 8px;
+  background: rgba(61, 122, 92, 0.2);
+  color: var(--cream);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.potager-community-feed {
+  margin-top: 0.85rem;
+}
+
+.potager-community-feed-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--sunset-light);
+}
+
+.potager-community-post {
+  display: flex;
+  gap: 0.65rem;
+  padding: 0.6rem;
+  margin-bottom: 0.5rem;
+  border-radius: 10px;
+  background: rgba(20, 35, 28, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.potager-community-post--surplus {
+  border-color: rgba(255, 180, 80, 0.25);
+}
+
+.potager-community-post-photo {
+  width: 4.5rem;
+  height: 4.5rem;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.potager-community-post-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.potager-community-post-kind {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--sunset-light);
+}
+
+.potager-community-post-plants {
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--cream);
+}
+
+.potager-community-post-comment {
+  margin: 0.25rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.potager-community-post-meta {
+  margin: 0.35rem 0 0;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.potager-community-modal .potager-community-textarea {
+  resize: vertical;
+  min-height: 4.5rem;
+}
+
+.potager-community-file {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.potager-community-photo-btn {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.65rem;
+  padding: 0.55rem;
+  border: 1px dashed rgba(224, 122, 58, 0.4);
+  border-radius: 10px;
+  background: rgba(224, 122, 58, 0.08);
+  color: var(--sunset-light);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.potager-community-preview {
+  display: block;
+  width: 100%;
+  max-height: 10rem;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 0.65rem;
+}
+
+.potager-community-modal-hint,
+.potager-community-modal-note {
+  margin: 0 0 0.65rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.potager-community-plant-picks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.potager-community-plant-pick {
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(27, 61, 47, 0.45);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.potager-community-plant-pick.active {
+  border-color: rgba(255, 180, 80, 0.5);
+  background: rgba(255, 160, 60, 0.18);
+  color: var(--sunset-light);
+}
+
+.potager-community-error {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: #ffb4a8;
+}
+
 [data-theme="light"] .theme-screen--potager {
   background: linear-gradient(180deg, var(--bg-deep) 0%, #e8f0ea 100%);
 }

@@ -22,6 +22,7 @@ import {
 } from "@/lib/potagerStorage";
 import PotagerWeatherCard from "@/components/PotagerWeatherCard";
 import PotagerRecipesCard from "@/components/PotagerRecipesCard";
+import PotagerCommunityCard from "@/components/PotagerCommunityCard";
 
 function generateId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -336,6 +337,8 @@ export default function PotagerView({ discoveries, onOpenDiscovery, onStartScan,
       </div>
 
       <PotagerRecipesCard harvestPlants={harvestPlants} t={t} lang={lang} />
+
+      <PotagerCommunityCard harvestPlants={harvestPlants} t={t} />
 
       <div className="potager-beds-grid">
         {plantsByBed.map((bedPlants, bedIndex) => (
