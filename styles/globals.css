@@ -567,12 +567,24 @@ video {
   pointer-events: none;
 }
 
-.scanner-hint {
+.viewfinder-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.viewfinder-label {
+  margin: 0 1.25rem 0.9rem;
   text-align: center;
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 0.8rem;
-  padding: 0 1.5rem 0.35rem;
-  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.12rem;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+  color: #fff;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
   pointer-events: none;
 }
 
@@ -580,53 +592,9 @@ video {
   position: relative;
   width: min(88vw, 320px);
   aspect-ratio: 4 / 3;
-  pointer-events: none;
-}
-
-.viewfinder-corner {
-  position: absolute;
-  width: 28px;
-  height: 28px;
-  border-color: rgba(255, 255, 255, 0.85);
-  border-style: solid;
-  pointer-events: none;
-}
-
-.viewfinder-corner.tl {
-  top: 0;
-  left: 0;
-  border-width: 3px 0 0 3px;
-  border-radius: 4px 0 0 0;
-}
-
-.viewfinder-corner.tr {
-  top: 0;
-  right: 0;
-  border-width: 3px 3px 0 0;
-  border-radius: 0 4px 0 0;
-}
-
-.viewfinder-corner.bl {
-  bottom: 0;
-  left: 0;
-  border-width: 0 0 3px 3px;
-  border-radius: 0 0 0 4px;
-}
-
-.viewfinder-corner.br {
-  bottom: 0;
-  right: 0;
-  border-width: 0 3px 3px 0;
-  border-radius: 0 0 4px 0;
-}
-
-.scan-line {
-  position: absolute;
-  left: 8%;
-  right: 8%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--sunset-light), transparent);
-  animation: scanLine 2.8s ease-in-out infinite;
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  border-radius: 3px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.48);
   pointer-events: none;
 }
 

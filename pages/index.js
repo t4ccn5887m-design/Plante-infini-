@@ -790,14 +790,11 @@ function FallingLeaves() {
   );
 }
 
-function Viewfinder({ viewfinderRef }) {
+function Viewfinder({ viewfinderRef, label }) {
   return (
-    <div ref={viewfinderRef} className="viewfinder-wilder">
-      <div className="viewfinder-corner tl" />
-      <div className="viewfinder-corner tr" />
-      <div className="viewfinder-corner bl" />
-      <div className="viewfinder-corner br" />
-      <div className="scan-line" />
+    <div className="viewfinder-stack">
+      <p className="viewfinder-label">{label}</p>
+      <div ref={viewfinderRef} className="viewfinder-wilder" aria-hidden="true" />
     </div>
   );
 }
@@ -2395,7 +2392,12 @@ export default function Wilder() {
             </div>
 
             <div className="scanner-center">
-              {camReady && <Viewfinder viewfinderRef={viewfinderRef} />}
+              {camReady && (
+                <Viewfinder
+                  viewfinderRef={viewfinderRef}
+                  label={t("scanner.frame_hint")}
+                />
+              )}
             </div>
 
             {camReady && (
@@ -2410,8 +2412,6 @@ export default function Wilder() {
                 aria-label={t("scanner.zoom")}
               />
             )}
-
-            <p className="scanner-hint">{t("scanner.hint")}</p>
 
             <div className="scanner-bottom">
               {inRando && (
