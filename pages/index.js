@@ -18,6 +18,8 @@ import { computeStats } from "@/lib/stats";
 import { isHeritageType } from "@/lib/categories";
 import OnboardingScreen from "@/components/OnboardingScreen";
 import PotagerView from "@/components/PotagerView";
+import EspacesVertsView from "@/components/EspacesVertsView";
+import EspaceVertPlantList from "@/components/EspaceVertPlantList";
 import RandosView, { RandosStartButton, RandosActiveBar } from "@/components/RandosView";
 import RandoNatureAlerts from "@/components/RandoNatureAlerts";
 import RandoJournal from "@/components/RandoJournal";
@@ -147,6 +149,7 @@ function buildAlbumRecord({
   location,
   theme = DEFAULT_ALBUM_THEME,
   parentId = null,
+  spaceKind = null,
 }) {
   const photos = coverPhoto ? [coverPhoto] : [];
   return {
@@ -159,6 +162,7 @@ function buildAlbumRecord({
     photos,
     discoveryIds,
     theme,
+    ...(spaceKind ? { spaceKind } : {}),
     ...(parentId ? { parentId } : {}),
     ...(location
       ? {
@@ -1053,39 +1057,6 @@ function ThemeAlbumPickerModal({ albums, onSelect, onCreate, onClose, t, locale 
   );
 }
 
-function HerbariumView({ albums, discoveries, onOpenDiscovery, t, locale }) {
-  const plants = getHerbariumDiscoveries(albums, discoveries);
-  if (plants.length === 0) {
-    return (
-      <div className="albums-empty herbarium-empty">
-        <span className="herbarium-empty-icon" aria-hidden="true">
-          📖
-        </span>
-        <p>{t("themes.jardin.herbarium_empty")}</p>
-      </div>
-    );
-  }
-  return (
-    <div className="herbarium-grid">
-      {plants.map((d) => (
-        <button
-          key={d.id}
-          type="button"
-          className="herbarium-card"
-          onClick={() => onOpenDiscovery(d)}
-        >
-          <div className="herbarium-card-frame">
-            <img src={d.photo} alt={d.nom} />
-          </div>
-          <h3>{d.nom}</h3>
-          <p className="herbarium-latin">{d.nom_latin || "—"}</p>
-          <p className="herbarium-date">{formatDate(d.discoveredAt, locale)}</p>
-        </button>
-      ))}
-    </div>
-  );
-}
-
 function JuniorsDiscoveryCard({ discovery, onClick, t, typeLabel, rarityLabel }) {
   const emoji = THEME_META.juniors.emoji;
   return (
@@ -1189,6 +1160,23 @@ function ThemeAlbumsScreen({
             onStartScan={onStartScan}
             t={t}
             lang={lang}
+          />
+        ) : isJardin ? (
+          <EspacesVertsView
+            albums={albums}
+            discoveries={discoveries}
+            herbariumPlants={getHerbariumDiscoveries(albums, discoveries)}
+            jardinTab={jardinTab}
+            setJardinTab={setJardinTab}
+            onOpenAlbum={(albumId) => {
+              setReturnScreen(themeId);
+              setSelectedAlbumId(albumId);
+              setScreen("album-detail");
+            }}
+            onCreateSpace={(data) => createAlbumFromList(themeId, data)}
+            onOpenDiscovery={(d) => openDiscoveryDetail(d, themeId)}
+            t={t}
+            locale={locale}
           />
         ) : isRandos ? (
           <>
@@ -1311,42 +1299,6 @@ function ThemeAlbumsScreen({
           </>
         ) : (
           <>
-            {isJardin && (
-              <div className="jardin-tabs" role="tablist">
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={jardinTab === "albums"}
-                  className={`jardin-tab${jardinTab === "albums" ? " active" : ""}`}
-                  onClick={() => setJardinTab("albums")}
-                >
-                  📁 {t("themes.jardin.tab_albums")}
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={jardinTab === "herbier"}
-                  className={`jardin-tab${jardinTab === "herbier" ? " active" : ""}`}
-                  onClick={() => setJardinTab("herbier")}
-                >
-                  📖 {t("themes.jardin.herbarium")}
-                </button>
-              </div>
-            )}
-
-            {isJardin && jardinTab === "herbier" ? (
-              <>
-                <p className="theme-herbarium-intro">{t("themes.jardin.herbarium_subtitle")}</p>
-                <HerbariumView
-                  albums={albums}
-                  discoveries={discoveries}
-                  onOpenDiscovery={(d) => openDiscoveryDetail(d, themeId)}
-                  t={t}
-                  locale={locale}
-                />
-              </>
-            ) : (
-              <>
                 {showMapToggle && (
               <div className="albums-view-toggle" role="tablist" aria-label={t(`themes.${themeId}.title`)}>
                 <button
@@ -1484,8 +1436,6 @@ function ThemeAlbumsScreen({
                 )}
               </div>
             )}
-              </>
-            )}
           </>
         )}
       </div>
@@ -1541,6 +1491,8 @@ export default function Wilder() {
   const [randoTrack, setRandoTrack] = useState([]);
   const [showRandoMap, setShowRandoMap] = useState(false);
   const [randoJournalAlbumId, setRandoJournalAlbumId] = useState(null);
+  const [rescanDiscoveryId, setRescanDiscoveryId] = useState(null);
+  const [scanTargetAlbumId, setScanTargetAlbumId] = useState(null);
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -1766,14 +1718,18 @@ export default function Wilder() {
       setScreen("randos");
       return;
     }
+    const back =
+      returnScreen === "album-detail" || isThemeScreen(returnScreen) ? returnScreen : "home";
     setResult(null);
     setCaptured(null);
     setCurrentDiscovery(null);
     setErrorMsg("");
     setSavedToAlbum(false);
     setShowAlbumPicker(false);
-    setScreen("home");
-  }, [activeRandoAlbumId]);
+    setRescanDiscoveryId(null);
+    setScanTargetAlbumId(null);
+    setScreen(back);
+  }, [activeRandoAlbumId, returnScreen]);
 
   const goHome = () => {
     setResult(null);
@@ -1783,7 +1739,24 @@ export default function Wilder() {
     setSavedToAlbum(false);
     setShowAlbumPicker(false);
     setShowRandoMap(false);
+    setRescanDiscoveryId(null);
+    setScanTargetAlbumId(null);
     setScreen("home");
+  };
+
+  const leaveResult = () => {
+    if (returnScreen === "album-detail") {
+      setResult(null);
+      setCaptured(null);
+      setCurrentDiscovery(null);
+      setSavedToAlbum(false);
+      setShowAlbumPicker(false);
+      setRescanDiscoveryId(null);
+      setScanTargetAlbumId(null);
+      setScreen("album-detail");
+      return;
+    }
+    goHome();
   };
 
   const navigateMain = (target) => {
@@ -1845,26 +1818,57 @@ export default function Wilder() {
         return;
       }
 
-      const discovery = {
-        id: generateId(),
-        photo: photoStored,
-        nom: data.nom,
-        nom_latin: data.nom_latin || "",
-        type: data.type || "plante",
-        description: data.description || "",
-        habitat: data.habitat || "",
-        rarete: data.rarete || "commun",
-        etat_sante: data.etat_sante || "",
-        histoire: data.histoire || "",
-        date_construction: data.date_construction || "",
-        style_architectural: data.style_architectural || "",
-        anecdotes: data.anecdotes || "",
-        fun_fact: data.fun_fact || "",
-        discoveredAt: new Date().toISOString(),
-        ...(location || {}),
-      };
+      const now = new Date().toISOString();
+      let discovery;
+      let updated;
 
-      const updated = [discovery, ...loadDiscoveries()];
+      if (rescanDiscoveryId) {
+        const prev = loadDiscoveries().find((d) => d.id === rescanDiscoveryId);
+        if (prev) {
+          discovery = {
+            ...prev,
+            photo: photoStored,
+            nom: data.nom,
+            nom_latin: data.nom_latin || prev.nom_latin || "",
+            type: data.type || prev.type || "plante",
+            description: data.description || prev.description || "",
+            habitat: data.habitat || prev.habitat || "",
+            rarete: data.rarete || prev.rarete || "commun",
+            etat_sante: data.etat_sante || "",
+            histoire: data.histoire || prev.histoire || "",
+            date_construction: data.date_construction || prev.date_construction || "",
+            style_architectural:
+              data.style_architectural || prev.style_architectural || "",
+            anecdotes: data.anecdotes || prev.anecdotes || "",
+            fun_fact: data.fun_fact || prev.fun_fact || "",
+            ...(location || {}),
+          };
+          updated = loadDiscoveries().map((d) => (d.id === rescanDiscoveryId ? discovery : d));
+        }
+      }
+
+      if (!discovery) {
+        discovery = {
+          id: generateId(),
+          photo: photoStored,
+          nom: data.nom,
+          nom_latin: data.nom_latin || "",
+          type: data.type || "plante",
+          description: data.description || "",
+          habitat: data.habitat || "",
+          rarete: data.rarete || "commun",
+          etat_sante: data.etat_sante || "",
+          histoire: data.histoire || "",
+          date_construction: data.date_construction || "",
+          style_architectural: data.style_architectural || "",
+          anecdotes: data.anecdotes || "",
+          fun_fact: data.fun_fact || "",
+          discoveredAt: now,
+          plantedAt: now,
+          ...(location || {}),
+        };
+        updated = [discovery, ...loadDiscoveries()];
+      }
       const saveResult = saveDiscoveries(updated);
       if (!saveResult.ok) {
         console.warn("[Wilder] Sauvegarde localStorage échouée:", saveResult.error);
@@ -1883,6 +1887,9 @@ export default function Wilder() {
       setDiscoveries(updated);
       setCurrentDiscovery(discovery);
       setResult(data);
+      const wasRescan = Boolean(rescanDiscoveryId);
+      setRescanDiscoveryId(null);
+      if (wasRescan) setSavedToAlbum(true);
       setScreen("result");
       if (checkNewBadges(updated)) {
         playBadgeUnlockSound();
@@ -1894,7 +1901,7 @@ export default function Wilder() {
       setErrorMsg("Erreur: " + e.message);
       setScreen("error");
     }
-  }, [t, checkNewBadges, lang]);
+  }, [t, checkNewBadges, lang, rescanDiscoveryId]);
 
   const handleCapturedImage = useCallback(
     (dataUrl) => {
@@ -1959,6 +1966,12 @@ export default function Wilder() {
     addToAlbum(activeRandoAlbumId);
   }, [screen, activeRandoAlbumId, currentDiscovery?.id, savedToAlbum]);
 
+  useEffect(() => {
+    if (screen !== "result" || !scanTargetAlbumId || !currentDiscovery || savedToAlbum) return;
+    addToAlbum(scanTargetAlbumId);
+    setScanTargetAlbumId(null);
+  }, [screen, scanTargetAlbumId, currentDiscovery?.id, savedToAlbum]);
+
   const createAlbum = async (name, theme = DEFAULT_ALBUM_THEME) => {
     if (!currentDiscovery) return;
     let location = null;
@@ -1988,8 +2001,8 @@ export default function Wilder() {
     setSavedToAlbum(true);
   };
 
-  const createAlbumFromList = async (themeId) => {
-    const name = newAlbumName.trim() || defaultAlbumName(t, locale);
+  const createAlbumFromList = async (themeId, options = {}) => {
+    const name = (options.name || newAlbumName).trim() || defaultAlbumName(t, locale);
     const location = await getCurrentLocation();
     const createdAt = new Date().toISOString();
     const album = buildAlbumRecord({
@@ -1999,6 +2012,7 @@ export default function Wilder() {
       discoveryIds: [],
       location,
       theme: themeId,
+      spaceKind: options.spaceKind || null,
     });
     const updated = [album, ...loadAlbums()];
     saveAlbums(updated);
@@ -2399,9 +2413,14 @@ export default function Wilder() {
               type="button"
               className="btn-secondary"
               style={{ marginBottom: "1rem", padding: "0.5rem 0.85rem" }}
-              onClick={inRando ? resumeRando : goHome}
+              onClick={inRando ? resumeRando : leaveResult}
             >
-              <IconBack size={16} /> {inRando ? t("themes.randos.resume") : t("discovery.home")}
+              <IconBack size={16} />{" "}
+              {inRando
+                ? t("themes.randos.resume")
+                : returnScreen === "album-detail"
+                  ? t("scanner.back")
+                  : t("discovery.home")}
             </button>
 
             <DiscoveryBody data={result} discovery={currentDiscovery} showNewBadge t={t} lang={lang}>
@@ -2466,6 +2485,7 @@ export default function Wilder() {
     const subAlbums = getSubAlbums(albums, selectedAlbum.id);
     const backScreen = isThemeScreen(returnScreen) ? returnScreen : albumTheme;
 
+    const isJardinAlbum = albumTheme === "jardin";
     const isRandosAlbum = albumTheme === "randos";
     const hasRandoTrack =
       isRandosAlbum &&
@@ -2478,7 +2498,7 @@ export default function Wilder() {
           <title>{selectedAlbum.name} — Wilder</title>
         </Head>
         <div
-          className={`albums-screen screen-enter-fast${isJuniorsAlbum ? " theme-screen--juniors" : ""}${isRandosAlbum ? " theme-screen--randos" : ""}`}
+          className={`albums-screen screen-enter-fast${isJuniorsAlbum ? " theme-screen--juniors" : ""}${isJardinAlbum ? " theme-screen--jardin" : ""}${isRandosAlbum ? " theme-screen--randos" : ""}`}
         >
           {hasRandoTrack && (
             <div className="rando-detail-map-wrap">
@@ -2561,35 +2581,91 @@ export default function Wilder() {
             </div>
           )}
 
-          {creatingSubAlbum ? (
-            <div className="sub-album-create" style={{ padding: "0 1.25rem" }}>
-              <input
-                className="modal-input"
-                placeholder={t("themes.new_sub_album")}
-                value={newSubAlbumName}
-                onChange={(e) => setNewSubAlbumName(e.target.value)}
-                autoFocus
-              />
-              <div className="modal-actions">
-                <button type="button" className="btn-secondary" onClick={() => setCreatingSubAlbum(false)}>
-                  {t("albums.cancel")}
-                </button>
-                <button type="button" className="btn-primary" onClick={() => createSubAlbum(selectedAlbum)}>
-                  {t("albums.create")}
-                </button>
+          {!isJardinAlbum &&
+            (creatingSubAlbum ? (
+              <div className="sub-album-create" style={{ padding: "0 1.25rem" }}>
+                <input
+                  className="modal-input"
+                  placeholder={t("themes.new_sub_album")}
+                  value={newSubAlbumName}
+                  onChange={(e) => setNewSubAlbumName(e.target.value)}
+                  autoFocus
+                />
+                <div className="modal-actions">
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => setCreatingSubAlbum(false)}
+                  >
+                    {t("albums.cancel")}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-primary"
+                    onClick={() => createSubAlbum(selectedAlbum)}
+                  >
+                    {t("albums.create")}
+                  </button>
+                </div>
               </div>
-            </div>
-          ) : (
-            <button
-              type="button"
-              className="btn-create-sub-album"
-              onClick={() => setCreatingSubAlbum(true)}
-            >
-              <IconPlus size={16} /> {t("themes.create_sub_album")}
-            </button>
-          )}
+            ) : (
+              <button
+                type="button"
+                className="btn-create-sub-album"
+                onClick={() => setCreatingSubAlbum(true)}
+              >
+                <IconPlus size={16} /> {t("themes.create_sub_album")}
+              </button>
+            ))}
 
-          {items.length === 0 ? (
+          {isJardinAlbum ? (
+            <div className="ev-detail-plants">
+              <EspaceVertPlantList
+                plants={items}
+                locale={locale}
+                t={t}
+                onScanPlant={(d) => {
+                  setRescanDiscoveryId(d.id);
+                  setScanTargetAlbumId(null);
+                  setReturnScreen("album-detail");
+                  setScreen("camera");
+                }}
+                onOpenDiscovery={(d) => {
+                  setReturnScreen("album-detail");
+                  openDiscoveryDetail(d, "album-detail");
+                }}
+              />
+              {items.length === 0 ? (
+                <button
+                  type="button"
+                  className="btn-primary ev-detail-scan-main"
+                  onClick={() => {
+                    setRescanDiscoveryId(null);
+                    setScanTargetAlbumId(selectedAlbum.id);
+                    setReturnScreen("album-detail");
+                    setScreen("camera");
+                  }}
+                >
+                  {t("albums.scan")}
+                </button>
+              ) : (
+                <div className="ev-detail-add-bar">
+                  <button
+                    type="button"
+                    className="ev-add-btn"
+                    onClick={() => {
+                      setRescanDiscoveryId(null);
+                      setScanTargetAlbumId(selectedAlbum.id);
+                      setReturnScreen("album-detail");
+                      setScreen("camera");
+                    }}
+                  >
+                    {t("albums.scan")}
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : items.length === 0 ? (
             <div className="albums-empty">
               <p>{t("albums.empty_album")}</p>
               <button
