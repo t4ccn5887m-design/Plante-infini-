@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import SwipeToDelete from "@/components/SwipeToDelete";
 import { getRarityLabel, getTypeLabel } from "@/lib/i18n";
-import { computeRandoDistanceKm } from "@/lib/randos";
+import { computeRandoDistanceKm, computeRandoDurationMs, formatRandoDuration } from "@/lib/randos";
 import {
   buildTrackSvg,
   getAlbumDisplayName,
@@ -36,79 +36,13 @@ function formatDistance(km, t) {
   return t("themes.randos.distance_km", { km });
 }
 
-function IconPrint({ size = 18 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M6 9V2h12v7" />
-      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-      <rect x="6" y="14" width="12" height="8" />
-    </svg>
-  );
-}
-
-function IconShare({ size = 18 }) {
+function IconShare({ size = 20 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
       <polyline points="16 6 12 2 8 6" />
       <line x1="12" y1="2" x2="12" y2="15" />
     </svg>
-  );
-}
-
-function JournalDiscovery({ discovery, index, t, typeLabel, rarityLabel, locale }) {
-  const time = discovery.discoveredAt
-    ? new Date(discovery.discoveredAt).toLocaleTimeString(locale, {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    : null;
-
-  return (
-    <article className="rando-journal-discovery">
-      <div className="rando-journal-discovery-num" aria-hidden="true">
-        {index + 1}
-      </div>
-      <div className="rando-journal-discovery-content">
-        {discovery.photo && (
-          <img src={discovery.photo} alt="" className="rando-journal-discovery-photo" />
-        )}
-        <div className="rando-journal-discovery-text">
-          <h3 className="rando-journal-discovery-name">{discovery.nom}</h3>
-          {discovery.nom_latin && (
-            <p className="rando-journal-discovery-latin">{discovery.nom_latin}</p>
-          )}
-          {time && <p className="rando-journal-discovery-time">{time}</p>}
-          <div className="rando-journal-discovery-chips">
-            {discovery.type && (
-              <span className="rando-journal-chip">{typeLabel(discovery.type)}</span>
-            )}
-            {(discovery.rarete === "rare" || discovery.rarete === "tres_rare") && (
-              <span className="rando-journal-chip rando-journal-chip--rare">
-                {rarityLabel(discovery.rarete)}
-              </span>
-            )}
-          </div>
-          {discovery.description && (
-            <p className="rando-journal-discovery-desc">{discovery.description}</p>
-          )}
-          {discovery.habitat && (
-            <p className="rando-journal-discovery-meta">
-              <span className="rando-journal-meta-label">{t("discovery.habitat")}</span>
-              {discovery.habitat}
-            </p>
-          )}
-          {discovery.fun_fact && (
-            <p className="rando-journal-discovery-fun">
-              💡 {discovery.fun_fact}
-            </p>
-          )}
-          {discovery.anecdotes && (
-            <p className="rando-journal-discovery-meta">{discovery.anecdotes}</p>
-          )}
-        </div>
-      </div>
-    </article>
   );
 }
 
@@ -137,6 +71,11 @@ export default function RandoJournal({
     () => computeRandoDistanceKm(album, discoveries),
     [album, discoveries]
   );
+
+  const durationLabel = useMemo(() => {
+    const ms = computeRandoDurationMs(album);
+    return formatRandoDuration(ms, t);
+  }, [album, t]);
 
   const track = album?.gpsTrack || [];
   const hasMap =
@@ -179,7 +118,7 @@ export default function RandoJournal({
   return (
     <div className="rando-journal-overlay" role="presentation">
       <div
-        className="rando-journal"
+        className="rando-journal rando-journal--summary"
         role="dialog"
         aria-labelledby="rando-journal-title"
         aria-modal="true"
@@ -193,33 +132,21 @@ export default function RandoJournal({
           >
             ✕
           </button>
-          <div className="rando-journal-toolbar-actions">
-            <button
-              type="button"
-              className="rando-journal-toolbar-btn rando-journal-toolbar-btn--primary"
-              onClick={handlePrint}
-            >
-              <IconPrint size={17} />
-              {t("themes.randos.journal_print")}
-            </button>
-            <button
-              type="button"
-              className="rando-journal-toolbar-btn rando-journal-toolbar-btn--primary"
-              onClick={handleShare}
-              disabled={sharing}
-            >
-              <IconShare size={17} />
-              {sharing ? t("themes.randos.journal_share_generating") : t("themes.randos.journal_share")}
-            </button>
-          </div>
+          <button
+            type="button"
+            className="rando-journal-toolbar-btn rando-journal-toolbar-btn--ghost"
+            onClick={handlePrint}
+          >
+            {t("themes.randos.journal_print")}
+          </button>
         </div>
 
         <div className="rando-journal-scroll">
-          <header className="rando-journal-header">
+          <header className="rando-journal-header rando-journal-header--summary">
             <span className="rando-journal-emoji" aria-hidden="true">
               🥾
             </span>
-            <p className="rando-journal-kicker">{t("themes.randos.journal_title")}</p>
+            <p className="rando-journal-kicker">{t("themes.randos.summary_title")}</p>
             <h1 id="rando-journal-title" className="rando-journal-name">
               {name}
             </h1>
@@ -231,9 +158,17 @@ export default function RandoJournal({
                 <span aria-hidden="true">📍</span> {placeName}
               </p>
             )}
-            <div className="rando-journal-stats">
-              <span className="rando-journal-stat">{formatDistance(distanceKm, t)}</span>
-              <span className="rando-journal-stat">
+            <div className="rando-journal-stats rando-journal-stats--summary">
+              {durationLabel && (
+                <span className="rando-journal-stat">
+                  <span className="rando-journal-stat-label">{t("themes.randos.duration_label")}</span>
+                  {durationLabel}
+                </span>
+              )}
+              {distanceKm != null && (
+                <span className="rando-journal-stat">{formatDistance(distanceKm, t)}</span>
+              )}
+              <span className="rando-journal-stat rando-journal-stat--highlight">
                 {items.length}{" "}
                 {items.length !== 1
                   ? t("albums.discoveries_plural")
@@ -242,12 +177,41 @@ export default function RandoJournal({
             </div>
           </header>
 
+          <button
+            type="button"
+            className="rando-journal-share-cta no-print"
+            onClick={handleShare}
+            disabled={sharing}
+          >
+            <IconShare size={22} />
+            {sharing ? t("themes.randos.journal_share_generating") : t("themes.randos.journal_share_cta")}
+          </button>
+
+          {items.length > 0 && (
+            <section className="rando-journal-gallery" aria-label={t("themes.randos.journal_discoveries_title")}>
+              <div className="rando-journal-gallery-grid">
+                {items.map((d) => (
+                  <figure key={d.id} className="rando-journal-gallery-item">
+                    {d.photo ? (
+                      <img src={d.photo} alt="" className="rando-journal-gallery-photo" />
+                    ) : (
+                      <div className="rando-journal-gallery-photo rando-journal-gallery-photo--empty" aria-hidden="true">
+                        🌿
+                      </div>
+                    )}
+                    <figcaption className="rando-journal-gallery-caption">{d.nom}</figcaption>
+                  </figure>
+                ))}
+              </div>
+            </section>
+          )}
+
           {hasMap && (
-            <section className="rando-journal-map-section">
+            <section className="rando-journal-map-section no-print">
               <h2 className="rando-journal-section-title">
                 {t("themes.randos.journal_map_title")}
               </h2>
-              <div className="rando-journal-map-live no-print">
+              <div className="rando-journal-map-live">
                 <RandoMap
                   track={track}
                   discoveries={items}
@@ -265,24 +229,32 @@ export default function RandoJournal({
             </section>
           )}
 
-          <section className="rando-journal-discoveries-section">
-            <h2 className="rando-journal-section-title">
-              {t("themes.randos.journal_discoveries_title")}
-            </h2>
-            {items.length === 0 ? (
-              <p className="rando-journal-empty">{t("themes.randos.journal_empty_discoveries")}</p>
-            ) : (
+          {items.length === 0 ? (
+            <p className="rando-journal-empty">{t("themes.randos.journal_empty_discoveries")}</p>
+          ) : (
+            <section className="rando-journal-discoveries-section only-print">
+              <h2 className="rando-journal-section-title">
+                {t("themes.randos.journal_discoveries_title")}
+              </h2>
               <div className="rando-journal-discovery-list">
                 {items.map((d, i) => {
                   const article = (
-                    <JournalDiscovery
-                      discovery={d}
-                      index={i}
-                      t={t}
-                      typeLabel={typeLabel}
-                      rarityLabel={rarityLabel}
-                      locale={locale}
-                    />
+                    <article className="rando-journal-discovery">
+                      <div className="rando-journal-discovery-num" aria-hidden="true">
+                        {i + 1}
+                      </div>
+                      <div className="rando-journal-discovery-content">
+                        {d.photo && (
+                          <img src={d.photo} alt="" className="rando-journal-discovery-photo" />
+                        )}
+                        <div className="rando-journal-discovery-text">
+                          <h3 className="rando-journal-discovery-name">{d.nom}</h3>
+                          {d.description && (
+                            <p className="rando-journal-discovery-desc">{d.description}</p>
+                          )}
+                        </div>
+                      </div>
+                    </article>
                   );
                   if (!onDeleteDiscovery) {
                     return <div key={d.id}>{article}</div>;
@@ -299,8 +271,8 @@ export default function RandoJournal({
                   );
                 })}
               </div>
-            )}
-          </section>
+            </section>
+          )}
 
           <footer className="rando-journal-footer">
             <span className="rando-journal-footer-brand">Wilder</span>

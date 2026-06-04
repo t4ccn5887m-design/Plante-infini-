@@ -37,7 +37,8 @@ import {
   getDefaultAnimauxAlbumId,
 } from "@/lib/animaux";
 import { inferHealthFromEtatSante } from "@/lib/potagerHealth";
-import RandosView, { RandosStartButton, RandosActiveBar } from "@/components/RandosView";
+import RandosView from "@/components/RandosView";
+import RandoScanResult from "@/components/RandoScanResult";
 import RandoNatureAlerts from "@/components/RandoNatureAlerts";
 import RandoJournal from "@/components/RandoJournal";
 import RandoMap from "@/components/RandoMap";
@@ -1178,7 +1179,7 @@ function ThemeAlbumsScreen({
         </title>
       </Head>
       <div
-        className={`albums-screen screen-enter with-bottom-nav${isPotager || isJardin || isJuniors ? "" : " with-scanner-fab"} theme-screen theme-screen--${themeId}${isJuniors ? " theme-screen--juniors" : ""}${isMapView ? " albums-screen--map" : ""}`}
+        className={`albums-screen screen-enter with-bottom-nav${isPotager || isJardin || isJuniors || isRandos ? "" : " with-scanner-fab"} theme-screen theme-screen--${themeId}${isJuniors ? " theme-screen--juniors" : ""}${isMapView ? " albums-screen--map" : ""}`}
       >
         <div className="albums-header">
           <h1 className="albums-title">
@@ -1186,7 +1187,7 @@ function ThemeAlbumsScreen({
           </h1>
           <ThemeToggle theme={theme} onToggle={onToggleTheme} t={t} />
         </div>
-        {!isPotager && !isJardin && !isJuniors && (
+        {!isPotager && !isJardin && !isJuniors && !isRandos && (
           <p className="theme-screen-subtitle">{t(`themes.${themeId}.subtitle`)}</p>
         )}
 
@@ -1220,121 +1221,61 @@ function ThemeAlbumsScreen({
           />
         ) : isRandos ? (
           <>
-            <div className="albums-view-toggle" role="tablist" aria-label={t(`themes.${themeId}.title`)}>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={!isMapView}
-                className={`albums-view-btn${!isMapView ? " active" : ""}`}
-                onClick={() => {
-                  setAlbumsViewMode("list");
-                  setMapSheetAlbum(null);
-                }}
-              >
-                <IconList size={18} />
-                {t("albums.view_list")}
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={isMapView}
-                className={`albums-view-btn${isMapView ? " active" : ""}`}
-                onClick={() => setAlbumsViewMode("map")}
-              >
-                <IconMap size={18} />
-                {t("albums.view_map")}
-              </button>
-            </div>
-
-            {isMapView ? (
-              <>
-                {activeRandoAlbumId ? (
-                  <>
-                    <p className="albums-map-stats">
-                      {randoTrack.length === 0
-                        ? t("themes.randos.gps_waiting")
-                        : activeRandoDistance != null
-                          ? t("themes.randos.distance_km", { km: activeRandoDistance })
-                          : t("albums.map_loading")}
-                    </p>
-                    <RandoMap
-                      track={randoTrack}
-                      discoveries={randoDiscoveries}
-                      live
-                      theme={theme}
-                      className="rando-map-container--screen"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <p className="albums-map-stats">
-                      {mapLoadedCount == null
-                        ? t("albums.map_loading")
-                        : mapLoadedCount === 0
-                          ? t("albums.map_empty")
-                          : t("albums.map_loaded_count", { count: mapLoadedCount })}
-                    </p>
-                    <AlbumsMapView
-                      key={`${themeId}-${albumsViewMode}`}
-                      themeFilter={themeId}
-                      onLoadedCount={setMapLoadedCount}
-                      onAlbumsSynced={setAlbums}
-                      onSelectAlbum={setMapSheetAlbum}
-                      t={t}
-                    />
-                    {mapSheetAlbum && (
-                      <AlbumMapSheet
-                        album={mapSheetAlbum}
-                        discoveries={discoveries}
-                        onClose={() => setMapSheetAlbum(null)}
-                        onOpenAlbum={(albumId) => {
-                          setMapSheetAlbum(null);
-                          setReturnScreen(themeId);
-                          setSelectedAlbumId(albumId);
-                          setScreen("album-detail");
-                        }}
-                        t={t}
-                        locale={locale}
-                      />
-                    )}
-                  </>
-                )}
-              </>
+            {activeRandoAlbumId && (
+              <RandoNatureAlerts
+                position={randoCurrentPosition}
+                active={Boolean(activeRandoAlbumId)}
+                t={t}
+                className="rando-nature-alerts--randos"
+              />
+            )}
+            {activeRandoAlbumId && isMapView ? (
+              <div className="randos-live-map">
+                <p className="albums-map-stats">
+                  {randoTrack.length === 0
+                    ? t("themes.randos.gps_waiting")
+                    : activeRandoDistance != null
+                      ? t("themes.randos.distance_km", { km: activeRandoDistance })
+                      : t("albums.map_loading")}
+                </p>
+                <RandoMap
+                  track={randoTrack}
+                  discoveries={randoDiscoveries}
+                  live
+                  theme={theme}
+                  className="rando-map-container--screen"
+                />
+                <button
+                  type="button"
+                  className="randos-map-back-btn"
+                  onClick={() => {
+                    setAlbumsViewMode("list");
+                    setMapSheetAlbum(null);
+                  }}
+                >
+                  ← {t("themes.randos.back_to_list")}
+                </button>
+              </div>
             ) : (
               <RandosView
                 albums={albums}
                 discoveries={discoveries}
                 locale={locale}
                 t={t}
-                onOpenAlbum={(albumId) => {
-                  setReturnScreen(themeId);
-                  setSelectedAlbumId(albumId);
-                  setScreen("album-detail");
+                onStartScan={onStartScan}
+                onStartRando={onStartRando}
+                activeRandoAlbumId={activeRandoAlbumId}
+                distanceKm={activeRandoDistance}
+                onResumeRando={onResumeRando}
+                onEndRando={onEndRando}
+                onShowMap={() => {
+                  setAlbumsViewMode("map");
+                  setMapSheetAlbum(null);
                 }}
-                onOpenJournal={onOpenRandoJournal}
+                onOpenAlbum={(albumId) => {
+                  onOpenRandoJournal(albumId);
+                }}
               />
-            )}
-            {activeRandoAlbumId ? (
-              <>
-                <RandoNatureAlerts
-                  position={randoCurrentPosition}
-                  active={Boolean(activeRandoAlbumId)}
-                  t={t}
-                  className="rando-nature-alerts--randos"
-                />
-                <RandosActiveBar
-                  t={t}
-                  distanceKm={activeRandoDistance}
-                  onResume={onResumeRando}
-                  onEnd={onEndRando}
-                  onShowMap={() => {
-                    setAlbumsViewMode("map");
-                    setMapSheetAlbum(null);
-                  }}
-                />
-              </>
-            ) : (
-              <RandosStartButton t={t} onStartRando={onStartRando} />
             )}
           </>
         ) : (
@@ -1479,7 +1420,7 @@ function ThemeAlbumsScreen({
           </>
         )}
       </div>
-      {!(isRandos && activeRandoAlbumId) && !isPotager && !isJardin && !isJuniors && (
+      {!isRandos && !isPotager && !isJardin && !isJuniors && (
         <FloatingScannerButton onClick={onStartScan} t={t} />
       )}
       <BottomNav active={themeId} onNavigate={navigateMain} t={t} />
@@ -2657,6 +2598,29 @@ export default function Wilder() {
                 setCurrentDiscovery(null);
                 setScreen("juniors");
               }}
+            />
+          </div>
+          {confettiOverlay}
+        </>
+      );
+    }
+
+    if (inRando) {
+      return (
+        <>
+          <Head>
+            <title>
+              {result.nom} — {t("themes.randos.title")}
+            </title>
+          </Head>
+          <div className="rando-scan-screen screen-enter-fast">
+            <RandoScanResult
+              result={result}
+              photo={captured}
+              t={t}
+              onBack={resumeRando}
+              onScanAgain={resumeRando}
+              onEndRando={endRando}
             />
           </div>
           {confettiOverlay}
