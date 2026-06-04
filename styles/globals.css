@@ -262,99 +262,6 @@ video {
   color: var(--cream);
 }
 
-.home-recent {
-  width: 100%;
-  flex-shrink: 0;
-  max-height: 42vh;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.home-recent-title {
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--cream-muted);
-  margin: 0 0 0.65rem 0.25rem;
-}
-
-.home-recent-empty {
-  font-size: 0.95rem;
-  line-height: 1.45;
-  color: var(--cream-muted);
-  text-align: center;
-  padding: 0.75rem 0.5rem 1rem;
-}
-
-.home-recent-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.home-recent-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 0.55rem 0.65rem;
-  border: 1px solid rgba(245, 242, 235, 0.14);
-  border-radius: 12px;
-  background: rgba(15, 36, 25, 0.45);
-  backdrop-filter: blur(8px);
-  cursor: pointer;
-  text-align: left;
-  color: var(--cream);
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-
-.home-recent-item:hover,
-.home-recent-item:active {
-  background: rgba(245, 242, 235, 0.1);
-  border-color: rgba(245, 242, 235, 0.22);
-}
-
-.home-recent-item img,
-.home-recent-item-placeholder {
-  width: 52px;
-  height: 52px;
-  border-radius: 10px;
-  flex-shrink: 0;
-  object-fit: cover;
-}
-
-.home-recent-item-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  background: rgba(245, 242, 235, 0.08);
-}
-
-.home-recent-item-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  min-width: 0;
-}
-
-.home-recent-item-text strong {
-  font-size: 0.98rem;
-  font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.home-recent-item-text span {
-  font-size: 0.78rem;
-  color: var(--cream-muted);
-}
-
 .wilder-logo-wrap {
   text-align: center;
   margin-bottom: 1.5rem;
@@ -1871,7 +1778,6 @@ video {
   border-color: #c62828 !important;
 }
 
-.home-recent-list > li,
 .jardin-plant-list > ul > li,
 .jardin-plant-list-inner > li,
 .potager-plant-list ul > li,

@@ -444,44 +444,6 @@ function ThemeToggle({ theme, onToggle, t }) {
   );
 }
 
-function RecentDiscoveries({ discoveries, onOpen, onDelete, swipeLabels, t, typeLabel }) {
-  const recent = useMemo(
-    () =>
-      [...discoveries]
-        .sort((a, b) => new Date(b.discoveredAt) - new Date(a.discoveredAt))
-        .slice(0, 8),
-    [discoveries]
-  );
-
-  if (recent.length === 0) {
-    return <p className="home-recent-empty">{t("home.recent_empty")}</p>;
-  }
-
-  return (
-    <ul className="home-recent-list">
-      {recent.map((d) => (
-        <li key={d.id}>
-          <SwipeToDelete onDelete={() => onDelete?.(d.id)} {...swipeLabels}>
-            <button type="button" className="home-recent-item" onClick={() => onOpen(d)}>
-              {d.photo ? (
-                <img src={d.photo} alt="" width={52} height={52} />
-              ) : (
-                <span className="home-recent-item-placeholder" aria-hidden="true">
-                  🌿
-                </span>
-              )}
-              <span className="home-recent-item-text">
-                <strong>{d.nom}</strong>
-                <span>{typeLabel(d.type)}</span>
-              </span>
-            </button>
-          </SwipeToDelete>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 function BottomNav({ active, onNavigate, t }) {
   const items = NAV_THEMES.map((id) => ({
     id,
@@ -2199,20 +2161,6 @@ export default function Wilder() {
               >
                 {t("home.about")}
               </button>
-
-              <section className="home-recent stagger-3" aria-labelledby="home-recent-title">
-                <h2 id="home-recent-title" className="home-recent-title">
-                  {t("home.recent_title")}
-                </h2>
-                <RecentDiscoveries
-                  discoveries={discoveries}
-                  onOpen={(d) => openDiscoveryDetail(d, "home")}
-                  onDelete={handleDeleteDiscovery}
-                  swipeLabels={swipeDeleteLabels}
-                  t={t}
-                  typeLabel={typeLabel}
-                />
-              </section>
             </div>
 
             <div className="discovery-marquee stagger-2" aria-hidden="true">
