@@ -1,45 +1,16 @@
-import { useState, useEffect, useCallback } from "react";
-import { HEALTH } from "@/lib/potagerHealth";
+import { useEffect } from "react";
 import { recordPotagerVisit } from "@/lib/potagerEngagement";
 import { checkPotagerReminders } from "@/lib/potagerNotifications";
-import { loadPotagerPlants } from "@/lib/potagerStorage";
 import PotagerWeatherLine from "@/components/PotagerWeatherLine";
-import SwipeToDelete from "@/components/SwipeToDelete";
 
-function HealthIndicator({ health, t }) {
-  const label = t(`themes.potager.health_status_${health}`);
-  return (
-    <span
-      className={`potager-list-health potager-list-health--${health}`}
-      aria-label={label}
-      title={label}
-    />
-  );
-}
-
-export default function PotagerView({ onStartScan, onDeletePlant, swipeLabels, t, lang }) {
-  const [plants, setPlants] = useState([]);
-
-  const refresh = useCallback(() => {
-    setPlants(loadPotagerPlants());
-  }, []);
-
+export default function PotagerView({ onStartScan, children, t, lang }) {
   useEffect(() => {
-    refresh();
     recordPotagerVisit();
-  }, [refresh]);
+  }, []);
 
   useEffect(() => {
     if (lang) checkPotagerReminders(lang);
   }, [lang]);
-
-  useEffect(() => {
-    const onStorage = (e) => {
-      if (e.key === "wilder-potager-plants") refresh();
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, [refresh]);
 
   return (
     <div className="potager-simple">
@@ -50,40 +21,7 @@ export default function PotagerView({ onStartScan, onDeletePlant, swipeLabels, t
         <span className="potager-scan-cta-label">{t("themes.potager.scan_cta")}</span>
       </button>
 
-      <section className="potager-plant-list" aria-label={t("themes.potager.my_plants")}>
-        {plants.length === 0 ? (
-          <p className="potager-plant-list-empty">{t("themes.potager.empty_plants")}</p>
-        ) : (
-          <ul>
-            {plants.map((plant) => {
-              const row = (
-                <div className="potager-plant-row">
-                  <span className="potager-plant-row-name">{plant.name}</span>
-                  <HealthIndicator health={plant.health || HEALTH.good} t={t} />
-                </div>
-              );
-
-              return (
-                <li key={plant.id}>
-                  {onDeletePlant ? (
-                    <SwipeToDelete
-                      onDelete={() => {
-                        onDeletePlant(plant.id);
-                        refresh();
-                      }}
-                      {...swipeLabels}
-                    >
-                      {row}
-                    </SwipeToDelete>
-                  ) : (
-                    row
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
+      {children}
 
       <PotagerWeatherLine t={t} />
     </div>

@@ -24,6 +24,7 @@ import { isHeritageType } from "@/lib/categories";
 import OnboardingScreen from "@/components/OnboardingScreen";
 import FloatingScannerButton from "@/components/FloatingScannerButton";
 import PotagerView from "@/components/PotagerView";
+import ThemeAlbumsList from "@/components/ThemeAlbumsList";
 import PotagerScanResult from "@/components/PotagerScanResult";
 import { upsertPotagerPlantFromDiscovery } from "@/lib/potagerPlant";
 import { recordPotagerWatering } from "@/lib/potagerEngagement";
@@ -66,6 +67,8 @@ import {
   saveDiscoveries,
 } from "@/lib/discoveriesStorage";
 import { removeDiscoveryById, removePotagerPlantById } from "@/lib/removeDiscovery";
+import { removeAlbumById } from "@/lib/removeAlbum";
+import { getAlbumDisplayName, getFirstDiscoveryPhoto, getAlbumPhotos } from "@/lib/albumUtils";
 import SwipeToDelete from "@/components/SwipeToDelete";
 import {
   ALBUM_THEMES,
@@ -74,6 +77,7 @@ import {
   getRootAlbums,
   getSubAlbums,
   isThemeScreen,
+  normalizeAlbumTheme,
   NAV_THEMES,
   THEME_META,
 } from "@/lib/themes";
@@ -125,21 +129,6 @@ function formatLocation(discovery) {
   return null;
 }
 
-function getAlbumDisplayName(album) {
-  return album.nom || album.name || "Album";
-}
-
-function getAlbumPhotos(album, allDiscoveries) {
-  if (Array.isArray(album.photos) && album.photos.length > 0) return album.photos;
-  const photos = [];
-  for (const id of album.discoveryIds || []) {
-    const d = allDiscoveries.find((x) => x.id === id);
-    if (d?.photo) photos.push(d.photo);
-  }
-  if (photos.length === 0 && album.coverPhoto) photos.push(album.coverPhoto);
-  return photos;
-}
-
 function getAlbumLocation(album, allDiscoveries) {
   if (album.latitude != null && album.longitude != null) {
     return {
@@ -159,11 +148,6 @@ function getAlbumLocation(album, allDiscoveries) {
     }
   }
   return null;
-}
-
-function getFirstDiscoveryPhoto(album, allDiscoveries) {
-  const photos = getAlbumPhotos(album, allDiscoveries);
-  return photos[0] || null;
 }
 
 function buildAlbumRecord({
@@ -936,7 +920,7 @@ function ThemeAlbumPickerModal({ albums, onSelect, onCreate, onClose, t, locale,
   const [creating, setCreating] = useState(false);
 
   const themeAlbums = pickedTheme
-    ? albums.filter((a) => a.theme === pickedTheme && !a.parentId)
+    ? albums.filter((a) => normalizeAlbumTheme(a) === pickedTheme && !a.parentId)
     : [];
 
   const handleCreate = () => {
@@ -1075,9 +1059,33 @@ function ThemeAlbumsScreen({
   onCloseRandoJournal,
   randoCurrentPosition,
   onDeleteDiscovery,
-  onDeletePotagerPlant,
+  onDeleteAlbum,
   swipeLabels,
+  defaultAlbumNameLabel,
 }) {
+  const openThemeAlbum = (albumId) => {
+    setReturnScreen(themeId);
+    setSelectedAlbumId(albumId);
+    setScreen("album-detail");
+  };
+
+  const albumsListProps = {
+    themeId,
+    themeEmoji: THEME_META[themeId].emoji,
+    albums,
+    discoveries,
+    locale,
+    t,
+    creatingAlbum,
+    setCreatingAlbum,
+    newAlbumName,
+    setNewAlbumName,
+    onCreateAlbum: createAlbumFromList,
+    onOpenAlbum: openThemeAlbum,
+    onDeleteAlbum,
+    swipeLabels,
+    defaultAlbumName: defaultAlbumNameLabel,
+  };
   const isPotager = themeId === "potager";
   const isJuniors = themeId === "juniors";
   const isJardin = themeId === "jardin";
@@ -1086,9 +1094,6 @@ function ThemeAlbumsScreen({
   const activeRandoDistance = activeRandoAlbumId
     ? computeTrackDistanceKm(randoTrack)
     : null;
-  const rootAlbums = getRootAlbums(albums, themeId).sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
   const showMapToggle = !isRandos && !isJardin;
 
   return (
@@ -1112,33 +1117,17 @@ function ThemeAlbumsScreen({
         )}
 
         {isPotager ? (
-          <PotagerView
-            onStartScan={onStartScan}
-            onDeletePlant={onDeletePotagerPlant}
-            swipeLabels={swipeLabels}
-            t={t}
-            lang={lang}
-          />
+          <PotagerView onStartScan={onStartScan} t={t} lang={lang}>
+            <ThemeAlbumsList {...albumsListProps} />
+          </PotagerView>
         ) : isJardin ? (
-          <EspacesVertsView
-            albums={albums}
-            discoveries={discoveries}
-            onStartScan={onStartScan}
-            onOpenPlant={onOpenJardinPlant}
-            onDeleteDiscovery={onDeleteDiscovery}
-            swipeLabels={swipeLabels}
-            t={t}
-          />
+          <EspacesVertsView onStartScan={onStartScan} t={t}>
+            <ThemeAlbumsList {...albumsListProps} />
+          </EspacesVertsView>
         ) : isJuniors ? (
-          <AnimauxView
-            albums={albums}
-            discoveries={discoveries}
-            onStartScan={onStartScan}
-            onOpenAnimal={onOpenAnimal}
-            onDeleteDiscovery={onDeleteDiscovery}
-            swipeLabels={swipeLabels}
-            t={t}
-          />
+          <AnimauxView onStartScan={onStartScan} t={t}>
+            <ThemeAlbumsList {...albumsListProps} />
+          </AnimauxView>
         ) : isRandos ? (
           <>
             {activeRandoAlbumId && (
@@ -1182,6 +1171,7 @@ function ThemeAlbumsScreen({
                 discoveries={discoveries}
                 locale={locale}
                 t={t}
+                themeEmoji={THEME_META.randos.emoji}
                 onStartScan={onStartScan}
                 onStartRando={onStartRando}
                 activeRandoAlbumId={activeRandoAlbumId}
@@ -1192,9 +1182,15 @@ function ThemeAlbumsScreen({
                   setAlbumsViewMode("map");
                   setMapSheetAlbum(null);
                 }}
-                onOpenAlbum={(albumId) => {
-                  onOpenRandoJournal(albumId);
-                }}
+                onOpenAlbum={openThemeAlbum}
+                onDeleteAlbum={onDeleteAlbum}
+                creatingAlbum={creatingAlbum}
+                setCreatingAlbum={setCreatingAlbum}
+                newAlbumName={newAlbumName}
+                setNewAlbumName={setNewAlbumName}
+                onCreateAlbum={createAlbumFromList}
+                swipeLabels={swipeLabels}
+                defaultAlbumName={defaultAlbumNameLabel}
               />
             )}
           </>
@@ -1262,80 +1258,7 @@ function ThemeAlbumsScreen({
                 )}
               </>
             ) : (
-              <div className="albums-list">
-                {rootAlbums.length === 0 && !creatingAlbum ? (
-                  <div className="albums-empty">
-                    <span style={{ fontSize: "2.5rem", opacity: 0.5 }} aria-hidden="true">
-                      {THEME_META[themeId].emoji}
-                    </span>
-                    <p>{t("albums.empty")}</p>
-                    <p className="album-examples">{t(`themes.${themeId}.empty_examples`)}</p>
-                  </div>
-                ) : (
-                  rootAlbums.map((album) => {
-                    const count = album.discoveryIds.length;
-                    const coverPhoto = getFirstDiscoveryPhoto(album, discoveries);
-                    const subCount = getSubAlbums(albums, album.id).length;
-                    return (
-                      <button
-                        key={album.id}
-                        type="button"
-                        className="album-card"
-                        onClick={() => {
-                          setReturnScreen(themeId);
-                          setSelectedAlbumId(album.id);
-                          setScreen("album-detail");
-                        }}
-                      >
-                        {coverPhoto ? (
-                          <img src={coverPhoto} alt="" className="album-cover" />
-                        ) : (
-                          <div className="album-cover album-cover-placeholder">
-                            <IconAlbums size={28} />
-                          </div>
-                        )}
-                        <div className="album-info">
-                          <h3>{getAlbumDisplayName(album)}</h3>
-                          <p>
-                            {count}{" "}
-                            {count !== 1 ? t("albums.discoveries_plural") : t("albums.discoveries")}
-                            {subCount > 0 && ` · ${subCount} ${t("themes.sub_albums").toLowerCase()}`} ·{" "}
-                            {formatDate(album.createdAt, locale)}
-                          </p>
-                        </div>
-                      </button>
-                    );
-                  })
-                )}
-
-                {creatingAlbum ? (
-                  <>
-                    <input
-                      className="modal-input"
-                      placeholder={defaultAlbumName(t, locale)}
-                      value={newAlbumName}
-                      onChange={(e) => setNewAlbumName(e.target.value)}
-                      autoFocus
-                    />
-                    <div className="modal-actions">
-                      <button type="button" className="btn-secondary" onClick={() => setCreatingAlbum(false)}>
-                        {t("albums.cancel")}
-                      </button>
-                      <button
-                        type="button"
-                        className="btn-primary"
-                        onClick={() => createAlbumFromList(themeId)}
-                      >
-                        {t("albums.create")}
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <button type="button" className="btn-create-album" onClick={() => setCreatingAlbum(true)}>
-                    <IconPlus size={18} /> {t("albums.create")}
-                  </button>
-                )}
-              </div>
+              <ThemeAlbumsList {...albumsListProps} />
             )}
           </>
         )}
@@ -2136,6 +2059,40 @@ export default function Wilder() {
       confirmLabel: t("discovery.delete_action"),
     }),
     [t]
+  );
+
+  const swipeAlbumDeleteLabels = useMemo(
+    () => ({
+      deleteLabel: t("albums.delete_btn"),
+      confirmMessage: t("albums.delete_confirm"),
+      cancelLabel: t("albums.cancel"),
+      confirmLabel: t("albums.delete_action"),
+    }),
+    [t]
+  );
+
+  const defaultAlbumNameLabel = useMemo(() => defaultAlbumName(t, locale), [t, locale]);
+
+  const handleDeleteAlbum = useCallback(
+    (albumId) => {
+      const updated = removeAlbumById(albumId, albums);
+      saveAlbums(updated);
+      setAlbums(updated);
+      if (selectedAlbumId === albumId) {
+        setSelectedAlbumId(null);
+        setScreen(isThemeScreen(returnScreen) ? returnScreen : "home");
+      }
+      if (activeRandoAlbumId === albumId) {
+        setActiveRandoAlbumId(null);
+        setRandoTrack([]);
+        locationWatchStopRef.current?.();
+        locationWatchStopRef.current = null;
+      }
+      if (randoJournalAlbumId === albumId) {
+        setRandoJournalAlbumId(null);
+      }
+    },
+    [albums, selectedAlbumId, returnScreen, activeRandoAlbumId, randoJournalAlbumId]
   );
 
   const handleDeleteDiscovery = useCallback(
@@ -3448,8 +3405,9 @@ export default function Wilder() {
         onCloseRandoJournal={() => setRandoJournalAlbumId(null)}
         randoCurrentPosition={randoCurrentPosition}
         onDeleteDiscovery={handleDeleteDiscovery}
-        onDeletePotagerPlant={handleDeletePotagerPlant}
-        swipeLabels={swipeDeleteLabels}
+        onDeleteAlbum={handleDeleteAlbum}
+        swipeLabels={swipeAlbumDeleteLabels}
+        defaultAlbumNameLabel={defaultAlbumNameLabel}
       />
     );
   }
