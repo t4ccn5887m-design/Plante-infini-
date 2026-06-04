@@ -74,7 +74,12 @@ export function discoveryToAnalysisData(discovery) {
 
 export default function DiscoveryAnalysisSections({ data, t }) {
   const sections = getAnalysisSections(data, t);
-  return sections.map((section) => (
-    <ResultSection key={section.title} title={section.title} text={section.text} />
-  ));
+  if (!sections.length) return null;
+  return (
+    <div className="discovery-analysis-sections">
+      {sections.map((section) => (
+        <ResultSection key={section.title} title={section.title} text={section.text} />
+      ))}
+    </div>
+  );
 }

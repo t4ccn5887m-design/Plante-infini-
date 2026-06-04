@@ -559,6 +559,77 @@ video {
   pointer-events: none;
 }
 
+.scanner-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.scanner-hint {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.8rem;
+  padding: 0 1.5rem 0.35rem;
+  margin: 0;
+  pointer-events: none;
+}
+
+.viewfinder-wilder {
+  position: relative;
+  width: min(72vw, 280px);
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+
+.viewfinder-corner {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-color: rgba(255, 255, 255, 0.85);
+  border-style: solid;
+  pointer-events: none;
+}
+
+.viewfinder-corner.tl {
+  top: 0;
+  left: 0;
+  border-width: 3px 0 0 3px;
+  border-radius: 4px 0 0 0;
+}
+
+.viewfinder-corner.tr {
+  top: 0;
+  right: 0;
+  border-width: 3px 3px 0 0;
+  border-radius: 0 4px 0 0;
+}
+
+.viewfinder-corner.bl {
+  bottom: 0;
+  left: 0;
+  border-width: 0 0 3px 3px;
+  border-radius: 0 0 0 4px;
+}
+
+.viewfinder-corner.br {
+  bottom: 0;
+  right: 0;
+  border-width: 0 3px 3px 0;
+  border-radius: 0 0 4px 0;
+}
+
+.scan-line {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--sunset-light), transparent);
+  animation: scanLine 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
 .scanner-top {
   display: flex;
   align-items: center;
@@ -1150,6 +1221,11 @@ video {
   border: 1px solid rgba(224, 122, 58, 0.45);
 }
 
+.discovery-analysis-sections {
+  margin-top: 1rem;
+  width: 100%;
+}
+
 .result-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -1157,6 +1233,10 @@ video {
   padding: 1.15rem 1.25rem;
   margin-bottom: 0.85rem;
   backdrop-filter: blur(8px);
+}
+
+.discovery-analysis-sections .result-card:last-child {
+  margin-bottom: 0;
 }
 
 .result-card-title {

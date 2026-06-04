@@ -1916,6 +1916,10 @@ export default function Wilder() {
     setCamZoom(Math.min(4, Math.max(1, pinchRef.current.zoom * ratio)));
   }, []);
 
+  const onPinchEnd = useCallback(() => {
+    pinchRef.current = { dist: 0, zoom: camZoom };
+  }, [camZoom]);
+
   const fromGallery = useCallback(
     (file) => {
       if (!file) return;
@@ -2264,12 +2268,16 @@ export default function Wilder() {
     return (
       <>
         <Head><title>Scanner — Wilder</title></Head>
-        <div className="scanner-screen screen-enter-fast">
+        <div
+          className="scanner-screen screen-enter-fast"
+          onTouchStart={onPinchStart}
+          onTouchMove={onPinchMove}
+          onTouchEnd={onPinchEnd}
+          onTouchCancel={onPinchEnd}
+        >
           <div
             ref={videoWrapRef}
             className="scanner-video-wrap"
-            onTouchStart={onPinchStart}
-            onTouchMove={onPinchMove}
             style={{ "--cam-zoom": camZoom }}
           >
             <video
