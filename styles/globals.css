@@ -2884,6 +2884,104 @@ video {
   position: relative;
 }
 
+.potager-weather {
+  margin-bottom: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(30, 80, 55, 0.55) 0%, rgba(15, 45, 32, 0.75) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.potager-weather--muted {
+  padding: 0.85rem 1rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.potager-weather-loading {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.potager-weather-main {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.potager-weather-emoji {
+  font-size: 2.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.potager-weather-temps {
+  flex-shrink: 0;
+}
+
+.potager-weather-now {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--cream);
+  line-height: 1.1;
+}
+
+.potager-weather-range {
+  margin: 0.15rem 0 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.potager-weather-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.potager-weather-heading {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--sunset-light);
+}
+
+.potager-weather-place {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.potager-weather-advice {
+  margin: 0.85rem 0 0;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.potager-weather-advice--rain {
+  background: rgba(70, 130, 200, 0.25);
+  color: #a8d4ff;
+}
+
+.potager-weather-advice--frost {
+  background: rgba(120, 180, 220, 0.2);
+  color: #c8e8ff;
+}
+
+.potager-weather-advice--sun {
+  background: rgba(220, 160, 60, 0.2);
+  color: #ffe4a8;
+}
+
 .potager-stats {
   display: flex;
   flex-wrap: wrap;
@@ -3207,6 +3305,15 @@ video {
 
 [data-theme="light"] .theme-screen--potager {
   background: linear-gradient(180deg, var(--bg-deep) 0%, #e8f0ea 100%);
+}
+
+[data-theme="light"] .potager-weather {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(232, 245, 236, 0.95) 100%);
+  border-color: rgba(45, 90, 69, 0.15);
+}
+
+[data-theme="light"] .potager-weather-now {
+  color: var(--forest-deep);
 }
 
 [data-theme="light"] .potager-bed-soil {

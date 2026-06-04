@@ -10,6 +10,7 @@ import {
   loadPotagerPlants,
   savePotagerPlants,
 } from "@/lib/potagerStorage";
+import PotagerWeatherCard from "@/components/PotagerWeatherCard";
 
 function generateId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -235,6 +236,8 @@ export default function PotagerView({ discoveries, onOpenDiscovery, onStartScan,
 
   return (
     <div className="potager-view">
+      <PotagerWeatherCard t={t} />
+
       <div className="potager-stats" aria-live="polite">
         <span className="potager-stat">
           <strong>{stats.total}</strong> {t("themes.potager.plants_count")}
