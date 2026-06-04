@@ -2982,6 +2982,55 @@ video {
   color: #ffe4a8;
 }
 
+.potager-streak {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.85rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255, 120, 40, 0.18) 0%, rgba(180, 60, 20, 0.12) 100%);
+  border: 1px solid rgba(255, 160, 80, 0.25);
+}
+
+.potager-streak-flame {
+  font-size: 1.65rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.potager-streak-count {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffb347;
+  line-height: 1;
+  min-width: 1.25rem;
+}
+
+.potager-streak-text {
+  flex: 1;
+  font-size: 0.82rem;
+  color: var(--cream);
+  line-height: 1.25;
+}
+
+.potager-streak-notify-btn {
+  flex-shrink: 0;
+  padding: 0.35rem 0.5rem;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.potager-streak-notify-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
 .potager-stats {
   display: flex;
   flex-wrap: wrap;

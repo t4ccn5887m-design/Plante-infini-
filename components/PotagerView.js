@@ -6,6 +6,16 @@ import {
   inferHealthFromEtatSante,
 } from "@/lib/potagerHealth";
 import {
+  getPotagerStreak,
+  recordPotagerVisit,
+  recordPotagerWatering,
+} from "@/lib/potagerEngagement";
+import {
+  checkPotagerReminders,
+  isPotagerNotificationSupported,
+  requestPotagerNotificationPermission,
+} from "@/lib/potagerNotifications";
+import {
   POTAGER_BED_COUNT,
   loadPotagerPlants,
   savePotagerPlants,
@@ -178,13 +188,24 @@ function PotagerAddModal({
   );
 }
 
-export default function PotagerView({ discoveries, onOpenDiscovery, onStartScan, t }) {
+export default function PotagerView({ discoveries, onOpenDiscovery, onStartScan, t, lang }) {
   const [plants, setPlants] = useState([]);
   const [modal, setModal] = useState(null);
+  const [streak, setStreak] = useState(0);
+  const [notifyPermission, setNotifyPermission] = useState("default");
 
   useEffect(() => {
     setPlants(loadPotagerPlants());
+    const { streak: visitStreak } = recordPotagerVisit();
+    setStreak(visitStreak ?? getPotagerStreak());
+    if (isPotagerNotificationSupported()) {
+      setNotifyPermission(Notification.permission);
+    }
   }, []);
+
+  useEffect(() => {
+    if (lang) checkPotagerReminders(lang);
+  }, [lang]);
 
   const persist = useCallback((next) => {
     setPlants(next);
@@ -214,7 +235,14 @@ export default function PotagerView({ discoveries, onOpenDiscovery, onStartScan,
       ? plants.map((p) => (p.id === record.id ? { ...p, ...record } : p))
       : [...plants, record];
     persist(next);
+    recordPotagerWatering();
     setModal(null);
+  };
+
+  const handleEnableNotifications = async () => {
+    const result = await requestPotagerNotificationPermission();
+    setNotifyPermission(result.permission);
+    if (result.ok && lang) checkPotagerReminders(lang);
   };
 
   const handleDelete = () => {
@@ -237,6 +265,29 @@ export default function PotagerView({ discoveries, onOpenDiscovery, onStartScan,
   return (
     <div className="potager-view">
       <PotagerWeatherCard t={t} />
+
+      <div className="potager-streak" aria-label={t("themes.potager.streak_label")}>
+        <span className="potager-streak-flame" aria-hidden="true">
+          🔥
+        </span>
+        <span className="potager-streak-count">{streak}</span>
+        <span className="potager-streak-text">
+          {streak === 1
+            ? t("themes.potager.streak_day")
+            : t("themes.potager.streak_days", { count: streak })}
+        </span>
+        {isPotagerNotificationSupported() && notifyPermission === "default" && (
+          <button
+            type="button"
+            className="potager-streak-notify-btn"
+            onClick={handleEnableNotifications}
+            title={t("themes.potager.notify_enable")}
+            aria-label={t("themes.potager.notify_enable")}
+          >
+            🔔
+          </button>
+        )}
+      </div>
 
       <div className="potager-stats" aria-live="polite">
         <span className="potager-stat">

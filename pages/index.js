@@ -1128,6 +1128,7 @@ function ThemeAlbumsScreen({
   openDiscoveryDetail,
   createAlbumFromList,
   t,
+  lang,
   locale,
   theme,
   onToggleTheme,
@@ -1168,6 +1169,7 @@ function ThemeAlbumsScreen({
             onOpenDiscovery={(d) => openDiscoveryDetail(d, themeId)}
             onStartScan={onStartScan}
             t={t}
+            lang={lang}
           />
         ) : (
           <>
@@ -2555,6 +2557,7 @@ export default function Wilder() {
         openDiscoveryDetail={openDiscoveryDetail}
         createAlbumFromList={createAlbumFromList}
         t={t}
+        lang={lang}
         locale={locale}
         theme={theme}
         onToggleTheme={toggleTheme}
