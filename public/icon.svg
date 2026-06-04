@@ -1,22 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="Wilder">
-  <rect width="512" height="512" rx="112" fill="#1a3a2a"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none" role="img" aria-label="Wilder">
+  <rect width="512" height="512" rx="96" fill="#1B3A2D"/>
 
-  <!-- Œil stylisé — blanc cassé -->
+  <!-- Œil horizontal — traits fins -->
   <path
-    d="M88 256c0-72 68-128 168-128s168 56 168 128-68 128-168 128-168-56-168-128z"
-    fill="#F5F2EB"
-  />
-
-  <!-- Iris feuille -->
-  <path
-    d="M256 148c-52 56-52 152 0 208 52-56 52-152 0-208z"
-    fill="#4CAF7A"
-  />
-  <path
-    d="M256 168v168"
-    stroke="#1a3a2a"
-    stroke-width="10"
+    d="M88 256C168 188 344 188 424 256"
+    stroke="#F5F0E8"
+    stroke-width="7"
     stroke-linecap="round"
-    opacity="0.35"
+    fill="none"
+  />
+  <path
+    d="M88 256C168 324 344 324 424 256"
+    stroke="#F5F0E8"
+    stroke-width="7"
+    stroke-linecap="round"
+    fill="none"
+  />
+
+  <!-- Pupille feuille — pointue en haut et en bas -->
+  <path
+    d="M256 192C292 236 292 276 256 320C220 276 220 236 256 192Z"
+    fill="#4CAF50"
   />
 </svg>
