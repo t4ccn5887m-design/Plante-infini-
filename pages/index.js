@@ -19,6 +19,7 @@ import { isHeritageType } from "@/lib/categories";
 import OnboardingScreen from "@/components/OnboardingScreen";
 import PotagerView from "@/components/PotagerView";
 import RandosView, { RandosStartButton, RandosActiveBar } from "@/components/RandosView";
+import RandoNatureAlerts from "@/components/RandoNatureAlerts";
 import RandoJournal from "@/components/RandoJournal";
 import RandoMap from "@/components/RandoMap";
 import {
@@ -1148,6 +1149,7 @@ function ThemeAlbumsScreen({
   randoJournalAlbumId,
   onOpenRandoJournal,
   onCloseRandoJournal,
+  randoCurrentPosition,
 }) {
   const isPotager = themeId === "potager";
   const isJuniors = themeId === "juniors";
@@ -1285,16 +1287,24 @@ function ThemeAlbumsScreen({
               />
             )}
             {activeRandoAlbumId ? (
-              <RandosActiveBar
-                t={t}
-                distanceKm={activeRandoDistance}
-                onResume={onResumeRando}
-                onEnd={onEndRando}
-                onShowMap={() => {
-                  setAlbumsViewMode("map");
-                  setMapSheetAlbum(null);
-                }}
-              />
+              <>
+                <RandoNatureAlerts
+                  position={randoCurrentPosition}
+                  active={Boolean(activeRandoAlbumId)}
+                  t={t}
+                  className="rando-nature-alerts--randos"
+                />
+                <RandosActiveBar
+                  t={t}
+                  distanceKm={activeRandoDistance}
+                  onResume={onResumeRando}
+                  onEnd={onEndRando}
+                  onShowMap={() => {
+                    setAlbumsViewMode("map");
+                    setMapSheetAlbum(null);
+                  }}
+                />
+              </>
             ) : (
               <RandosStartButton t={t} onStartRando={onStartRando} />
             )}
@@ -1554,6 +1564,12 @@ export default function Wilder() {
     () => computeTrackDistanceKm(randoTrack),
     [randoTrack]
   );
+
+  const randoCurrentPosition = useMemo(() => {
+    if (!randoTrack.length) return loadStoredLocation();
+    const last = randoTrack[randoTrack.length - 1];
+    return last?.latitude != null ? last : loadStoredLocation();
+  }, [randoTrack]);
 
   useEffect(() => {
     const savedTheme = loadTheme();
@@ -2134,6 +2150,12 @@ export default function Wilder() {
               className="rando-map-container--fullscreen"
             />
             <div className="rando-map-overlay">
+              <RandoNatureAlerts
+                position={randoCurrentPosition}
+                active={Boolean(activeRandoAlbumId)}
+                t={t}
+                className="rando-nature-alerts--map"
+              />
               <div className="rando-map-top">
                 <button
                   type="button"
@@ -2188,6 +2210,12 @@ export default function Wilder() {
           </div>
 
           <div className="scanner-overlay">
+            <RandoNatureAlerts
+              position={randoCurrentPosition}
+              active={inRando}
+              t={t}
+              className="rando-nature-alerts--scanner"
+            />
             <div className="scanner-top">
               <button type="button" className="scanner-back" onClick={leaveScanner} aria-label={t("scanner.back")}>
                 <IconBack size={20} color="white" />
@@ -2986,6 +3014,7 @@ export default function Wilder() {
         randoJournalAlbumId={randoJournalAlbumId}
         onOpenRandoJournal={setRandoJournalAlbumId}
         onCloseRandoJournal={() => setRandoJournalAlbumId(null)}
+        randoCurrentPosition={randoCurrentPosition}
       />
     );
   }
