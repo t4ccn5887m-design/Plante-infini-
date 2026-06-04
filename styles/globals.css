@@ -21,6 +21,7 @@
   --rarity-peu: #5B9BD5;
   --rarity-rare: #9B6ED0;
   --rarity-tres: #E07A3A;
+  --photo-frame-aspect: 3 / 4;
 }
 
 [data-theme="light"] {
@@ -590,8 +591,8 @@ video {
 
 .viewfinder-wilder {
   position: relative;
-  width: min(88vw, 320px);
-  aspect-ratio: 4 / 3;
+  width: min(78vw, 280px);
+  aspect-ratio: var(--photo-frame-aspect);
   border: 1.5px solid rgba(255, 255, 255, 0.55);
   border-radius: 3px;
   box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.48);
@@ -883,8 +884,8 @@ video {
 
 .analyze-viewfinder {
   position: relative;
-  width: min(88vw, 320px);
-  aspect-ratio: 4 / 3;
+  width: min(78vw, 280px);
+  aspect-ratio: var(--photo-frame-aspect);
   border: 1.5px solid var(--forest-light);
   border-radius: 3px;
   box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.48);
@@ -1004,7 +1005,7 @@ video {
 .discovery-hero {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: var(--photo-frame-aspect);
 }
 
 .discovery-hero img,
@@ -3411,7 +3412,7 @@ video {
 .animaux-scan-photo-wrap {
   border-radius: 18px;
   overflow: hidden;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: var(--photo-frame-aspect);
   background: #fff0e0;
   box-shadow: 0 8px 24px rgba(240, 112, 32, 0.15);
 }
@@ -4408,7 +4409,7 @@ video {
 .potager-scan-photo-wrap {
   border-radius: 18px;
   overflow: hidden;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: var(--photo-frame-aspect);
   margin-bottom: 1rem;
   background: #e8f4ea;
   box-shadow: 0 8px 24px rgba(26, 77, 46, 0.12);
@@ -4650,7 +4651,7 @@ video {
 .jardin-scan-photo-wrap {
   border-radius: 18px;
   overflow: hidden;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: var(--photo-frame-aspect);
   background: #e8f4ea;
   box-shadow: 0 8px 24px rgba(26, 77, 46, 0.12);
 }
@@ -5963,7 +5964,7 @@ video {
 .rando-scan-photo-wrap {
   border-radius: 18px;
   overflow: hidden;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: var(--photo-frame-aspect);
   background: #e8f4ea;
   box-shadow: 0 8px 24px rgba(26, 77, 46, 0.12);
 }
