@@ -21,6 +21,7 @@ import {
   savePotagerPlants,
 } from "@/lib/potagerStorage";
 import PotagerWeatherCard from "@/components/PotagerWeatherCard";
+import PotagerRecipesCard from "@/components/PotagerRecipesCard";
 
 function generateId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -61,11 +62,24 @@ function HealthDot({ health, t }) {
 
 function PotagerPlantCard({ plant, onClick, t }) {
   return (
-    <button type="button" className="potager-plant-card" onClick={onClick}>
+    <button
+      type="button"
+      className={`potager-plant-card${plant.readyToHarvest ? " potager-plant-card--harvest" : ""}`}
+      onClick={onClick}
+    >
       <span className="potager-plant-emoji" aria-hidden="true">
         {plant.emoji}
       </span>
       <span className="potager-plant-name">{plant.name}</span>
+      {plant.readyToHarvest && (
+        <span
+          className="potager-harvest-badge"
+          title={t("themes.potager.harvest_ready")}
+          aria-label={t("themes.potager.harvest_ready")}
+        >
+          🧺
+        </span>
+      )}
       <HealthDot health={plant.health} t={t} />
     </button>
   );
@@ -83,6 +97,7 @@ function PotagerAddModal({
   const [name, setName] = useState(editing?.name || "");
   const [emoji, setEmoji] = useState(editing?.emoji || "🌱");
   const [health, setHealth] = useState(editing?.health || HEALTH.good);
+  const [readyToHarvest, setReadyToHarvest] = useState(Boolean(editing?.readyToHarvest));
   const [bedId, setBedId] = useState(
     editing?.bedId ?? (initialBed != null ? initialBed : 0)
   );
@@ -95,6 +110,7 @@ function PotagerAddModal({
       name: trimmed,
       emoji,
       health,
+      readyToHarvest,
       bedId,
       discoveryId: editing?.discoveryId || null,
       addedAt: editing?.addedAt || new Date().toISOString(),
@@ -149,6 +165,19 @@ function PotagerAddModal({
             </button>
           ))}
         </div>
+
+        <label className="potager-modal-label">{t("themes.potager.harvest_label")}</label>
+        <button
+          type="button"
+          className={`potager-harvest-toggle${readyToHarvest ? " active" : ""}`}
+          onClick={() => setReadyToHarvest((v) => !v)}
+          aria-pressed={readyToHarvest}
+        >
+          <span aria-hidden="true">🧺</span>
+          {readyToHarvest
+            ? t("themes.potager.harvest_ready")
+            : t("themes.potager.harvest_mark")}
+        </button>
 
         <label className="potager-modal-label">{t("themes.potager.pick_bed")}</label>
         <div className="potager-bed-picker">
@@ -226,6 +255,11 @@ export default function PotagerView({ discoveries, onOpenDiscovery, onStartScan,
     return { total: plants.length, good };
   }, [plants]);
 
+  const harvestPlants = useMemo(
+    () => plants.filter((p) => p.readyToHarvest && String(p.name || "").trim()),
+    [plants]
+  );
+
   const openAdd = (bedId = null) => setModal({ mode: "add", bedId });
   const openEdit = (plant) => setModal({ mode: "edit", plant });
 
@@ -301,6 +335,8 @@ export default function PotagerView({ discoveries, onOpenDiscovery, onStartScan,
         )}
       </div>
 
+      <PotagerRecipesCard harvestPlants={harvestPlants} t={t} lang={lang} />
+
       <div className="potager-beds-grid">
         {plantsByBed.map((bedPlants, bedIndex) => (
           <section
@@ -373,6 +409,7 @@ export function createPotagerPlantFromDiscovery(discovery) {
     health: inferHealthFromEtatSante(discovery.etat_sante),
     bedId: 0,
     discoveryId: discovery.id,
+    readyToHarvest: false,
     addedAt: new Date().toISOString(),
   };
 }
