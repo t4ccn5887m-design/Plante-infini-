@@ -4063,6 +4063,314 @@ video {
   background: linear-gradient(180deg, transparent 0%, rgba(245, 242, 235, 0.92) 40%);
 }
 
+/* ── Rando GPS & live map ── */
+
+.rando-map-container {
+  flex: 1;
+  min-height: 220px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+}
+
+.rando-map-container--screen {
+  min-height: 0;
+  margin-bottom: calc(7.5rem + env(safe-area-inset-bottom));
+  border-radius: 0;
+  border: none;
+}
+
+.rando-map-container--detail {
+  height: 240px;
+  margin: 0 1rem;
+}
+
+.rando-map-container--fullscreen {
+  position: absolute;
+  inset: 0;
+  border-radius: 0;
+  border: none;
+  min-height: 100%;
+}
+
+.rando-map-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--bg-deep);
+}
+
+.rando-map-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 500;
+}
+
+.rando-map-top,
+.rando-map-bottom {
+  pointer-events: auto;
+  padding: calc(0.75rem + env(safe-area-inset-top)) 1rem 1rem;
+}
+
+.rando-map-bottom {
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  display: flex;
+  gap: 0.65rem;
+}
+
+.rando-map-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.rando-map-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(15, 36, 25, 0.78);
+  backdrop-filter: blur(8px);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+}
+
+.rando-map-distance {
+  opacity: 0.85;
+  font-weight: 500;
+}
+
+.rando-map-camera-btn,
+.rando-map-end-btn {
+  flex: 1;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+}
+
+.rando-map-camera-btn {
+  background: rgba(245, 242, 235, 0.95);
+  color: var(--forest-deep);
+}
+
+.rando-map-end-btn {
+  background: linear-gradient(145deg, var(--sunset) 0%, #c45f28 100%);
+  color: white;
+  box-shadow: 0 4px 16px var(--sunset-glow);
+}
+
+.randos-active-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(4.25rem + env(safe-area-inset-bottom));
+  padding: 0.65rem 1rem 0.5rem;
+  z-index: 35;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(15, 36, 25, 0.9) 30%,
+    rgba(15, 36, 25, 0.98) 100%
+  );
+}
+
+.randos-active-info {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.55rem;
+}
+
+.randos-active-label {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.randos-active-distance {
+  margin: 0.1rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.randos-active-pulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #6BCF8E;
+  box-shadow: 0 0 0 0 rgba(107, 207, 142, 0.6);
+  animation: randoPulse 1.8s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes randoPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(107, 207, 142, 0.55); }
+  50% { box-shadow: 0 0 0 8px rgba(107, 207, 142, 0); }
+}
+
+.randos-active-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.randos-active-map-btn,
+.randos-active-resume-btn,
+.randos-active-end-btn {
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.75rem 0.85rem;
+  font-size: 0.88rem;
+}
+
+.randos-active-map-btn {
+  background: rgba(245, 242, 235, 0.12);
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  padding: 0.65rem 0.75rem;
+}
+
+.randos-active-resume-btn {
+  flex: 1;
+  background: linear-gradient(145deg, var(--forest-light) 0%, var(--forest-mid) 100%);
+  color: white;
+}
+
+.randos-active-end-btn {
+  background: rgba(224, 122, 58, 0.2);
+  color: var(--sunset-light);
+  border: 1px solid rgba(224, 122, 58, 0.35);
+}
+
+.scanner-rando-badge {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0.5rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(15, 36, 25, 0.65);
+  backdrop-filter: blur(6px);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: white;
+}
+
+.scanner-rando-distance {
+  opacity: 0.85;
+  font-weight: 500;
+}
+
+.scanner-map-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(245, 242, 235, 0.18);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scanner-end-rando-btn {
+  display: block;
+  width: calc(100% - 2rem);
+  margin: 0 auto 0.65rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid rgba(224, 122, 58, 0.45);
+  border-radius: 12px;
+  background: rgba(224, 122, 58, 0.15);
+  color: #ffb88a;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+  padding-top: 0.5rem;
+}
+
+.rando-detail-map-title {
+  margin: 0 1rem 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.rando-added-hint {
+  margin: 0.75rem 0 0;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--forest-light);
+}
+
+.rando-discovery-marker-wrap,
+.rando-user-marker-wrap {
+  background: transparent;
+  border: none;
+}
+
+.rando-discovery-marker {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+}
+
+.rando-user-marker {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.rando-user-dot {
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: #4da3ff;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  z-index: 2;
+}
+
+.rando-user-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(77, 163, 255, 0.35);
+  animation: randoPulse 2s ease-in-out infinite;
+}
+
+[data-theme="light"] .randos-active-bar {
+  background: linear-gradient(180deg, transparent 0%, rgba(245, 242, 235, 0.95) 35%);
+}
+
+[data-theme="light"] .randos-active-end-btn {
+  background: rgba(224, 122, 58, 0.12);
+  color: var(--sunset);
+}
+
 @media (max-width: 360px) {
   .rando-card-meta {
     grid-template-columns: 1fr 1fr;

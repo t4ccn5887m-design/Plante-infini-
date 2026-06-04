@@ -18,7 +18,8 @@ import { computeStats } from "@/lib/stats";
 import { isHeritageType } from "@/lib/categories";
 import OnboardingScreen from "@/components/OnboardingScreen";
 import PotagerView from "@/components/PotagerView";
-import RandosView, { RandosStartButton } from "@/components/RandosView";
+import RandosView, { RandosStartButton, RandosActiveBar } from "@/components/RandosView";
+import RandoMap from "@/components/RandoMap";
 import {
   acquireCameraStream,
   completeOnboarding,
@@ -27,7 +28,9 @@ import {
   isOnboardingComplete,
   loadStoredLocation,
   requestLocationPermission,
+  startLocationWatch,
 } from "@/lib/permissions";
+import { appendTrackPoint, computeTrackDistanceKm } from "@/lib/randos";
 import { compressDataUrl } from "@/lib/compressImage";
 import {
   loadAlbums,
@@ -1136,12 +1139,20 @@ function ThemeAlbumsScreen({
   navigateMain,
   onStartScan,
   onStartRando,
+  activeRandoAlbumId,
+  randoTrack,
+  randoDiscoveries,
+  onResumeRando,
+  onEndRando,
 }) {
   const isPotager = themeId === "potager";
   const isJuniors = themeId === "juniors";
   const isJardin = themeId === "jardin";
   const isRandos = themeId === "randos";
   const isMapView = albumsViewMode === "map";
+  const activeRandoDistance = activeRandoAlbumId
+    ? computeTrackDistanceKm(randoTrack)
+    : null;
   const rootAlbums = getRootAlbums(albums, themeId).sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
@@ -1203,35 +1214,56 @@ function ThemeAlbumsScreen({
 
             {isMapView ? (
               <>
-                <p className="albums-map-stats">
-                  {mapLoadedCount == null
-                    ? t("albums.map_loading")
-                    : mapLoadedCount === 0
-                      ? t("albums.map_empty")
-                      : t("albums.map_loaded_count", { count: mapLoadedCount })}
-                </p>
-                <AlbumsMapView
-                  key={`${themeId}-${albumsViewMode}`}
-                  themeFilter={themeId}
-                  onLoadedCount={setMapLoadedCount}
-                  onAlbumsSynced={setAlbums}
-                  onSelectAlbum={setMapSheetAlbum}
-                  t={t}
-                />
-                {mapSheetAlbum && (
-                  <AlbumMapSheet
-                    album={mapSheetAlbum}
-                    discoveries={discoveries}
-                    onClose={() => setMapSheetAlbum(null)}
-                    onOpenAlbum={(albumId) => {
-                      setMapSheetAlbum(null);
-                      setReturnScreen(themeId);
-                      setSelectedAlbumId(albumId);
-                      setScreen("album-detail");
-                    }}
-                    t={t}
-                    locale={locale}
-                  />
+                {activeRandoAlbumId ? (
+                  <>
+                    <p className="albums-map-stats">
+                      {randoTrack.length === 0
+                        ? t("themes.randos.gps_waiting")
+                        : activeRandoDistance != null
+                          ? t("themes.randos.distance_km", { km: activeRandoDistance })
+                          : t("albums.map_loading")}
+                    </p>
+                    <RandoMap
+                      track={randoTrack}
+                      discoveries={randoDiscoveries}
+                      live
+                      theme={theme}
+                      className="rando-map-container--screen"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <p className="albums-map-stats">
+                      {mapLoadedCount == null
+                        ? t("albums.map_loading")
+                        : mapLoadedCount === 0
+                          ? t("albums.map_empty")
+                          : t("albums.map_loaded_count", { count: mapLoadedCount })}
+                    </p>
+                    <AlbumsMapView
+                      key={`${themeId}-${albumsViewMode}`}
+                      themeFilter={themeId}
+                      onLoadedCount={setMapLoadedCount}
+                      onAlbumsSynced={setAlbums}
+                      onSelectAlbum={setMapSheetAlbum}
+                      t={t}
+                    />
+                    {mapSheetAlbum && (
+                      <AlbumMapSheet
+                        album={mapSheetAlbum}
+                        discoveries={discoveries}
+                        onClose={() => setMapSheetAlbum(null)}
+                        onOpenAlbum={(albumId) => {
+                          setMapSheetAlbum(null);
+                          setReturnScreen(themeId);
+                          setSelectedAlbumId(albumId);
+                          setScreen("album-detail");
+                        }}
+                        t={t}
+                        locale={locale}
+                      />
+                    )}
+                  </>
                 )}
               </>
             ) : (
@@ -1247,7 +1279,20 @@ function ThemeAlbumsScreen({
                 }}
               />
             )}
-            <RandosStartButton t={t} onStartRando={onStartRando} />
+            {activeRandoAlbumId ? (
+              <RandosActiveBar
+                t={t}
+                distanceKm={activeRandoDistance}
+                onResume={onResumeRando}
+                onEnd={onEndRando}
+                onShowMap={() => {
+                  setAlbumsViewMode("map");
+                  setMapSheetAlbum(null);
+                }}
+              />
+            ) : (
+              <RandosStartButton t={t} onStartRando={onStartRando} />
+            )}
           </>
         ) : (
           <>
@@ -1465,15 +1510,31 @@ export default function Wilder() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [newBadge, setNewBadge] = useState(null);
   const [activeRandoAlbumId, setActiveRandoAlbumId] = useState(null);
+  const [randoTrack, setRandoTrack] = useState([]);
+  const [showRandoMap, setShowRandoMap] = useState(false);
+
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const streamRef = useRef(null);
+  const locationWatchStopRef = useRef(null);
 
   const t = useMemo(() => createT(lang), [lang]);
   const locale = useMemo(() => getLocale(lang), [lang]);
   const typeLabel = useCallback((type) => getTypeLabel(t, type), [t]);
   const rarityLabel = useCallback((r) => getRarityLabel(t, r), [t]);
 
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
-  const streamRef = useRef(null);
+  const randoDiscoveries = useMemo(() => {
+    if (!activeRandoAlbumId) return [];
+    const album = albums.find((a) => a.id === activeRandoAlbumId);
+    if (!album) return [];
+    const ids = new Set(album.discoveryIds || []);
+    return discoveries.filter((d) => ids.has(d.id));
+  }, [activeRandoAlbumId, albums, discoveries]);
+
+  const activeRandoDistance = useMemo(
+    () => computeTrackDistanceKm(randoTrack),
+    [randoTrack]
+  );
 
   useEffect(() => {
     const savedTheme = loadTheme();
@@ -1593,6 +1654,90 @@ export default function Wilder() {
     }
   }, [screen, result?.nom]);
 
+  const persistRandoTrack = useCallback((track, albumId) => {
+    if (!albumId || !Array.isArray(track)) return;
+    const allAlbums = loadAlbums();
+    const idx = allAlbums.findIndex((a) => a.id === albumId);
+    if (idx === -1) return;
+    allAlbums[idx] = { ...allAlbums[idx], gpsTrack: track };
+    saveAlbums(allAlbums);
+    setAlbums(allAlbums);
+  }, []);
+
+  useEffect(() => {
+    if (!activeRandoAlbumId) {
+      setRandoTrack([]);
+      return;
+    }
+    const album = loadAlbums().find((a) => a.id === activeRandoAlbumId);
+    if (album?.gpsTrack?.length) setRandoTrack(album.gpsTrack);
+  }, [activeRandoAlbumId]);
+
+  useEffect(() => {
+    if (!activeRandoAlbumId) return undefined;
+
+    const stop = startLocationWatch(
+      (point) => {
+        setRandoTrack((prev) => {
+          const next = appendTrackPoint(prev, point);
+          if (next.length !== prev.length) {
+            persistRandoTrack(next, activeRandoAlbumId);
+          }
+          return next;
+        });
+      },
+      () => {}
+    );
+
+    locationWatchStopRef.current = stop;
+
+    return () => {
+      stop?.();
+      locationWatchStopRef.current = null;
+    };
+  }, [activeRandoAlbumId, persistRandoTrack]);
+
+  const endRando = useCallback(() => {
+    if (!activeRandoAlbumId) return;
+    const allAlbums = loadAlbums();
+    const idx = allAlbums.findIndex((a) => a.id === activeRandoAlbumId);
+    if (idx !== -1) {
+      allAlbums[idx] = {
+        ...allAlbums[idx],
+        gpsTrack: randoTrack,
+        endedAt: new Date().toISOString(),
+      };
+      saveAlbums(allAlbums);
+      setAlbums(allAlbums);
+    }
+    locationWatchStopRef.current?.();
+    locationWatchStopRef.current = null;
+    setActiveRandoAlbumId(null);
+    setRandoTrack([]);
+    setShowRandoMap(false);
+    setScreen("randos");
+  }, [activeRandoAlbumId, randoTrack]);
+
+  const resumeRando = useCallback(() => {
+    setShowRandoMap(false);
+    setScreen("camera");
+  }, []);
+
+  const leaveScanner = useCallback(() => {
+    if (activeRandoAlbumId) {
+      setShowRandoMap(false);
+      setScreen("randos");
+      return;
+    }
+    setResult(null);
+    setCaptured(null);
+    setCurrentDiscovery(null);
+    setErrorMsg("");
+    setSavedToAlbum(false);
+    setShowAlbumPicker(false);
+    setScreen("home");
+  }, [activeRandoAlbumId]);
+
   const goHome = () => {
     setResult(null);
     setCaptured(null);
@@ -1600,14 +1745,13 @@ export default function Wilder() {
     setErrorMsg("");
     setSavedToAlbum(false);
     setShowAlbumPicker(false);
-    setActiveRandoAlbumId(null);
+    setShowRandoMap(false);
     setScreen("home");
   };
 
   const navigateMain = (target) => {
     if (target === "home") goHome();
     else {
-      if (target !== "randos") setActiveRandoAlbumId(null);
       if (target === "randos") setAlbumsViewMode("list");
       else setAlbumsViewMode("list");
       setScreen(target);
@@ -1615,8 +1759,11 @@ export default function Wilder() {
   };
 
   const startRando = useCallback(async () => {
-    const location = await getCurrentLocation();
+    const location = await getCurrentLocation({ refresh: true });
     const createdAt = new Date().toISOString();
+    const initialTrack = location
+      ? [{ latitude: location.latitude, longitude: location.longitude, timestamp: Date.now() }]
+      : [];
     const album = buildAlbumRecord({
       name: defaultAlbumName(t, locale),
       createdAt,
@@ -1625,9 +1772,12 @@ export default function Wilder() {
       location,
       theme: "randos",
     });
+    if (initialTrack.length) album.gpsTrack = initialTrack;
     const updated = [album, ...loadAlbums()];
     saveAlbums(updated);
     setAlbums(updated);
+    setRandoTrack(initialTrack);
+    setShowRandoMap(false);
     setActiveRandoAlbumId(album.id);
     setScreen("camera");
   }, [t, locale]);
@@ -1948,6 +2098,58 @@ export default function Wilder() {
 
   /* ── SCANNER ── */
   if (screen === "camera") {
+    const inRando = Boolean(activeRandoAlbumId);
+
+    if (inRando && showRandoMap) {
+      return (
+        <>
+          <Head><title>{t("themes.randos.track_title")} — Wilder</title></Head>
+          <div className="rando-map-screen screen-enter-fast">
+            <RandoMap
+              track={randoTrack}
+              discoveries={randoDiscoveries}
+              live
+              theme={theme}
+              className="rando-map-container--fullscreen"
+            />
+            <div className="rando-map-overlay">
+              <div className="rando-map-top">
+                <button
+                  type="button"
+                  className="scanner-back"
+                  onClick={() => setShowRandoMap(false)}
+                  aria-label={t("themes.randos.hide_map")}
+                >
+                  <IconBack size={20} color="white" />
+                </button>
+                <div className="rando-map-status">
+                  <span className="randos-active-pulse" aria-hidden="true" />
+                  <span>{t("themes.randos.active")}</span>
+                  {activeRandoDistance != null && (
+                    <span className="rando-map-distance">
+                      {activeRandoDistance < 1
+                        ? t("themes.randos.distance_m", {
+                            m: Math.max(1, Math.round(activeRandoDistance * 1000)),
+                          })
+                        : t("themes.randos.distance_km", { km: activeRandoDistance })}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="rando-map-bottom">
+                <button type="button" className="rando-map-camera-btn" onClick={() => setShowRandoMap(false)}>
+                  📷 {t("themes.randos.hide_map")}
+                </button>
+                <button type="button" className="rando-map-end-btn" onClick={endRando}>
+                  {t("themes.randos.end")}
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      );
+    }
+
     return (
       <>
         <Head><title>Scanner — Wilder</title></Head>
@@ -1966,9 +2168,35 @@ export default function Wilder() {
 
           <div className="scanner-overlay">
             <div className="scanner-top">
-              <button type="button" className="scanner-back" onClick={goHome} aria-label={t("scanner.back")}>
+              <button type="button" className="scanner-back" onClick={leaveScanner} aria-label={t("scanner.back")}>
                 <IconBack size={20} color="white" />
               </button>
+              {inRando && (
+                <div className="scanner-rando-badge">
+                  <span className="randos-active-pulse" aria-hidden="true" />
+                  {t("themes.randos.active")}
+                  {activeRandoDistance != null && (
+                    <span className="scanner-rando-distance">
+                      ·{" "}
+                      {activeRandoDistance < 1
+                        ? t("themes.randos.distance_m", {
+                            m: Math.max(1, Math.round(activeRandoDistance * 1000)),
+                          })
+                        : t("themes.randos.distance_km", { km: activeRandoDistance })}
+                    </span>
+                  )}
+                </div>
+              )}
+              {inRando && (
+                <button
+                  type="button"
+                  className="scanner-map-btn"
+                  onClick={() => setShowRandoMap(true)}
+                  aria-label={t("themes.randos.show_map")}
+                >
+                  🗺️
+                </button>
+              )}
             </div>
 
             <div className="scanner-center">
@@ -1978,6 +2206,11 @@ export default function Wilder() {
             <p className="scanner-hint">{t("scanner.hint")}</p>
 
             <div className="scanner-bottom">
+              {inRando && (
+                <button type="button" className="scanner-end-rando-btn" onClick={endRando}>
+                  {t("themes.randos.end")}
+                </button>
+              )}
               <div className="scanner-controls">
                 <label className="gallery-btn">
                   <div className="gallery-btn-icon">
@@ -2093,6 +2326,8 @@ export default function Wilder() {
 
   /* ── RESULT ── */
   if (screen === "result" && result) {
+    const inRando = Boolean(activeRandoAlbumId);
+
     return (
       <>
         <Head>
@@ -2115,30 +2350,46 @@ export default function Wilder() {
               type="button"
               className="btn-secondary"
               style={{ marginBottom: "1rem", padding: "0.5rem 0.85rem" }}
-              onClick={goHome}
+              onClick={inRando ? resumeRando : goHome}
             >
-              <IconBack size={16} /> {t("discovery.home")}
+              <IconBack size={16} /> {inRando ? t("themes.randos.resume") : t("discovery.home")}
             </button>
 
             <DiscoveryBody data={result} discovery={currentDiscovery} showNewBadge t={t} lang={lang}>
+              {!inRando && (
+                <button
+                  type="button"
+                  className="btn-primary"
+                  style={{ width: "100%", marginTop: "0.5rem" }}
+                  onClick={() => !savedToAlbum && setShowAlbumPicker(true)}
+                  disabled={savedToAlbum}
+                >
+                  {savedToAlbum ? t("discovery.added_album") : t("discovery.add_album")}
+                </button>
+              )}
+              {inRando && savedToAlbum && (
+                <p className="rando-added-hint">{t("discovery.added_album")}</p>
+              )}
+
               <button
                 type="button"
                 className="btn-primary"
                 style={{ width: "100%", marginTop: "0.5rem" }}
-                onClick={() => !savedToAlbum && setShowAlbumPicker(true)}
-                disabled={savedToAlbum}
-              >
-                {savedToAlbum ? t("discovery.added_album") : t("discovery.add_album")}
-              </button>
-
-              <button
-                type="button"
-                className="btn-secondary"
-                style={{ width: "100%", marginTop: "0.75rem" }}
                 onClick={() => setScreen("camera")}
               >
-                {t("discovery.scan_again")}
+                {inRando ? t("themes.randos.resume") : t("discovery.scan_again")}
               </button>
+
+              {inRando && (
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  style={{ width: "100%", marginTop: "0.75rem" }}
+                  onClick={endRando}
+                >
+                  {t("themes.randos.end")}
+                </button>
+              )}
             </DiscoveryBody>
           </div>
 
@@ -2166,14 +2417,32 @@ export default function Wilder() {
     const subAlbums = getSubAlbums(albums, selectedAlbum.id);
     const backScreen = isThemeScreen(returnScreen) ? returnScreen : albumTheme;
 
+    const isRandosAlbum = albumTheme === "randos";
+    const hasRandoTrack =
+      isRandosAlbum &&
+      ((selectedAlbum.gpsTrack?.length > 0) ||
+        items.some((d) => d.latitude != null && d.longitude != null));
+
     return (
       <>
         <Head>
           <title>{selectedAlbum.name} — Wilder</title>
         </Head>
         <div
-          className={`albums-screen screen-enter-fast${isJuniorsAlbum ? " theme-screen--juniors" : ""}`}
+          className={`albums-screen screen-enter-fast${isJuniorsAlbum ? " theme-screen--juniors" : ""}${isRandosAlbum ? " theme-screen--randos" : ""}`}
         >
+          {hasRandoTrack && (
+            <div className="rando-detail-map-wrap">
+              <h2 className="rando-detail-map-title">{t("themes.randos.track_title")}</h2>
+              <RandoMap
+                track={selectedAlbum.gpsTrack || []}
+                discoveries={items}
+                live={false}
+                theme={theme}
+                className="rando-map-container--detail"
+              />
+            </div>
+          )}
           <div className="album-detail-header">
             {selectedAlbum.coverPhoto ? (
               <img src={selectedAlbum.coverPhoto} alt="" className="album-detail-cover" />
@@ -2668,6 +2937,11 @@ export default function Wilder() {
         navigateMain={navigateMain}
         onStartScan={() => setScreen("camera")}
         onStartRando={startRando}
+        activeRandoAlbumId={activeRandoAlbumId}
+        randoTrack={randoTrack}
+        randoDiscoveries={randoDiscoveries}
+        onResumeRando={resumeRando}
+        onEndRando={endRando}
       />
     );
   }

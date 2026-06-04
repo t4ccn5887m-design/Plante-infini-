@@ -173,3 +173,34 @@ export function RandosStartButton({ t, onStartRando }) {
     </div>
   );
 }
+
+export function RandosActiveBar({ t, distanceKm, onResume, onEnd, onShowMap }) {
+  return (
+    <div className="randos-active-bar">
+      <div className="randos-active-info">
+        <span className="randos-active-pulse" aria-hidden="true" />
+        <div>
+          <p className="randos-active-label">{t("themes.randos.active")}</p>
+          {distanceKm != null && (
+            <p className="randos-active-distance">
+              {distanceKm < 1
+                ? t("themes.randos.distance_m", { m: Math.max(1, Math.round(distanceKm * 1000)) })
+                : t("themes.randos.distance_km", { km: distanceKm })}
+            </p>
+          )}
+        </div>
+      </div>
+      <div className="randos-active-actions">
+        <button type="button" className="randos-active-map-btn" onClick={onShowMap}>
+          🗺️
+        </button>
+        <button type="button" className="randos-active-resume-btn" onClick={onResume}>
+          {t("themes.randos.resume")}
+        </button>
+        <button type="button" className="randos-active-end-btn" onClick={onEnd}>
+          {t("themes.randos.end")}
+        </button>
+      </div>
+    </div>
+  );
+}
