@@ -3817,6 +3817,103 @@ video {
   cursor: wait;
 }
 
+/* ── Discovery result actions (post-scan) ── */
+
+.discovery-result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.discovery-result-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  width: 100%;
+  min-height: 3.75rem;
+  padding: 1rem 1.25rem;
+  border: none;
+  border-radius: 18px;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.25;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.discovery-result-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.discovery-result-btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.discovery-result-btn--organize {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  color: var(--cream);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.discovery-result-btn--scan {
+  flex-direction: row;
+  gap: 0.5rem;
+  min-height: 4.25rem;
+  font-size: 1.3rem;
+  background: linear-gradient(180deg, #ff9a3c 0%, #f07020 100%);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(240, 112, 32, 0.4);
+}
+
+.discovery-result-btn--share {
+  background: linear-gradient(135deg, var(--forest-light), var(--forest-mid));
+  color: #f5f2eb;
+}
+
+.discovery-result-btn-label {
+  display: block;
+}
+
+.discovery-result-btn-hint {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--forest-light);
+  opacity: 0.95;
+}
+
+.discovery-result-actions-cancel {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.discovery-result-end-rando {
+  display: block;
+  width: calc(100% - 3rem);
+  margin: 0 1.5rem 1.5rem;
+  padding: 0.85rem;
+  text-align: center;
+}
+
+.potager-scan-result .discovery-result-actions,
+.jardin-scan-result .discovery-result-actions,
+.animaux-scan-result .discovery-result-actions,
+.rando-scan-result .discovery-result-actions {
+  margin-top: 1.25rem;
+}
+
+.rando-scan-result .rando-scan-end {
+  margin: 0 1.15rem 1.25rem;
+  width: calc(100% - 2.3rem);
+}
+
 /* ── Confetti & badge unlock ── */
 
 .confetti-canvas {

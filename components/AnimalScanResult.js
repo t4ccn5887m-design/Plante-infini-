@@ -1,11 +1,17 @@
 import { isProtectedSpecies } from "@/lib/animaux";
 import DiscoveryAnalysisSections from "@/components/DiscoveryAnalysisSections";
+import DiscoveryResultActions from "@/components/DiscoveryResultActions";
 
 export default function AnimalScanResult({
   result,
   photo,
+  discovery,
   t,
+  lang,
   onBack,
+  onScanAgain,
+  onOrganizeDestination,
+  organizeHint,
   saved = true,
 }) {
   const protectedSpecies = isProtectedSpecies(result);
@@ -45,6 +51,14 @@ export default function AnimalScanResult({
             : t("themes.juniors.common")}
         </p>
 
+        <DiscoveryResultActions
+          discovery={discovery}
+          t={t}
+          lang={lang}
+          organizeHint={organizeHint}
+          onOrganizeDestination={onOrganizeDestination}
+          onScanAgain={onScanAgain}
+        />
       </div>
 
       {saved && (

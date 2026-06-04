@@ -1,8 +1,18 @@
 import { HEALTH, inferHealthFromEtatSante } from "@/lib/potagerHealth";
 import { getPotagerActionLabel } from "@/lib/potagerAction";
 import DiscoveryAnalysisSections from "@/components/DiscoveryAnalysisSections";
+import DiscoveryResultActions from "@/components/DiscoveryResultActions";
 
-export default function PotagerScanResult({ result, t, onBack }) {
+export default function PotagerScanResult({
+  result,
+  discovery,
+  t,
+  lang,
+  onBack,
+  onScanAgain,
+  onOrganizeDestination,
+  organizeHint,
+}) {
   const health = inferHealthFromEtatSante(result?.etat_sante);
   const action = getPotagerActionLabel(result, t);
 
@@ -34,6 +44,15 @@ export default function PotagerScanResult({ result, t, onBack }) {
         </p>
 
         <p className="potager-scan-action">{action}</p>
+
+        <DiscoveryResultActions
+          discovery={discovery}
+          t={t}
+          lang={lang}
+          organizeHint={organizeHint}
+          onOrganizeDestination={onOrganizeDestination}
+          onScanAgain={onScanAgain}
+        />
       </div>
 
       <p className="sr-only" aria-live="polite">

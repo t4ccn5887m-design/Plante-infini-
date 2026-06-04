@@ -1,10 +1,23 @@
 import { HEALTH, inferHealthFromEtatSante } from "@/lib/potagerHealth";
 import { getTypeLabel } from "@/lib/i18n";
 import DiscoveryAnalysisSections from "@/components/DiscoveryAnalysisSections";
+import DiscoveryResultActions from "@/components/DiscoveryResultActions";
 
 const PLANT_TYPES = new Set(["plante", "arbre", "fleur", "herbe"]);
 
-export default function RandoScanResult({ result, photo, t, onBack, onScanAgain, onEndRando }) {
+export default function RandoScanResult({
+  result,
+  photo,
+  discovery,
+  t,
+  lang,
+  onBack,
+  onScanAgain,
+  scanAgainLabel,
+  onOrganizeDestination,
+  organizeHint,
+  onEndRando,
+}) {
   const type = result?.type || "plante";
   const typeLabel = getTypeLabel(t, type);
   const showHealth = PLANT_TYPES.has(type);
@@ -52,16 +65,21 @@ export default function RandoScanResult({ result, photo, t, onBack, onScanAgain,
         ✓ {t("themes.randos.saved_auto")}
       </p>
 
-      <div className="rando-scan-actions">
-        <button type="button" className="rando-scan-cta" onClick={onScanAgain}>
-          <span aria-hidden="true">📸</span> {t("themes.randos.scan_again")}
+      <DiscoveryResultActions
+        discovery={discovery}
+        t={t}
+        lang={lang}
+        organizeHint={organizeHint}
+        onOrganizeDestination={onOrganizeDestination}
+        onScanAgain={onScanAgain}
+        scanAgainLabel={scanAgainLabel}
+      />
+
+      {onEndRando && (
+        <button type="button" className="rando-scan-end" onClick={onEndRando}>
+          {t("themes.randos.end")}
         </button>
-        {onEndRando && (
-          <button type="button" className="rando-scan-end" onClick={onEndRando}>
-            {t("themes.randos.end")}
-          </button>
-        )}
-      </div>
+      )}
     </div>
   );
 }

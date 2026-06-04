@@ -17,6 +17,7 @@ import AnalyzeLoadingScreen from "@/components/AnalyzeLoadingScreen";
 import DiscoveryAnalysisSections, {
   discoveryToAnalysisData,
 } from "@/components/DiscoveryAnalysisSections";
+import DiscoveryResultActions from "@/components/DiscoveryResultActions";
 import { shareDiscovery } from "@/lib/share";
 import { computeStats } from "@/lib/stats";
 import { isHeritageType } from "@/lib/categories";
@@ -898,7 +899,7 @@ function BadgeUnlockToast({ badge, t, onClose }) {
   );
 }
 
-function DiscoveryBody({ data, discovery, showNewBadge, t, lang, onShare, children }) {
+function DiscoveryBody({ data, discovery, showNewBadge, t, lang, onShare, showInlineShare, children }) {
   return (
     <>
       {showNewBadge && <span className="discovery-new-badge">{t("discovery.new")}</span>}
@@ -919,7 +920,7 @@ function DiscoveryBody({ data, discovery, showNewBadge, t, lang, onShare, childr
 
       {discovery && <LocationCard discovery={discovery} t={t} />}
 
-      {discovery && onShare !== false && (
+      {discovery && onShare !== false && showInlineShare !== false && (
         <ShareButton discovery={discovery} t={t} lang={lang} />
       )}
 
@@ -928,9 +929,9 @@ function DiscoveryBody({ data, discovery, showNewBadge, t, lang, onShare, childr
   );
 }
 
-function ThemeAlbumPickerModal({ albums, onSelect, onCreate, onClose, t, locale }) {
-  const [step, setStep] = useState("theme");
-  const [pickedTheme, setPickedTheme] = useState(null);
+function ThemeAlbumPickerModal({ albums, onSelect, onCreate, onClose, t, locale, startTheme = null }) {
+  const [step, setStep] = useState(startTheme ? "album" : "theme");
+  const [pickedTheme, setPickedTheme] = useState(startTheme);
   const [newName, setNewName] = useState("");
   const [creating, setCreating] = useState(false);
 
@@ -1373,6 +1374,8 @@ export default function Wilder() {
   const [albums, setAlbums] = useState([]);
   const [selectedAlbumId, setSelectedAlbumId] = useState(null);
   const [showAlbumPicker, setShowAlbumPicker] = useState(false);
+  const [albumPickerStartTheme, setAlbumPickerStartTheme] = useState(null);
+  const [organizeSaved, setOrganizeSaved] = useState({});
   const [savedToAlbum, setSavedToAlbum] = useState(false);
   const [pokedexAnim, setPokedexAnim] = useState(true);
   const [creatingAlbum, setCreatingAlbum] = useState(false);
@@ -1673,6 +1676,8 @@ export default function Wilder() {
     setErrorMsg("");
     setSavedToAlbum(false);
     setShowAlbumPicker(false);
+    setAlbumPickerStartTheme(null);
+    setOrganizeSaved({});
     setShowRandoMap(false);
     setRescanDiscoveryId(null);
     setScanTargetAlbumId(null);
@@ -1686,6 +1691,8 @@ export default function Wilder() {
       setCurrentDiscovery(null);
       setSavedToAlbum(false);
       setShowAlbumPicker(false);
+      setAlbumPickerStartTheme(null);
+      setOrganizeSaved({});
       setRescanDiscoveryId(null);
       setScanTargetAlbumId(null);
       setScreen("album-detail");
@@ -1955,8 +1962,63 @@ export default function Wilder() {
       setAlbums(allAlbums);
     }
     setShowAlbumPicker(false);
+    setAlbumPickerStartTheme(null);
     setSavedToAlbum(true);
+    if (album?.theme) {
+      setOrganizeSaved((prev) => ({ ...prev, [album.theme]: true }));
+    }
   };
+
+  const shareDiscoveryPayload = useMemo(() => {
+    if (!currentDiscovery) return null;
+    return {
+      ...currentDiscovery,
+      nom: result?.nom || currentDiscovery.nom,
+      nom_latin: result?.nom_latin || currentDiscovery.nom_latin,
+      description: result?.description || currentDiscovery.description || "",
+      type: result?.type || currentDiscovery.type,
+      rarete: result?.rarete || currentDiscovery.rarete,
+    };
+  }, [currentDiscovery, result]);
+
+  const getOrganizeHint = useCallback(() => {
+    if (organizeSaved.potager || returnScreen === "potager") return t("discovery.saved_potager");
+    if (organizeSaved.jardin || returnScreen === "jardin") return t("discovery.saved_jardin");
+    if (organizeSaved.juniors || returnScreen === "juniors") return t("discovery.saved_juniors");
+    if (organizeSaved.randos || activeRandoAlbumId) return t("discovery.saved_randos");
+    if (savedToAlbum) return t("discovery.added_album");
+    return null;
+  }, [organizeSaved, returnScreen, activeRandoAlbumId, savedToAlbum, t]);
+
+  const handleOrganizeDestination = useCallback(
+    (themeId) => {
+      if (!currentDiscovery || !result) return;
+      if (themeId === "potager") {
+        upsertPotagerPlantFromDiscovery(currentDiscovery, result);
+        recordPotagerWatering();
+        setOrganizeSaved((prev) => ({ ...prev, potager: true }));
+        return;
+      }
+      if (themeId === "randos" && activeRandoAlbumId) {
+        addToAlbum(activeRandoAlbumId);
+        setOrganizeSaved((prev) => ({ ...prev, randos: true }));
+        return;
+      }
+      setAlbumPickerStartTheme(themeId);
+      setShowAlbumPicker(true);
+    },
+    [currentDiscovery, result, activeRandoAlbumId, addToAlbum]
+  );
+
+  const scanAgainFromResult = useCallback(() => {
+    setResult(null);
+    setCaptured(null);
+    setSavedToAlbum(false);
+    setShowAlbumPicker(false);
+    setAlbumPickerStartTheme(null);
+    setOrganizeSaved({});
+    setScreen("camera");
+  }, []);
 
   useEffect(() => {
     if (screen !== "result" || !activeRandoAlbumId || !currentDiscovery || savedToAlbum) return;
@@ -1973,6 +2035,7 @@ export default function Wilder() {
     if (screen !== "result" || returnScreen !== "potager" || !currentDiscovery || !result) return;
     upsertPotagerPlantFromDiscovery(currentDiscovery, result);
     recordPotagerWatering();
+    setOrganizeSaved((prev) => ({ ...prev, potager: true }));
   }, [screen, returnScreen, currentDiscovery?.id, result]);
 
   const createAlbum = async (name, theme = DEFAULT_ALBUM_THEME) => {
@@ -2001,7 +2064,9 @@ export default function Wilder() {
     saveAlbums(updated);
     setAlbums(updated);
     setShowAlbumPicker(false);
+    setAlbumPickerStartTheme(null);
     setSavedToAlbum(true);
+    setOrganizeSaved((prev) => ({ ...prev, [theme]: true }));
   };
 
   const createAlbumFromList = async (themeId, options = {}) => {
@@ -2513,6 +2578,21 @@ export default function Wilder() {
     const inJardin = returnScreen === "jardin" && !inRando;
     const inJuniors = returnScreen === "juniors" && !inRando;
 
+    const resultAlbumPicker = showAlbumPicker ? (
+      <ThemeAlbumPickerModal
+        albums={albums}
+        onSelect={addToAlbum}
+        onCreate={createAlbum}
+        onClose={() => {
+          setShowAlbumPicker(false);
+          setAlbumPickerStartTheme(null);
+        }}
+        startTheme={albumPickerStartTheme}
+        t={t}
+        locale={locale}
+      />
+    ) : null;
+
     if (inPotager) {
       return (
         <>
@@ -2522,7 +2602,12 @@ export default function Wilder() {
           <div className="potager-scan-screen screen-enter-fast">
             <PotagerScanResult
               result={result}
+              discovery={shareDiscoveryPayload}
               t={t}
+              lang={lang}
+              organizeHint={getOrganizeHint()}
+              onOrganizeDestination={handleOrganizeDestination}
+              onScanAgain={scanAgainFromResult}
               onBack={() => {
                 setResult(null);
                 setCaptured(null);
@@ -2531,6 +2616,7 @@ export default function Wilder() {
               }}
             />
           </div>
+          {resultAlbumPicker}
           {confettiOverlay}
         </>
       );
@@ -2548,7 +2634,12 @@ export default function Wilder() {
             <JardinScanResult
               result={result}
               photo={captured}
+              discovery={shareDiscoveryPayload}
               t={t}
+              lang={lang}
+              organizeHint={getOrganizeHint()}
+              onOrganizeDestination={handleOrganizeDestination}
+              onScanAgain={scanAgainFromResult}
               onBack={() => {
                 setResult(null);
                 setCaptured(null);
@@ -2557,6 +2648,7 @@ export default function Wilder() {
               }}
             />
           </div>
+          {resultAlbumPicker}
           {confettiOverlay}
         </>
       );
@@ -2574,7 +2666,12 @@ export default function Wilder() {
             <AnimalScanResult
               result={result}
               photo={captured}
+              discovery={shareDiscoveryPayload}
               t={t}
+              lang={lang}
+              organizeHint={getOrganizeHint()}
+              onOrganizeDestination={handleOrganizeDestination}
+              onScanAgain={scanAgainFromResult}
               onBack={() => {
                 setResult(null);
                 setCaptured(null);
@@ -2583,6 +2680,7 @@ export default function Wilder() {
               }}
             />
           </div>
+          {resultAlbumPicker}
           {confettiOverlay}
         </>
       );
@@ -2600,12 +2698,18 @@ export default function Wilder() {
             <RandoScanResult
               result={result}
               photo={captured}
+              discovery={shareDiscoveryPayload}
               t={t}
-              onBack={resumeRando}
+              lang={lang}
+              organizeHint={getOrganizeHint()}
+              onOrganizeDestination={handleOrganizeDestination}
               onScanAgain={resumeRando}
+              scanAgainLabel={t("themes.randos.scan_again")}
+              onBack={resumeRando}
               onEndRando={endRando}
             />
           </div>
+          {resultAlbumPicker}
           {confettiOverlay}
         </>
       );
@@ -2643,54 +2747,37 @@ export default function Wilder() {
                   : t("discovery.home")}
             </button>
 
-            <DiscoveryBody data={result} discovery={currentDiscovery} showNewBadge t={t} lang={lang}>
-              {!inRando && (
-                <button
-                  type="button"
-                  className="btn-primary"
-                  style={{ width: "100%", marginTop: "0.5rem" }}
-                  onClick={() => !savedToAlbum && setShowAlbumPicker(true)}
-                  disabled={savedToAlbum}
-                >
-                  {savedToAlbum ? t("discovery.added_album") : t("discovery.add_album")}
-                </button>
-              )}
-              {inRando && savedToAlbum && (
-                <p className="rando-added-hint">{t("discovery.added_album")}</p>
-              )}
+            <DiscoveryBody
+              data={result}
+              discovery={currentDiscovery}
+              showNewBadge
+              showInlineShare={false}
+              t={t}
+              lang={lang}
+            />
 
+            <DiscoveryResultActions
+              discovery={shareDiscoveryPayload}
+              t={t}
+              lang={lang}
+              organizeHint={getOrganizeHint()}
+              onOrganizeDestination={handleOrganizeDestination}
+              onScanAgain={inRando ? resumeRando : scanAgainFromResult}
+              scanAgainLabel={inRando ? t("themes.randos.scan_again") : undefined}
+            />
+
+            {inRando && (
               <button
                 type="button"
-                className="btn-primary"
-                style={{ width: "100%", marginTop: "0.5rem" }}
-                onClick={() => setScreen("camera")}
+                className="discovery-result-end-rando btn-secondary"
+                onClick={endRando}
               >
-                {inRando ? t("themes.randos.resume") : t("discovery.scan_again")}
+                {t("themes.randos.end")}
               </button>
-
-              {inRando && (
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  style={{ width: "100%", marginTop: "0.75rem" }}
-                  onClick={endRando}
-                >
-                  {t("themes.randos.end")}
-                </button>
-              )}
-            </DiscoveryBody>
+            )}
           </div>
 
-          {showAlbumPicker && (
-            <ThemeAlbumPickerModal
-              albums={albums}
-              onSelect={addToAlbum}
-              onCreate={createAlbum}
-              onClose={() => setShowAlbumPicker(false)}
-              t={t}
-              locale={locale}
-            />
-          )}
+          {resultAlbumPicker}
           {confettiOverlay}
         </div>
       </>

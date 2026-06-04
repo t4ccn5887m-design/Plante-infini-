@@ -1,12 +1,18 @@
 import { HEALTH, inferHealthFromEtatSante } from "@/lib/potagerHealth";
 import { getJardinActionLabel } from "@/lib/espaceVertAction";
 import DiscoveryAnalysisSections from "@/components/DiscoveryAnalysisSections";
+import DiscoveryResultActions from "@/components/DiscoveryResultActions";
 
 export default function JardinScanResult({
   result,
   photo,
+  discovery,
   t,
+  lang,
   onBack,
+  onScanAgain,
+  onOrganizeDestination,
+  organizeHint,
   saved = true,
 }) {
   const health = inferHealthFromEtatSante(result?.etat_sante);
@@ -52,6 +58,15 @@ export default function JardinScanResult({
           <p className="jardin-scan-action-label">{t("themes.jardin.action_label")}</p>
           <p className="jardin-scan-action">{action}</p>
         </div>
+
+        <DiscoveryResultActions
+          discovery={discovery}
+          t={t}
+          lang={lang}
+          organizeHint={organizeHint}
+          onOrganizeDestination={onOrganizeDestination}
+          onScanAgain={onScanAgain}
+        />
       </div>
 
       {saved && (
