@@ -23,13 +23,19 @@ import PotagerScanResult from "@/components/PotagerScanResult";
 import { upsertPotagerPlantFromDiscovery } from "@/lib/potagerPlant";
 import { recordPotagerWatering } from "@/lib/potagerEngagement";
 import EspacesVertsView from "@/components/EspacesVertsView";
+import AnimauxView from "@/components/AnimauxView";
 import EspaceVertPlantList from "@/components/EspaceVertPlantList";
 import JardinScanResult from "@/components/JardinScanResult";
+import AnimalScanResult from "@/components/AnimalScanResult";
 import { CARE_SCAN, applyCareToDiscovery } from "@/lib/espaceVertPlant";
 import {
   discoveryToScanResult,
   getDefaultJardinAlbumId,
 } from "@/lib/espaceVertGarden";
+import {
+  discoveryToAnimalResult,
+  getDefaultAnimauxAlbumId,
+} from "@/lib/animaux";
 import { inferHealthFromEtatSante } from "@/lib/potagerHealth";
 import RandosView, { RandosStartButton, RandosActiveBar } from "@/components/RandosView";
 import RandoNatureAlerts from "@/components/RandoNatureAlerts";
@@ -1108,37 +1114,6 @@ function ThemeAlbumPickerModal({ albums, onSelect, onCreate, onClose, t, locale 
   );
 }
 
-function JuniorsDiscoveryCard({ discovery, onClick, onDelete, swipeLabels, t, typeLabel, rarityLabel }) {
-  const emoji = THEME_META.juniors.emoji;
-  const card = (
-    <button type="button" className="juniors-discovery-card" onClick={onClick}>
-      <img src={discovery.photo} alt={discovery.nom} />
-      <div className="juniors-discovery-body">
-        <span className="juniors-discovery-badge">{emoji} {t("themes.juniors.fun_title")}</span>
-        <h4>{discovery.nom}</h4>
-        <p className="juniors-discovery-type">{typeLabel(discovery.type)}</p>
-        {discovery.fun_fact && (
-          <p className="juniors-discovery-fact">
-            💡 {discovery.fun_fact.slice(0, 120)}
-            {discovery.fun_fact.length > 120 ? "…" : ""}
-          </p>
-        )}
-        {(discovery.rarete === "rare" || discovery.rarete === "tres_rare") && (
-          <span className={`discovery-item-rarity rarity-${discovery.rarete}`}>
-            ⭐ {rarityLabel(discovery.rarete)}
-          </span>
-        )}
-      </div>
-    </button>
-  );
-  if (!onDelete) return card;
-  return (
-    <SwipeToDelete onDelete={() => onDelete(discovery.id)} {...swipeLabels}>
-      {card}
-    </SwipeToDelete>
-  );
-}
-
 function ThemeAlbumsScreen({
   themeId,
   albums,
@@ -1167,6 +1142,7 @@ function ThemeAlbumsScreen({
   navigateMain,
   onStartScan,
   onOpenJardinPlant,
+  onOpenAnimal,
   onStartRando,
   activeRandoAlbumId,
   randoTrack,
@@ -1202,7 +1178,7 @@ function ThemeAlbumsScreen({
         </title>
       </Head>
       <div
-        className={`albums-screen screen-enter with-bottom-nav${isPotager || isJardin ? "" : " with-scanner-fab"} theme-screen theme-screen--${themeId}${isJuniors ? " theme-screen--juniors" : ""}${isMapView ? " albums-screen--map" : ""}`}
+        className={`albums-screen screen-enter with-bottom-nav${isPotager || isJardin || isJuniors ? "" : " with-scanner-fab"} theme-screen theme-screen--${themeId}${isJuniors ? " theme-screen--juniors" : ""}${isMapView ? " albums-screen--map" : ""}`}
       >
         <div className="albums-header">
           <h1 className="albums-title">
@@ -1210,7 +1186,7 @@ function ThemeAlbumsScreen({
           </h1>
           <ThemeToggle theme={theme} onToggle={onToggleTheme} t={t} />
         </div>
-        {!isPotager && !isJardin && (
+        {!isPotager && !isJardin && !isJuniors && (
           <p className="theme-screen-subtitle">{t(`themes.${themeId}.subtitle`)}</p>
         )}
 
@@ -1228,6 +1204,16 @@ function ThemeAlbumsScreen({
             discoveries={discoveries}
             onStartScan={onStartScan}
             onOpenPlant={onOpenJardinPlant}
+            onDeleteDiscovery={onDeleteDiscovery}
+            swipeLabels={swipeLabels}
+            t={t}
+          />
+        ) : isJuniors ? (
+          <AnimauxView
+            albums={albums}
+            discoveries={discoveries}
+            onStartScan={onStartScan}
+            onOpenAnimal={onOpenAnimal}
             onDeleteDiscovery={onDeleteDiscovery}
             swipeLabels={swipeLabels}
             t={t}
@@ -1493,7 +1479,7 @@ function ThemeAlbumsScreen({
           </>
         )}
       </div>
-      {!(isRandos && activeRandoAlbumId) && !isPotager && !isJardin && (
+      {!(isRandos && activeRandoAlbumId) && !isPotager && !isJardin && !isJuniors && (
         <FloatingScannerButton onClick={onStartScan} t={t} />
       )}
       <BottomNav active={themeId} onNavigate={navigateMain} t={t} />
@@ -1552,6 +1538,7 @@ export default function Wilder() {
   const [rescanDiscoveryId, setRescanDiscoveryId] = useState(null);
   const [scanTargetAlbumId, setScanTargetAlbumId] = useState(null);
   const [jardinPlantDiscovery, setJardinPlantDiscovery] = useState(null);
+  const [animalDiscovery, setAnimalDiscovery] = useState(null);
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -1906,6 +1893,10 @@ export default function Wilder() {
               data.style_architectural || prev.style_architectural || "",
             anecdotes: data.anecdotes || prev.anecdotes || "",
             fun_fact: data.fun_fact || prev.fun_fact || "",
+            comportement: data.comportement || prev.comportement || "",
+            alimentation: data.alimentation || prev.alimentation || "",
+            espece_protegee: data.espece_protegee ?? prev.espece_protegee ?? null,
+            region_saison: data.region_saison || prev.region_saison || "",
             ...(location || {}),
             },
             CARE_SCAN,
@@ -1935,6 +1926,10 @@ export default function Wilder() {
           style_architectural: data.style_architectural || "",
           anecdotes: data.anecdotes || "",
           fun_fact: data.fun_fact || "",
+          comportement: data.comportement || "",
+          alimentation: data.alimentation || "",
+          espece_protegee: data.espece_protegee ?? null,
+          region_saison: data.region_saison || "",
           discoveredAt: now,
           plantedAt: now,
           lastScannedAt: now,
@@ -2170,8 +2165,14 @@ export default function Wilder() {
           setScreen(isThemeScreen(returnScreen) ? returnScreen : "jardin");
         }
       }
+      if (animalDiscovery?.id === discoveryId) {
+        setAnimalDiscovery(null);
+        if (screen === "animal-detail") {
+          setScreen(isThemeScreen(returnScreen) ? returnScreen : "juniors");
+        }
+      }
     },
-    [discoveries, albums, viewingDiscovery, currentDiscovery, jardinPlantDiscovery, screen, returnScreen]
+    [discoveries, albums, viewingDiscovery, currentDiscovery, jardinPlantDiscovery, animalDiscovery, screen, returnScreen]
   );
 
   const handleDeletePotagerPlant = useCallback(
@@ -2555,11 +2556,38 @@ export default function Wilder() {
     );
   }
 
+  /* ── ANIMAL DETAIL ── */
+  if (screen === "animal-detail" && animalDiscovery) {
+    const animalResult = discoveryToAnimalResult(animalDiscovery);
+    return (
+      <>
+        <Head>
+          <title>
+            {animalDiscovery.nom} — {t("themes.juniors.title")}
+          </title>
+        </Head>
+        <div className="animaux-scan-screen screen-enter-fast">
+          <AnimalScanResult
+            result={animalResult}
+            photo={animalDiscovery.photo}
+            t={t}
+            saved={false}
+            onBack={() => {
+              setAnimalDiscovery(null);
+              setScreen("juniors");
+            }}
+          />
+        </div>
+      </>
+    );
+  }
+
   /* ── RESULT ── */
   if (screen === "result" && result) {
     const inRando = Boolean(activeRandoAlbumId);
     const inPotager = returnScreen === "potager" && !inRando;
     const inJardin = returnScreen === "jardin" && !inRando;
+    const inJuniors = returnScreen === "juniors" && !inRando;
 
     if (inPotager) {
       return (
@@ -2602,6 +2630,32 @@ export default function Wilder() {
                 setCaptured(null);
                 setCurrentDiscovery(null);
                 setScreen("jardin");
+              }}
+            />
+          </div>
+          {confettiOverlay}
+        </>
+      );
+    }
+
+    if (inJuniors) {
+      return (
+        <>
+          <Head>
+            <title>
+              {result.nom} — {t("themes.juniors.title")}
+            </title>
+          </Head>
+          <div className="animaux-scan-screen screen-enter-fast">
+            <AnimalScanResult
+              result={result}
+              photo={captured}
+              t={t}
+              onBack={() => {
+                setResult(null);
+                setCaptured(null);
+                setCurrentDiscovery(null);
+                setScreen("juniors");
               }}
             />
           </div>
@@ -2879,18 +2933,42 @@ export default function Wilder() {
               </button>
             </div>
           ) : isJuniorsAlbum ? (
-            <div className="juniors-discovery-list">
+            <div className="animaux-list animaux-list--album">
               {items.map((d) => (
-                <JuniorsDiscoveryCard
+                <SwipeToDelete
                   key={d.id}
-                  discovery={d}
-                  onClick={() => openDiscoveryDetail(d, backScreen)}
-                  onDelete={handleDeleteDiscovery}
-                  swipeLabels={swipeDeleteLabels}
-                  t={t}
-                  typeLabel={typeLabel}
-                  rarityLabel={rarityLabel}
-                />
+                  onDelete={() => handleDeleteDiscovery(d.id)}
+                  {...swipeDeleteLabels}
+                >
+                  <button
+                    type="button"
+                    className="animaux-row"
+                    onClick={() => {
+                      setAnimalDiscovery(d);
+                      setReturnScreen("album-detail");
+                      setScreen("animal-detail");
+                    }}
+                  >
+                    <div className="animaux-row-photo-wrap">
+                      {d.photo ? (
+                        <img src={d.photo} alt="" className="animaux-row-photo" />
+                      ) : (
+                        <span
+                          className="animaux-row-photo animaux-row-photo--empty"
+                          aria-hidden="true"
+                        >
+                          🦊
+                        </span>
+                      )}
+                    </div>
+                    <div className="animaux-row-info">
+                      <span className="animaux-row-name">{d.nom}</span>
+                      {d.habitat && (
+                        <span className="animaux-row-habitat">{d.habitat}</span>
+                      )}
+                    </div>
+                  </button>
+                </SwipeToDelete>
               ))}
             </div>
           ) : (
@@ -2982,28 +3060,16 @@ export default function Wilder() {
             </button>
 
             {isJuniorsView ? (
-              <div className="juniors-detail-card">
-                <span className="juniors-detail-emoji" aria-hidden="true">
-                  🐛✨
-                </span>
-                <h2 className="juniors-detail-title">{t("themes.juniors.fun_title")}</h2>
-                <p className="juniors-detail-learn">{t("themes.juniors.fun_learn")}</p>
-                <h3 className="juniors-detail-name">{d.nom}</h3>
-                <p className="juniors-detail-latin">{d.nom_latin}</p>
-                <span className="juniors-detail-type">{typeLabel(d.type)}</span>
-                {d.fun_fact && (
-                  <div className="juniors-fun-fact-box">
-                    <strong>💡 {t("themes.juniors.fun_fact_label")}</strong>
-                    <p>{d.fun_fact}</p>
-                  </div>
-                )}
-                {d.description && (
-                  <p className="juniors-detail-desc">{d.description.slice(0, 200)}</p>
-                )}
-                <p className="juniors-detail-date">
-                  📅 {t("discovery.discovered_on")} {formatDate(d.discoveredAt, locale)}
-                </p>
-              </div>
+              <AnimalScanResult
+                result={discoveryToAnimalResult(d)}
+                photo={null}
+                t={t}
+                saved={false}
+                onBack={() => {
+                  setViewingDiscovery(null);
+                  setScreen(returnScreen === "album-detail" ? "album-detail" : returnScreen);
+                }}
+              />
             ) : (
               <DiscoveryBody data={data} discovery={d} showNewBadge={false} t={t} lang={lang}>
                 <p style={{ fontSize: "0.82rem", color: "var(--text-muted)", marginTop: "0.5rem" }}>
@@ -3269,9 +3335,15 @@ export default function Wilder() {
         discoveries={discoveries}
         albumsViewMode={albumsViewMode}
         setAlbumsViewMode={setAlbumsViewMode}
-        onOpenJardinPlant={(d) => {
-          setJardinPlantDiscovery(d);
+        onOpenJardinPlant={(plant) => {
+          setJardinPlantDiscovery(plant);
+          setReturnScreen("jardin");
           setScreen("jardin-plant");
+        }}
+        onOpenAnimal={(animal) => {
+          setAnimalDiscovery(animal);
+          setReturnScreen("juniors");
+          setScreen("animal-detail");
         }}
         creatingAlbum={creatingAlbum}
         setCreatingAlbum={setCreatingAlbum}
@@ -3306,6 +3378,25 @@ export default function Wilder() {
                 discoveryIds: [],
                 location: null,
                 theme: "jardin",
+              });
+              const updated = [album, ...loadAlbums()];
+              saveAlbums(updated);
+              setAlbums(updated);
+              albumId = album.id;
+            }
+            setScanTargetAlbumId(albumId);
+          }
+          if (screen === "juniors") {
+            let albumId = getDefaultAnimauxAlbumId(albums);
+            if (!albumId) {
+              const createdAt = new Date().toISOString();
+              const album = buildAlbumRecord({
+                name: t("themes.juniors.default_album"),
+                createdAt,
+                coverPhoto: null,
+                discoveryIds: [],
+                location: null,
+                theme: "juniors",
               });
               const updated = [album, ...loadAlbums()];
               saveAlbums(updated);

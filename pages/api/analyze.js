@@ -23,7 +23,7 @@ Refuse monuments, bâtiments et patrimoine bâti sans sujet naturel : {"erreur":
 Selon le type :
 • Tous : nom commun, nom_latin, famille.
 • Plante/arbre/fleur/fruit/légume : etat_sante (symptômes visibles), soins_traitement si malade, guide_entretien, conseils_expert basés sur la photo.
-• Animal/oiseau/reptile/papillon : habitat, comportement, dangerosite si pertinent.
+• Animal/oiseau/reptile/papillon : habitat, alimentation, comportement, dangerosite si pertinent, espece_protegee (true si espèce protégée ou menacée), region_saison (régions et saisons où le retrouver).
 • Insecte/champignon : infos_utiles (écologie, précautions, toxicité/comestibilité).
 
 JSON uniquement, sans markdown :
@@ -39,8 +39,11 @@ JSON uniquement, sans markdown :
   "guide_entretien":"Entretien plante ; null sinon",
   "conseils_expert":"Conseils photo ; null sinon",
   "habitat":"Habitat naturel",
-  "comportement":"Animal ; null sinon",
+  "alimentation":"Régime alimentaire animal ; null sinon",
+  "comportement":"Comportement animal ; null sinon",
   "dangerosite":"Risques ; null sinon",
+  "espece_protegee":true|false|null,
+  "region_saison":"Régions et saisons où le retrouver ; null sinon",
   "infos_utiles":"Champignon/insecte ; null sinon",
   "rarete":"commun|peu_commun|rare|tres_rare",
   "fun_fact":"Fait amusant animal/champignon ; null sinon"
@@ -51,7 +54,7 @@ Refuse si photo vide/noire : {"erreur":"Aucune decouverte identifiable"}`;
 const USER_PROMPT =
   "Identifie le sujet naturel principal. Remplis le JSON (null si non applicable). " +
   "Plante : santé, soins, entretien, conseils selon la photo. " +
-  "Animal : espèce, habitat, comportement, danger. " +
+  "Animal : espèce, habitat, alimentation, comportement, protection, région/saison, danger. " +
   "Insecte/champignon : identification et infos utiles. " +
   "Français, ton bienveillant. JSON seul.";
 
