@@ -1809,6 +1809,85 @@ video {
   font-style: italic;
 }
 
+/* ── Swipe to delete ── */
+
+.swipe-delete-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.swipe-delete-action {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 92px;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background: #c62828;
+  border-radius: inherit;
+}
+
+.swipe-delete-action-btn {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.25;
+  padding: 0.5rem 0.35rem;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.swipe-delete-panel {
+  position: relative;
+  z-index: 1;
+  background: inherit;
+  border-radius: inherit;
+  touch-action: pan-y;
+}
+
+.swipe-delete-panel > * {
+  width: 100%;
+}
+
+.swipe-delete-confirm {
+  text-align: center;
+}
+
+.swipe-delete-confirm-msg {
+  font-size: 1.05rem;
+  line-height: 1.45;
+  margin: 0.5rem 0 1.25rem;
+  color: var(--text-primary, #f5f5f5);
+}
+
+.swipe-delete-confirm-btn {
+  background: #c62828 !important;
+  border-color: #c62828 !important;
+}
+
+.home-recent-list > li,
+.jardin-plant-list > ul > li,
+.jardin-plant-list-inner > li,
+.potager-plant-list ul > li,
+.juniors-discovery-list > .swipe-delete-wrap,
+.discovery-grid > .swipe-delete-wrap {
+  list-style: none;
+}
+
+.discovery-grid > .swipe-delete-wrap {
+  min-width: 0;
+}
+
+.rando-journal-discovery-wrap {
+  margin-bottom: 0.75rem;
+}
+
 /* ── Modal ── */
 
 .modal-overlay {

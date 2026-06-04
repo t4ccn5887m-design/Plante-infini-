@@ -53,6 +53,8 @@ import {
   saveAlbums,
   saveDiscoveries,
 } from "@/lib/discoveriesStorage";
+import { removeDiscoveryById, removePotagerPlantById } from "@/lib/removeDiscovery";
+import SwipeToDelete from "@/components/SwipeToDelete";
 import {
   ALBUM_THEMES,
   DEFAULT_ALBUM_THEME,
@@ -435,7 +437,7 @@ function ThemeToggle({ theme, onToggle, t }) {
   );
 }
 
-function RecentDiscoveries({ discoveries, onOpen, t, typeLabel }) {
+function RecentDiscoveries({ discoveries, onOpen, onDelete, swipeLabels, t, typeLabel }) {
   const recent = useMemo(
     () =>
       [...discoveries]
@@ -452,19 +454,21 @@ function RecentDiscoveries({ discoveries, onOpen, t, typeLabel }) {
     <ul className="home-recent-list">
       {recent.map((d) => (
         <li key={d.id}>
-          <button type="button" className="home-recent-item" onClick={() => onOpen(d)}>
-            {d.photo ? (
-              <img src={d.photo} alt="" width={52} height={52} />
-            ) : (
-              <span className="home-recent-item-placeholder" aria-hidden="true">
-                🌿
+          <SwipeToDelete onDelete={() => onDelete?.(d.id)} {...swipeLabels}>
+            <button type="button" className="home-recent-item" onClick={() => onOpen(d)}>
+              {d.photo ? (
+                <img src={d.photo} alt="" width={52} height={52} />
+              ) : (
+                <span className="home-recent-item-placeholder" aria-hidden="true">
+                  🌿
+                </span>
+              )}
+              <span className="home-recent-item-text">
+                <strong>{d.nom}</strong>
+                <span>{typeLabel(d.type)}</span>
               </span>
-            )}
-            <span className="home-recent-item-text">
-              <strong>{d.nom}</strong>
-              <span>{typeLabel(d.type)}</span>
-            </span>
-          </button>
+            </button>
+          </SwipeToDelete>
         </li>
       ))}
     </ul>
@@ -1104,9 +1108,9 @@ function ThemeAlbumPickerModal({ albums, onSelect, onCreate, onClose, t, locale 
   );
 }
 
-function JuniorsDiscoveryCard({ discovery, onClick, t, typeLabel, rarityLabel }) {
+function JuniorsDiscoveryCard({ discovery, onClick, onDelete, swipeLabels, t, typeLabel, rarityLabel }) {
   const emoji = THEME_META.juniors.emoji;
-  return (
+  const card = (
     <button type="button" className="juniors-discovery-card" onClick={onClick}>
       <img src={discovery.photo} alt={discovery.nom} />
       <div className="juniors-discovery-body">
@@ -1126,6 +1130,12 @@ function JuniorsDiscoveryCard({ discovery, onClick, t, typeLabel, rarityLabel })
         )}
       </div>
     </button>
+  );
+  if (!onDelete) return card;
+  return (
+    <SwipeToDelete onDelete={() => onDelete(discovery.id)} {...swipeLabels}>
+      {card}
+    </SwipeToDelete>
   );
 }
 
@@ -1167,6 +1177,9 @@ function ThemeAlbumsScreen({
   onOpenRandoJournal,
   onCloseRandoJournal,
   randoCurrentPosition,
+  onDeleteDiscovery,
+  onDeletePotagerPlant,
+  swipeLabels,
 }) {
   const isPotager = themeId === "potager";
   const isJuniors = themeId === "juniors";
@@ -1202,13 +1215,21 @@ function ThemeAlbumsScreen({
         )}
 
         {isPotager ? (
-          <PotagerView onStartScan={onStartScan} t={t} lang={lang} />
+          <PotagerView
+            onStartScan={onStartScan}
+            onDeletePlant={onDeletePotagerPlant}
+            swipeLabels={swipeLabels}
+            t={t}
+            lang={lang}
+          />
         ) : isJardin ? (
           <EspacesVertsView
             albums={albums}
             discoveries={discoveries}
             onStartScan={onStartScan}
             onOpenPlant={onOpenJardinPlant}
+            onDeleteDiscovery={onDeleteDiscovery}
+            swipeLabels={swipeLabels}
             t={t}
           />
         ) : isRandos ? (
@@ -1486,6 +1507,8 @@ function ThemeAlbumsScreen({
             locale={locale}
             t={t}
             onClose={onCloseRandoJournal}
+            onDeleteDiscovery={onDeleteDiscovery}
+            swipeLabels={swipeLabels}
           />
         );
       })()}
@@ -2116,6 +2139,52 @@ export default function Wilder() {
     setScreen("discovery-detail");
   };
 
+  const swipeDeleteLabels = useMemo(
+    () => ({
+      deleteLabel: t("discovery.delete_btn"),
+      confirmMessage: t("discovery.delete_confirm"),
+      cancelLabel: t("albums.cancel"),
+      confirmLabel: t("discovery.delete_action"),
+    }),
+    [t]
+  );
+
+  const handleDeleteDiscovery = useCallback(
+    (discoveryId) => {
+      const result = removeDiscoveryById(discoveryId, discoveries, albums);
+      if (!result) return;
+      saveDiscoveries(result.discoveries);
+      saveAlbums(result.albums);
+      setDiscoveries(result.discoveries);
+      setAlbums(result.albums);
+      if (viewingDiscovery?.id === discoveryId) {
+        setViewingDiscovery(null);
+        setScreen(isThemeScreen(returnScreen) ? returnScreen : "home");
+      }
+      if (currentDiscovery?.id === discoveryId) {
+        setCurrentDiscovery(null);
+      }
+      if (jardinPlantDiscovery?.id === discoveryId) {
+        setJardinPlantDiscovery(null);
+        if (screen === "jardin-plant") {
+          setScreen(isThemeScreen(returnScreen) ? returnScreen : "jardin");
+        }
+      }
+    },
+    [discoveries, albums, viewingDiscovery, currentDiscovery, jardinPlantDiscovery, screen, returnScreen]
+  );
+
+  const handleDeletePotagerPlant = useCallback(
+    (plantId) => {
+      const plant = removePotagerPlantById(plantId);
+      if (!plant) return;
+      if (plant.discoveryId) {
+        handleDeleteDiscovery(plant.discoveryId);
+      }
+    },
+    [handleDeleteDiscovery]
+  );
+
   const confettiOverlay = (
     <>
       <Confetti active={showConfetti} onDone={() => setShowConfetti(false)} />
@@ -2188,6 +2257,20 @@ export default function Wilder() {
               >
                 {t("home.about")}
               </button>
+
+              <section className="home-recent stagger-3" aria-labelledby="home-recent-title">
+                <h2 id="home-recent-title" className="home-recent-title">
+                  {t("home.recent_title")}
+                </h2>
+                <RecentDiscoveries
+                  discoveries={discoveries}
+                  onOpen={(d) => openDiscoveryDetail(d, "home")}
+                  onDelete={handleDeleteDiscovery}
+                  swipeLabels={swipeDeleteLabels}
+                  t={t}
+                  typeLabel={typeLabel}
+                />
+              </section>
             </div>
 
             <div className="discovery-marquee stagger-2" aria-hidden="true">
@@ -2779,6 +2862,8 @@ export default function Wilder() {
                   setReturnScreen("album-detail");
                   setScreen("jardin-plant");
                 }}
+                onDeleteDiscovery={handleDeleteDiscovery}
+                swipeLabels={swipeDeleteLabels}
               />
             </div>
           ) : items.length === 0 ? (
@@ -2800,6 +2885,8 @@ export default function Wilder() {
                   key={d.id}
                   discovery={d}
                   onClick={() => openDiscoveryDetail(d, backScreen)}
+                  onDelete={handleDeleteDiscovery}
+                  swipeLabels={swipeDeleteLabels}
                   t={t}
                   typeLabel={typeLabel}
                   rarityLabel={rarityLabel}
@@ -2809,26 +2896,31 @@ export default function Wilder() {
           ) : (
             <div className="discovery-grid">
               {items.map((d) => (
-                <button
+                <SwipeToDelete
                   key={d.id}
-                  type="button"
-                  className="discovery-item"
-                  onClick={() => {
-                    setReturnScreen(backScreen);
-                    openDiscoveryDetail(d, "album-detail");
-                  }}
+                  onDelete={() => handleDeleteDiscovery(d.id)}
+                  {...swipeDeleteLabels}
                 >
-                  <img src={d.photo} alt={d.nom} />
-                  <div className="discovery-item-info">
-                    <h4>{d.nom}</h4>
-                    <p>{d.nom_latin}</p>
-                    {(d.rarete === "rare" || d.rarete === "tres_rare") && (
-                      <span className={`discovery-item-rarity rarity-${d.rarete}`}>
-                        {rarityLabel(d.rarete)}
-                      </span>
-                    )}
-                  </div>
-                </button>
+                  <button
+                    type="button"
+                    className="discovery-item"
+                    onClick={() => {
+                      setReturnScreen(backScreen);
+                      openDiscoveryDetail(d, "album-detail");
+                    }}
+                  >
+                    <img src={d.photo} alt={d.nom} />
+                    <div className="discovery-item-info">
+                      <h4>{d.nom}</h4>
+                      <p>{d.nom_latin}</p>
+                      {(d.rarete === "rare" || d.rarete === "tres_rare") && (
+                        <span className={`discovery-item-rarity rarity-${d.rarete}`}>
+                          {rarityLabel(d.rarete)}
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                </SwipeToDelete>
               ))}
             </div>
           )}
@@ -2840,6 +2932,8 @@ export default function Wilder() {
             locale={locale}
             t={t}
             onClose={() => setRandoJournalAlbumId(null)}
+            onDeleteDiscovery={handleDeleteDiscovery}
+            swipeLabels={swipeDeleteLabels}
           />
         )}
       </>
@@ -3232,6 +3326,9 @@ export default function Wilder() {
         onOpenRandoJournal={setRandoJournalAlbumId}
         onCloseRandoJournal={() => setRandoJournalAlbumId(null)}
         randoCurrentPosition={randoCurrentPosition}
+        onDeleteDiscovery={handleDeleteDiscovery}
+        onDeletePotagerPlant={handleDeletePotagerPlant}
+        swipeLabels={swipeDeleteLabels}
       />
     );
   }

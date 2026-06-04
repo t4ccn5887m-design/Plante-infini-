@@ -4,6 +4,7 @@ import { recordPotagerVisit } from "@/lib/potagerEngagement";
 import { checkPotagerReminders } from "@/lib/potagerNotifications";
 import { loadPotagerPlants } from "@/lib/potagerStorage";
 import PotagerWeatherLine from "@/components/PotagerWeatherLine";
+import SwipeToDelete from "@/components/SwipeToDelete";
 
 function HealthIndicator({ health, t }) {
   const label = t(`themes.potager.health_status_${health}`);
@@ -16,7 +17,7 @@ function HealthIndicator({ health, t }) {
   );
 }
 
-export default function PotagerView({ onStartScan, t, lang }) {
+export default function PotagerView({ onStartScan, onDeletePlant, swipeLabels, t, lang }) {
   const [plants, setPlants] = useState([]);
 
   const refresh = useCallback(() => {
@@ -54,12 +55,32 @@ export default function PotagerView({ onStartScan, t, lang }) {
           <p className="potager-plant-list-empty">{t("themes.potager.empty_plants")}</p>
         ) : (
           <ul>
-            {plants.map((plant) => (
-              <li key={plant.id} className="potager-plant-row">
-                <span className="potager-plant-row-name">{plant.name}</span>
-                <HealthIndicator health={plant.health || HEALTH.good} t={t} />
-              </li>
-            ))}
+            {plants.map((plant) => {
+              const row = (
+                <div className="potager-plant-row">
+                  <span className="potager-plant-row-name">{plant.name}</span>
+                  <HealthIndicator health={plant.health || HEALTH.good} t={t} />
+                </div>
+              );
+
+              return (
+                <li key={plant.id}>
+                  {onDeletePlant ? (
+                    <SwipeToDelete
+                      onDelete={() => {
+                        onDeletePlant(plant.id);
+                        refresh();
+                      }}
+                      {...swipeLabels}
+                    >
+                      {row}
+                    </SwipeToDelete>
+                  ) : (
+                    row
+                  )}
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>

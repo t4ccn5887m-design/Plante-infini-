@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
+import SwipeToDelete from "@/components/SwipeToDelete";
 import { getRarityLabel, getTypeLabel } from "@/lib/i18n";
 import { computeRandoDistanceKm } from "@/lib/randos";
 import {
@@ -111,7 +112,15 @@ function JournalDiscovery({ discovery, index, t, typeLabel, rarityLabel, locale 
   );
 }
 
-export default function RandoJournal({ album, discoveries, locale, t, onClose }) {
+export default function RandoJournal({
+  album,
+  discoveries,
+  locale,
+  t,
+  onClose,
+  onDeleteDiscovery,
+  swipeLabels,
+}) {
   const [sharing, setSharing] = useState(false);
 
   const items = useMemo(
@@ -264,17 +273,31 @@ export default function RandoJournal({ album, discoveries, locale, t, onClose })
               <p className="rando-journal-empty">{t("themes.randos.journal_empty_discoveries")}</p>
             ) : (
               <div className="rando-journal-discovery-list">
-                {items.map((d, i) => (
-                  <JournalDiscovery
-                    key={d.id}
-                    discovery={d}
-                    index={i}
-                    t={t}
-                    typeLabel={typeLabel}
-                    rarityLabel={rarityLabel}
-                    locale={locale}
-                  />
-                ))}
+                {items.map((d, i) => {
+                  const article = (
+                    <JournalDiscovery
+                      discovery={d}
+                      index={i}
+                      t={t}
+                      typeLabel={typeLabel}
+                      rarityLabel={rarityLabel}
+                      locale={locale}
+                    />
+                  );
+                  if (!onDeleteDiscovery) {
+                    return <div key={d.id}>{article}</div>;
+                  }
+                  return (
+                    <div key={d.id} className="rando-journal-discovery-wrap">
+                      <SwipeToDelete
+                        onDelete={() => onDeleteDiscovery(d.id)}
+                        {...swipeLabels}
+                      >
+                        {article}
+                      </SwipeToDelete>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </section>
