@@ -19,6 +19,7 @@ import { isHeritageType } from "@/lib/categories";
 import OnboardingScreen from "@/components/OnboardingScreen";
 import PotagerView from "@/components/PotagerView";
 import RandosView, { RandosStartButton, RandosActiveBar } from "@/components/RandosView";
+import RandoJournal from "@/components/RandoJournal";
 import RandoMap from "@/components/RandoMap";
 import {
   acquireCameraStream,
@@ -1144,6 +1145,9 @@ function ThemeAlbumsScreen({
   randoDiscoveries,
   onResumeRando,
   onEndRando,
+  randoJournalAlbumId,
+  onOpenRandoJournal,
+  onCloseRandoJournal,
 }) {
   const isPotager = themeId === "potager";
   const isJuniors = themeId === "juniors";
@@ -1277,6 +1281,7 @@ function ThemeAlbumsScreen({
                   setSelectedAlbumId(albumId);
                   setScreen("album-detail");
                 }}
+                onOpenJournal={onOpenRandoJournal}
               />
             )}
             {activeRandoAlbumId ? (
@@ -1475,6 +1480,19 @@ function ThemeAlbumsScreen({
         )}
       </div>
       <BottomNav active={themeId} onNavigate={navigateMain} t={t} />
+      {isRandos && randoJournalAlbumId && (() => {
+        const journalAlbum = albums.find((a) => a.id === randoJournalAlbumId);
+        if (!journalAlbum) return null;
+        return (
+          <RandoJournal
+            album={journalAlbum}
+            discoveries={discoveries}
+            locale={locale}
+            t={t}
+            onClose={onCloseRandoJournal}
+          />
+        );
+      })()}
     </>
   );
 }
@@ -1512,6 +1530,7 @@ export default function Wilder() {
   const [activeRandoAlbumId, setActiveRandoAlbumId] = useState(null);
   const [randoTrack, setRandoTrack] = useState([]);
   const [showRandoMap, setShowRandoMap] = useState(false);
+  const [randoJournalAlbumId, setRandoJournalAlbumId] = useState(null);
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -1699,8 +1718,9 @@ export default function Wilder() {
 
   const endRando = useCallback(() => {
     if (!activeRandoAlbumId) return;
+    const endedId = activeRandoAlbumId;
     const allAlbums = loadAlbums();
-    const idx = allAlbums.findIndex((a) => a.id === activeRandoAlbumId);
+    const idx = allAlbums.findIndex((a) => a.id === endedId);
     if (idx !== -1) {
       allAlbums[idx] = {
         ...allAlbums[idx],
@@ -1715,6 +1735,7 @@ export default function Wilder() {
     setActiveRandoAlbumId(null);
     setRandoTrack([]);
     setShowRandoMap(false);
+    setRandoJournalAlbumId(endedId);
     setScreen("randos");
   }, [activeRandoAlbumId, randoTrack]);
 
@@ -2443,6 +2464,17 @@ export default function Wilder() {
               />
             </div>
           )}
+          {isRandosAlbum && (
+            <div className="rando-journal-open-wrap">
+              <button
+                type="button"
+                className="btn-primary rando-journal-open-btn"
+                onClick={() => setRandoJournalAlbumId(selectedAlbum.id)}
+              >
+                📓 {t("themes.randos.journal_open")}
+              </button>
+            </div>
+          )}
           <div className="album-detail-header">
             {selectedAlbum.coverPhoto ? (
               <img src={selectedAlbum.coverPhoto} alt="" className="album-detail-cover" />
@@ -2581,6 +2613,15 @@ export default function Wilder() {
             </div>
           )}
         </div>
+        {isRandosAlbum && randoJournalAlbumId === selectedAlbum.id && (
+          <RandoJournal
+            album={selectedAlbum}
+            discoveries={discoveries}
+            locale={locale}
+            t={t}
+            onClose={() => setRandoJournalAlbumId(null)}
+          />
+        )}
       </>
     );
   }
@@ -2942,6 +2983,9 @@ export default function Wilder() {
         randoDiscoveries={randoDiscoveries}
         onResumeRando={resumeRando}
         onEndRando={endRando}
+        randoJournalAlbumId={randoJournalAlbumId}
+        onOpenRandoJournal={setRandoJournalAlbumId}
+        onCloseRandoJournal={() => setRandoJournalAlbumId(null)}
       />
     );
   }

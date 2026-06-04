@@ -82,48 +82,59 @@ function formatDistance(km, t) {
   return t("themes.randos.distance_km", { km });
 }
 
-function RandoCard({ album, discoveries, locale, t, onOpen }) {
+function RandoCard({ album, discoveries, locale, t, onOpen, onOpenJournal }) {
   const name = getAlbumDisplayName(album);
   const cover = getCoverPhoto(album, discoveries);
   const count = (album.discoveryIds || []).length;
   const distanceKm = computeRandoDistanceKm(album, discoveries);
 
   return (
-    <button type="button" className="rando-card" onClick={() => onOpen(album.id)}>
-      <div className="rando-card-cover-wrap">
-        {cover ? (
-          <img src={cover} alt="" className="rando-card-cover" />
-        ) : (
-          <div className="rando-card-cover rando-card-cover--placeholder" aria-hidden="true">
-            <span className="rando-card-cover-emoji">🥾</span>
-            <IconAlbums size={32} />
-          </div>
-        )}
-        <div className="rando-card-cover-shade" aria-hidden="true" />
-        <h3 className="rando-card-title">{name}</h3>
-      </div>
-      <div className="rando-card-meta">
-        <span className="rando-card-meta-item">
-          <span className="rando-card-meta-label">{t("themes.randos.date_label")}</span>
-          <time dateTime={album.createdAt}>{formatDate(album.createdAt, locale)}</time>
-        </span>
-        <span className="rando-card-meta-item rando-card-meta-item--distance">
-          <IconRoute size={15} />
-          <span>{formatDistance(distanceKm, t)}</span>
-        </span>
-        <span className="rando-card-meta-item rando-card-meta-item--discoveries">
-          <IconLeaf size={14} />
-          <span>
-            {count}{" "}
-            {count !== 1 ? t("albums.discoveries_plural") : t("albums.discoveries")}
+    <article className="rando-card-wrap">
+      <button type="button" className="rando-card" onClick={() => onOpen(album.id)}>
+        <div className="rando-card-cover-wrap">
+          {cover ? (
+            <img src={cover} alt="" className="rando-card-cover" />
+          ) : (
+            <div className="rando-card-cover rando-card-cover--placeholder" aria-hidden="true">
+              <span className="rando-card-cover-emoji">🥾</span>
+              <IconAlbums size={32} />
+            </div>
+          )}
+          <div className="rando-card-cover-shade" aria-hidden="true" />
+          <h3 className="rando-card-title">{name}</h3>
+        </div>
+        <div className="rando-card-meta">
+          <span className="rando-card-meta-item">
+            <span className="rando-card-meta-label">{t("themes.randos.date_label")}</span>
+            <time dateTime={album.createdAt}>{formatDate(album.createdAt, locale)}</time>
           </span>
-        </span>
-      </div>
-    </button>
+          <span className="rando-card-meta-item rando-card-meta-item--distance">
+            <IconRoute size={15} />
+            <span>{formatDistance(distanceKm, t)}</span>
+          </span>
+          <span className="rando-card-meta-item rando-card-meta-item--discoveries">
+            <IconLeaf size={14} />
+            <span>
+              {count}{" "}
+              {count !== 1 ? t("albums.discoveries_plural") : t("albums.discoveries")}
+            </span>
+          </span>
+        </div>
+      </button>
+      <button
+        type="button"
+        className="rando-card-journal-btn"
+        onClick={() => onOpenJournal(album.id)}
+        aria-label={`${t("themes.randos.journal_open")} — ${name}`}
+      >
+        <span aria-hidden="true">📓</span>
+        {t("themes.randos.journal_open")}
+      </button>
+    </article>
   );
 }
 
-export default function RandosView({ albums, discoveries, locale, t, onOpenAlbum }) {
+export default function RandosView({ albums, discoveries, locale, t, onOpenAlbum, onOpenJournal }) {
   const pastRandos = useMemo(
     () =>
       getRootAlbums(albums, "randos").sort(
@@ -152,6 +163,7 @@ export default function RandosView({ albums, discoveries, locale, t, onOpenAlbum
                 locale={locale}
                 t={t}
                 onOpen={onOpenAlbum}
+                onOpenJournal={onOpenJournal}
               />
             </li>
           ))}
