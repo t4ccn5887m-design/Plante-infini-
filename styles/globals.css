@@ -2868,3 +2868,352 @@ video {
   color: var(--text-muted);
   margin-top: 0.15rem;
 }
+
+/* ── Mon Potager ── */
+
+.theme-screen--potager {
+  background: linear-gradient(180deg, var(--bg-deep) 0%, #0a1f14 55%, var(--forest-deep) 100%);
+}
+
+.theme-screen--potager .albums-title {
+  color: var(--cream);
+}
+
+.potager-view {
+  padding: 0 1rem 6.5rem;
+  position: relative;
+}
+
+.potager-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  padding: 0 0.25rem 1rem;
+}
+
+.potager-stat {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.potager-stat strong {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--sunset-light);
+  margin-right: 0.2rem;
+}
+
+.potager-stat--good {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.potager-beds-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+}
+
+.potager-bed {
+  display: flex;
+  flex-direction: column;
+  min-height: 9.5rem;
+}
+
+.potager-bed-plank {
+  height: 0.55rem;
+  border-radius: 6px 6px 2px 2px;
+  background: linear-gradient(180deg, #8b5a2b 0%, #6b4423 100%);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  position: relative;
+}
+
+.potager-bed-number {
+  position: absolute;
+  right: 0.4rem;
+  top: -1.1rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--sunset-light);
+  opacity: 0.85;
+}
+
+.potager-bed-soil {
+  flex: 1;
+  margin-top: 0;
+  padding: 0.65rem 0.5rem 0.55rem;
+  border-radius: 0 0 14px 14px;
+  background: linear-gradient(180deg, #2a4a35 0%, #1e3828 100%);
+  border: 1px solid rgba(61, 122, 92, 0.35);
+  border-top: none;
+  box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.potager-bed-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  width: 100%;
+  min-height: 7.5rem;
+  border: 1px dashed rgba(224, 122, 58, 0.35);
+  border-radius: 10px;
+  background: rgba(27, 61, 47, 0.35);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.potager-bed-empty:hover {
+  border-color: var(--sunset);
+  background: rgba(224, 122, 58, 0.08);
+  color: var(--sunset-light);
+}
+
+.potager-bed-empty-icon {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--sunset);
+  line-height: 1;
+}
+
+.potager-bed-plants {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.potager-plant-card {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(45, 90, 69, 0.65) 0%, rgba(27, 61, 47, 0.8) 100%);
+  color: var(--cream);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.potager-plant-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  border-color: rgba(224, 122, 58, 0.4);
+}
+
+.potager-plant-emoji {
+  font-size: 1.65rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.potager-plant-name {
+  flex: 1;
+  font-weight: 600;
+  font-size: 0.82rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.potager-health-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.potager-health-dot--good {
+  background: #4ade80;
+  color: #4ade80;
+}
+
+.potager-health-dot--warning {
+  background: var(--sunset-light);
+  color: var(--sunset-light);
+}
+
+.potager-health-dot--critical {
+  background: #f87171;
+  color: #f87171;
+}
+
+.potager-fab {
+  position: fixed;
+  right: 1.25rem;
+  bottom: calc(4.75rem + env(safe-area-inset-bottom));
+  width: 3.5rem;
+  height: 3.5rem;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--sunset) 0%, #c45f28 100%);
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 20px var(--sunset-glow), 0 2px 8px rgba(0, 0, 0, 0.35);
+  z-index: 40;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.potager-fab:hover {
+  transform: scale(1.06);
+  box-shadow: 0 8px 24px var(--sunset-glow), 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.potager-fab:active {
+  transform: scale(0.98);
+}
+
+.potager-modal-overlay {
+  z-index: 50;
+}
+
+.potager-modal h2 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  color: var(--cream);
+}
+
+.potager-modal-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0.65rem 0 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.potager-emoji-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.potager-emoji-btn {
+  width: 2.35rem;
+  height: 2.35rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(27, 61, 47, 0.4);
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.potager-emoji-btn.selected {
+  border-color: var(--sunset);
+  background: rgba(224, 122, 58, 0.2);
+  box-shadow: 0 0 0 2px rgba(224, 122, 58, 0.25);
+}
+
+.potager-health-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.potager-health-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.potager-health-btn.active {
+  border-color: var(--forest-light);
+  background: rgba(61, 122, 92, 0.2);
+  color: var(--cream);
+}
+
+.potager-health-btn--good.active {
+  border-color: #4ade80;
+  background: rgba(74, 222, 128, 0.12);
+}
+
+.potager-health-btn--warning.active {
+  border-color: var(--sunset-light);
+  background: rgba(244, 162, 97, 0.12);
+}
+
+.potager-health-btn--critical.active {
+  border-color: #f87171;
+  background: rgba(248, 113, 113, 0.12);
+}
+
+.potager-bed-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.potager-bed-pick {
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(27, 61, 47, 0.45);
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.potager-bed-pick.active {
+  border-color: var(--sunset);
+  background: rgba(224, 122, 58, 0.25);
+  color: var(--cream);
+}
+
+.potager-scan-link {
+  display: block;
+  width: 100%;
+  margin-top: 0.85rem;
+  padding: 0.65rem;
+  border: 1px dashed var(--forest-light);
+  border-radius: 10px;
+  background: rgba(61, 122, 92, 0.12);
+  color: var(--forest-light);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.potager-scan-link:hover {
+  background: rgba(61, 122, 92, 0.22);
+}
+
+.potager-btn-delete {
+  color: #f87171 !important;
+  border-color: rgba(248, 113, 113, 0.35) !important;
+}
+
+[data-theme="light"] .theme-screen--potager {
+  background: linear-gradient(180deg, var(--bg-deep) 0%, #e8f0ea 100%);
+}
+
+[data-theme="light"] .potager-bed-soil {
+  background: linear-gradient(180deg, #3d7a5c 0%, #2d5a45 100%);
+}
+
+[data-theme="light"] .potager-plant-card {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--forest-deep);
+}
