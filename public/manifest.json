@@ -1,7 +1,7 @@
 {
   "name": "Wilder",
   "short_name": "Wilder",
-  "description": "Explore the wild around you",
+  "description": "Explore la nature sauvage autour de toi",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1B3A2D",
@@ -12,6 +12,12 @@
       "src": "/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png",
       "purpose": "any"
     },
     {

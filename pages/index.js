@@ -268,34 +268,40 @@ function applyTheme(theme) {
 
 function IconWilderLogo({ size = 72 }) {
   return (
-    <svg className="wilder-logo-icon" width={size} height={size} viewBox="0 0 80 80" fill="none" aria-hidden="true">
-      <circle cx="40" cy="40" r="38" fill="rgba(27, 61, 47, 0.85)" stroke="rgba(245, 242, 235, 0.25)" strokeWidth="1.5" />
-      <path
-        d="M28 52c-2-8 2-18 12-22 4-2 8-1 10 2 2-6 8-10 16-8 6 2 10 8 10 16 0 12-10 20-22 22-8 1-14-2-16-10z"
-        fill="#3D7A5C"
-        stroke="#F5F2EB"
-        strokeWidth="1.2"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M32 48c3-6 8-10 14-12M48 36c4 2 7 6 8 12"
-        stroke="#F5F2EB"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        opacity="0.6"
-      />
-      <ellipse cx="34" cy="38" rx="5" ry="6" fill="#E07A3A" opacity="0.9" transform="rotate(-25 34 38)" />
-      <circle cx="33" cy="36" r="1.2" fill="#F5F2EB" />
-      <circle cx="35" cy="40" r="1.2" fill="#F5F2EB" />
-      <circle cx="37" cy="37" r="1.2" fill="#F5F2EB" />
-      <path
-        d="M52 28c-4 6-6 14-4 22 2-10 8-16 16-18"
-        fill="#2D5A45"
-        stroke="#F5F2EB"
-        strokeWidth="1"
-        strokeLinecap="round"
-      />
-      <path d="M50 26c2-4 6-6 10-4" stroke="#F5F2EB" strokeWidth="1.2" strokeLinecap="round" />
+    <svg className="wilder-logo-icon" width={size} height={size} viewBox="0 0 512 512" fill="none" aria-hidden="true">
+      <rect width="512" height="512" rx="96" fill="#1B3A2D" />
+      <g fill="none" stroke="#F5F0E8" strokeLinecap="round" strokeLinejoin="round">
+        <path
+          d="M 132 138 C 118 218, 128 318, 168 388 C 188 418, 218 402, 238 362 C 248 332, 252 302, 256 268"
+          strokeWidth="18"
+        />
+        <path
+          d="M 380 138 C 394 218, 384 318, 344 388 C 324 418, 294 402, 274 362 C 264 332, 260 302, 256 268"
+          strokeWidth="18"
+        />
+        <path d="M 168 248 C 148 268, 138 292, 132 318" strokeWidth="7" opacity="0.75" />
+        <path d="M 344 248 C 364 268, 374 292, 380 318" strokeWidth="7" opacity="0.75" />
+        <path d="M 256 268 C 262 318, 272 358, 286 388" strokeWidth="8" opacity="0.7" />
+        <path d="M 218 318 C 236 298, 248 278, 256 268" strokeWidth="6" opacity="0.55" />
+        <path d="M 294 318 C 276 298, 264 278, 256 268" strokeWidth="6" opacity="0.55" />
+      </g>
+      <g fill="#F5F0E8">
+        <path d="M 148 178 C 132 172, 124 188, 130 202 C 138 210, 152 206, 156 192 C 158 184, 154 180, 148 178Z" />
+        <path d="M 364 178 C 380 172, 388 188, 382 202 C 374 210, 360 206, 356 192 C 354 184, 358 180, 364 178Z" />
+        <path d="M 192 328 C 176 322, 168 340, 176 354 C 186 362, 200 356, 204 340 C 206 332, 200 328, 192 328Z" />
+        <path d="M 320 328 C 336 322, 344 340, 336 354 C 326 362, 312 356, 308 340 C 306 332, 312 328, 320 328Z" />
+        <path d="M 248 228 C 234 222, 226 238, 234 252 C 244 260, 258 254, 262 238 C 264 230, 256 226, 248 228Z" />
+        <path d="M 264 228 C 278 222, 286 238, 278 252 C 268 260, 254 254, 250 238 C 248 230, 256 226, 264 228Z" />
+      </g>
+      <g fill="#4CAF50">
+        <path d="M 118 302 C 100 296, 92 316, 102 332 C 114 342, 130 334, 134 314 C 136 304, 126 298, 118 302Z" />
+        <path d="M 394 302 C 412 296, 420 316, 410 332 C 398 342, 382 334, 378 314 C 376 304, 386 298, 394 302Z" />
+        <path d="M 156 398 C 140 392, 132 412, 142 426 C 154 436, 170 428, 174 408 C 176 398, 166 392, 156 398Z" />
+        <path d="M 356 398 C 372 392, 380 412, 370 426 C 358 436, 342 428, 338 408 C 336 398, 346 392, 356 398Z" />
+        <path d="M 276 408 C 262 402, 254 420, 264 434 C 276 444, 292 436, 296 416 C 298 406, 288 400, 276 408Z" />
+        <path d="M 236 408 C 250 402, 258 420, 248 434 C 236 444, 220 436, 216 416 C 214 406, 224 400, 236 408Z" />
+        <path d="M 256 152 C 242 146, 234 164, 244 178 C 256 188, 272 180, 276 160 C 278 150, 268 144, 256 152Z" />
+      </g>
     </svg>
   );
 }
