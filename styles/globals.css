@@ -4079,6 +4079,12 @@ video {
   margin-top: 0.75rem;
 }
 
+.about-tagline {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-top: 0.35rem;
+}
+
 .about-version {
   font-size: 0.82rem;
   color: var(--text-muted);
@@ -4100,6 +4106,10 @@ video {
   font-size: 0.92rem;
   line-height: 1.65;
   color: var(--text-secondary);
+}
+
+.about-section p + p {
+  margin-top: 0.75rem;
 }
 
 .about-rate-btn {

@@ -3289,11 +3289,25 @@ export default function Wilder() {
             <div className="about-logo-wrap">
               <IconWilderLogo size={96} />
               <h2>Wilder</h2>
+              <p className="about-tagline">{t("slogan")}</p>
               <p className="about-version">{t("about.version")}</p>
             </div>
             <div className="about-section">
               <h3>{t("about.vision_title")}</h3>
               <p>{t("about.vision")}</p>
+              <p>{t("about.vision_highlight")}</p>
+            </div>
+            <div className="about-section">
+              <h3>{t("about.how_title")}</h3>
+              <p>{t("about.how")}</p>
+            </div>
+            <div className="about-section">
+              <h3>{t("about.audience_title")}</h3>
+              <p>{t("about.audience_1")}</p>
+              <p>{t("about.audience_2")}</p>
+              <p>{t("about.audience_3")}</p>
+              <p>{t("about.audience_4")}</p>
+              <p>{t("about.audience_5")}</p>
             </div>
             <div className="about-section">
               <h3>{t("about.mission_title")}</h3>
