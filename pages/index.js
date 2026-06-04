@@ -60,6 +60,7 @@ import {
 } from "@/lib/permissions";
 import { appendTrackPoint, computeTrackDistanceKm } from "@/lib/randos";
 import { compressDataUrl } from "@/lib/compressImage";
+import { captureViewfinderFrame } from "@/lib/cameraCapture";
 import {
   loadAlbums,
   loadDiscoveries,
@@ -789,9 +790,9 @@ function FallingLeaves() {
   );
 }
 
-function Viewfinder() {
+function Viewfinder({ viewfinderRef }) {
   return (
-    <div className="viewfinder-wilder">
+    <div ref={viewfinderRef} className="viewfinder-wilder">
       <div className="viewfinder-corner tl" />
       <div className="viewfinder-corner tr" />
       <div className="viewfinder-corner bl" />
@@ -1330,7 +1331,7 @@ export default function Wilder() {
 
   const videoRef = useRef(null);
   const videoWrapRef = useRef(null);
-  const canvasRef = useRef(null);
+  const viewfinderRef = useRef(null);
   const streamRef = useRef(null);
   const pinchRef = useRef({ dist: 0, zoom: 1 });
   const hardwareZoomRef = useRef({ min: 1, max: 1, step: 0.1, supported: false });
@@ -1864,24 +1865,10 @@ export default function Wilder() {
 
   const takePhoto = useCallback(() => {
     const v = videoRef.current;
-    const c = canvasRef.current;
-    if (!v || !c || v.readyState < 2) return;
-    const w = v.videoWidth;
-    const h = v.videoHeight;
-    if (!w || !h) return;
-    const zoom = Math.max(1, camZoom);
-    const useCrop = !hardwareZoomRef.current.supported && zoom > 1;
-    c.width = w;
-    c.height = h;
-    const ctx = c.getContext("2d");
-    if (useCrop) {
-      const sw = w / zoom;
-      const sh = h / zoom;
-      ctx.drawImage(v, (w - sw) / 2, (h - sh) / 2, sw, sh, 0, 0, w, h);
-    } else {
-      ctx.drawImage(v, 0, 0, w, h);
-    }
-    handleCapturedImage(c.toDataURL("image/jpeg", 0.85));
+    if (!v || v.readyState < 2) return;
+    const cssZoom = hardwareZoomRef.current.supported ? 1 : Math.max(1, camZoom);
+    const dataUrl = captureViewfinderFrame(v, viewfinderRef.current, cssZoom);
+    if (dataUrl) handleCapturedImage(dataUrl);
   }, [handleCapturedImage, camZoom]);
 
   const onPinchStart = useCallback((e) => {
@@ -2366,7 +2353,6 @@ export default function Wilder() {
               onLoadedMetadata={() => attachStreamToVideo()}
               style={{ opacity: camReady ? 1 : 0 }}
             />
-            <canvas ref={canvasRef} style={{ display: "none" }} />
           </div>
 
           <div className="scanner-overlay">
@@ -2409,7 +2395,7 @@ export default function Wilder() {
             </div>
 
             <div className="scanner-center">
-              {camReady && <Viewfinder />}
+              {camReady && <Viewfinder viewfinderRef={viewfinderRef} />}
             </div>
 
             {camReady && (
