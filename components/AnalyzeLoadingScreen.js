@@ -27,21 +27,19 @@ export default function AnalyzeLoadingScreen({ captured, t }) {
         <img src={captured} alt="" className="analyze-preview-photo" aria-hidden="true" />
       )}
       <div className="analyze-content">
-        <div className="analyze-ring" aria-hidden="true">
-          <div className="analyze-ring-inner">
-            {captured && (
-              <img src={captured} alt="" className="analyze-ring-photo" />
-            )}
-          </div>
+        <div className="analyze-viewfinder" aria-hidden="true">
+          {captured && (
+            <img src={captured} alt="" className="analyze-viewfinder-photo" />
+          )}
         </div>
+        <p className="analyze-status-text" key={step}>
+          {steps[step]}
+        </p>
         <div className="analyze-pulse-dots" aria-hidden="true">
           <span />
           <span />
           <span />
         </div>
-        <p className="analyze-status-text" key={step}>
-          {steps[step]}
-        </p>
       </div>
     </div>
   );
