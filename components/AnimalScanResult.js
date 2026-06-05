@@ -1,4 +1,5 @@
 import { isProtectedSpecies } from "@/lib/animaux";
+import AnimalStorySections from "@/components/AnimalStorySections";
 import DiscoveryAnalysisSections from "@/components/DiscoveryAnalysisSections";
 import DiscoveryResultActions from "@/components/DiscoveryResultActions";
 
@@ -38,6 +39,8 @@ export default function AnimalScanResult({
         {result.nom_latin && (
           <p className="animaux-scan-latin">{result.nom_latin}</p>
         )}
+
+        <AnimalStorySections data={result} t={t} />
 
         <DiscoveryAnalysisSections data={result} t={t} />
 
