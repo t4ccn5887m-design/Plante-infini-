@@ -1,4 +1,4 @@
-const CACHE_NAME = "wilder-v2";
+const CACHE_NAME = "wilder-v3";
 const PRECACHE_URLS = [
   "/",
   "/manifest.json",
@@ -38,6 +38,8 @@ self.addEventListener("notificationclick", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  const url = new URL(event.request.url);
+  if (url.pathname.startsWith("/api/")) return;
 
   event.respondWith(
     fetch(event.request)

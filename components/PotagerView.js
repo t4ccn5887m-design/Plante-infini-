@@ -10,6 +10,7 @@ import PotagerDailyCareTasks from "@/components/PotagerDailyCareTasks";
 import PotagerIdeasCard from "@/components/PotagerIdeasCard";
 import PotagerRecipesCard from "@/components/PotagerRecipesCard";
 import PotagerCommunityCard from "@/components/PotagerCommunityCard";
+import PotagerHarvestList from "@/components/PotagerHarvestList";
 import NurseriesNearbyCard from "@/components/NurseriesNearbyCard";
 import {
   ThemeInterior,
@@ -27,7 +28,8 @@ function scrollToRef(ref) {
 export default function PotagerView({ onStartScan, onStartDailyCare, children, t, lang }) {
   const [dailyCare, setDailyCare] = useState(null);
   const [journalRefreshKey, setJournalRefreshKey] = useState(0);
-  const [harvestPlants, setHarvestPlants] = useState([]);
+  const [potagerPlants, setPotagerPlants] = useState([]);
+  const harvestPlants = potagerPlants.filter((p) => p.readyToHarvest);
 
   const journalRef = useRef(null);
   const ideasRef = useRef(null);
@@ -37,12 +39,8 @@ export default function PotagerView({ onStartScan, onStartDailyCare, children, t
   const weatherRef = useRef(null);
   const albumsRef = useRef(null);
 
-  const refreshHarvestPlants = useCallback(() => {
-    setHarvestPlants(
-      loadPotagerPlants()
-        .filter((p) => p.readyToHarvest)
-        .map((p) => ({ id: p.id, name: p.name, emoji: p.emoji }))
-    );
+  const refreshPotagerPlants = useCallback(() => {
+    setPotagerPlants(loadPotagerPlants());
   }, []);
 
   const refreshDailyCare = useCallback(() => {
@@ -52,8 +50,8 @@ export default function PotagerView({ onStartScan, onStartDailyCare, children, t
   useEffect(() => {
     recordPotagerVisit();
     refreshDailyCare();
-    refreshHarvestPlants();
-  }, [refreshDailyCare, refreshHarvestPlants]);
+    refreshPotagerPlants();
+  }, [refreshDailyCare, refreshPotagerPlants]);
 
   useEffect(() => {
     if (lang) checkPotagerReminders(lang);
@@ -131,6 +129,14 @@ export default function PotagerView({ onStartScan, onStartDailyCare, children, t
       <div ref={journalRef}>
         <PotagerCareJournal t={t} lang={lang} refreshKey={journalRefreshKey} />
       </div>
+
+      {potagerPlants.length > 0 && (
+        <PotagerHarvestList
+          plants={potagerPlants}
+          t={t}
+          onChanged={(plants) => setPotagerPlants(plants)}
+        />
+      )}
 
       <ThemeSection title={t("albums.title")}>
         <div ref={albumsRef}>{children}</div>

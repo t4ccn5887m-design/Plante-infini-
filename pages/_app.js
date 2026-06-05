@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import InstallBanner from "@/components/InstallBanner";
 import { detectLang } from "@/lib/i18n";
 import { checkPotagerReminders } from "@/lib/potagerNotifications";
+import { checkJardinMorningSurprise } from "@/lib/espaceVertNotifications";
+import { loadAlbums, loadDiscoveries } from "@/lib/discoveriesStorage";
 
 export default function App({ Component, pageProps }) {
   useEffect(() => {
@@ -15,11 +17,15 @@ export default function App({ Component, pageProps }) {
   useEffect(() => {
     const onVisible = () => {
       if (document.visibilityState === "visible") {
-        checkPotagerReminders(detectLang());
+        const lang = detectLang();
+        checkPotagerReminders(lang);
+        checkJardinMorningSurprise(loadAlbums(), loadDiscoveries(), lang);
       }
     };
     document.addEventListener("visibilitychange", onVisible);
-    checkPotagerReminders(detectLang());
+    const lang = detectLang();
+    checkPotagerReminders(lang);
+    checkJardinMorningSurprise(loadAlbums(), loadDiscoveries(), lang);
     return () => document.removeEventListener("visibilitychange", onVisible);
   }, []);
 

@@ -1,13 +1,25 @@
-import { useMemo } from "react";
-import { computeWrapped } from "@/lib/wrapped";
+import { useMemo, useState } from "react";
+import { computeWrapped, shareWrapped } from "@/lib/wrapped";
 import { getTypeLabel } from "@/lib/i18n";
 
 export default function WilderWrapped({ discoveries, albums, t, year }) {
+  const [sharing, setSharing] = useState(false);
   const wrapped = useMemo(
     () => computeWrapped(discoveries, albums, year),
     [discoveries, albums, year]
   );
   const typeLbl = (type) => (type ? getTypeLabel(t, type) : "—");
+
+  const handleShare = async () => {
+    setSharing(true);
+    try {
+      await shareWrapped(wrapped, t, typeLbl);
+    } catch {
+      /* cancelled */
+    } finally {
+      setSharing(false);
+    }
+  };
 
   if (!wrapped.hasData) {
     return (
@@ -65,6 +77,15 @@ export default function WilderWrapped({ discoveries, albums, t, year }) {
           </ul>
         </div>
       )}
+
+      <button
+        type="button"
+        className="btn-primary wrapped-share-btn"
+        onClick={handleShare}
+        disabled={sharing}
+      >
+        {sharing ? t("discovery.share_generating") : `📤 ${t("wrapped.share")}`}
+      </button>
     </div>
   );
 }
