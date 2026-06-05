@@ -1,8 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
-  isCloudAvailable,
-  loadCloudSession,
-  pullDiscoveriesFromCloud,
+  getCloudStatus,
   signInWithEmail,
   signOutCloud,
   signUpWithEmail,
@@ -10,38 +8,43 @@ import {
 } from "@/lib/cloudSync";
 
 export default function CloudAccountCard({ t, onDiscoveriesSynced }) {
-  const [session, setSession] = useState(null);
+  const [status, setStatus] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mode, setMode] = useState("signin");
-  const [status, setStatus] = useState("idle");
+  const [actionStatus, setActionStatus] = useState("idle");
   const [message, setMessage] = useState("");
 
-  const cloudOk = isCloudAvailable();
-
-  useEffect(() => {
-    setSession(loadCloudSession());
+  const refresh = useCallback(async () => {
+    const s = await getCloudStatus();
+    setStatus(s);
   }, []);
 
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
   const handleAuth = async () => {
-    setStatus("loading");
+    setActionStatus("loading");
     setMessage("");
     const fn = mode === "signup" ? signUpWithEmail : signInWithEmail;
     const result = await fn(email.trim(), password);
     if (!result.ok) {
-      setStatus("error");
+      setActionStatus("error");
       setMessage(result.error || t("cloud.error"));
       return;
     }
-    setSession(loadCloudSession());
-    setStatus("ready");
-    setMessage(t("cloud.signed_in"));
+    if (result.discoveries) onDiscoveriesSynced?.(result.discoveries);
+    await refresh();
+    setActionStatus("ready");
+    setMessage(t("cloud.signed_in_restore"));
   };
 
-  const handleSyncUp = async () => {
-    setStatus("loading");
+  const handleForceSync = async () => {
+    setActionStatus("loading");
     const result = await syncDiscoveriesToCloud();
-    setStatus(result.ok ? "ready" : "error");
+    await refresh();
+    setActionStatus(result.ok ? "ready" : "error");
     setMessage(
       result.ok
         ? t("cloud.synced_up", { count: result.synced })
@@ -49,25 +52,15 @@ export default function CloudAccountCard({ t, onDiscoveriesSynced }) {
     );
   };
 
-  const handleSyncDown = async () => {
-    setStatus("loading");
-    const result = await pullDiscoveriesFromCloud();
-    setStatus(result.ok ? "ready" : "error");
-    if (result.ok) {
-      setMessage(t("cloud.synced_down", { count: result.merged }));
-      if (result.discoveries) onDiscoveriesSynced?.(result.discoveries);
-    } else {
-      setMessage(t("cloud.error"));
-    }
-  };
-
   const handleSignOut = async () => {
+    setActionStatus("loading");
     await signOutCloud();
-    setSession(null);
-    setMessage(t("cloud.signed_out"));
+    await refresh();
+    setActionStatus("idle");
+    setMessage(t("cloud.signed_out_anon"));
   };
 
-  if (!cloudOk) {
+  if (!status?.available) {
     return (
       <section className="cloud-card cloud-card--muted">
         <h2>{t("cloud.title")}</h2>
@@ -76,28 +69,38 @@ export default function CloudAccountCard({ t, onDiscoveriesSynced }) {
     );
   }
 
+  const showEmailForm = !status.email;
+
   return (
     <section className="cloud-card">
-      <h2>{t("cloud.title")}</h2>
-      <p className="cloud-sub">{t("cloud.subtitle")}</p>
+      <div className="cloud-auto-status">
+        <span className="cloud-auto-dot" aria-hidden="true" />
+        <div>
+          <h2>{t("cloud.title")}</h2>
+          <p className="cloud-sub">{t("cloud.auto_enabled")}</p>
+        </div>
+      </div>
 
-      {session ? (
-        <>
-          <p className="cloud-email">{session.email}</p>
-          <div className="cloud-actions">
-            <button type="button" className="btn-primary" onClick={handleSyncUp} disabled={status === "loading"}>
-              ↑ {t("cloud.sync_up")}
-            </button>
-            <button type="button" className="btn-secondary" onClick={handleSyncDown} disabled={status === "loading"}>
-              ↓ {t("cloud.sync_down")}
-            </button>
-            <button type="button" className="btn-secondary" onClick={handleSignOut}>
-              {t("cloud.sign_out")}
-            </button>
-          </div>
-        </>
-      ) : (
-        <>
+      <p className="cloud-auto-detail">
+        {status.pending > 0
+          ? t("cloud.pending", { count: status.pending })
+          : t("cloud.auto_ok")}
+      </p>
+
+      {status.isAnonymous && (
+        <p className="cloud-anon-hint">{t("cloud.anonymous_hint")}</p>
+      )}
+
+      {status.email && (
+        <p className="cloud-email-badge">
+          ✓ {status.email}
+        </p>
+      )}
+
+      {showEmailForm && (
+        <div className="cloud-email-section">
+          <h3 className="cloud-email-title">{t("cloud.email_optional_title")}</h3>
+          <p className="cloud-email-hint">{t("cloud.email_optional")}</p>
           <div className="cloud-tabs">
             <button
               type="button"
@@ -134,14 +137,34 @@ export default function CloudAccountCard({ t, onDiscoveriesSynced }) {
             type="button"
             className="btn-primary cloud-submit"
             onClick={handleAuth}
-            disabled={status === "loading" || !email || !password}
+            disabled={actionStatus === "loading" || !email || !password}
           >
             {mode === "signup" ? t("cloud.sign_up") : t("cloud.sign_in")}
           </button>
-        </>
+        </div>
       )}
 
-      {message && <p className="cloud-message" role="status">{message}</p>}
+      <div className="cloud-actions">
+        <button
+          type="button"
+          className="btn-secondary"
+          onClick={handleForceSync}
+          disabled={actionStatus === "loading"}
+        >
+          ↻ {t("cloud.force_sync")}
+        </button>
+        {status.email && (
+          <button type="button" className="btn-secondary" onClick={handleSignOut}>
+            {t("cloud.sign_out")}
+          </button>
+        )}
+      </div>
+
+      {message && (
+        <p className="cloud-message" role="status">
+          {message}
+        </p>
+      )}
     </section>
   );
 }

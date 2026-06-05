@@ -6,6 +6,7 @@ import { detectLang } from "@/lib/i18n";
 import { checkPotagerReminders } from "@/lib/potagerNotifications";
 import { checkJardinMorningSurprise } from "@/lib/espaceVertNotifications";
 import { loadAlbums, loadDiscoveries } from "@/lib/discoveriesStorage";
+import { flushPendingSync } from "@/lib/cloudSync";
 
 export default function App({ Component, pageProps }) {
   useEffect(() => {
@@ -20,6 +21,7 @@ export default function App({ Component, pageProps }) {
         const lang = detectLang();
         checkPotagerReminders(lang);
         checkJardinMorningSurprise(loadAlbums(), loadDiscoveries(), lang);
+        flushPendingSync();
       }
     };
     document.addEventListener("visibilitychange", onVisible);
