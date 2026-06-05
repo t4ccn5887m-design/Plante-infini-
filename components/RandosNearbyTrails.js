@@ -89,11 +89,15 @@ export default function RandosNearbyTrails({ t, lang, onStartTrail, disabled }) 
   const [needsLocation, setNeedsLocation] = useState(false);
   const [startingId, setStartingId] = useState(null);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async ({ refresh = false } = {}) => {
     if (disabled) return;
     setStatus("loading");
     setError(null);
-    const location = await getCurrentLocation({ refresh: true });
+
+    let location = refresh
+      ? (await requestLocationPermission()).location
+      : await getCurrentLocation();
+
     if (!location) {
       setNeedsLocation(true);
       setTrails([]);
@@ -117,9 +121,8 @@ export default function RandosNearbyTrails({ t, lang, onStartTrail, disabled }) 
     load();
   }, [load]);
 
-  const handleEnableLocation = async () => {
-    await requestLocationPermission();
-    load();
+  const handleEnableLocation = () => {
+    load({ refresh: true });
   };
 
   const handleStartTrail = async (trail) => {
@@ -160,7 +163,7 @@ export default function RandosNearbyTrails({ t, lang, onStartTrail, disabled }) 
       {status === "error" && (
         <div className="randos-nearby-error-wrap">
           <p className="randos-nearby-error">{t("themes.randos.nearby_error")}</p>
-          <button type="button" className="randos-nearby-retry" onClick={load}>
+          <button type="button" className="randos-nearby-retry" onClick={() => load({ refresh: true })}>
             {t("themes.randos.nearby_retry")}
           </button>
         </div>

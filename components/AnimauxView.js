@@ -1,7 +1,6 @@
 const MODES = [
   { id: "animal", emoji: "📸", labelKey: "mode_animal_cta", hintKey: "mode_animal_hint", variant: "primary" },
   { id: "traces", emoji: "🔍", labelKey: "mode_traces_cta", hintKey: "mode_traces_hint", variant: "secondary" },
-  { id: "sound", emoji: "🎵", labelKey: "mode_sound_cta", hintKey: "mode_sound_hint", variant: "secondary" },
 ];
 
 export default function AnimauxView({ onStartScan, children, t }) {

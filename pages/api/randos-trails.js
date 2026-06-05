@@ -112,9 +112,11 @@ export default async function handler(req, res) {
   const query = `
 [out:json][timeout:25];
 (
-  relation["route"="hiking"](around:${radiusM},${lat},${lon});
-  relation["route"="foot"]["name"](around:${radiusM},${lat},${lon});
-  way["highway"~"path|footway|track"]["name"]["foot"!="no"](around:${radiusM},${lat},${lon});
+  relation["type"="route"]["route"~"hiking|foot"]["name"](around:${radiusM},${lat},${lon});
+  way["route"="hiking"]["name"](around:${radiusM},${lat},${lon});
+  way["highway"="path"]["name"](around:${radiusM},${lat},${lon});
+  way["highway"="footway"]["name"]["sac_scale"](around:${radiusM},${lat},${lon});
+  way["highway"="track"]["name"]["foot"~"designated|yes"](around:${radiusM},${lat},${lon});
 );
 out center tags;
 `;
