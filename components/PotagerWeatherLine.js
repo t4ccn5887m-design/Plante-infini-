@@ -15,9 +15,19 @@ async function fetchForecast(latitude, longitude) {
   return parseWeatherApiResponse(data);
 }
 
-/** Single weather line for the potager home screen: "☀️ 21° — Arrosez ce soir" */
+function formatRainfallLine(t, mm) {
+  const amount = mm != null ? Number(mm) : 0;
+  if (!Number.isFinite(amount) || amount < 0.1) {
+    return t("themes.potager.rain_yesterday_none");
+  }
+  const rounded = Math.round(amount * 10) / 10;
+  return t("themes.potager.rain_yesterday", { mm: rounded });
+}
+
+/** Weather + yesterday rainfall for the potager home screen */
 export default function PotagerWeatherLine({ t }) {
   const [line, setLine] = useState(null);
+  const [rainLine, setRainLine] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -31,6 +41,7 @@ export default function PotagerWeatherLine({ t }) {
       }
       if (!loc?.latitude || !loc?.longitude) {
         setLine(t("themes.potager.weather_line_fallback"));
+        setRainLine(null);
         return;
       }
 
@@ -52,8 +63,12 @@ export default function PotagerWeatherLine({ t }) {
             advice: t(adviceKey),
           })
         );
+        setRainLine(formatRainfallLine(t, forecast.yesterdayPrecipitation));
       } catch {
-        if (!cancelled) setLine(t("themes.potager.weather_line_fallback"));
+        if (!cancelled) {
+          setLine(t("themes.potager.weather_line_fallback"));
+          setRainLine(null);
+        }
       }
     }
 
@@ -64,8 +79,11 @@ export default function PotagerWeatherLine({ t }) {
   }, [t]);
 
   return (
-    <p className="potager-weather-line" aria-live="polite">
-      {line ?? t("themes.potager.weather_loading_short")}
-    </p>
+    <div className="potager-weather-block" aria-live="polite">
+      <p className="potager-weather-line">
+        {line ?? t("themes.potager.weather_loading_short")}
+      </p>
+      {rainLine && <p className="potager-rain-line">{rainLine}</p>}
+    </div>
   );
 }

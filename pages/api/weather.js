@@ -18,6 +18,7 @@ export default async function handler(req, res) {
       "daily",
       "temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code"
     );
+    url.searchParams.set("past_days", "1");
     url.searchParams.set("forecast_days", "1");
     url.searchParams.set("timezone", "auto");
 

@@ -4,6 +4,8 @@ import { checkPotagerReminders } from "@/lib/potagerNotifications";
 import { loadDailyCare, toggleDailyCareTask } from "@/lib/potagerDailyCare";
 import PotagerWeatherLine from "@/components/PotagerWeatherLine";
 import PotagerDailyCareTasks from "@/components/PotagerDailyCareTasks";
+import PotagerIdeasCard from "@/components/PotagerIdeasCard";
+import NurseriesNearbyCard from "@/components/NurseriesNearbyCard";
 
 export default function PotagerView({ onStartScan, onStartDailyCare, children, t, lang }) {
   const [dailyCare, setDailyCare] = useState(null);
@@ -66,6 +68,9 @@ export default function PotagerView({ onStartScan, onStartDailyCare, children, t
       </button>
 
       {children}
+
+      <PotagerIdeasCard t={t} lang={lang} />
+      <NurseriesNearbyCard t={t} i18nPrefix="themes.potager" />
 
       <PotagerWeatherLine t={t} />
     </div>
