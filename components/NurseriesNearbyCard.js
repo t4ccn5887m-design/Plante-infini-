@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { loadStoredLocation, requestLocationPermission } from "@/lib/permissions";
 import { fetchNurseriesNearby } from "@/lib/nurseriesNearby";
+import { IconSprout } from "@/components/ThemeIcons";
 
 function NurseryCard({ nursery, t, i18nPrefix }) {
   const distance =
@@ -14,7 +15,7 @@ function NurseryCard({ nursery, t, i18nPrefix }) {
     <article className="nurseries-card">
       <div className="nurseries-card-head">
         <span className="nurseries-card-emoji" aria-hidden="true">
-          🌱
+          <IconSprout size={20} />
         </span>
         <div className="nurseries-card-meta">
           <h3 className="nurseries-card-name">{nursery.name}</h3>

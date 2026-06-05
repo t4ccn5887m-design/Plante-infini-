@@ -1,36 +1,59 @@
-const MODES = [
-  { id: "animal", emoji: "📸", labelKey: "mode_animal_cta", hintKey: "mode_animal_hint", variant: "primary" },
-  { id: "traces", emoji: "🔍", labelKey: "mode_traces_cta", hintKey: "mode_traces_hint", variant: "secondary" },
-];
+import {
+  ThemeInterior,
+  ThemeHeroCard,
+  ThemeGrid,
+  ThemeGridCard,
+  ThemeSection,
+} from "@/components/ThemeInterior";
+import { IconCamera, IconFootprints, IconAlbums, IconAnimaux } from "@/components/ThemeIcons";
 
 export default function AnimauxView({ onStartScan, children, t }) {
   return (
-    <div className="animaux-simple">
-      <header className="animaux-discovery-header">
-        <h2 className="animaux-discovery-title">{t("themes.juniors.discovery_title")}</h2>
-        <p className="animaux-discovery-sub">{t("themes.juniors.discovery_sub")}</p>
-      </header>
+    <ThemeInterior themeId="juniors">
+      <ThemeHeroCard
+        title={t("themes.juniors.discovery_title")}
+        subtitle={t("themes.juniors.discovery_sub")}
+        label={t("themes.juniors.mode_animal_cta")}
+        icon={IconCamera}
+        onClick={() => onStartScan?.("animal")}
+        variant="primary"
+        delay={0}
+      />
 
-      <div className="animaux-discovery-modes">
-        {MODES.map((mode) => (
-          <button
-            key={mode.id}
-            type="button"
-            className={`animaux-mode-cta animaux-mode-cta--${mode.variant}`}
-            onClick={() => onStartScan?.(mode.id)}
-          >
-            <span className="animaux-mode-cta-emoji" aria-hidden="true">
-              {mode.emoji}
-            </span>
-            <span className="animaux-mode-cta-text">
-              <span className="animaux-mode-cta-label">{t(`themes.juniors.${mode.labelKey}`)}</span>
-              <span className="animaux-mode-cta-hint">{t(`themes.juniors.${mode.hintKey}`)}</span>
-            </span>
-          </button>
-        ))}
-      </div>
+      <ThemeGrid>
+        <ThemeGridCard
+          label={t("themes.juniors.mode_traces_cta")}
+          hint={t("themes.juniors.mode_traces_hint")}
+          icon={IconFootprints}
+          onClick={() => onStartScan?.("traces")}
+          variant="terracotta"
+          delay={1}
+        />
+        <ThemeGridCard
+          label={t("albums.title")}
+          hint={t("themes.juniors.empty_examples")}
+          icon={IconAlbums}
+          variant="beige"
+          delay={2}
+        />
+        <ThemeGridCard
+          label={t("themes.juniors.mode_animal_cta")}
+          hint={t("themes.juniors.mode_animal_hint")}
+          icon={IconCamera}
+          onClick={() => onStartScan?.("animal")}
+          variant="sage"
+          delay={3}
+        />
+        <ThemeGridCard
+          label={t("themes.juniors.discovery_title")}
+          hint={t("themes.juniors.discovery_sub")}
+          icon={IconAnimaux}
+          variant="sage"
+          delay={4}
+        />
+      </ThemeGrid>
 
-      {children}
-    </div>
+      <ThemeSection title={t("albums.title")}>{children}</ThemeSection>
+    </ThemeInterior>
   );
 }

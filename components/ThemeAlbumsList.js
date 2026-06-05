@@ -66,10 +66,10 @@ export default function ThemeAlbumsList({
   return (
     <section className="albums-list theme-albums-list" aria-label={t("albums.title")}>
       {rootAlbums.length === 0 && !creatingAlbum ? (
-        <div className="albums-empty">
-          <span style={{ fontSize: "2.5rem", opacity: 0.5 }} aria-hidden="true">
-            {themeEmoji}
-          </span>
+        <div className="albums-empty theme-albums-empty">
+          <div className="theme-albums-empty-icon" aria-hidden="true">
+            <IconAlbums size={36} />
+          </div>
           <p>{t("albums.empty")}</p>
           <p className="album-examples">{t(`themes.${themeId}.empty_examples`)}</p>
         </div>

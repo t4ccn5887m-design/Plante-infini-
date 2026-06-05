@@ -7,6 +7,14 @@ import PotagerCareJournal from "@/components/PotagerCareJournal";
 import PotagerDailyCareTasks from "@/components/PotagerDailyCareTasks";
 import PotagerIdeasCard from "@/components/PotagerIdeasCard";
 import NurseriesNearbyCard from "@/components/NurseriesNearbyCard";
+import {
+  ThemeInterior,
+  ThemeHeroCard,
+  ThemeGrid,
+  ThemeGridCard,
+  ThemeSection,
+} from "@/components/ThemeInterior";
+import { IconCamera, IconScan, IconJournal, IconLightbulb, IconSprout } from "@/components/ThemeIcons";
 
 export default function PotagerView({ onStartScan, onStartDailyCare, children, t, lang }) {
   const [dailyCare, setDailyCare] = useState(null);
@@ -34,24 +42,16 @@ export default function PotagerView({ onStartScan, onStartDailyCare, children, t
   }, []);
 
   return (
-    <div className="potager-simple">
-      <section className="potager-daily-care-hero" aria-labelledby="potager-daily-care-heading">
-        <h2 id="potager-daily-care-heading" className="potager-daily-care-hero-title">
-          {t("themes.potager.daily_care_title")}
-        </h2>
-        <p className="potager-daily-care-hero-sub">{t("themes.potager.daily_care_hook")}</p>
-
-        <button
-          type="button"
-          className="potager-daily-care-cta"
-          onClick={() => onStartDailyCare?.()}
-        >
-          <span className="potager-daily-care-cta-emoji" aria-hidden="true">
-            📸
-          </span>
-          <span className="potager-daily-care-cta-label">{t("themes.potager.daily_care_cta")}</span>
-        </button>
-      </section>
+    <ThemeInterior themeId="potager">
+      <ThemeHeroCard
+        title={t("themes.potager.daily_care_title")}
+        subtitle={t("themes.potager.daily_care_hook")}
+        label={t("themes.potager.daily_care_cta")}
+        icon={IconCamera}
+        onClick={() => onStartDailyCare?.()}
+        variant="primary"
+        delay={0}
+      />
 
       {dailyCare?.tasks?.length > 0 && (
         <PotagerDailyCareTasks
@@ -62,21 +62,45 @@ export default function PotagerView({ onStartScan, onStartDailyCare, children, t
         />
       )}
 
+      <ThemeGrid>
+        <ThemeGridCard
+          label={t("themes.potager.scan_cta")}
+          hint={t("themes.potager.scan_plant")}
+          icon={IconScan}
+          onClick={() => onStartScan?.()}
+          variant="sage"
+          delay={1}
+        />
+        <ThemeGridCard
+          label={t("themes.potager.care_journal_title").replace(/^[^\w\s]+\s*/, "")}
+          hint={t("themes.potager.daily_care_subtitle")}
+          icon={IconJournal}
+          variant="beige"
+          delay={2}
+        />
+        <ThemeGridCard
+          label={t("themes.potager.ideas_title").replace(/^[^\w\s]+\s*/, "")}
+          hint={t("themes.potager.ideas_subtitle")}
+          icon={IconLightbulb}
+          variant="terracotta"
+          delay={3}
+        />
+        <ThemeGridCard
+          label={t("themes.potager.nurseries_title").replace(/^[^\w\s]+\s*/, "")}
+          hint={t("themes.potager.nurseries_subtitle")}
+          icon={IconSprout}
+          variant="sage"
+          delay={4}
+        />
+      </ThemeGrid>
+
       <PotagerCareJournal t={t} lang={lang} refreshKey={journalRefreshKey} />
 
-      <button type="button" className="potager-scan-cta potager-scan-cta--secondary" onClick={() => onStartScan?.()}>
-        <span className="potager-scan-cta-emoji" aria-hidden="true">
-          🔍
-        </span>
-        <span className="potager-scan-cta-label">{t("themes.potager.scan_cta")}</span>
-      </button>
-
-      {children}
+      <ThemeSection title={t("albums.title")}>{children}</ThemeSection>
 
       <PotagerIdeasCard t={t} lang={lang} />
       <NurseriesNearbyCard t={t} i18nPrefix="themes.potager" />
-
       <PotagerWeatherLine t={t} />
-    </div>
+    </ThemeInterior>
   );
 }
