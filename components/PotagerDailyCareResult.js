@@ -1,6 +1,15 @@
+import PotagerCareJournal from "@/components/PotagerCareJournal";
 import PotagerDailyCareTasks from "@/components/PotagerDailyCareTasks";
 
-export default function PotagerDailyCareResult({ session, t, onBack, onToggleTask, onNewPhoto }) {
+export default function PotagerDailyCareResult({
+  session,
+  t,
+  lang,
+  journalRefreshKey = 0,
+  onBack,
+  onToggleTask,
+  onNewPhoto,
+}) {
   if (!session) return null;
 
   return (
@@ -25,6 +34,7 @@ export default function PotagerDailyCareResult({ session, t, onBack, onToggleTas
         <p className="potager-daily-care-result-sub">{t("themes.potager.daily_care_subtitle")}</p>
 
         <PotagerDailyCareTasks session={session} t={t} onToggleTask={onToggleTask} />
+        <PotagerCareJournal t={t} lang={lang} refreshKey={journalRefreshKey} />
       </div>
 
       <button type="button" className="potager-daily-care-new-photo" onClick={onNewPhoto}>

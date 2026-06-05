@@ -3,12 +3,14 @@ import { recordPotagerVisit } from "@/lib/potagerEngagement";
 import { checkPotagerReminders } from "@/lib/potagerNotifications";
 import { loadDailyCare, toggleDailyCareTask } from "@/lib/potagerDailyCare";
 import PotagerWeatherLine from "@/components/PotagerWeatherLine";
+import PotagerCareJournal from "@/components/PotagerCareJournal";
 import PotagerDailyCareTasks from "@/components/PotagerDailyCareTasks";
 import PotagerIdeasCard from "@/components/PotagerIdeasCard";
 import NurseriesNearbyCard from "@/components/NurseriesNearbyCard";
 
 export default function PotagerView({ onStartScan, onStartDailyCare, children, t, lang }) {
   const [dailyCare, setDailyCare] = useState(null);
+  const [journalRefreshKey, setJournalRefreshKey] = useState(0);
 
   const refreshDailyCare = useCallback(() => {
     setDailyCare(loadDailyCare());
@@ -23,13 +25,13 @@ export default function PotagerView({ onStartScan, onStartDailyCare, children, t
     if (lang) checkPotagerReminders(lang);
   }, [lang]);
 
-  const handleToggleTask = useCallback(
-    (taskId) => {
-      const updated = toggleDailyCareTask(taskId);
-      if (updated) setDailyCare(updated);
-    },
-    []
-  );
+  const handleToggleTask = useCallback((taskId) => {
+    const updated = toggleDailyCareTask(taskId);
+    if (updated) {
+      setDailyCare(updated);
+      setJournalRefreshKey((k) => k + 1);
+    }
+  }, []);
 
   return (
     <div className="potager-simple">
@@ -59,6 +61,8 @@ export default function PotagerView({ onStartScan, onStartDailyCare, children, t
           compact
         />
       )}
+
+      <PotagerCareJournal t={t} lang={lang} refreshKey={journalRefreshKey} />
 
       <button type="button" className="potager-scan-cta potager-scan-cta--secondary" onClick={() => onStartScan?.()}>
         <span className="potager-scan-cta-emoji" aria-hidden="true">

@@ -20,7 +20,18 @@ RÈGLES STRICTES :
 • Photo vide/noire ou sans sujet naturel identifiable : {"erreur":"Aucune decouverte identifiable"}
 • Refuse monuments, bâtiments et patrimoine bâti sans sujet naturel : {"erreur":"Aucune decouverte identifiable"}
 
-MISSION : identifier le sujet naturel principal (plante, arbre, arbuste, animal, insecte, champignon, fleur, fruit, légume, oiseau, reptile, papillon…).
+MISSION : identifier le sujet naturel principal (plante, arbre, arbuste, animal, insecte, champignon, fleur, fruit, légume, oiseau, reptile, papillon, mauvaise herbe…).
+
+MAUVAISES HERBES (potager, jardin, jardinière, parcelle cultivée) :
+Si le sujet principal est une adventice / mauvaise herbe (pissenlit, ortie, mauvaise herbe, chiendent, bardane, morelle noire, plantain, rumex, etc.) :
+• type = "mauvaise_herbe"
+• nom = nom commun exact de la mauvaise herbe
+• mauvaise_herbe = true
+• mauvaise_herbe_nuisible : pourquoi elle est nuisible pour le potager (concurrence eau/nutriments, ombre, parasites, toxicité voisins, etc.)
+• mauvaise_herbe_solution : meilleure solution naturelle pour s'en débarrasser (désherbage manuel, binette, paillage, couverture solaire…)
+• mauvaise_herbe_astuces : astuces de grand-mère concrètes (vinaigre blanc dilué, sel en petite quantité ciblée, eau bouillante, purin d'ortie, bicarbonate, savon noir… — précise quand et comment)
+• mauvaise_herbe_prevention : comment éviter qu'elle revienne (paillage, rotation, densité de plantation, arrosage ciblé, bordures…)
+Sinon : mauvaise_herbe = false et tous les champs mauvaise_herbe_* = null.
 
 CONTENU OBLIGATOIRE SELON LE TYPE :
 
@@ -49,7 +60,7 @@ Insectes et champignons :
 
 JSON uniquement, sans markdown ni texte autour :
 {
-  "type":"plante|animal|champignon|fleur|insecte|oiseau|arbre|fruit|legume|reptile|papillon",
+  "type":"plante|animal|champignon|fleur|insecte|oiseau|arbre|fruit|legume|reptile|papillon|mauvaise_herbe",
   "nom":"Nom commun exact",
   "nom_latin":"Binôme latin ou null",
   "famille":"Famille botanique ou null",
@@ -68,7 +79,12 @@ JSON uniquement, sans markdown ni texte autour :
   "region_saison":"Meilleure saison et régions pour observer ; null sinon",
   "infos_utiles":"Insecte/champignon ; null sinon",
   "rarete":"commun|peu_commun|rare|tres_rare",
-  "fun_fact":"Anecdote ou fait surprenant ; null si incertain"
+  "fun_fact":"Anecdote ou fait surprenant ; null si incertain",
+  "mauvaise_herbe":true|false,
+  "mauvaise_herbe_nuisible":"Pourquoi nuisible au potager ; null si pas une mauvaise herbe",
+  "mauvaise_herbe_solution":"Meilleure solution naturelle ; null si pas une mauvaise herbe",
+  "mauvaise_herbe_astuces":"Astuces de grand-mère (vinaigre, sel, eau bouillante, purin…) ; null si pas une mauvaise herbe",
+  "mauvaise_herbe_prevention":"Comment éviter qu'elle revienne ; null si pas une mauvaise herbe"
 }`;
 
 const USER_PROMPT =
@@ -76,6 +92,7 @@ const USER_PROMPT =
   "Si tu n'es pas sûr à 90 %, dis-le clairement. Ne jamais inventer. " +
   "Plante ou arbre : identification (nom, latin, famille), description, âge approximatif si arbre visible, où le trouver, " +
   "état de santé avec causes et solutions, un fait surprenant. " +
+  "Mauvaise herbe en potager : type mauvaise_herbe, nom, pourquoi nuisible, solution naturelle, astuces grand-mère, prévention. " +
   "Animal : nom, habitat, comportement, espèce protégée ou non, meilleure saison pour l'observer. " +
   "Si la photo est floue, renvoie l'erreur prévue. Remplis le JSON (null si non applicable). JSON seul, sans markdown.";
 
