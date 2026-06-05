@@ -40,6 +40,8 @@ import PokedexCollection from "@/components/PokedexCollection";
 import DuoModePanel from "@/components/DuoModePanel";
 import CloudAccountCard from "@/components/CloudAccountCard";
 import HomeDashboard from "@/components/HomeDashboard";
+import HomeGreeting from "@/components/HomeGreeting";
+import HomeScanHero from "@/components/HomeScanHero";
 import { getWrappedYear } from "@/lib/wrapped";
 import { recordDuoDiscovery } from "@/lib/duoMode";
 import { recordNatureActivity } from "@/lib/natureStreak";
@@ -458,12 +460,12 @@ function IconInfo({ size = 20, color = "currentColor" }) {
   );
 }
 
-function ThemeToggle({ theme, onToggle, t }) {
+function ThemeToggle({ theme, onToggle, t, className = "" }) {
   const isDark = theme === "dark";
   return (
     <button
       type="button"
-      className="theme-toggle"
+      className={`theme-toggle${className ? ` ${className}` : ""}`}
       onClick={onToggle}
       aria-label={isDark ? t("home.theme_light") : t("home.theme_dark")}
     >
@@ -795,6 +797,36 @@ function IconLeafSmall({ className, style }) {
     <svg className={className} style={style} width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
       <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
     </svg>
+  );
+}
+
+function HomeFireflies() {
+  const flies = Array.from({ length: 14 }, (_, i) => ({
+    id: i,
+    left: `${6 + (i * 6.5) % 88}%`,
+    top: `${12 + (i * 9.7) % 55}%`,
+    delay: `${i * 0.65}s`,
+    duration: `${2.8 + (i % 5) * 0.6}s`,
+    size: 2 + (i % 4),
+  }));
+
+  return (
+    <div className="home-fireflies" aria-hidden="true">
+      {flies.map((f) => (
+        <span
+          key={f.id}
+          className="home-firefly"
+          style={{
+            left: f.left,
+            top: f.top,
+            width: f.size,
+            height: f.size,
+            animationDelay: f.delay,
+            animationDuration: f.duration,
+          }}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -2599,43 +2631,42 @@ export default function Wilder() {
         </Head>
         <div className="wilder-home screen-enter">
           <div className="wilder-home-bg" aria-hidden="true" />
+          <div className="wilder-home-aurora" aria-hidden="true" />
           <div className="wilder-home-overlay" aria-hidden="true" />
+          <FallingLeaves />
+          <HomeFireflies />
           <div className="wilder-home-content">
             <header className="wilder-home-header stagger-1">
+              <ThemeToggle
+                theme={theme}
+                onToggle={toggleTheme}
+                t={t}
+                className="theme-toggle--home"
+              />
+              <IconWilderLogo size={52} />
               <h1 className="wilder-logo-title">Wilder</h1>
               <p className="wilder-logo-slogan">{slogan}</p>
+              <HomeGreeting t={t} />
             </header>
 
             <div className="wilder-home-main stagger-2">
-              <button
-                type="button"
-                className="discovery-counter discovery-counter--link"
-                onClick={() => setScreen("stats")}
-                aria-label={t("home.stats")}
-              >
-                <span className="discovery-counter-num">{discoveries.length}</span>
-                <span>
-                  {discoveries.length !== 1
-                    ? t("home.discoveries_plural")
-                    : t("home.discoveries")}
-                </span>
-                {stats.rareCount > 0 && (
-                  <span className="discovery-counter-rare">
-                    ◆ {stats.rareCount}{" "}
-                    {stats.rareCount !== 1 ? t("home.rare_plural") : t("home.rare")}
-                  </span>
-                )}
-              </button>
+              <HomeScanHero
+                t={t}
+                discoveries={discoveries}
+                onStartScan={(opts) => startScan("home", opts || {})}
+                isNewUser={discoveries.length === 0}
+              />
 
               <HomeDashboard
                 discoveries={discoveries}
+                stats={stats}
                 t={t}
                 locale={locale}
                 onNavigate={navigateMain}
-                onStartScan={() => startScan("home")}
+                onStartScan={(opts) => startScan("home", opts || {})}
                 onOpenStats={() => setScreen("stats")}
                 onOpenTrophies={() => setScreen("trophies")}
-                onOpenDiscovery={openDiscoveryDetail}
+                onOpenDiscovery={(d) => openDiscoveryDetail(d, "home")}
                 onOpenScreen={setScreen}
               />
 
@@ -2643,11 +2674,10 @@ export default function Wilder() {
                 <button type="button" className="home-about-link" onClick={() => setScreen("about")}>
                   {t("home.about")}
                 </button>
-                <ThemeToggle theme={theme} onToggle={toggleTheme} t={t} />
               </div>
             </div>
 
-            <div className="discovery-marquee stagger-2" aria-hidden="true">
+            <div className="discovery-marquee stagger-3" aria-hidden="true">
               <div className="discovery-marquee-track">
                 <span>
                   {marquee}

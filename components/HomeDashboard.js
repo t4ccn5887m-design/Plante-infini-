@@ -1,10 +1,21 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { NAV_THEMES, THEME_META } from "@/lib/themes";
 import { getNextBadge } from "@/lib/badges";
-import { getNatureStreak } from "@/lib/natureStreak";
+import { POKEDEX_TYPES } from "@/lib/pokedex";
+import { computeWildScore, getTipIndex } from "@/lib/homeAmbience";
+import { getHomeProgress } from "@/lib/homeEngagement";
 import { ThemeIcon } from "@/components/ThemeIcons";
+import HomeDailyMission from "@/components/HomeDailyMission";
+import HomeProgressBoard from "@/components/HomeProgressBoard";
 
-function ThemeHubCard({ themeId, label, onNavigate, delay }) {
+const HUB_DESC_KEYS = {
+  potager: "home.hub_potager",
+  randos: "home.hub_randos",
+  jardin: "home.hub_jardin",
+  juniors: "home.hub_juniors",
+};
+
+function ThemeHubCard({ themeId, label, desc, onNavigate, delay }) {
   if (themeId === "home") return null;
   return (
     <button
@@ -14,15 +25,17 @@ function ThemeHubCard({ themeId, label, onNavigate, delay }) {
       style={{ "--stagger": delay }}
     >
       <span className="home-hub-card-icon">
-        <ThemeIcon themeId={themeId} size={28} />
+        <ThemeIcon themeId={themeId} size={26} />
       </span>
       <span className="home-hub-card-label">{label}</span>
+      <span className="home-hub-card-desc">{desc}</span>
     </button>
   );
 }
 
 export default function HomeDashboard({
   discoveries,
+  stats,
   t,
   locale,
   onNavigate,
@@ -32,19 +45,42 @@ export default function HomeDashboard({
   onOpenDiscovery,
   onOpenScreen,
 }) {
-  const streak = getNatureStreak();
+  const [toolsOpen, setToolsOpen] = useState(false);
   const nextBadge = useMemo(() => getNextBadge(discoveries), [discoveries]);
+  const wildScore = useMemo(() => computeWildScore(stats), [stats]);
+  const progress = useMemo(() => getHomeProgress(discoveries, stats), [discoveries, stats]);
+  const tipIndex = getTipIndex();
+  const isNewUser = discoveries.length === 0;
+  const showWrapped = discoveries.length >= 3;
+
   const recent = useMemo(
     () =>
       [...discoveries]
         .sort((a, b) => new Date(b.discoveredAt || 0) - new Date(a.discoveredAt || 0))
-        .slice(0, 8),
+        .slice(0, 10),
+    [discoveries]
+  );
+
+  const featured = useMemo(
+    () =>
+      [...discoveries]
+        .filter((d) => d.photo && (d.rarete === "rare" || d.rarete === "tres_rare"))
+        .slice(0, 3)
+        .concat(
+          [...discoveries]
+            .filter((d) => d.photo)
+            .sort((a, b) => new Date(b.discoveredAt || 0) - new Date(a.discoveredAt || 0))
+            .slice(0, 6)
+        )
+        .filter((d, i, arr) => arr.findIndex((x) => x.id === d.id) === i)
+        .slice(0, 6),
     [discoveries]
   );
 
   const themeItems = NAV_THEMES.filter((id) => id !== "home").map((id, i) => ({
     id,
     label: t(THEME_META[id].navKey),
+    desc: t(HUB_DESC_KEYS[id]),
     delay: i,
   }));
 
@@ -57,14 +93,34 @@ export default function HomeDashboard({
 
   return (
     <div className="home-dashboard">
-      {streak > 0 && (
-        <div className="home-streak-pill" role="status">
-          <span className="home-streak-fire" aria-hidden="true">🔥</span>
-          <span>{t("home.streak", { count: streak })}</span>
+      <HomeDailyMission
+        t={t}
+        mission={progress.mission}
+        streak={progress.streak}
+        onStartScan={() => onStartScan({})}
+      />
+
+      {!isNewUser && (
+        <HomeProgressBoard
+          t={t}
+          progress={progress}
+          wildScore={wildScore}
+          onOpenStats={onOpenStats}
+          onOpenTrophies={onOpenTrophies}
+          onOpenPokedex={() => onOpenScreen("pokedex")}
+          onOpenWrapped={() => onOpenScreen("wrapped")}
+          showWrapped={showWrapped}
+        />
+      )}
+
+      {(isNewUser || discoveries.length < 5) && (
+        <div className="home-tip-card" role="note">
+          <span className="home-tip-icon" aria-hidden="true">💡</span>
+          <p>{t(`home.tip_${tipIndex}`)}</p>
         </div>
       )}
 
-      {nextBadge && (
+      {nextBadge && !isNewUser && (
         <button type="button" className="home-next-badge" onClick={onOpenTrophies}>
           <span className="home-next-badge-icon" aria-hidden="true">
             {nextBadge.badge.icon}
@@ -86,27 +142,85 @@ export default function HomeDashboard({
         </button>
       )}
 
+      {discoveries.length >= 1 && (
+        <button
+          type="button"
+          className="home-cloud-nudge"
+          onClick={() => onOpenScreen("account")}
+        >
+          <span className="home-cloud-nudge-icon" aria-hidden="true">☁️</span>
+          <div>
+            <span className="home-cloud-nudge-title">{t("home.cloud_nudge")}</span>
+            <span className="home-cloud-nudge-cta">{t("home.cloud_nudge_cta")} →</span>
+          </div>
+        </button>
+      )}
+
       <div className="home-hub-grid">
-        {themeItems.map(({ id, label, delay }) => (
-          <ThemeHubCard key={id} themeId={id} label={label} onNavigate={onNavigate} delay={delay} />
+        {themeItems.map(({ id, label, desc, delay }) => (
+          <ThemeHubCard
+            key={id}
+            themeId={id}
+            label={label}
+            desc={desc}
+            onNavigate={onNavigate}
+            delay={delay}
+          />
         ))}
       </div>
 
-      <div className="home-tools-row">
-        {hubScreens.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            className="home-tool-chip"
-            onClick={() => onOpenScreen(item.id)}
-          >
-            <span aria-hidden="true">{item.emoji}</span>
-            <span>{item.label}</span>
-          </button>
-        ))}
+      <div className="home-explorer-more">
+        <button
+          type="button"
+          className="home-explorer-toggle"
+          onClick={() => setToolsOpen((o) => !o)}
+          aria-expanded={toolsOpen}
+        >
+          <span>{toolsOpen ? t("home.explorer_less") : t("home.explorer_more")}</span>
+          <span className={`home-explorer-chevron${toolsOpen ? " open" : ""}`} aria-hidden="true">
+            ›
+          </span>
+        </button>
+        {toolsOpen && (
+          <div className="home-tools-row">
+            {hubScreens.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className="home-tool-chip"
+                onClick={() => onOpenScreen(item.id)}
+              >
+                <span aria-hidden="true">{item.emoji}</span>
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
-      {recent.length > 0 ? (
+      {featured.length >= 3 && (
+        <section className="home-discovery-wall" aria-label={t("home.discovery_wall_title")}>
+          <h2 className="home-discovery-wall-title">{t("home.discovery_wall_title")}</h2>
+          <div className="home-discovery-wall-grid">
+            {featured.map((d, i) => (
+              <button
+                key={d.id}
+                type="button"
+                className={`home-discovery-wall-tile${i === 0 && featured.length >= 4 ? " home-discovery-wall-tile--hero" : ""}`}
+                onClick={() => onOpenDiscovery(d)}
+              >
+                <img src={d.photo} alt="" />
+                {(d.rarete === "rare" || d.rarete === "tres_rare") && (
+                  <span className="home-discovery-wall-rare" aria-hidden="true">◆</span>
+                )}
+                <span className="home-discovery-wall-name">{d.nom}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {recent.length > 0 && (
         <section className="home-recent" aria-label={t("home.recent_title")}>
           <div className="home-recent-head">
             <h2>{t("home.recent_title")}</h2>
@@ -115,44 +229,35 @@ export default function HomeDashboard({
             </button>
           </div>
           <div className="home-recent-scroll">
-            {recent.map((d) => (
-              <button
-                key={d.id}
-                type="button"
-                className="home-recent-card"
-                onClick={() => onOpenDiscovery(d.id)}
-              >
-                {d.photo ? (
-                  <img src={d.photo} alt="" className="home-recent-photo" />
-                ) : (
-                  <span className="home-recent-photo home-recent-photo--empty">🌿</span>
-                )}
-                <span className="home-recent-name">{d.nom}</span>
-                {d.discoveredAt && (
-                  <span className="home-recent-date">
-                    {new Date(d.discoveredAt).toLocaleDateString(locale, {
-                      day: "numeric",
-                      month: "short",
-                    })}
-                  </span>
-                )}
-              </button>
-            ))}
+            {recent.map((d) => {
+              const emoji = POKEDEX_TYPES.find((p) => p.id === d.type)?.emoji || "🌿";
+              return (
+                <button
+                  key={d.id}
+                  type="button"
+                  className="home-recent-card"
+                  onClick={() => onOpenDiscovery(d)}
+                >
+                  {d.photo ? (
+                    <img src={d.photo} alt="" className="home-recent-photo" />
+                  ) : (
+                    <span className="home-recent-photo home-recent-photo--empty">{emoji}</span>
+                  )}
+                  <span className="home-recent-name">{d.nom}</span>
+                  {d.discoveredAt && (
+                    <span className="home-recent-date">
+                      {new Date(d.discoveredAt).toLocaleDateString(locale, {
+                        day: "numeric",
+                        month: "short",
+                      })}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </section>
-      ) : (
-        <p className="home-recent-empty">{t("home.recent_empty")}</p>
       )}
-
-      <button type="button" className="btn-scanner btn-scanner--hero home-scan-cta" onClick={onStartScan}>
-        <span className="btn-scanner-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
-            <circle cx="12" cy="13" r="3" />
-          </svg>
-        </span>
-        {t("home.discover")}
-      </button>
     </div>
   );
 }
