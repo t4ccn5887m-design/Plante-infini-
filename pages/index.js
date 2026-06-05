@@ -42,6 +42,7 @@ import CloudAccountCard from "@/components/CloudAccountCard";
 import HomeDashboard from "@/components/HomeDashboard";
 import HomeGreeting from "@/components/HomeGreeting";
 import HomeScanHero from "@/components/HomeScanHero";
+import FirstDiscoveryCelebration from "@/components/FirstDiscoveryCelebration";
 import { getWrappedYear } from "@/lib/wrapped";
 import { recordDuoDiscovery } from "@/lib/duoMode";
 import { recordNatureActivity } from "@/lib/natureStreak";
@@ -1491,6 +1492,34 @@ export default function Wilder() {
     return false;
   }, []);
 
+  const finishDiscoveryFlow = useCallback(
+    (updated, wasRescan) => {
+      setDiscoveries(updated);
+      recordNatureActivity();
+      setRescanDiscoveryId(null);
+      if (wasRescan) setSavedToAlbum(true);
+
+      const isFirstEver = !wasRescan && updated.length === 1;
+      if (isFirstEver) {
+        const seen = loadSeenBadges();
+        const fresh = getNewBadgeIds(updated, seen);
+        if (fresh.length > 0) saveSeenBadges([...seen, ...fresh]);
+        setScreen("first-celebration");
+        setShowConfetti(true);
+        playBadgeUnlockSound();
+        return;
+      }
+
+      setScreen("result");
+      if (checkNewBadges(updated)) {
+        playBadgeUnlockSound();
+      } else {
+        playDiscoverySound();
+      }
+    },
+    [checkNewBadges]
+  );
+
   const attachStreamToVideo = useCallback(async () => {
     const video = videoRef.current;
     const stream = streamRef.current;
@@ -2026,25 +2055,16 @@ export default function Wilder() {
         setScreen("error");
         return;
       }
-      setDiscoveries(updated);
       setCurrentDiscovery(discovery);
       setResult(data);
-      recordNatureActivity();
       const wasRescan = Boolean(rescanDiscoveryId);
-      setRescanDiscoveryId(null);
-      if (wasRescan) setSavedToAlbum(true);
-      setScreen("result");
-      if (checkNewBadges(updated)) {
-        playBadgeUnlockSound();
-      } else {
-        playDiscoverySound();
-      }
+      finishDiscoveryFlow(updated, wasRescan);
     } catch (e) {
       console.error("[Wilder] analyze:", e);
       setErrorMsg(t("error.generic"));
       setScreen("error");
     }
-  }, [t, checkNewBadges, lang, rescanDiscoveryId]);
+  }, [t, finishDiscoveryFlow, lang, rescanDiscoveryId]);
 
   const analyzeAnimal = useCallback(
     async (mode, base64, imgSrc, { durationSec } = {}) => {
@@ -2155,27 +2175,18 @@ export default function Wilder() {
           return;
         }
 
-        setDiscoveries(updated);
         setCurrentDiscovery(discovery);
         setResult(data);
-        recordNatureActivity();
         recordDuoDiscovery(discovery.id);
         const wasRescan = Boolean(rescanDiscoveryId);
-        setRescanDiscoveryId(null);
-        if (wasRescan) setSavedToAlbum(true);
-        setScreen("result");
-        if (checkNewBadges(updated)) {
-          playBadgeUnlockSound();
-        } else {
-          playDiscoverySound();
-        }
+        finishDiscoveryFlow(updated, wasRescan);
       } catch (e) {
         console.error("[Wilder] analyzeAnimal:", e);
         setErrorMsg(t("error.generic"));
         setScreen("error");
       }
     },
-    [t, checkNewBadges, lang, rescanDiscoveryId]
+    [t, finishDiscoveryFlow, lang, rescanDiscoveryId]
   );
 
   const analyzeDailyCare = useCallback(
@@ -2616,7 +2627,14 @@ export default function Wilder() {
           <title>Wilder</title>
           <meta name="description" content={slogan} />
         </Head>
-        <OnboardingScreen t={t} onComplete={() => setNeedsOnboarding(false)} />
+        <OnboardingScreen
+          t={t}
+          onComplete={() => {
+            setNeedsOnboarding(false);
+            setReturnScreen("home");
+            startScan("home");
+          }}
+        />
       </>
     );
   }
@@ -2845,6 +2863,10 @@ export default function Wilder() {
                 onChange={(e) => setCamZoom(Number(e.target.value))}
                 aria-label={t("scanner.zoom")}
               />
+            )}
+
+            {discoveries.length === 0 && camReady && (
+              <p className="scanner-gallery-hint">{t("first_discovery.gallery_hint")}</p>
             )}
 
             <div className="scanner-bottom">
@@ -3076,6 +3098,27 @@ export default function Wilder() {
             }}
           />
         </div>
+      </>
+    );
+  }
+
+  /* ── FIRST DISCOVERY CELEBRATION ── */
+  if (screen === "first-celebration" && result) {
+    return (
+      <>
+        <Head>
+          <title>{result.nom} — Wilder</title>
+        </Head>
+        <FirstDiscoveryCelebration
+          result={result}
+          photo={captured}
+          discovery={shareDiscoveryPayload}
+          t={t}
+          lang={lang}
+          onViewFull={() => setScreen("result")}
+          onScanAgain={scanAgainFromResult}
+        />
+        <Confetti active={showConfetti} onDone={() => setShowConfetti(false)} />
       </>
     );
   }

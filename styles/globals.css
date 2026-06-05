@@ -10446,3 +10446,250 @@ button.theme-grid-card:active {
   border-color: transparent;
 }
 .about-lang-hint { font-size: 0.82rem; color: var(--text-muted); }
+
+/* ── First discovery celebration ── */
+.first-celebration {
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #0f2419;
+}
+
+.first-celebration-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(224, 122, 58, 0.22) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(61, 122, 92, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.first-celebration-content {
+  position: relative;
+  z-index: 1;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: calc(1.5rem + env(safe-area-inset-top)) 1.5rem calc(2rem + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.first-celebration-eyebrow {
+  margin: 0 0 1rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sunset-light);
+}
+
+.first-celebration-photo-wrap {
+  position: relative;
+  width: min(220px, 72vw);
+  margin-bottom: 1rem;
+}
+
+.first-celebration-photo {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 20px;
+  border: 3px solid rgba(245, 242, 235, 0.2);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+}
+
+.first-celebration-photo--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  background: rgba(61, 122, 92, 0.25);
+}
+
+.first-celebration-badge-float {
+  position: absolute;
+  right: -0.5rem;
+  bottom: -0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #1b3a2d, #2d5a45);
+  border: 2px solid rgba(224, 122, 58, 0.5);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  animation: slideUp 0.5s ease-out 0.3s both;
+}
+
+.first-celebration-badge-icon { font-size: 1.5rem; }
+
+.first-celebration-badge-label {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #ffd8b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  max-width: 4.5rem;
+  line-height: 1.2;
+}
+
+.first-celebration-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 8vw, 2.25rem);
+  font-weight: 800;
+  color: #f5f2eb;
+  line-height: 1.1;
+}
+
+.first-celebration-latin {
+  margin: 0.35rem 0 0.5rem;
+  font-size: 0.88rem;
+  font-style: italic;
+  color: rgba(245, 242, 235, 0.55);
+}
+
+.first-celebration-rarity {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.first-celebration-message {
+  margin: 0 0 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: rgba(245, 242, 235, 0.75);
+  max-width: 300px;
+}
+
+.first-celebration-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+  max-width: 320px;
+}
+
+.first-celebration-btn {
+  width: 100%;
+  border-radius: 999px !important;
+  min-height: 3rem;
+  font-size: 0.95rem !important;
+}
+
+.first-celebration-btn--scan {
+  width: 100% !important;
+  height: auto !important;
+  flex-direction: row !important;
+  gap: 0.5rem !important;
+  padding: 0.85rem 1.25rem !important;
+  border-radius: 999px !important;
+}
+
+.first-celebration-full-link {
+  margin-top: 1rem;
+  background: none;
+  border: none;
+  color: rgba(245, 242, 235, 0.5);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.first-celebration-full-link:hover {
+  color: rgba(245, 242, 235, 0.8);
+}
+
+.first-celebration-notify {
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(61, 122, 92, 0.35);
+  background: rgba(61, 122, 92, 0.15);
+  text-align: left;
+}
+
+.first-celebration-notify-title {
+  margin: 0 0 0.35rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #f5f2eb;
+}
+
+.first-celebration-notify-body {
+  margin: 0 0 0.75rem;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: rgba(245, 242, 235, 0.65);
+}
+
+.first-celebration-notify-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.first-celebration-notify-btn {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  font-size: 0.85rem;
+}
+
+.first-celebration-notify-skip {
+  background: none;
+  border: none;
+  color: rgba(245, 242, 235, 0.45);
+  font-size: 0.78rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  text-align: center;
+}
+
+.first-celebration-notify-denied,
+.first-celebration-notify-ok {
+  margin: 0.5rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.first-celebration-notify-ok {
+  color: #7dcea0;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 1.25rem;
+}
+
+.first-celebration-notify-denied {
+  color: #ffb8a0;
+}
+
+.scanner-gallery-hint {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(7.5rem + env(safe-area-inset-bottom));
+  z-index: 3;
+  max-width: 280px;
+  margin: 0;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(15, 36, 25, 0.75);
+  border: 1px solid rgba(245, 242, 235, 0.18);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.35;
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}

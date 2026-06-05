@@ -5,6 +5,7 @@ import InstallBanner from "@/components/InstallBanner";
 import { detectLang } from "@/lib/i18n";
 import { checkPotagerReminders } from "@/lib/potagerNotifications";
 import { checkJardinMorningSurprise } from "@/lib/espaceVertNotifications";
+import { checkNatureReminders } from "@/lib/natureNotifications";
 import { loadAlbums, loadDiscoveries } from "@/lib/discoveriesStorage";
 import { flushPendingSync } from "@/lib/cloudSync";
 
@@ -21,6 +22,7 @@ export default function App({ Component, pageProps }) {
         const lang = detectLang();
         checkPotagerReminders(lang);
         checkJardinMorningSurprise(loadAlbums(), loadDiscoveries(), lang);
+        checkNatureReminders(lang);
         flushPendingSync();
       }
     };
@@ -28,6 +30,7 @@ export default function App({ Component, pageProps }) {
     const lang = detectLang();
     checkPotagerReminders(lang);
     checkJardinMorningSurprise(loadAlbums(), loadDiscoveries(), lang);
+    checkNatureReminders(lang);
     return () => document.removeEventListener("visibilitychange", onVisible);
   }, []);
 
