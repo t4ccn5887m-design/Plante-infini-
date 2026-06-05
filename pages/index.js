@@ -26,6 +26,12 @@ import FloatingScannerButton from "@/components/FloatingScannerButton";
 import PotagerView from "@/components/PotagerView";
 import ThemeAlbumsList from "@/components/ThemeAlbumsList";
 import PotagerScanResult from "@/components/PotagerScanResult";
+import PotagerDailyCareResult from "@/components/PotagerDailyCareResult";
+import {
+  buildDailyCareSession,
+  saveDailyCare,
+  toggleDailyCareTask,
+} from "@/lib/potagerDailyCare";
 import { upsertPotagerPlantFromDiscovery } from "@/lib/potagerPlant";
 import { recordPotagerWatering } from "@/lib/potagerEngagement";
 import EspacesVertsView from "@/components/EspacesVertsView";
@@ -1051,6 +1057,7 @@ function ThemeAlbumsScreen({
   onToggleTheme,
   navigateMain,
   onStartScan,
+  onStartDailyCare,
   onOpenJardinPlant,
   onOpenAnimal,
   onStartRando,
@@ -1122,7 +1129,12 @@ function ThemeAlbumsScreen({
         )}
 
         {isPotager ? (
-          <PotagerView onStartScan={onStartScan} t={t} lang={lang}>
+          <PotagerView
+            onStartScan={onStartScan}
+            onStartDailyCare={onStartDailyCare}
+            t={t}
+            lang={lang}
+          >
             <ThemeAlbumsList {...albumsListProps} />
           </PotagerView>
         ) : isJardin ? (
@@ -1329,6 +1341,8 @@ export default function Wilder() {
   const [randoJournalAlbumId, setRandoJournalAlbumId] = useState(null);
   const [rescanDiscoveryId, setRescanDiscoveryId] = useState(null);
   const [scanTargetAlbumId, setScanTargetAlbumId] = useState(null);
+  const [scanMode, setScanMode] = useState("single");
+  const [dailyCareSession, setDailyCareSession] = useState(null);
   const [jardinPlantDiscovery, setJardinPlantDiscovery] = useState(null);
   const [animalDiscovery, setAnimalDiscovery] = useState(null);
 
@@ -1583,10 +1597,21 @@ export default function Wilder() {
     setOrganizeSaved({});
     setRescanDiscoveryId(null);
     setScanTargetAlbumId(null);
+    setScanMode("single");
+    setDailyCareSession(null);
+  }, []);
+
+  const startDailyCareScan = useCallback(() => {
+    setScanMode("daily-care");
+    setReturnScreen("potager");
+    setScanTargetAlbumId(null);
+    setRescanDiscoveryId(null);
+    setScreen("camera");
   }, []);
 
   const startScan = useCallback(
     (origin, { albumId: targetAlbumId } = {}) => {
+      setScanMode("single");
       setReturnScreen(origin);
       setRescanDiscoveryId(null);
       if (targetAlbumId) {
@@ -1859,11 +1884,60 @@ export default function Wilder() {
     }
   }, [t, checkNewBadges, lang, rescanDiscoveryId]);
 
+  const analyzeDailyCare = useCallback(
+    async (base64, imgSrc) => {
+      setCaptured(imgSrc);
+      setScreen("analyzing");
+      try {
+        const [res, photoStored] = await Promise.all([
+          fetch("/api/potager-daily-care", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: base64, lang }),
+          }),
+          compressDataUrl(imgSrc),
+        ]);
+
+        const { data, parseError } = await parseApiResponse(res);
+        if (parseError || !data) {
+          setErrorMsg(t("error.analyze"));
+          setScreen("error");
+          return;
+        }
+        if (!res.ok || data.erreur) {
+          setErrorMsg(data.erreur || t("error.analyze"));
+          setScreen("error");
+          return;
+        }
+
+        const session = buildDailyCareSession({
+          photo: photoStored,
+          plantes: data.plantes,
+        });
+        saveDailyCare(session);
+        setDailyCareSession(session);
+        setScanMode("single");
+        setScreen("potager-daily-care");
+        playDiscoverySound();
+      } catch (e) {
+        console.error("[Wilder] analyzeDailyCare:", e);
+        setErrorMsg("Erreur: " + e.message);
+        setScreen("error");
+      }
+    },
+    [lang, t]
+  );
+
   const handleCapturedImage = useCallback(
     (dataUrl) => {
-      analyze(dataUrl.split(",")[1], dataUrl);
+      const base64 = dataUrl.split(",")[1];
+      if (scanMode === "daily-care") {
+        analyzeDailyCare(base64, dataUrl);
+        return;
+      }
+      analyze(base64, dataUrl);
     },
-    [analyze]
+    [analyze, analyzeDailyCare, scanMode]
   );
 
   const takePhoto = useCallback(() => {
@@ -2401,7 +2475,11 @@ export default function Wilder() {
               {camReady && (
                 <Viewfinder
                   viewfinderRef={viewfinderRef}
-                  label={t("scanner.frame_hint")}
+                  label={
+                    scanMode === "daily-care"
+                      ? t("themes.potager.daily_care_frame_hint")
+                      : t("scanner.frame_hint")
+                  }
                 />
               )}
             </div>
@@ -2492,10 +2570,49 @@ export default function Wilder() {
 
   /* ── ANALYZING ── */
   if (screen === "analyzing") {
+    const dailyCareSteps =
+      scanMode === "daily-care"
+        ? [
+            t("themes.potager.daily_care_analyze_0"),
+            t("themes.potager.daily_care_analyze_1"),
+            t("themes.potager.daily_care_analyze_2"),
+          ]
+        : null;
     return (
       <>
         <Head><title>Analyse… — Wilder</title></Head>
-        <AnalyzeLoadingScreen captured={captured} t={t} />
+        <AnalyzeLoadingScreen captured={captured} t={t} customSteps={dailyCareSteps} />
+      </>
+    );
+  }
+
+  /* ── POTAGER DAILY CARE ── */
+  if (screen === "potager-daily-care" && dailyCareSession) {
+    return (
+      <>
+        <Head>
+          <title>
+            {t("themes.potager.daily_care_title")} — {t("themes.potager.title")}
+          </title>
+        </Head>
+        <div className="potager-scan-screen screen-enter-fast">
+          <PotagerDailyCareResult
+            session={dailyCareSession}
+            t={t}
+            onBack={() => {
+              clearScanSession();
+              setScreen("potager");
+            }}
+            onToggleTask={(taskId) => {
+              const updated = toggleDailyCareTask(taskId);
+              if (updated) setDailyCareSession(updated);
+            }}
+            onNewPhoto={() => {
+              clearScanSession();
+              startDailyCareScan();
+            }}
+          />
+        </div>
       </>
     );
   }
@@ -3392,6 +3509,7 @@ export default function Wilder() {
         onToggleTheme={toggleTheme}
         navigateMain={navigateMain}
         onStartScan={() => startScan(screen)}
+        onStartDailyCare={startDailyCareScan}
         onStartRando={startRando}
         activeRandoAlbumId={activeRandoAlbumId}
         randoTrack={randoTrack}

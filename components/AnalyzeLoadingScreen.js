@@ -2,15 +2,18 @@ import { useEffect, useMemo, useState } from "react";
 
 const STEP_MS = 2000;
 
-export default function AnalyzeLoadingScreen({ captured, t }) {
+export default function AnalyzeLoadingScreen({ captured, t, customSteps }) {
   const steps = useMemo(
-    () => [
-      t("analyze.status_0"),
-      t("analyze.status_1"),
-      t("analyze.status_2"),
-      t("analyze.status_3"),
-    ],
-    [t]
+    () =>
+      customSteps?.length
+        ? customSteps
+        : [
+            t("analyze.status_0"),
+            t("analyze.status_1"),
+            t("analyze.status_2"),
+            t("analyze.status_3"),
+          ],
+    [customSteps, t]
   );
   const [step, setStep] = useState(0);
 
