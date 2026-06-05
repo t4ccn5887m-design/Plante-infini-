@@ -1,7 +1,16 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Head from "next/head";
 import Confetti from "@/components/Confetti";
-import { createT, detectLang, getLocale, getRarityLabel, getTypeLabel } from "@/lib/i18n";
+import {
+  createT,
+  detectLang,
+  getLocale,
+  getRarityLabel,
+  getTypeLabel,
+  saveLang,
+  SUPPORTED_LANGS,
+  LANG_LABELS,
+} from "@/lib/i18n";
 import {
   BADGE_DEFS,
   computeUnlockedBadgeIds,
@@ -24,6 +33,17 @@ import { isHeritageType } from "@/lib/categories";
 import OnboardingScreen from "@/components/OnboardingScreen";
 import FloatingScannerButton from "@/components/FloatingScannerButton";
 import PotagerView from "@/components/PotagerView";
+import AnimalAudioRecorder from "@/components/AnimalAudioRecorder";
+import WilderWrapped from "@/components/WilderWrapped";
+import WorldDiscoveriesMap from "@/components/WorldDiscoveriesMap";
+import PokedexCollection from "@/components/PokedexCollection";
+import DuoModePanel from "@/components/DuoModePanel";
+import CloudAccountCard from "@/components/CloudAccountCard";
+import HomeDashboard from "@/components/HomeDashboard";
+import { getWrappedYear } from "@/lib/wrapped";
+import { recordDuoDiscovery } from "@/lib/duoMode";
+import { recordNatureActivity } from "@/lib/natureStreak";
+import { computeEspaceVertScore, getScoreTier } from "@/lib/espaceVertScore";
 import ThemeAlbumsList from "@/components/ThemeAlbumsList";
 import PotagerScanResult from "@/components/PotagerScanResult";
 import PotagerDailyCareResult from "@/components/PotagerDailyCareResult";
@@ -36,6 +56,7 @@ import { upsertPotagerPlantFromDiscovery } from "@/lib/potagerPlant";
 import { recordPotagerWatering } from "@/lib/potagerEngagement";
 import EspacesVertsView from "@/components/EspacesVertsView";
 import AnimauxView from "@/components/AnimauxView";
+import { ThemeIcon } from "@/components/ThemeIcons";
 import EspaceVertPlantList from "@/components/EspaceVertPlantList";
 import JardinScanResult from "@/components/JardinScanResult";
 import AnimalScanResult from "@/components/AnimalScanResult";
@@ -45,9 +66,11 @@ import {
   getDefaultJardinAlbumId,
 } from "@/lib/espaceVertGarden";
 import {
+  buildAnimalDiscoveryFields,
   discoveryToAnimalResult,
   getDefaultAnimauxAlbumId,
 } from "@/lib/animaux";
+import { getAnimalContext } from "@/lib/animalAudio";
 import { inferHealthFromEtatSante } from "@/lib/potagerHealth";
 import RandosView from "@/components/RandosView";
 import RandoScanResult from "@/components/RandoScanResult";
@@ -73,6 +96,8 @@ import {
   saveAlbums,
   saveDiscoveries,
 } from "@/lib/discoveriesStorage";
+import { persistDiscoveries } from "@/lib/persistDiscovery";
+import { bootstrapCloudSync, flushPendingSync } from "@/lib/cloudSync";
 import { removeDiscoveryById, removePotagerPlantById } from "@/lib/removeDiscovery";
 import { removeAlbumById } from "@/lib/removeAlbum";
 import { getAlbumDisplayName, getFirstDiscoveryPhoto, getAlbumPhotos } from "@/lib/albumUtils";
@@ -881,15 +906,28 @@ function ShareButton({ discovery, t, lang }) {
   );
 }
 
-function BadgeUnlockToast({ badge, t, onClose }) {
+function BadgeUnlockToast({ badge, t, onClose, onViewTrophies }) {
   return (
     <div className="badge-unlock-toast" role="alert">
       <span className="badge-unlock-icon">{badge.icon}</span>
       <div>
         <p className="badge-unlock-label">{t("trophies.new_badge")}</p>
         <p className="badge-unlock-name">{t(`badges.${badge.id}.name`)}</p>
+        {onViewTrophies && (
+          <button type="button" className="badge-unlock-view" onClick={onViewTrophies}>
+            {t("home.trophies")} →
+          </button>
+        )}
       </div>
       <button type="button" className="badge-unlock-close" onClick={onClose} aria-label="OK">✓</button>
+    </div>
+  );
+}
+
+function OrganizeSavedToast({ message }) {
+  return (
+    <div className="organize-saved-toast" role="status" aria-live="polite">
+      {message}
     </div>
   );
 }
@@ -1061,6 +1099,7 @@ function ThemeAlbumsScreen({
   onOpenJardinPlant,
   onOpenAnimal,
   onStartRando,
+  onStartRandoFromTrail,
   activeRandoAlbumId,
   randoTrack,
   randoDiscoveries,
@@ -1118,15 +1157,9 @@ function ThemeAlbumsScreen({
       <div
         className={`albums-screen screen-enter with-bottom-nav${isPotager || isJardin || isJuniors || isRandos ? "" : " with-scanner-fab"} theme-screen theme-screen--${themeId}${isJuniors ? " theme-screen--juniors" : ""}${isMapView ? " albums-screen--map" : ""}`}
       >
-        <div className="albums-header">
-          <h1 className="albums-title">
-            {THEME_META[themeId].emoji} {t(`themes.${themeId}.title`)}
-          </h1>
+        <div className="albums-header theme-premium-header theme-premium-header--compact">
           <ThemeToggle theme={theme} onToggle={onToggleTheme} t={t} />
         </div>
-        {!isPotager && !isJardin && !isJuniors && !isRandos && (
-          <p className="theme-screen-subtitle">{t(`themes.${themeId}.subtitle`)}</p>
-        )}
 
         {isPotager ? (
           <PotagerView
@@ -1142,9 +1175,16 @@ function ThemeAlbumsScreen({
             <ThemeAlbumsList {...albumsListProps} />
           </EspacesVertsView>
         ) : isJuniors ? (
-          <AnimauxView onStartScan={onStartScan} t={t}>
-            <ThemeAlbumsList {...albumsListProps} />
-          </AnimauxView>
+          <>
+            <AnimauxView onStartScan={onStartScan} t={t}>
+              <ThemeAlbumsList {...albumsListProps} />
+            </AnimauxView>
+            <DuoModePanel
+              t={t}
+              discoveries={discoveries}
+              onOpenDiscovery={(d) => openDiscoveryDetail(d.id)}
+            />
+          </>
         ) : isRandos ? (
           <>
             {activeRandoAlbumId && (
@@ -1188,9 +1228,11 @@ function ThemeAlbumsScreen({
                 discoveries={discoveries}
                 locale={locale}
                 t={t}
+                lang={lang}
                 themeEmoji={THEME_META.randos.emoji}
                 onStartScan={onStartScan}
                 onStartRando={onStartRando}
+                onStartRandoFromTrail={onStartRandoFromTrail}
                 activeRandoAlbumId={activeRandoAlbumId}
                 distanceKm={activeRandoDistance}
                 onResumeRando={onResumeRando}
@@ -1316,6 +1358,7 @@ export default function Wilder() {
   const [showAlbumPicker, setShowAlbumPicker] = useState(false);
   const [albumPickerStartTheme, setAlbumPickerStartTheme] = useState(null);
   const [organizeSaved, setOrganizeSaved] = useState({});
+  const [organizeSaveToast, setOrganizeSaveToast] = useState(null);
   const [savedToAlbum, setSavedToAlbum] = useState(false);
   const [pokedexAnim, setPokedexAnim] = useState(true);
   const [creatingAlbum, setCreatingAlbum] = useState(false);
@@ -1326,12 +1369,22 @@ export default function Wilder() {
   const [camError, setCamError] = useState("");
   const [camLoading, setCamLoading] = useState(false);
   const [camZoom, setCamZoom] = useState(1);
-  const [needsOnboarding, setNeedsOnboarding] = useState(false);
+  const [needsOnboarding, setNeedsOnboarding] = useState(() => {
+    if (typeof window === "undefined") return false;
+    if (isOnboardingComplete()) return false;
+    if (loadDiscoveries().length > 0) return false;
+    return true;
+  });
   const [viewingDiscovery, setViewingDiscovery] = useState(null);
   const [returnScreen, setReturnScreen] = useState("home");
   const [creatingSubAlbum, setCreatingSubAlbum] = useState(false);
   const [newSubAlbumName, setNewSubAlbumName] = useState("");
-  const [lang] = useState(() => detectLang());
+  const [lang, setLangState] = useState(() => detectLang());
+  const setLang = useCallback((code) => {
+    if (!SUPPORTED_LANGS.includes(code)) return;
+    saveLang(code);
+    setLangState(code);
+  }, []);
   const [theme, setTheme] = useState("dark");
   const [showConfetti, setShowConfetti] = useState(false);
   const [newBadge, setNewBadge] = useState(null);
@@ -1343,6 +1396,7 @@ export default function Wilder() {
   const [scanTargetAlbumId, setScanTargetAlbumId] = useState(null);
   const [scanMode, setScanMode] = useState("single");
   const [dailyCareSession, setDailyCareSession] = useState(null);
+  const [careJournalRefreshKey, setCareJournalRefreshKey] = useState(0);
   const [jardinPlantDiscovery, setJardinPlantDiscovery] = useState(null);
   const [animalDiscovery, setAnimalDiscovery] = useState(null);
 
@@ -1353,6 +1407,7 @@ export default function Wilder() {
   const pinchRef = useRef({ dist: 0, zoom: 1 });
   const hardwareZoomRef = useRef({ min: 1, max: 1, step: 0.1, supported: false });
   const locationWatchStopRef = useRef(null);
+  const organizeReturnTimerRef = useRef(null);
 
   const t = useMemo(() => createT(lang), [lang]);
   const locale = useMemo(() => getLocale(lang), [lang]);
@@ -1469,7 +1524,9 @@ export default function Wilder() {
         requestLocationPermission().catch(() => {});
       }
       setNeedsOnboarding(false);
+      return;
     }
+    setNeedsOnboarding(true);
   }, []);
 
   useEffect(() => {
@@ -1492,9 +1549,24 @@ export default function Wilder() {
     if (seen.length === 0 && items.length > 0) {
       saveSeenBadges(computeUnlockedBadgeIds(items));
     }
+    bootstrapCloudSync().then((result) => {
+      if (result.ok && result.discoveries) {
+        setDiscoveries(result.discoveries);
+      }
+    });
     const onFirstTouch = () => warmUpSounds();
     window.addEventListener("pointerdown", onFirstTouch, { once: true });
     return () => window.removeEventListener("pointerdown", onFirstTouch);
+  }, []);
+
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === "visible") {
+        flushPendingSync();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
   }, []);
 
   useEffect(() => {
@@ -1588,6 +1660,11 @@ export default function Wilder() {
   }, [activeRandoAlbumId, randoTrack]);
 
   const clearScanSession = useCallback(() => {
+    if (organizeReturnTimerRef.current) {
+      clearTimeout(organizeReturnTimerRef.current);
+      organizeReturnTimerRef.current = null;
+    }
+    setOrganizeSaveToast(null);
     setResult(null);
     setCaptured(null);
     setCurrentDiscovery(null);
@@ -1610,8 +1687,15 @@ export default function Wilder() {
   }, []);
 
   const startScan = useCallback(
-    (origin, { albumId: targetAlbumId } = {}) => {
-      setScanMode("single");
+    (origin, { albumId: targetAlbumId, animalMode } = {}) => {
+      if (animalMode === "sound") {
+        setReturnScreen(origin);
+        setRescanDiscoveryId(null);
+        setScreen("animal-sound");
+        return;
+      }
+      const juniorsModes = ["animal", "traces"];
+      setScanMode(juniorsModes.includes(animalMode) ? animalMode : "single");
       setReturnScreen(origin);
       setRescanDiscoveryId(null);
       if (targetAlbumId) {
@@ -1742,6 +1826,41 @@ export default function Wilder() {
     setScreen("camera");
   }, [t, locale]);
 
+  const startRandoFromTrail = useCallback(
+    async (trail) => {
+      const location = await getCurrentLocation({ refresh: true });
+      const createdAt = new Date().toISOString();
+      const initialTrack = location
+        ? [{ latitude: location.latitude, longitude: location.longitude, timestamp: Date.now() }]
+        : [];
+      const albumName = trail?.name
+        ? t("themes.randos.trail_album_name", { name: trail.name })
+        : defaultAlbumName(t, locale);
+      const album = buildAlbumRecord({
+        name: albumName,
+        createdAt,
+        coverPhoto: null,
+        discoveryIds: [],
+        location,
+        theme: "randos",
+      });
+      if (initialTrack.length) album.gpsTrack = initialTrack;
+      if (trail?.id) {
+        album.suggestedTrailId = trail.id;
+        album.suggestedTrailName = trail.name;
+      }
+      const updated = [album, ...loadAlbums()];
+      saveAlbums(updated);
+      setAlbums(updated);
+      setRandoTrack(initialTrack);
+      setShowRandoMap(false);
+      setActiveRandoAlbumId(album.id);
+      setReturnScreen("randos");
+      setScreen("camera");
+    },
+    [t, locale]
+  );
+
   const analyze = useCallback(async (base64, imgSrc) => {
     setCaptured(imgSrc);
     setScreen("analyzing");
@@ -1790,6 +1909,15 @@ export default function Wilder() {
             rarete: data.rarete || prev.rarete || "commun",
             etat_sante: data.etat_sante || "",
             health: inferHealthFromEtatSante(data.etat_sante) || prev.health,
+            mauvaise_herbe: data.mauvaise_herbe ?? prev.mauvaise_herbe ?? null,
+            mauvaise_herbe_nuisible:
+              data.mauvaise_herbe_nuisible || prev.mauvaise_herbe_nuisible || "",
+            mauvaise_herbe_solution:
+              data.mauvaise_herbe_solution || prev.mauvaise_herbe_solution || "",
+            mauvaise_herbe_astuces:
+              data.mauvaise_herbe_astuces || prev.mauvaise_herbe_astuces || "",
+            mauvaise_herbe_prevention:
+              data.mauvaise_herbe_prevention || prev.mauvaise_herbe_prevention || "",
             soins_traitement: data.soins_traitement || prev.soins_traitement || "",
             guide_entretien: data.guide_entretien || prev.guide_entretien || "",
             conseils_expert: data.conseils_expert || prev.conseils_expert || "",
@@ -1829,6 +1957,11 @@ export default function Wilder() {
           rarete: data.rarete || "commun",
           etat_sante: data.etat_sante || "",
           health: inferHealthFromEtatSante(data.etat_sante),
+          mauvaise_herbe: data.mauvaise_herbe ?? null,
+          mauvaise_herbe_nuisible: data.mauvaise_herbe_nuisible || "",
+          mauvaise_herbe_solution: data.mauvaise_herbe_solution || "",
+          mauvaise_herbe_astuces: data.mauvaise_herbe_astuces || "",
+          mauvaise_herbe_prevention: data.mauvaise_herbe_prevention || "",
           soins_traitement: data.soins_traitement || "",
           guide_entretien: data.guide_entretien || "",
           conseils_expert: data.conseils_expert || "",
@@ -1850,15 +1983,11 @@ export default function Wilder() {
         };
         updated = [discovery, ...loadDiscoveries()];
       }
-      const saveResult = saveDiscoveries(updated);
+      const saveResult = persistDiscoveries(updated, discovery);
       if (!saveResult.ok) {
         console.warn("[Wilder] Sauvegarde localStorage échouée:", saveResult.error);
         if (saveResult.error === "QuotaExceededError") {
-          setErrorMsg(
-            lang === "fr"
-              ? "Mémoire pleine — supprimez d'anciennes découvertes ou libérez de l'espace"
-              : t("error.analyze")
-          );
+          setErrorMsg(t("error.quota_exceeded"));
         } else {
           setErrorMsg(t("error.analyze"));
         }
@@ -1868,6 +1997,7 @@ export default function Wilder() {
       setDiscoveries(updated);
       setCurrentDiscovery(discovery);
       setResult(data);
+      recordNatureActivity();
       const wasRescan = Boolean(rescanDiscoveryId);
       setRescanDiscoveryId(null);
       if (wasRescan) setSavedToAlbum(true);
@@ -1879,10 +2009,142 @@ export default function Wilder() {
       }
     } catch (e) {
       console.error("[Wilder] analyze:", e);
-      setErrorMsg("Erreur: " + e.message);
+      setErrorMsg(t("error.generic"));
       setScreen("error");
     }
   }, [t, checkNewBadges, lang, rescanDiscoveryId]);
+
+  const analyzeAnimal = useCallback(
+    async (mode, base64, imgSrc, { durationSec } = {}) => {
+      setCaptured(imgSrc);
+      setScreen("analyzing");
+      const context = getAnimalContext();
+      try {
+        const [res, location, photoStored] = await Promise.all([
+          fetch("/api/analyze-animal", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              image: base64,
+              mode,
+              lang,
+              durationSec,
+              season: context.season,
+            }),
+          }),
+          getCurrentLocation(),
+          compressDataUrl(imgSrc),
+        ]);
+
+        const { data, parseError } = await parseApiResponse(res);
+        if (parseError || !data) {
+          setErrorMsg(t("error.analyze"));
+          setScreen("error");
+          return;
+        }
+        if (!res.ok || data.erreur) {
+          setErrorMsg(data.erreur || t("error.analyze"));
+          setScreen("error");
+          return;
+        }
+
+        const now = new Date().toISOString();
+        const animalFields = buildAnimalDiscoveryFields(data);
+        let discovery;
+        let updated;
+
+        if (rescanDiscoveryId) {
+          const prev = loadDiscoveries().find((d) => d.id === rescanDiscoveryId);
+          if (prev) {
+            discovery = {
+              ...prev,
+              photo: photoStored,
+              nom: data.nom,
+              nom_latin: data.nom_latin || prev.nom_latin || "",
+              famille: data.famille || prev.famille || "",
+              type: data.type || prev.type || "animal",
+              description: data.description || prev.description || "",
+              identification_note: data.identification_note || prev.identification_note || "",
+              habitat: data.habitat || prev.habitat || "",
+              rarete: data.rarete || prev.rarete || "commun",
+              anecdotes: data.anecdotes || prev.anecdotes || "",
+              fun_fact: data.fun_fact || prev.fun_fact || "",
+              dangerosite: data.dangerosite || prev.dangerosite || "",
+              infos_utiles: data.infos_utiles || prev.infos_utiles || "",
+              comportement: data.comportement || prev.comportement || "",
+              alimentation: data.alimentation || prev.alimentation || "",
+              espece_protegee: data.espece_protegee ?? prev.espece_protegee ?? null,
+              region_saison: data.region_saison || prev.region_saison || "",
+              ...animalFields,
+              ...(location || {}),
+            };
+            updated = loadDiscoveries().map((d) => (d.id === rescanDiscoveryId ? discovery : d));
+          }
+        }
+
+        if (!discovery) {
+          discovery = {
+            id: generateId(),
+            photo: photoStored,
+            nom: data.nom,
+            nom_latin: data.nom_latin || "",
+            famille: data.famille || "",
+            type: data.type || "animal",
+            description: data.description || "",
+            identification_note: data.identification_note || "",
+            habitat: data.habitat || "",
+            rarete: data.rarete || "commun",
+            anecdotes: data.anecdotes || "",
+            fun_fact: data.fun_fact || "",
+            dangerosite: data.dangerosite || "",
+            infos_utiles: data.infos_utiles || "",
+            comportement: data.comportement || "",
+            alimentation: data.alimentation || "",
+            espece_protegee: data.espece_protegee ?? null,
+            region_saison: data.region_saison || "",
+            ...animalFields,
+            discoveredAt: now,
+            plantedAt: now,
+            lastScannedAt: now,
+            ...(location || {}),
+          };
+          updated = [discovery, ...loadDiscoveries()];
+        }
+
+        const saveResult = persistDiscoveries(updated, discovery);
+        if (!saveResult.ok) {
+          console.warn("[Wilder] Sauvegarde localStorage échouée:", saveResult.error);
+          setErrorMsg(
+            saveResult.error === "QuotaExceededError"
+              ? t("error.quota_exceeded")
+              : t("error.analyze")
+          );
+          setScreen("error");
+          return;
+        }
+
+        setDiscoveries(updated);
+        setCurrentDiscovery(discovery);
+        setResult(data);
+        recordNatureActivity();
+        recordDuoDiscovery(discovery.id);
+        const wasRescan = Boolean(rescanDiscoveryId);
+        setRescanDiscoveryId(null);
+        if (wasRescan) setSavedToAlbum(true);
+        setScreen("result");
+        if (checkNewBadges(updated)) {
+          playBadgeUnlockSound();
+        } else {
+          playDiscoverySound();
+        }
+      } catch (e) {
+        console.error("[Wilder] analyzeAnimal:", e);
+        setErrorMsg(t("error.generic"));
+        setScreen("error");
+      }
+    },
+    [t, checkNewBadges, lang, rescanDiscoveryId]
+  );
 
   const analyzeDailyCare = useCallback(
     async (base64, imgSrc) => {
@@ -1921,7 +2183,7 @@ export default function Wilder() {
         playDiscoverySound();
       } catch (e) {
         console.error("[Wilder] analyzeDailyCare:", e);
-        setErrorMsg("Erreur: " + e.message);
+        setErrorMsg(t("error.generic"));
         setScreen("error");
       }
     },
@@ -1935,9 +2197,13 @@ export default function Wilder() {
         analyzeDailyCare(base64, dataUrl);
         return;
       }
+      if (scanMode === "animal" || scanMode === "traces" || scanMode === "sound") {
+        analyzeAnimal(scanMode, base64, dataUrl);
+        return;
+      }
       analyze(base64, dataUrl);
     },
-    [analyze, analyzeDailyCare, scanMode]
+    [analyze, analyzeAnimal, analyzeDailyCare, scanMode]
   );
 
   const takePhoto = useCallback(() => {
@@ -1979,7 +2245,36 @@ export default function Wilder() {
     [handleCapturedImage]
   );
 
-  const addToAlbum = (albumId) => {
+  const scanAgainFromResult = useCallback(() => {
+    if (organizeReturnTimerRef.current) {
+      clearTimeout(organizeReturnTimerRef.current);
+      organizeReturnTimerRef.current = null;
+    }
+    setOrganizeSaveToast(null);
+    setResult(null);
+    setCaptured(null);
+    setSavedToAlbum(false);
+    setShowAlbumPicker(false);
+    setAlbumPickerStartTheme(null);
+    setOrganizeSaved({});
+    setScreen("camera");
+  }, []);
+
+  const confirmOrganizeSave = useCallback(
+    (destination) => {
+      if (organizeReturnTimerRef.current) {
+        clearTimeout(organizeReturnTimerRef.current);
+      }
+      setOrganizeSaveToast(t("discovery.saved_toast", { destination }));
+      organizeReturnTimerRef.current = setTimeout(() => {
+        organizeReturnTimerRef.current = null;
+        scanAgainFromResult();
+      }, 2000);
+    },
+    [t, scanAgainFromResult]
+  );
+
+  const addToAlbum = (albumId, { confirmReturn = false } = {}) => {
     if (!currentDiscovery) return;
     const allAlbums = loadAlbums();
     const idx = allAlbums.findIndex((a) => a.id === albumId);
@@ -2008,6 +2303,12 @@ export default function Wilder() {
     setSavedToAlbum(true);
     if (album?.theme) {
       setOrganizeSaved((prev) => ({ ...prev, [album.theme]: true }));
+    }
+    if (confirmReturn) {
+      const destination =
+        album?.name ||
+        (album?.theme ? t(`themes.${album.theme}.title`) : t("discovery.add_album"));
+      confirmOrganizeSave(destination);
     }
   };
 
@@ -2040,28 +2341,27 @@ export default function Wilder() {
         upsertPotagerPlantFromDiscovery(currentDiscovery, result);
         recordPotagerWatering();
         setOrganizeSaved((prev) => ({ ...prev, potager: true }));
+        confirmOrganizeSave(t("themes.potager.title"));
         return;
       }
       if (themeId === "randos" && activeRandoAlbumId) {
-        addToAlbum(activeRandoAlbumId);
-        setOrganizeSaved((prev) => ({ ...prev, randos: true }));
+        addToAlbum(activeRandoAlbumId, { confirmReturn: true });
         return;
       }
       setAlbumPickerStartTheme(themeId);
       setShowAlbumPicker(true);
     },
-    [currentDiscovery, result, activeRandoAlbumId, addToAlbum]
+    [currentDiscovery, result, activeRandoAlbumId, confirmOrganizeSave, t]
   );
 
-  const scanAgainFromResult = useCallback(() => {
-    setResult(null);
-    setCaptured(null);
-    setSavedToAlbum(false);
-    setShowAlbumPicker(false);
-    setAlbumPickerStartTheme(null);
-    setOrganizeSaved({});
-    setScreen("camera");
-  }, []);
+  useEffect(
+    () => () => {
+      if (organizeReturnTimerRef.current) {
+        clearTimeout(organizeReturnTimerRef.current);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     if (screen !== "result" || !activeRandoAlbumId || !currentDiscovery || savedToAlbum) return;
@@ -2110,6 +2410,7 @@ export default function Wilder() {
     setAlbumPickerStartTheme(null);
     setSavedToAlbum(true);
     setOrganizeSaved((prev) => ({ ...prev, [theme]: true }));
+    confirmOrganizeSave(albumName);
   };
 
   const createAlbumFromList = async (themeId, options = {}) => {
@@ -2261,8 +2562,18 @@ export default function Wilder() {
     <>
       <Confetti active={showConfetti} onDone={() => setShowConfetti(false)} />
       {newBadge && showConfetti && (
-        <BadgeUnlockToast badge={newBadge} t={t} onClose={() => setNewBadge(null)} />
+        <BadgeUnlockToast
+          badge={newBadge}
+          t={t}
+          onClose={() => setNewBadge(null)}
+          onViewTrophies={() => {
+            setNewBadge(null);
+            setShowConfetti(false);
+            setScreen("trophies");
+          }}
+        />
       )}
+      {organizeSaveToast ? <OrganizeSavedToast message={organizeSaveToast} /> : null}
     </>
   );
 
@@ -2296,7 +2607,12 @@ export default function Wilder() {
             </header>
 
             <div className="wilder-home-main stagger-2">
-              <div className="discovery-counter">
+              <button
+                type="button"
+                className="discovery-counter discovery-counter--link"
+                onClick={() => setScreen("stats")}
+                aria-label={t("home.stats")}
+              >
                 <span className="discovery-counter-num">{discoveries.length}</span>
                 <span>
                   {discoveries.length !== 1
@@ -2309,26 +2625,26 @@ export default function Wilder() {
                     {stats.rareCount !== 1 ? t("home.rare_plural") : t("home.rare")}
                   </span>
                 )}
+              </button>
+
+              <HomeDashboard
+                discoveries={discoveries}
+                t={t}
+                locale={locale}
+                onNavigate={navigateMain}
+                onStartScan={() => startScan("home")}
+                onOpenStats={() => setScreen("stats")}
+                onOpenTrophies={() => setScreen("trophies")}
+                onOpenDiscovery={openDiscoveryDetail}
+                onOpenScreen={setScreen}
+              />
+
+              <div className="home-footer-links">
+                <button type="button" className="home-about-link" onClick={() => setScreen("about")}>
+                  {t("home.about")}
+                </button>
+                <ThemeToggle theme={theme} onToggle={toggleTheme} t={t} />
               </div>
-
-              <button
-                type="button"
-                className="btn-scanner btn-scanner--hero"
-                onClick={() => startScan("home")}
-              >
-                <span className="btn-scanner-icon">
-                  <IconCamera size={32} color="white" />
-                </span>
-                {t("home.discover")}
-              </button>
-
-              <button
-                type="button"
-                className="home-about-link"
-                onClick={() => setScreen("about")}
-              >
-                {t("home.about")}
-              </button>
             </div>
 
             <div className="discovery-marquee stagger-2" aria-hidden="true">
@@ -2409,7 +2725,7 @@ export default function Wilder() {
 
     return (
       <>
-        <Head><title>Scanner — Wilder</title></Head>
+        <Head><title>{t("scanner.button")} — Wilder</title></Head>
         <div
           className="scanner-screen screen-enter-fast"
           onTouchStart={onPinchStart}
@@ -2478,7 +2794,11 @@ export default function Wilder() {
                   label={
                     scanMode === "daily-care"
                       ? t("themes.potager.daily_care_frame_hint")
-                      : t("scanner.frame_hint")
+                      : scanMode === "traces"
+                        ? t("themes.juniors.traces_frame_hint")
+                        : scanMode === "animal"
+                          ? t("themes.juniors.animal_frame_hint")
+                          : t("scanner.frame_hint")
                   }
                 />
               )}
@@ -2522,7 +2842,7 @@ export default function Wilder() {
                   className="capture-btn-wilder"
                   onClick={takePhoto}
                   disabled={!camReady}
-                  aria-label="Capturer"
+                  aria-label={t("scanner.button")}
                 >
                   <div className="capture-btn-inner" />
                 </button>
@@ -2578,10 +2898,30 @@ export default function Wilder() {
             t("themes.potager.daily_care_analyze_2"),
           ]
         : null;
+    const animalSteps =
+      scanMode === "animal"
+        ? [
+            t("themes.juniors.analyze_animal_0"),
+            t("themes.juniors.analyze_animal_1"),
+            t("themes.juniors.analyze_animal_2"),
+          ]
+        : scanMode === "traces"
+          ? [
+              t("themes.juniors.analyze_traces_0"),
+              t("themes.juniors.analyze_traces_1"),
+              t("themes.juniors.analyze_traces_2"),
+            ]
+          : scanMode === "sound"
+            ? [
+                t("themes.juniors.analyze_sound_0"),
+                t("themes.juniors.analyze_sound_1"),
+                t("themes.juniors.analyze_sound_2"),
+              ]
+            : null;
     return (
       <>
         <Head><title>Analyse… — Wilder</title></Head>
-        <AnalyzeLoadingScreen captured={captured} t={t} customSteps={dailyCareSteps} />
+        <AnalyzeLoadingScreen captured={captured} t={t} customSteps={animalSteps || dailyCareSteps} />
       </>
     );
   }
@@ -2599,13 +2939,18 @@ export default function Wilder() {
           <PotagerDailyCareResult
             session={dailyCareSession}
             t={t}
+            lang={lang}
+            journalRefreshKey={careJournalRefreshKey}
             onBack={() => {
               clearScanSession();
               setScreen("potager");
             }}
             onToggleTask={(taskId) => {
               const updated = toggleDailyCareTask(taskId);
-              if (updated) setDailyCareSession(updated);
+              if (updated) {
+                setDailyCareSession(updated);
+                setCareJournalRefreshKey((k) => k + 1);
+              }
             }}
             onNewPhoto={() => {
               clearScanSession();
@@ -2621,22 +2966,34 @@ export default function Wilder() {
   if (screen === "error") {
     return (
       <>
-        <Head><title>Non reconnu — Wilder</title></Head>
-        <div
-          className="analyze-screen screen-enter"
-          style={{ textAlign: "center", padding: "2rem" }}
-        >
-          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🌿</div>
-          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.75rem", marginBottom: "0.75rem" }}>
-            {t("error.title")}
-          </h2>
-          <p style={{ color: "var(--text-muted)", maxWidth: 300, lineHeight: 1.6, marginBottom: "1.5rem" }}>
-            {errorMsg}
-          </p>
+        <Head><title>{t("error.title")} — Wilder</title></Head>
+        <div className="error-screen screen-enter">
+          <div className="error-screen-emoji" aria-hidden="true">🌿</div>
+          <h2 className="error-screen-title">{t("error.title")}</h2>
+          <p className="error-screen-msg">{errorMsg}</p>
           <button type="button" className="btn-primary" onClick={() => setScreen("camera")}>
             {t("error.retry")}
           </button>
         </div>
+      </>
+    );
+  }
+
+  /* ── ANIMAL SOUND RECORDER ── */
+  if (screen === "animal-sound") {
+    return (
+      <>
+        <Head>
+          <title>{t("themes.juniors.sound_title")} — Wilder</title>
+        </Head>
+        <AnimalAudioRecorder
+          t={t}
+          onBack={() => setScreen(returnScreen === "album-detail" ? "album-detail" : "juniors")}
+          onSubmit={({ base64, spectrogram, durationSec }) => {
+            setScanMode("sound");
+            analyzeAnimal("sound", base64, spectrogram, { durationSec });
+          }}
+        />
       </>
     );
   }
@@ -2659,7 +3016,7 @@ export default function Wilder() {
             saved={false}
             onBack={() => {
               setJardinPlantDiscovery(null);
-              setScreen("jardin");
+              setScreen(returnScreen === "album-detail" ? "album-detail" : "jardin");
             }}
           />
         </div>
@@ -2685,7 +3042,7 @@ export default function Wilder() {
             saved={false}
             onBack={() => {
               setAnimalDiscovery(null);
-              setScreen("juniors");
+              setScreen(returnScreen === "album-detail" ? "album-detail" : "juniors");
             }}
           />
         </div>
@@ -2703,7 +3060,7 @@ export default function Wilder() {
     const resultAlbumPicker = showAlbumPicker ? (
       <ThemeAlbumPickerModal
         albums={albums}
-        onSelect={addToAlbum}
+        onSelect={(albumId) => addToAlbum(albumId, { confirmReturn: true })}
         onCreate={createAlbum}
         onClose={() => {
           setShowAlbumPicker(false);
@@ -2955,7 +3312,7 @@ export default function Wilder() {
                 setCreatingSubAlbum(false);
                 setScreen(backScreen);
               }}
-              aria-label="Retour"
+              aria-label={t("discovery.back")}
             >
               <IconBack size={20} color="white" />
             </button>
@@ -3031,6 +3388,19 @@ export default function Wilder() {
 
           {isJardinAlbum ? (
             <div className="jardin-detail-wrap">
+              {items.length > 0 && (() => {
+                const score = computeEspaceVertScore(selectedAlbum, discoveries);
+                const tier = getScoreTier(score);
+                return (
+                  <div className={`jardin-score-banner jardin-score-banner--${tier}`}>
+                    <span className="jardin-score-label">{t("themes.jardin.score_label")}</span>
+                    <span className="jardin-score-value">
+                      {t("themes.jardin.score_out_of", { score })}
+                    </span>
+                    <span className="jardin-score-tier">{t(`themes.jardin.score_tier_${tier}`)}</span>
+                  </div>
+                );
+              })()}
               <button
                 type="button"
                 className="jardin-scan-cta"
@@ -3227,8 +3597,17 @@ export default function Wilder() {
         <Head>
           <title>{t("stats.title")} — Wilder</title>
         </Head>
-        <div className="stats-screen screen-enter">
+        <div className="stats-screen screen-enter with-bottom-nav">
           <div className="albums-header">
+            <button
+              type="button"
+              className="btn-secondary"
+              style={{ padding: "0.5rem 0.75rem" }}
+              onClick={goHome}
+              aria-label={t("discovery.back")}
+            >
+              <IconBack size={18} />
+            </button>
             <h1 className="albums-title">{t("stats.title")}</h1>
             <ThemeToggle theme={theme} onToggle={toggleTheme} t={t} />
           </div>
@@ -3342,15 +3721,13 @@ export default function Wilder() {
               </button>
             </div>
           )}
+          <div className="stats-actions">
+            <button type="button" className="btn-secondary" onClick={() => setScreen("trophies")}>
+              🏆 {t("home.trophies")}
+            </button>
+          </div>
         </div>
-        <button
-          type="button"
-          className="btn-secondary stats-back-home"
-          style={{ margin: "1rem 1.25rem 2rem" }}
-          onClick={goHome}
-        >
-          <IconBack size={16} /> {t("discovery.home")}
-        </button>
+        <BottomNav active="home" onNavigate={navigateMain} t={t} />
       </>
     );
   }
@@ -3362,7 +3739,7 @@ export default function Wilder() {
         <Head>
           <title>{t("trophies.title")} — Wilder</title>
         </Head>
-        <div className="trophies-screen screen-enter">
+        <div className="trophies-screen screen-enter with-bottom-nav">
           <div className="albums-header">
             <button
               type="button"
@@ -3374,6 +3751,15 @@ export default function Wilder() {
               <IconBack size={18} />
             </button>
             <h1 className="albums-title">{t("trophies.title")}</h1>
+            <button
+              type="button"
+              className="btn-secondary"
+              style={{ padding: "0.5rem 0.75rem" }}
+              onClick={() => setScreen("stats")}
+              aria-label={t("home.stats")}
+            >
+              📊
+            </button>
           </div>
           <div className="trophies-grid">
             {BADGE_DEFS.map((badge) => {
@@ -3403,6 +3789,109 @@ export default function Wilder() {
             })}
           </div>
         </div>
+        <BottomNav active="home" onNavigate={navigateMain} t={t} />
+      </>
+    );
+  }
+
+  /* ── WRAPPED ── */
+  if (screen === "wrapped") {
+    const wrappedYear = getWrappedYear();
+    return (
+      <>
+        <Head>
+          <title>{t("wrapped.title", { year: wrappedYear })} — Wilder</title>
+        </Head>
+        <div className="wrapped-screen screen-enter with-bottom-nav">
+          <div className="albums-header">
+            <button type="button" className="btn-secondary" style={{ padding: "0.5rem 0.75rem" }} onClick={goHome} aria-label={t("discovery.back")}>
+              <IconBack size={18} />
+            </button>
+            <h1 className="albums-title">{t("wrapped.title", { year: wrappedYear })}</h1>
+          </div>
+          <WilderWrapped discoveries={discoveries} albums={albums} t={t} year={wrappedYear} />
+        </div>
+        <BottomNav active="home" onNavigate={navigateMain} t={t} />
+      </>
+    );
+  }
+
+  /* ── WORLD MAP ── */
+  if (screen === "world-map") {
+    return (
+      <>
+        <Head>
+          <title>{t("world_map.title")} — Wilder</title>
+        </Head>
+        <div className="world-map-screen screen-enter with-bottom-nav">
+          <div className="albums-header">
+            <button type="button" className="btn-secondary" style={{ padding: "0.5rem 0.75rem" }} onClick={goHome} aria-label={t("discovery.back")}>
+              <IconBack size={18} />
+            </button>
+            <h1 className="albums-title">{t("world_map.title")}</h1>
+          </div>
+          <p className="world-map-subtitle">{t("world_map.subtitle")}</p>
+          <WorldDiscoveriesMap
+            discoveries={discoveries}
+            t={t}
+            onSelectDiscovery={(d) => openDiscoveryDetail(d.id)}
+          />
+        </div>
+        <BottomNav active="home" onNavigate={navigateMain} t={t} />
+      </>
+    );
+  }
+
+  /* ── POKÉDEX ── */
+  if (screen === "pokedex") {
+    return (
+      <>
+        <Head>
+          <title>{t("pokedex.title")} — Wilder</title>
+        </Head>
+        <div className="pokedex-screen screen-enter with-bottom-nav">
+          <div className="albums-header">
+            <button type="button" className="btn-secondary" style={{ padding: "0.5rem 0.75rem" }} onClick={goHome} aria-label={t("discovery.back")}>
+              <IconBack size={18} />
+            </button>
+            <h1 className="albums-title">{t("pokedex.title")}</h1>
+          </div>
+          <p className="pokedex-subtitle">{t("pokedex.subtitle")}</p>
+          <PokedexCollection
+            discoveries={discoveries}
+            t={t}
+            locale={locale}
+            onOpenDiscovery={(entry) => {
+              const full = discoveries.find((d) => d.nom === entry.nom && d.type === entry.type);
+              if (full) openDiscoveryDetail(full.id);
+            }}
+          />
+        </div>
+        <BottomNav active="home" onNavigate={navigateMain} t={t} />
+      </>
+    );
+  }
+
+  /* ── CLOUD ACCOUNT ── */
+  if (screen === "account") {
+    return (
+      <>
+        <Head>
+          <title>{t("cloud.title")} — Wilder</title>
+        </Head>
+        <div className="account-screen screen-enter with-bottom-nav">
+          <div className="albums-header">
+            <button type="button" className="btn-secondary" style={{ padding: "0.5rem 0.75rem" }} onClick={goHome} aria-label={t("discovery.back")}>
+              <IconBack size={18} />
+            </button>
+            <h1 className="albums-title">{t("cloud.title")}</h1>
+          </div>
+          <CloudAccountCard
+            t={t}
+            onDiscoveriesSynced={(items) => setDiscoveries(items)}
+          />
+        </div>
+        <BottomNav active="home" onNavigate={navigateMain} t={t} />
       </>
     );
   }
@@ -3454,6 +3943,22 @@ export default function Wilder() {
             <div className="about-section">
               <h3>{t("about.mission_title")}</h3>
               <p>{t("about.mission")}</p>
+            </div>
+            <div className="about-section about-lang-section">
+              <h3>{t("settings.language")}</h3>
+              <p className="about-lang-hint">{t("settings.language_hint")}</p>
+              <div className="about-lang-grid">
+                {SUPPORTED_LANGS.map((code) => (
+                  <button
+                    key={code}
+                    type="button"
+                    className={`about-lang-btn${lang === code ? " active" : ""}`}
+                    onClick={() => setLang(code)}
+                  >
+                    {LANG_LABELS[code] || code}
+                  </button>
+                ))}
+              </div>
             </div>
             <a
               className="btn-primary about-rate-btn"
@@ -3508,9 +4013,12 @@ export default function Wilder() {
         theme={theme}
         onToggleTheme={toggleTheme}
         navigateMain={navigateMain}
-        onStartScan={() => startScan(screen)}
+        onStartScan={(animalMode) =>
+          startScan(screen, typeof animalMode === "string" ? { animalMode } : {})
+        }
         onStartDailyCare={startDailyCareScan}
         onStartRando={startRando}
+        onStartRandoFromTrail={startRandoFromTrail}
         activeRandoAlbumId={activeRandoAlbumId}
         randoTrack={randoTrack}
         randoDiscoveries={randoDiscoveries}

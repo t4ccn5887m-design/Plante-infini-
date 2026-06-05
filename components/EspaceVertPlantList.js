@@ -1,107 +1,66 @@
-import {
-  formatPlantDate,
-  getPlantHealth,
-  getPlantLastWateredAt,
-  getPlantPlantedAt,
-} from "@/lib/espaceVertPlant";
+import { getPlantHealth } from "@/lib/espaceVertPlant";
+import SwipeToDelete from "@/components/SwipeToDelete";
 
-function HealthIndicator({ health, t }) {
-  const label =
-    health === "critical"
-      ? t("themes.potager.health_critical")
-      : health === "warning"
-        ? t("themes.potager.health_warning")
-        : t("themes.potager.health_good");
+function HealthDot({ health, t }) {
+  const label = t(`themes.jardin.health_status_${health}`);
   return (
     <span
-      className={`ev-plant-health ev-plant-health--${health}`}
-      title={label}
+      className={`jardin-list-health jardin-list-health--${health}`}
       aria-label={label}
+      title={label}
     />
   );
 }
 
-function EspaceVertPlantCard({ discovery, locale, t, onScan, onOpen }) {
+function EspaceVertPlantCard({ discovery, t, onOpen, onDelete, swipeLabels }) {
   const health = getPlantHealth(discovery);
-  const planted = formatPlantDate(getPlantPlantedAt(discovery), locale);
-  const wateredAt = getPlantLastWateredAt(discovery);
-  const watered = wateredAt
-    ? formatPlantDate(wateredAt, locale)
-    : t("themes.jardin.watering_unknown");
+
+  const card = (
+    <button type="button" className="jardin-plant-row" onClick={() => onOpen?.(discovery)}>
+      <div className="jardin-plant-row-photo-wrap">
+        {discovery.photo ? (
+          <img src={discovery.photo} alt="" className="jardin-plant-row-photo" />
+        ) : (
+          <span className="jardin-plant-row-photo jardin-plant-row-photo--empty" aria-hidden="true">
+            🌳
+          </span>
+        )}
+      </div>
+      <span className="jardin-plant-row-name">{discovery.nom}</span>
+      <HealthDot health={health} t={t} />
+    </button>
+  );
+
+  if (!onDelete) return card;
 
   return (
-    <article className="ev-plant-card">
-      <button
-        type="button"
-        className="ev-plant-card-main"
-        onClick={() => onOpen?.(discovery)}
-      >
-        <div className="ev-plant-photo-wrap">
-          {discovery.photo ? (
-            <img src={discovery.photo} alt="" className="ev-plant-photo" />
-          ) : (
-            <div className="ev-plant-photo ev-plant-photo--placeholder" aria-hidden="true">
-              🌱
-            </div>
-          )}
-          <HealthIndicator health={health} t={t} />
-        </div>
-        <div className="ev-plant-body">
-          <h3 className="ev-plant-name">{discovery.nom}</h3>
-          {discovery.nom_latin && (
-            <p className="ev-plant-latin">{discovery.nom_latin}</p>
-          )}
-          <dl className="ev-plant-meta">
-            <div className="ev-plant-meta-row">
-              <dt>{t("themes.jardin.plant_planted")}</dt>
-              <dd>{planted || "—"}</dd>
-            </div>
-            <div className="ev-plant-meta-row">
-              <dt>{t("themes.jardin.plant_last_watered")}</dt>
-              <dd>{watered}</dd>
-            </div>
-          </dl>
-        </div>
-      </button>
-      <button
-        type="button"
-        className="ev-plant-scan-btn"
-        onClick={() => onScan(discovery)}
-      >
-        {t("albums.scan")}
-      </button>
-    </article>
+    <SwipeToDelete onDelete={() => onDelete(discovery.id)} {...swipeLabels}>
+      {card}
+    </SwipeToDelete>
   );
 }
 
 export default function EspaceVertPlantList({
   plants,
-  locale,
   t,
-  onScanPlant,
   onOpenDiscovery,
+  onDeleteDiscovery,
+  swipeLabels,
 }) {
-  if (plants.length === 0) {
-    return (
-      <div className="ev-plant-empty albums-empty">
-        <span className="ev-empty-icon" aria-hidden="true">
-          🌱
-        </span>
-        <p>{t("themes.jardin.plants_empty")}</p>
-      </div>
-    );
+  if (!plants?.length) {
+    return <p className="jardin-plant-list-empty">{t("themes.jardin.empty_hint")}</p>;
   }
 
   return (
-    <ul className="ev-plant-list" aria-label={t("themes.jardin.plants_list")}>
+    <ul className="jardin-plant-list-inner" aria-label={t("themes.jardin.plants_list")}>
       {plants.map((d) => (
         <li key={d.id}>
           <EspaceVertPlantCard
             discovery={d}
-            locale={locale}
             t={t}
-            onScan={onScanPlant}
             onOpen={onOpenDiscovery}
+            onDelete={onDeleteDiscovery}
+            swipeLabels={swipeLabels}
           />
         </li>
       ))}
