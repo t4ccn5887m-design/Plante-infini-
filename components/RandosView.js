@@ -1,13 +1,16 @@
 import ThemeAlbumsList from "@/components/ThemeAlbumsList";
+import RandosNearbyTrails from "@/components/RandosNearbyTrails";
 
 export default function RandosView({
   albums,
   discoveries,
   locale,
   t,
+  lang,
   themeEmoji,
   onStartScan,
   onStartRando,
+  onStartRandoFromTrail,
   onOpenAlbum,
   onDeleteAlbum,
   activeRandoAlbumId,
@@ -71,6 +74,13 @@ export default function RandosView({
           </div>
         </div>
       )}
+
+      <RandosNearbyTrails
+        t={t}
+        lang={lang}
+        onStartTrail={onStartRandoFromTrail}
+        disabled={!!activeRandoAlbumId}
+      />
 
       <ThemeAlbumsList
         themeId="randos"
