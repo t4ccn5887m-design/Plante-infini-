@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { createT, getRarityLabel, getTypeLabel } from "@/lib/i18n";
-import { shareDiscovery } from "@/lib/share";
+import { shareDiscovery, SHARE_FORMATS } from "@/lib/share";
 
 export const ORGANIZE_DESTINATIONS = [
   { id: "potager", emoji: "🥕", titleKey: "themes.potager.title" },
@@ -51,17 +51,19 @@ export default function DiscoveryResultActions({
   organizeHint,
 }) {
   const [organizeOpen, setOrganizeOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [sharing, setSharing] = useState(false);
 
   const tr = useMemo(() => createT(lang), [lang]);
   const typeLbl = (type) => getTypeLabel(tr, type);
   const rarityLbl = (r) => getRarityLabel(tr, r);
 
-  const handleShare = async () => {
+  const handleShare = async (format = "feed") => {
     if (!discovery) return;
     setSharing(true);
+    setShareOpen(false);
     try {
-      await shareDiscovery(discovery, t, typeLbl, rarityLbl);
+      await shareDiscovery(discovery, t, typeLbl, rarityLbl, format);
     } catch {
       /* user cancelled */
     } finally {
@@ -101,13 +103,42 @@ export default function DiscoveryResultActions({
         <button
           type="button"
           className="discovery-result-btn discovery-result-btn--share"
-          onClick={handleShare}
+          onClick={() => setShareOpen(true)}
           disabled={sharing || !discovery}
         >
           <span aria-hidden="true">📤</span>
           <span>{sharing ? t("discovery.share_generating") : t("discovery.share")}</span>
         </button>
       </div>
+
+      {shareOpen && (
+        <div className="modal-overlay" onClick={() => setShareOpen(false)}>
+          <div className="modal-sheet share-format-sheet" onClick={(e) => e.stopPropagation()}>
+            <h2>{t("discovery.share_choose_format")}</h2>
+            <div className="share-format-grid">
+              {Object.entries(SHARE_FORMATS).map(([id, spec]) => (
+                <button
+                  key={id}
+                  type="button"
+                  className={`share-format-btn share-format-btn--${id}`}
+                  onClick={() => handleShare(id)}
+                  disabled={sharing}
+                >
+                  <span className="share-format-preview" aria-hidden="true" />
+                  <span>{t(spec.labelKey)}</span>
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="btn-secondary discovery-result-actions-cancel"
+              onClick={() => setShareOpen(false)}
+            >
+              {t("albums.cancel")}
+            </button>
+          </div>
+        </div>
+      )}
 
       <OrganizeDestinationModal
         open={organizeOpen}

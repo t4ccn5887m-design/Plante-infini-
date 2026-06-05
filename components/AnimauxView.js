@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import {
   ThemeInterior,
   ThemeHeroCard,
@@ -7,7 +8,13 @@ import {
 } from "@/components/ThemeInterior";
 import { IconCamera, IconFootprints, IconAlbums, IconAnimaux } from "@/components/ThemeIcons";
 
+function scrollToRef(ref) {
+  ref?.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 export default function AnimauxView({ onStartScan, children, t }) {
+  const albumsRef = useRef(null);
+
   return (
     <ThemeInterior themeId="juniors">
       <ThemeHeroCard
@@ -30,11 +37,20 @@ export default function AnimauxView({ onStartScan, children, t }) {
           delay={1}
         />
         <ThemeGridCard
+          label={t("themes.juniors.mode_sound_cta")}
+          hint={t("themes.juniors.mode_sound_hint")}
+          icon={IconAnimaux}
+          onClick={() => onStartScan?.("sound")}
+          variant="sage"
+          delay={2}
+        />
+        <ThemeGridCard
           label={t("albums.title")}
           hint={t("themes.juniors.empty_examples")}
           icon={IconAlbums}
+          onClick={() => scrollToRef(albumsRef)}
           variant="beige"
-          delay={2}
+          delay={3}
         />
         <ThemeGridCard
           label={t("themes.juniors.mode_animal_cta")}
@@ -42,18 +58,13 @@ export default function AnimauxView({ onStartScan, children, t }) {
           icon={IconCamera}
           onClick={() => onStartScan?.("animal")}
           variant="sage"
-          delay={3}
-        />
-        <ThemeGridCard
-          label={t("themes.juniors.discovery_title")}
-          hint={t("themes.juniors.discovery_sub")}
-          icon={IconAnimaux}
-          variant="sage"
           delay={4}
         />
       </ThemeGrid>
 
-      <ThemeSection title={t("albums.title")}>{children}</ThemeSection>
+      <ThemeSection title={t("albums.title")}>
+        <div ref={albumsRef}>{children}</div>
+      </ThemeSection>
     </ThemeInterior>
   );
 }

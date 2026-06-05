@@ -1,11 +1,15 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { recordPotagerVisit } from "@/lib/potagerEngagement";
 import { checkPotagerReminders } from "@/lib/potagerNotifications";
 import { loadDailyCare, toggleDailyCareTask } from "@/lib/potagerDailyCare";
+import { loadPotagerPlants } from "@/lib/potagerStorage";
 import PotagerWeatherLine from "@/components/PotagerWeatherLine";
+import PotagerWeatherCard from "@/components/PotagerWeatherCard";
 import PotagerCareJournal from "@/components/PotagerCareJournal";
 import PotagerDailyCareTasks from "@/components/PotagerDailyCareTasks";
 import PotagerIdeasCard from "@/components/PotagerIdeasCard";
+import PotagerRecipesCard from "@/components/PotagerRecipesCard";
+import PotagerCommunityCard from "@/components/PotagerCommunityCard";
 import NurseriesNearbyCard from "@/components/NurseriesNearbyCard";
 import {
   ThemeInterior,
@@ -16,9 +20,30 @@ import {
 } from "@/components/ThemeInterior";
 import { IconCamera, IconScan, IconJournal, IconLightbulb, IconSprout } from "@/components/ThemeIcons";
 
+function scrollToRef(ref) {
+  ref?.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 export default function PotagerView({ onStartScan, onStartDailyCare, children, t, lang }) {
   const [dailyCare, setDailyCare] = useState(null);
   const [journalRefreshKey, setJournalRefreshKey] = useState(0);
+  const [harvestPlants, setHarvestPlants] = useState([]);
+
+  const journalRef = useRef(null);
+  const ideasRef = useRef(null);
+  const nurseriesRef = useRef(null);
+  const recipesRef = useRef(null);
+  const communityRef = useRef(null);
+  const weatherRef = useRef(null);
+  const albumsRef = useRef(null);
+
+  const refreshHarvestPlants = useCallback(() => {
+    setHarvestPlants(
+      loadPotagerPlants()
+        .filter((p) => p.readyToHarvest)
+        .map((p) => ({ id: p.id, name: p.name, emoji: p.emoji }))
+    );
+  }, []);
 
   const refreshDailyCare = useCallback(() => {
     setDailyCare(loadDailyCare());
@@ -27,7 +52,8 @@ export default function PotagerView({ onStartScan, onStartDailyCare, children, t
   useEffect(() => {
     recordPotagerVisit();
     refreshDailyCare();
-  }, [refreshDailyCare]);
+    refreshHarvestPlants();
+  }, [refreshDailyCare, refreshHarvestPlants]);
 
   useEffect(() => {
     if (lang) checkPotagerReminders(lang);
@@ -40,6 +66,11 @@ export default function PotagerView({ onStartScan, onStartDailyCare, children, t
       setJournalRefreshKey((k) => k + 1);
     }
   }, []);
+
+  const gridLabel = useCallback(
+    (key) => t(key).replace(/^[^\w\s]+\s*/, ""),
+    [t]
+  );
 
   return (
     <ThemeInterior themeId="potager">
@@ -72,35 +103,55 @@ export default function PotagerView({ onStartScan, onStartDailyCare, children, t
           delay={1}
         />
         <ThemeGridCard
-          label={t("themes.potager.care_journal_title").replace(/^[^\w\s]+\s*/, "")}
+          label={gridLabel("themes.potager.care_journal_title")}
           hint={t("themes.potager.daily_care_subtitle")}
           icon={IconJournal}
+          onClick={() => scrollToRef(journalRef)}
           variant="beige"
           delay={2}
         />
         <ThemeGridCard
-          label={t("themes.potager.ideas_title").replace(/^[^\w\s]+\s*/, "")}
+          label={gridLabel("themes.potager.ideas_title")}
           hint={t("themes.potager.ideas_subtitle")}
           icon={IconLightbulb}
+          onClick={() => scrollToRef(ideasRef)}
           variant="terracotta"
           delay={3}
         />
         <ThemeGridCard
-          label={t("themes.potager.nurseries_title").replace(/^[^\w\s]+\s*/, "")}
+          label={gridLabel("themes.potager.nurseries_title")}
           hint={t("themes.potager.nurseries_subtitle")}
           icon={IconSprout}
+          onClick={() => scrollToRef(nurseriesRef)}
           variant="sage"
           delay={4}
         />
       </ThemeGrid>
 
-      <PotagerCareJournal t={t} lang={lang} refreshKey={journalRefreshKey} />
+      <div ref={journalRef}>
+        <PotagerCareJournal t={t} lang={lang} refreshKey={journalRefreshKey} />
+      </div>
 
-      <ThemeSection title={t("albums.title")}>{children}</ThemeSection>
+      <ThemeSection title={t("albums.title")}>
+        <div ref={albumsRef}>{children}</div>
+      </ThemeSection>
 
-      <PotagerIdeasCard t={t} lang={lang} />
-      <NurseriesNearbyCard t={t} i18nPrefix="themes.potager" />
-      <PotagerWeatherLine t={t} />
+      <div ref={ideasRef}>
+        <PotagerIdeasCard t={t} lang={lang} />
+      </div>
+      <div ref={recipesRef}>
+        <PotagerRecipesCard harvestPlants={harvestPlants} t={t} lang={lang} />
+      </div>
+      <div ref={communityRef}>
+        <PotagerCommunityCard harvestPlants={harvestPlants} t={t} />
+      </div>
+      <div ref={nurseriesRef}>
+        <NurseriesNearbyCard t={t} i18nPrefix="themes.potager" />
+      </div>
+      <div ref={weatherRef}>
+        <PotagerWeatherCard t={t} />
+        <PotagerWeatherLine t={t} />
+      </div>
     </ThemeInterior>
   );
 }

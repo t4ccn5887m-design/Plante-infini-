@@ -18,7 +18,12 @@ export default function OnboardingScreen({ t, onComplete }) {
     setLoading(true);
     setError("");
     try {
-      await requestAllPermissions();
+      const { camera } = await requestAllPermissions();
+      if (!camera.ok) {
+        setError(t("onboarding.error_camera"));
+        setLoading(false);
+        return;
+      }
       onComplete();
     } catch {
       setError(t("onboarding.error_generic"));
@@ -46,6 +51,10 @@ export default function OnboardingScreen({ t, onComplete }) {
           <li>
             <span className="onboarding-feature-icon"><IconCamera size={22} /></span>
             <span>{t("onboarding.camera_detail")}</span>
+          </li>
+          <li>
+            <span className="onboarding-feature-icon" aria-hidden="true">📍</span>
+            <span>{t("onboarding.location_detail")}</span>
           </li>
         </ul>
 

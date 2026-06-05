@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import ThemeAlbumsList from "@/components/ThemeAlbumsList";
 import RandosNearbyTrails from "@/components/RandosNearbyTrails";
 import {
@@ -8,6 +9,10 @@ import {
   ThemeSection,
 } from "@/components/ThemeInterior";
 import { IconScan, IconHike, IconMapPin, IconAlbums } from "@/components/ThemeIcons";
+
+function scrollToRef(ref) {
+  ref?.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
 export default function RandosView({
   albums,
@@ -34,6 +39,9 @@ export default function RandosView({
   swipeLabels,
   defaultAlbumName,
 }) {
+  const trailsRef = useRef(null);
+  const albumsRef = useRef(null);
+
   const formatDistance = (km) => {
     if (km == null) return null;
     if (km < 1) {
@@ -96,6 +104,7 @@ export default function RandosView({
           label={t("themes.randos.nearby_title")}
           hint={t("themes.randos.nearby_subtitle")}
           icon={IconMapPin}
+          onClick={() => scrollToRef(trailsRef)}
           variant="sage"
           delay={2}
         />
@@ -103,6 +112,7 @@ export default function RandosView({
           label={t("themes.randos.past_section")}
           hint={t("themes.randos.subtitle")}
           icon={IconAlbums}
+          onClick={() => scrollToRef(albumsRef)}
           variant="beige"
           delay={3}
         />
@@ -110,37 +120,42 @@ export default function RandosView({
           label={t("themes.randos.journal_title")}
           hint={t("themes.randos.journal_discoveries_title")}
           icon={IconAlbums}
+          onClick={() => scrollToRef(albumsRef)}
           variant="sage"
           delay={4}
         />
       </ThemeGrid>
 
-      <RandosNearbyTrails
-        t={t}
-        lang={lang}
-        onStartTrail={onStartRandoFromTrail}
-        disabled={!!activeRandoAlbumId}
-      />
+      <div ref={trailsRef}>
+        <RandosNearbyTrails
+          t={t}
+          lang={lang}
+          onStartTrail={onStartRandoFromTrail}
+          disabled={!!activeRandoAlbumId}
+        />
+      </div>
 
       <ThemeSection title={t("themes.randos.past_section")}>
-        <ThemeAlbumsList
-          themeId="randos"
-          themeEmoji={themeEmoji}
-          albums={albums}
-          discoveries={discoveries}
-          locale={locale}
-          t={t}
-          creatingAlbum={creatingAlbum}
-          setCreatingAlbum={setCreatingAlbum}
-          newAlbumName={newAlbumName}
-          setNewAlbumName={setNewAlbumName}
-          onCreateAlbum={onCreateAlbum}
-          onOpenAlbum={onOpenAlbum}
-          onDeleteAlbum={onDeleteAlbum}
-          swipeLabels={swipeLabels}
-          defaultAlbumName={defaultAlbumName}
-          excludeAlbumIds={activeRandoAlbumId ? [activeRandoAlbumId] : []}
-        />
+        <div ref={albumsRef}>
+          <ThemeAlbumsList
+            themeId="randos"
+            themeEmoji={themeEmoji}
+            albums={albums}
+            discoveries={discoveries}
+            locale={locale}
+            t={t}
+            creatingAlbum={creatingAlbum}
+            setCreatingAlbum={setCreatingAlbum}
+            newAlbumName={newAlbumName}
+            setNewAlbumName={setNewAlbumName}
+            onCreateAlbum={onCreateAlbum}
+            onOpenAlbum={onOpenAlbum}
+            onDeleteAlbum={onDeleteAlbum}
+            swipeLabels={swipeLabels}
+            defaultAlbumName={defaultAlbumName}
+            excludeAlbumIds={activeRandoAlbumId ? [activeRandoAlbumId] : []}
+          />
+        </div>
       </ThemeSection>
 
       {!activeRandoAlbumId && (
