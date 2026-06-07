@@ -2,7 +2,9 @@ import Document, { Html, Head, Main, NextScript } from "next/document";
 
 const OG_TITLE = "Wilder";
 const OG_DESCRIPTION = "Explorez la nature autour de vous";
-const OG_IMAGE_PATH = "/icon-512.png";
+const PWA_ICON_VERSION = "20250605";
+const v = (path) => `${path}?v=${PWA_ICON_VERSION}`;
+const OG_IMAGE_PATH = v("/icon-512.png");
 
 class WilderDocument extends Document {
   static async getInitialProps(ctx) {
@@ -42,12 +44,14 @@ class WilderDocument extends Document {
           <meta name="twitter:title" content={OG_TITLE} />
           <meta name="twitter:description" content={OG_DESCRIPTION} />
           <meta name="twitter:image" content={ogImage} />
-          <link rel="manifest" href="/manifest.json" />
-          <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-          <link rel="apple-touch-icon" href="/icon-192.png" />
-          <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
-          <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
-          <link rel="shortcut icon" href="/favicon.ico" />
+          <link rel="manifest" href={v("/manifest.json")} />
+          <link rel="icon" href={v("/icon.svg")} type="image/svg+xml" />
+          <link rel="apple-touch-icon" sizes="180x180" href={v("/icon-180.png")} />
+          <link rel="apple-touch-icon" sizes="192x192" href={v("/icon-192.png")} />
+          <link rel="icon" type="image/png" sizes="32x32" href={v("/favicon-32.png")} />
+          <link rel="icon" type="image/png" sizes="192x192" href={v("/icon-192.png")} />
+          <link rel="icon" type="image/png" sizes="512x512" href={v("/icon-512.png")} />
+          <link rel="shortcut icon" href={v("/favicon.ico")} />
         </Head>
         <body>
           <Main />
