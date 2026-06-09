@@ -48,6 +48,7 @@ import {
 import { supabase } from "@/lib/supabase";
 import FloatingScannerButton from "@/components/FloatingScannerButton";
 import PotagerView from "@/components/PotagerView";
+import HerbierView from "@/components/HerbierView";
 import AnimalAudioRecorder from "@/components/AnimalAudioRecorder";
 import WilderWrapped from "@/components/WilderWrapped";
 import WorldDiscoveriesMap from "@/components/WorldDiscoveriesMap";
@@ -1124,16 +1125,10 @@ function ThemeAlbumsScreen({
   themeId,
   albums,
   discoveries,
-  albumsViewMode,
-  setAlbumsViewMode,
   creatingAlbum,
   setCreatingAlbum,
   newAlbumName,
   setNewAlbumName,
-  mapSheetAlbum,
-  setMapSheetAlbum,
-  mapLoadedCount,
-  setMapLoadedCount,
   setAlbums,
   setSelectedAlbumId,
   setReturnScreen,
@@ -1147,21 +1142,6 @@ function ThemeAlbumsScreen({
   onToggleTheme,
   navigateMain,
   onStartScan,
-  onStartDailyCare,
-  onOpenJardinPlant,
-  onOpenAnimal,
-  onStartRando,
-  onStartRandoFromTrail,
-  activeRandoAlbumId,
-  randoTrack,
-  randoDiscoveries,
-  onResumeRando,
-  onEndRando,
-  randoJournalAlbumId,
-  onOpenRandoJournal,
-  onCloseRandoJournal,
-  randoCurrentPosition,
-  onDeleteDiscovery,
   onDeleteAlbum,
   swipeLabels,
   defaultAlbumNameLabel,
@@ -1173,8 +1153,8 @@ function ThemeAlbumsScreen({
   };
 
   const albumsListProps = {
-    themeId,
-    themeEmoji: THEME_META[themeId].emoji,
+    themeId: "juniors",
+    themeEmoji: THEME_META.juniors.emoji,
     albums,
     discoveries,
     locale,
@@ -1189,15 +1169,8 @@ function ThemeAlbumsScreen({
     swipeLabels,
     defaultAlbumName: defaultAlbumNameLabel,
   };
-  const isPotager = themeId === "potager";
-  const isJuniors = themeId === "juniors";
-  const isJardin = themeId === "jardin";
-  const isRandos = themeId === "randos";
-  const isMapView = albumsViewMode === "map";
-  const activeRandoDistance = activeRandoAlbumId
-    ? computeTrackDistanceKm(randoTrack)
-    : null;
-  const showMapToggle = !isRandos && !isJardin;
+
+  const openDiscovery = (d) => openDiscoveryDetail(d, themeId);
 
   return (
     <>
@@ -1207,198 +1180,42 @@ function ThemeAlbumsScreen({
         </title>
       </Head>
       <div
-        className={`albums-screen screen-enter with-bottom-nav${isPotager || isJardin || isJuniors || isRandos ? "" : " with-scanner-fab"} theme-screen theme-screen--${themeId}${isJuniors ? " theme-screen--juniors" : ""}${isMapView ? " albums-screen--map" : ""}`}
+        className={`albums-screen screen-enter with-bottom-nav theme-screen theme-screen--${themeId}${themeId === "juniors" ? " theme-screen--juniors" : ""}`}
       >
         <div className="albums-header theme-premium-header theme-premium-header--compact">
           <ThemeToggle theme={theme} onToggle={onToggleTheme} t={t} />
         </div>
 
-        {isPotager ? (
-          <PotagerView
-            onStartScan={onStartScan}
-            onStartDailyCare={onStartDailyCare}
-            t={t}
-            lang={lang}
-          >
-            <ThemeAlbumsList {...albumsListProps} />
-          </PotagerView>
-        ) : isJardin ? (
-          <EspacesVertsView onStartScan={onStartScan} t={t}>
-            <ThemeAlbumsList {...albumsListProps} />
-          </EspacesVertsView>
-        ) : isJuniors ? (
-          <>
-            <AnimauxView onStartScan={onStartScan} t={t}>
-              <ThemeAlbumsList {...albumsListProps} />
-            </AnimauxView>
-            <DuoModePanel
-              t={t}
-              discoveries={discoveries}
-              onOpenDiscovery={(d) => openDiscoveryDetail(d.id)}
-            />
-          </>
-        ) : isRandos ? (
-          <>
-            {activeRandoAlbumId && (
-              <RandoNatureAlerts
-                position={randoCurrentPosition}
-                active={Boolean(activeRandoAlbumId)}
-                t={t}
-                className="rando-nature-alerts--randos"
-              />
-            )}
-            {activeRandoAlbumId && isMapView ? (
-              <div className="randos-live-map">
-                <p className="albums-map-stats">
-                  {randoTrack.length === 0
-                    ? t("themes.randos.gps_waiting")
-                    : activeRandoDistance != null
-                      ? t("themes.randos.distance_km", { km: activeRandoDistance })
-                      : t("albums.map_loading")}
-                </p>
-                <RandoMap
-                  track={randoTrack}
-                  discoveries={randoDiscoveries}
-                  live
-                  theme={theme}
-                  className="rando-map-container--screen"
-                />
-                <button
-                  type="button"
-                  className="randos-map-back-btn"
-                  onClick={() => {
-                    setAlbumsViewMode("list");
-                    setMapSheetAlbum(null);
-                  }}
-                >
-                  ← {t("themes.randos.back_to_list")}
-                </button>
-              </div>
-            ) : (
-              <RandosView
-                albums={albums}
-                discoveries={discoveries}
-                locale={locale}
-                t={t}
-                lang={lang}
-                themeEmoji={THEME_META.randos.emoji}
-                onStartScan={onStartScan}
-                onStartRando={onStartRando}
-                onStartRandoFromTrail={onStartRandoFromTrail}
-                activeRandoAlbumId={activeRandoAlbumId}
-                distanceKm={activeRandoDistance}
-                onResumeRando={onResumeRando}
-                onEndRando={onEndRando}
-                onShowMap={() => {
-                  setAlbumsViewMode("map");
-                  setMapSheetAlbum(null);
-                }}
-                onOpenAlbum={openThemeAlbum}
-                onDeleteAlbum={onDeleteAlbum}
-                creatingAlbum={creatingAlbum}
-                setCreatingAlbum={setCreatingAlbum}
-                newAlbumName={newAlbumName}
-                setNewAlbumName={setNewAlbumName}
-                onCreateAlbum={createAlbumFromList}
-                swipeLabels={swipeLabels}
-                defaultAlbumName={defaultAlbumNameLabel}
-              />
-            )}
-          </>
-        ) : (
-          <>
-                {showMapToggle && (
-              <div className="albums-view-toggle" role="tablist" aria-label={t(`themes.${themeId}.title`)}>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={!isMapView}
-                  className={`albums-view-btn${!isMapView ? " active" : ""}`}
-                  onClick={() => {
-                    setAlbumsViewMode("list");
-                    setMapSheetAlbum(null);
-                  }}
-                >
-                  <IconList size={18} />
-                  {t("albums.view_list")}
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={isMapView}
-                  className={`albums-view-btn${isMapView ? " active" : ""}`}
-                  onClick={() => setAlbumsViewMode("map")}
-                >
-                  <IconMap size={18} />
-                  {t("albums.view_map")}
-                </button>
-              </div>
-            )}
-
-            {isMapView ? (
-              <>
-                <p className="albums-map-stats">
-                  {mapLoadedCount == null
-                    ? t("albums.map_loading")
-                    : mapLoadedCount === 0
-                      ? t("albums.map_empty")
-                      : t("albums.map_loaded_count", { count: mapLoadedCount })}
-                </p>
-                <AlbumsMapView
-                  key={`${themeId}-${albumsViewMode}`}
-                  themeFilter={themeId}
-                  onLoadedCount={setMapLoadedCount}
-                  onAlbumsSynced={setAlbums}
-                  onSelectAlbum={setMapSheetAlbum}
-                  t={t}
-                />
-                {mapSheetAlbum && (
-                  <AlbumMapSheet
-                    album={mapSheetAlbum}
-                    discoveries={discoveries}
-                    onClose={() => setMapSheetAlbum(null)}
-                    onOpenAlbum={(albumId) => {
-                      setMapSheetAlbum(null);
-                      setReturnScreen(themeId);
-                      setSelectedAlbumId(albumId);
-                      setScreen("album-detail");
-                    }}
-                    t={t}
-                    locale={locale}
-                  />
-                )}
-              </>
-            ) : (
-              <ThemeAlbumsList {...albumsListProps} />
-            )}
-          </>
-        )}
-      </div>
-      {!isRandos && !isPotager && !isJardin && !isJuniors && (
-        <FloatingScannerButton onClick={onStartScan} t={t} />
-      )}
-      <BottomNav active={themeId} onNavigate={navigateMain} t={t} />
-      {isRandos && randoJournalAlbumId && (() => {
-        const journalAlbum = albums.find((a) => a.id === randoJournalAlbumId);
-        if (!journalAlbum) return null;
-        return (
-          <RandoJournal
-            album={journalAlbum}
+        {themeId === "herbier" ? (
+          <HerbierView
             discoveries={discoveries}
             locale={locale}
             t={t}
-            onClose={onCloseRandoJournal}
-            onDeleteDiscovery={onDeleteDiscovery}
-            swipeLabels={swipeLabels}
+            onOpenDiscovery={openDiscovery}
           />
-        );
-      })()}
+        ) : themeId === "potager" ? (
+          <PotagerView
+            onStartScan={onStartScan}
+            albums={albums}
+            discoveries={discoveries}
+            locale={locale}
+            t={t}
+            lang={lang}
+            onOpenDiscovery={openDiscovery}
+          />
+        ) : (
+          <AnimauxView onStartScan={onStartScan} t={t}>
+            <ThemeAlbumsList {...albumsListProps} />
+          </AnimauxView>
+        )}
+      </div>
+      <BottomNav active={themeId} onNavigate={navigateMain} t={t} />
     </>
   );
 }
 
 export default function Wilder() {
-  const [screen, setScreen] = useState("home");
+  const [screen, setScreen] = useState("herbier");
   const [captured, setCaptured] = useState(null);
   const [result, setResult] = useState(null);
   const [currentDiscovery, setCurrentDiscovery] = useState(null);
@@ -1424,7 +1241,7 @@ export default function Wilder() {
   const [needsAuthWelcome, setNeedsAuthWelcome] = useState(false);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [viewingDiscovery, setViewingDiscovery] = useState(null);
-  const [returnScreen, setReturnScreen] = useState("home");
+  const [returnScreen, setReturnScreen] = useState("herbier");
   const [creatingSubAlbum, setCreatingSubAlbum] = useState(false);
   const [newSubAlbumName, setNewSubAlbumName] = useState("");
   const [lang, setLangState] = useState(() => detectLang());
@@ -1595,8 +1412,8 @@ export default function Wilder() {
     if (!isOnboardingComplete()) {
       setNeedsOnboarding(true);
     } else {
-      setReturnScreen("home");
-      setScreen("home");
+      setReturnScreen("herbier");
+      setScreen("herbier");
     }
   }, []);
 
@@ -1908,7 +1725,7 @@ export default function Wilder() {
   const resultBackLabel = useCallback(() => {
     if (activeRandoAlbumId) return t("themes.randos.resume");
     if (returnScreen === "album-detail") return t("scanner.back");
-    if (returnScreen === "home") return t("discovery.home");
+    if (returnScreen === "herbier") return t("discovery.home");
     if (returnScreen === "potager") return t("themes.potager.back_to_garden");
     if (returnScreen === "randos") return t("themes.randos.back_to_list");
     if (returnScreen === "jardin") return t("themes.jardin.back_to_garden");
@@ -1939,13 +1756,13 @@ export default function Wilder() {
     clearScanSession();
     setErrorMsg("");
     setShowRandoMap(false);
-    setScreen("home");
+    setScreen("herbier");
   };
 
   const leaveResult = useCallback(() => {
     const back = resolveScanBackScreen(returnScreen);
     clearScanSession();
-    if (back === "home") {
+    if (back === "herbier") {
       setErrorMsg("");
       setShowRandoMap(false);
     }
@@ -1953,13 +1770,9 @@ export default function Wilder() {
   }, [returnScreen, clearScanSession]);
 
   const navigateMain = (target) => {
-    if (target === "home") goHome();
-    else {
-      setReturnScreen(target);
-      if (target === "randos") setAlbumsViewMode("list");
-      else setAlbumsViewMode("list");
-      setScreen(target);
-    }
+    setReturnScreen(target);
+    setAlbumsViewMode("list");
+    setScreen(target);
   };
 
   const startRando = useCallback(async () => {
@@ -2644,7 +2457,7 @@ export default function Wilder() {
       setAlbums(updated);
       if (selectedAlbumId === albumId) {
         setSelectedAlbumId(null);
-        setScreen(isThemeScreen(returnScreen) ? returnScreen : "home");
+        setScreen(isThemeScreen(returnScreen) ? returnScreen : "herbier");
       }
       if (activeRandoAlbumId === albumId) {
         setActiveRandoAlbumId(null);
@@ -2669,7 +2482,7 @@ export default function Wilder() {
       setAlbums(result.albums);
       if (viewingDiscovery?.id === discoveryId) {
         setViewingDiscovery(null);
-        setScreen(isThemeScreen(returnScreen) ? returnScreen : "home");
+        setScreen(isThemeScreen(returnScreen) ? returnScreen : "herbier");
       }
       if (currentDiscovery?.id === discoveryId) {
         setCurrentDiscovery(null);
@@ -2743,82 +2556,10 @@ export default function Wilder() {
           t={t}
           onComplete={() => {
             setNeedsOnboarding(false);
-            setReturnScreen("home");
-            startScan("home");
+            setReturnScreen("herbier");
+            startScan("herbier");
           }}
         />
-      </>
-    );
-  }
-
-  /* ── HOME ── */
-  if (screen === "home") {
-    return (
-      <>
-        <Head>
-          <title>{pageTitle}</title>
-          <meta name="description" content={slogan} />
-        </Head>
-        <div className="wilder-home screen-enter">
-          <div className="wilder-home-bg" aria-hidden="true" />
-          <div className="wilder-home-aurora" aria-hidden="true" />
-          <div className="wilder-home-overlay" aria-hidden="true" />
-          <FallingLeaves />
-          <HomeFireflies />
-          <div className="wilder-home-content">
-            <header className="wilder-home-header stagger-1">
-              <ThemeToggle
-                theme={theme}
-                onToggle={toggleTheme}
-                t={t}
-                className="theme-toggle--home"
-              />
-              <IconWilderLogo size={52} />
-              <h1 className="wilder-logo-title">Wilder</h1>
-              <p className="wilder-logo-slogan">{slogan}</p>
-              <HomeGreeting t={t} />
-            </header>
-
-            <div className="wilder-home-main stagger-2">
-              <HomeScanHero
-                t={t}
-                discoveries={discoveries}
-                onStartScan={(opts) => startScan("home", opts || {})}
-                isNewUser={discoveries.length === 0}
-              />
-
-              <HomeDashboard
-                discoveries={discoveries}
-                stats={stats}
-                t={t}
-                locale={locale}
-                onNavigate={navigateMain}
-                onStartScan={(opts) => startScan("home", opts || {})}
-                onOpenStats={() => setScreen("stats")}
-                onOpenTrophies={() => setScreen("trophies")}
-                onOpenDiscovery={(d) => openDiscoveryDetail(d, "home")}
-                onOpenScreen={setScreen}
-              />
-
-              <div className="home-footer-links">
-                <button type="button" className="home-about-link" onClick={() => setScreen("about")}>
-                  {t("home.about")}
-                </button>
-              </div>
-            </div>
-
-            <div className="discovery-marquee stagger-3" aria-hidden="true">
-              <div className="discovery-marquee-track">
-                <span>
-                  {marquee}
-                  {marquee}
-                </span>
-              </div>
-            </div>
-          </div>
-          <BottomNav active="home" onNavigate={navigateMain} t={t} />
-          {confettiOverlay}
-        </div>
       </>
     );
   }
@@ -3900,7 +3641,7 @@ export default function Wilder() {
                 type="button"
                 className="btn-primary"
                 style={{ marginTop: "1.5rem" }}
-                onClick={() => startScan("home")}
+                onClick={() => startScan("herbier")}
               >
                 {t("home.discover")}
               </button>
@@ -3912,7 +3653,7 @@ export default function Wilder() {
             </button>
           </div>
         </div>
-        <BottomNav active="home" onNavigate={navigateMain} t={t} />
+        <BottomNav active="herbier" onNavigate={navigateMain} t={t} />
       </>
     );
   }
@@ -3974,7 +3715,7 @@ export default function Wilder() {
             })}
           </div>
         </div>
-        <BottomNav active="home" onNavigate={navigateMain} t={t} />
+        <BottomNav active="herbier" onNavigate={navigateMain} t={t} />
       </>
     );
   }
@@ -3996,7 +3737,7 @@ export default function Wilder() {
           </div>
           <WilderWrapped discoveries={discoveries} albums={albums} t={t} year={wrappedYear} />
         </div>
-        <BottomNav active="home" onNavigate={navigateMain} t={t} />
+        <BottomNav active="herbier" onNavigate={navigateMain} t={t} />
       </>
     );
   }
@@ -4022,7 +3763,7 @@ export default function Wilder() {
             onSelectDiscovery={(d) => openDiscoveryDetail(d.id)}
           />
         </div>
-        <BottomNav active="home" onNavigate={navigateMain} t={t} />
+        <BottomNav active="herbier" onNavigate={navigateMain} t={t} />
       </>
     );
   }
@@ -4052,7 +3793,7 @@ export default function Wilder() {
             }}
           />
         </div>
-        <BottomNav active="home" onNavigate={navigateMain} t={t} />
+        <BottomNav active="herbier" onNavigate={navigateMain} t={t} />
       </>
     );
   }
@@ -4076,7 +3817,7 @@ export default function Wilder() {
             onDiscoveriesSynced={(items) => setDiscoveries(items)}
           />
         </div>
-        <BottomNav active="home" onNavigate={navigateMain} t={t} />
+        <BottomNav active="herbier" onNavigate={navigateMain} t={t} />
       </>
     );
   }
@@ -4166,26 +3907,10 @@ export default function Wilder() {
         themeId={screen}
         albums={albums}
         discoveries={discoveries}
-        albumsViewMode={albumsViewMode}
-        setAlbumsViewMode={setAlbumsViewMode}
-        onOpenJardinPlant={(plant) => {
-          setJardinPlantDiscovery(plant);
-          setReturnScreen("jardin");
-          setScreen("jardin-plant");
-        }}
-        onOpenAnimal={(animal) => {
-          setAnimalDiscovery(animal);
-          setReturnScreen("juniors");
-          setScreen("animal-detail");
-        }}
         creatingAlbum={creatingAlbum}
         setCreatingAlbum={setCreatingAlbum}
         newAlbumName={newAlbumName}
         setNewAlbumName={setNewAlbumName}
-        mapSheetAlbum={mapSheetAlbum}
-        setMapSheetAlbum={setMapSheetAlbum}
-        mapLoadedCount={mapLoadedCount}
-        setMapLoadedCount={setMapLoadedCount}
         setAlbums={setAlbums}
         setSelectedAlbumId={setSelectedAlbumId}
         setReturnScreen={setReturnScreen}
@@ -4201,19 +3926,6 @@ export default function Wilder() {
         onStartScan={(animalMode) =>
           startScan(screen, typeof animalMode === "string" ? { animalMode } : {})
         }
-        onStartDailyCare={startDailyCareScan}
-        onStartRando={startRando}
-        onStartRandoFromTrail={startRandoFromTrail}
-        activeRandoAlbumId={activeRandoAlbumId}
-        randoTrack={randoTrack}
-        randoDiscoveries={randoDiscoveries}
-        onResumeRando={resumeRando}
-        onEndRando={endRando}
-        randoJournalAlbumId={randoJournalAlbumId}
-        onOpenRandoJournal={setRandoJournalAlbumId}
-        onCloseRandoJournal={() => setRandoJournalAlbumId(null)}
-        randoCurrentPosition={randoCurrentPosition}
-        onDeleteDiscovery={handleDeleteDiscovery}
         onDeleteAlbum={handleDeleteAlbum}
         swipeLabels={swipeAlbumDeleteLabels}
         defaultAlbumNameLabel={defaultAlbumNameLabel}
