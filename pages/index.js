@@ -31,6 +31,21 @@ import { shareDiscovery } from "@/lib/share";
 import { computeStats } from "@/lib/stats";
 import { isHeritageType } from "@/lib/categories";
 import OnboardingScreen from "@/components/OnboardingScreen";
+import AuthWelcomeScreen from "@/components/AuthWelcomeScreen";
+import {
+  completeAuthWelcome,
+  isAuthWelcomeComplete,
+  shouldShowAuthWelcome,
+  shouldSkipAuthWelcomeForSession,
+} from "@/lib/authWelcome";
+import {
+  bootstrapCloudSync,
+  completeAuthSession,
+  flushPendingSync,
+  getCloudSession,
+  isCloudAvailable,
+} from "@/lib/cloudSync";
+import { supabase } from "@/lib/supabase";
 import FloatingScannerButton from "@/components/FloatingScannerButton";
 import PotagerView from "@/components/PotagerView";
 import AnimalAudioRecorder from "@/components/AnimalAudioRecorder";
@@ -100,7 +115,6 @@ import {
   saveDiscoveries,
 } from "@/lib/discoveriesStorage";
 import { persistDiscoveries } from "@/lib/persistDiscovery";
-import { bootstrapCloudSync, flushPendingSync } from "@/lib/cloudSync";
 import { removeDiscoveryById, removePotagerPlantById } from "@/lib/removeDiscovery";
 import { removeAlbumById } from "@/lib/removeAlbum";
 import { getAlbumDisplayName, getFirstDiscoveryPhoto, getAlbumPhotos } from "@/lib/albumUtils";
@@ -1402,12 +1416,8 @@ export default function Wilder() {
   const [camError, setCamError] = useState("");
   const [camLoading, setCamLoading] = useState(false);
   const [camZoom, setCamZoom] = useState(1);
-  const [needsOnboarding, setNeedsOnboarding] = useState(() => {
-    if (typeof window === "undefined") return false;
-    if (isOnboardingComplete()) return false;
-    if (loadDiscoveries().length > 0) return false;
-    return true;
-  });
+  const [needsAuthWelcome, setNeedsAuthWelcome] = useState(false);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [viewingDiscovery, setViewingDiscovery] = useState(null);
   const [returnScreen, setReturnScreen] = useState("home");
   const [creatingSubAlbum, setCreatingSubAlbum] = useState(false);
@@ -1573,6 +1583,87 @@ export default function Wilder() {
     setCamReady(false);
   }, []);
 
+  const handleAuthComplete = useCallback((result) => {
+    completeAuthWelcome();
+    if (result?.discoveries) setDiscoveries(result.discoveries);
+    setNeedsAuthWelcome(false);
+    if (!isOnboardingComplete()) {
+      setNeedsOnboarding(true);
+    } else {
+      setReturnScreen("home");
+      setScreen("home");
+    }
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const initAuthGate = async () => {
+      const items = loadDiscoveries();
+      if (shouldShowAuthWelcome(items.length > 0)) {
+        if (isCloudAvailable() && supabase) {
+          const skip = await shouldSkipAuthWelcomeForSession(() => getCloudSession());
+          if (cancelled) return;
+          if (skip) {
+            setNeedsAuthWelcome(false);
+            if (!isOnboardingComplete() && items.length === 0) {
+              setNeedsOnboarding(true);
+            }
+            return;
+          }
+        }
+        setNeedsAuthWelcome(true);
+        return;
+      }
+
+      if (isOnboardingComplete()) {
+        setNeedsOnboarding(false);
+      } else if (items.length > 0) {
+        completeOnboarding();
+        if (!loadStoredLocation()) {
+          requestLocationPermission().catch(() => {});
+        }
+        setNeedsOnboarding(false);
+      } else {
+        setNeedsOnboarding(true);
+      }
+    };
+
+    initAuthGate();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isCloudAvailable() || !supabase || !needsAuthWelcome) return undefined;
+
+    const finishOAuth = async () => {
+      const session = await getCloudSession();
+      if (session?.user && !session.user.is_anonymous) {
+        const result = await completeAuthSession();
+        if (result.ok) handleAuthComplete(result);
+      }
+    };
+    finishOAuth();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (
+        event === "SIGNED_IN" &&
+        session?.user &&
+        !session.user.is_anonymous &&
+        needsAuthWelcome
+      ) {
+        const result = await completeAuthSession();
+        if (result.ok) handleAuthComplete(result);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [needsAuthWelcome, handleAuthComplete]);
+
   useEffect(() => {
     if (isOnboardingComplete()) {
       setNeedsOnboarding(false);
@@ -1587,8 +1678,10 @@ export default function Wilder() {
       setNeedsOnboarding(false);
       return;
     }
-    setNeedsOnboarding(true);
-  }, []);
+    if (!needsAuthWelcome && isAuthWelcomeComplete()) {
+      setNeedsOnboarding(true);
+    }
+  }, [needsAuthWelcome]);
 
   useEffect(() => {
     const hw = hardwareZoomRef.current;
@@ -1603,6 +1696,8 @@ export default function Wilder() {
   }, [camZoom, camReady]);
 
   useEffect(() => {
+    if (needsAuthWelcome) return;
+
     const items = loadDiscoveries();
     setDiscoveries(items);
     setAlbums(loadAlbums());
@@ -1618,7 +1713,7 @@ export default function Wilder() {
     const onFirstTouch = () => warmUpSounds();
     window.addEventListener("pointerdown", onFirstTouch, { once: true });
     return () => window.removeEventListener("pointerdown", onFirstTouch);
-  }, []);
+  }, [needsAuthWelcome]);
 
   useEffect(() => {
     const onVisible = () => {
@@ -2619,6 +2714,18 @@ export default function Wilder() {
       {organizeSaveToast ? <OrganizeSavedToast message={organizeSaveToast} /> : null}
     </>
   );
+
+  if (needsAuthWelcome) {
+    return (
+      <>
+        <Head>
+          <title>Wilder</title>
+          <meta name="description" content={slogan} />
+        </Head>
+        <AuthWelcomeScreen t={t} slogan={slogan} onComplete={handleAuthComplete} />
+      </>
+    );
+  }
 
   if (needsOnboarding) {
     return (
