@@ -996,7 +996,12 @@ function DiscoveryBody({ data, discovery, showNewBadge, t, lang, onShare, showIn
 
       <AnimalSoundQuiz data={data} t={t} />
 
-      <DiscoveryAnalysisSections data={data} t={t} />
+      <DiscoveryAnalysisSections
+        data={data}
+        t={t}
+        lang={lang}
+        discoveryId={discovery?.id}
+      />
 
       {discovery && <LocationCard discovery={discovery} t={t} />}
 

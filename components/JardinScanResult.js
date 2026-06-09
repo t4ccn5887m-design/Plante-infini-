@@ -48,7 +48,19 @@ export default function JardinScanResult({
           <p className="jardin-scan-latin">{result.nom_latin}</p>
         )}
 
-        <DiscoveryAnalysisSections data={result} t={t} />
+        <DiscoveryAnalysisSections
+          data={{
+            ...result,
+            tronc_diametre_cm: discovery?.tronc_diametre_cm ?? result.tronc_diametre_cm,
+            age_precis_tronc: discovery?.age_precis_tronc ?? result.age_precis_tronc,
+            age_precis_coefficient:
+              discovery?.age_precis_coefficient ?? result.age_precis_coefficient,
+            age_precis_note: discovery?.age_precis_note ?? result.age_precis_note,
+          }}
+          t={t}
+          lang={lang}
+          discoveryId={discovery?.id}
+        />
 
         <p className={`jardin-scan-health jardin-scan-health--${healthClass}`}>
           {t(`themes.jardin.health_status_${health}`)}

@@ -1296,6 +1296,96 @@ video {
   word-break: break-word;
 }
 
+.tree-trunk-age {
+  background: var(--bg-card);
+  border: 1px solid rgba(224, 122, 58, 0.35);
+  border-radius: 16px;
+  padding: 1.15rem 1.25rem;
+  margin-bottom: 0.85rem;
+  backdrop-filter: blur(8px);
+}
+
+.tree-trunk-age-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sunset-light);
+  margin-bottom: 0.45rem;
+}
+
+.tree-trunk-age-hint {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin-bottom: 0.85rem;
+}
+
+.tree-trunk-age-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tree-trunk-age-input {
+  flex: 1 1 5rem;
+  min-width: 4.5rem;
+  max-width: 7rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(15, 36, 25, 0.35);
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.tree-trunk-age-input:focus {
+  outline: none;
+  border-color: rgba(224, 122, 58, 0.65);
+}
+
+.tree-trunk-age-unit {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.tree-trunk-age-btn {
+  flex: 1 1 auto;
+  padding: 0.7rem 1rem;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.tree-trunk-age-error {
+  margin-top: 0.75rem;
+  font-size: 0.82rem;
+  color: #ffb4bc;
+}
+
+.tree-trunk-age-result {
+  margin-top: 0.85rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: rgba(61, 122, 92, 0.18);
+  border: 1px solid rgba(61, 122, 92, 0.35);
+}
+
+.tree-trunk-age-result-main {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.55;
+  color: var(--text-primary);
+}
+
+.tree-trunk-age-result-note {
+  margin-top: 0.45rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
 /* ── Animal sound quiz ── */
 
 .animal-sound-quiz {
