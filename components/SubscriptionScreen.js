@@ -1,18 +1,30 @@
 import { useState } from "react";
-import { activatePremium } from "@/lib/freemium";
+import {
+  completePremiumActivation,
+  recordPaymentSuccess,
+} from "@/lib/freemium";
 import PremiumAuthStep from "@/components/PremiumAuthStep";
 
-export default function SubscriptionScreen({ t, scanCount, onSubscribed, onClose, forced = false }) {
-  const [step, setStep] = useState("plans");
+export default function SubscriptionScreen({
+  t,
+  scanCount,
+  onSubscribed,
+  onClose,
+  forced = false,
+  initialStep = "plans",
+}) {
+  const [step, setStep] = useState(initialStep);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const authRequired = step === "auth";
 
   const handleSelectPlan = (plan) => {
-    activatePremium(plan);
+    recordPaymentSuccess(plan);
     setSelectedPlan(plan);
     setStep("auth");
   };
 
   const handleAuthComplete = () => {
+    completePremiumActivation();
     onSubscribed?.(selectedPlan);
   };
 
@@ -61,11 +73,11 @@ export default function SubscriptionScreen({ t, scanCount, onSubscribed, onClose
             )}
           </>
         ) : (
-          <PremiumAuthStep
-            t={t}
-            onComplete={handleAuthComplete}
-            onSkip={handleAuthComplete}
-          />
+          <PremiumAuthStep t={t} onComplete={handleAuthComplete} />
+        )}
+
+        {authRequired && (
+          <p className="paywall-auth-required">{t("freemium.auth_required")}</p>
         )}
 
         {forced && step === "plans" && (

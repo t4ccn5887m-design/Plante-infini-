@@ -3499,6 +3499,14 @@ video {
   color: rgba(245, 242, 235, 0.65);
 }
 
+.paywall-auth-required {
+  margin: 1.15rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: rgba(245, 242, 235, 0.72);
+  text-align: center;
+}
+
 .premium-auth-step {
   text-align: left;
 }

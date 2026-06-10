@@ -6,7 +6,7 @@ import {
   syncDiscoveriesToCloud,
 } from "@/lib/cloudSync";
 
-export default function PremiumAuthStep({ t, onComplete, onSkip }) {
+export default function PremiumAuthStep({ t, onComplete }) {
   const [mode, setMode] = useState("signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -114,10 +114,6 @@ export default function PremiumAuthStep({ t, onComplete, onSkip }) {
           {error}
         </p>
       )}
-
-      <button type="button" className="premium-auth-skip" onClick={onSkip} disabled={loading}>
-        {t("freemium.auth_skip")}
-      </button>
     </div>
   );
 }
