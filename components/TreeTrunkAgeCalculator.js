@@ -11,7 +11,7 @@ async function parseApiResponse(res) {
   }
 }
 
-export default function TreeTrunkAgeCalculator({ data, t, lang = "fr", discoveryId }) {
+export default function TreeTrunkAgeCalculator({ data, t, lang = "fr", discoveryId, embedded = false }) {
   const [diameter, setDiameter] = useState(
     () => (data?.tronc_diametre_cm != null ? String(data.tronc_diametre_cm) : "")
   );
@@ -88,9 +88,9 @@ export default function TreeTrunkAgeCalculator({ data, t, lang = "fr", discovery
     }
   };
 
-  return (
-    <div className="tree-trunk-age">
-      <div className="tree-trunk-age-title">{t("tree_age.title")}</div>
+  const content = (
+    <>
+      {!embedded && <div className="tree-trunk-age-title">{t("tree_age.title")}</div>}
       <p className="tree-trunk-age-hint">{t("tree_age.hint")}</p>
 
       <div className="tree-trunk-age-row">
@@ -134,6 +134,12 @@ export default function TreeTrunkAgeCalculator({ data, t, lang = "fr", discovery
           {result.note && <p className="tree-trunk-age-result-note">{result.note}</p>}
         </div>
       )}
+    </>
+  );
+
+  return (
+    <div className={`tree-trunk-age${embedded ? " tree-trunk-age--embedded" : ""}`}>
+      {content}
     </div>
   );
 }

@@ -1,6 +1,6 @@
-import { Fragment } from "react";
-import TreeTrunkAgeCalculator from "@/components/TreeTrunkAgeCalculator";
 import { isTreeLikeAnalysis } from "@/lib/treeAge";
+import TreeTrunkAgeCalculator from "@/components/TreeTrunkAgeCalculator";
+import Accordion, { AccordionItem } from "@/components/Accordion";
 
 function textValue(value) {
   if (value == null || value === "") return null;
@@ -8,14 +8,21 @@ function textValue(value) {
   return s || null;
 }
 
-function ResultSection({ title, text }) {
+/** Première phrase courte pour le résumé visible sans scroll. */
+export function extractSummarySentence(text) {
+  const s = textValue(text);
+  if (!s) return null;
+
+  const sentenceMatch = s.match(/^(.+?[.!?…](?:\s|$))/u);
+  if (sentenceMatch) return sentenceMatch[1].trim();
+
+  if (s.length <= 140) return s;
+  return `${s.slice(0, 137).trim()}…`;
+}
+
+function SectionText({ text }) {
   if (!text) return null;
-  return (
-    <div className="result-card">
-      <div className="result-card-title">{title}</div>
-      <p className="result-card-text">{text}</p>
-    </div>
-  );
+  return <p className="result-card-text">{text}</p>;
 }
 
 /** Ordered analysis blocks for display (non-empty fields only). */
@@ -27,7 +34,11 @@ export function getAnalysisSections(data, t) {
   else if (data.espece_protegee === false) protectedSpecies = t("discovery.protected_no");
 
   return [
-    { key: "description", title: t("discovery.description"), text: textValue(data.description) },
+    {
+      key: "description",
+      title: t("discovery.description_full"),
+      text: textValue(data.description),
+    },
     {
       key: "identification_note",
       title: t("discovery.identification_note"),
@@ -121,6 +132,9 @@ export function discoveryToAnalysisData(discovery) {
     age_precis_tronc: discovery.age_precis_tronc,
     age_precis_coefficient: discovery.age_precis_coefficient,
     age_precis_note: discovery.age_precis_note,
+    nom: discovery.nom,
+    nom_latin: discovery.nom_latin,
+    type: discovery.type,
   };
 }
 
@@ -131,23 +145,24 @@ export default function DiscoveryAnalysisSections({ data, t, lang = "fr", discov
   if (!sections.length && !showTreeAge) return null;
 
   return (
-    <div className="discovery-analysis-sections">
+    <Accordion className="discovery-analysis-sections">
       {sections.map((section) => (
-        <Fragment key={section.key}>
-          <ResultSection title={section.title} text={section.text} />
-          {section.key === "age_approx" && showTreeAge && (
-            <TreeTrunkAgeCalculator
-              data={data}
-              t={t}
-              lang={lang}
-              discoveryId={discoveryId}
-            />
-          )}
-        </Fragment>
+        <AccordionItem key={section.key} title={section.title}>
+          <SectionText text={section.text} />
+        </AccordionItem>
       ))}
-      {showTreeAge && !sections.some((s) => s.key === "age_approx") && (
-        <TreeTrunkAgeCalculator data={data} t={t} lang={lang} discoveryId={discoveryId} />
+
+      {showTreeAge && (
+        <AccordionItem title={t("tree_age.title")} className="accordion-item--tree-age">
+          <TreeTrunkAgeCalculator
+            data={data}
+            t={t}
+            lang={lang}
+            discoveryId={discoveryId}
+            embedded
+          />
+        </AccordionItem>
       )}
-    </div>
+    </Accordion>
   );
 }
