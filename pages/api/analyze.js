@@ -1,5 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { parseClaudeJson } from "@/lib/parseAnalysis";
+import {
+  enforceScanQuotaForAnalyze,
+  recordSuccessfulScanServer,
+} from "@/lib/scanQuotaServer";
 
 function imageMediaType(base64) {
   const head = base64.replace(/\s/g, "").slice(0, 12);
@@ -113,6 +117,9 @@ export default async function handler(req, res) {
       return res.status(500).json({ erreur: "Clé API non configurée" });
     }
 
+    const gate = await enforceScanQuotaForAnalyze(req, res);
+    if (!gate) return;
+
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     const response = await client.messages.create({
       model: "claude-opus-4-5",
@@ -147,7 +154,20 @@ export default async function handler(req, res) {
       return res.status(422).json(parsed);
     }
 
-    res.status(200).json(parsed);
+    let scanQuota = null;
+    if (!gate.skipped) {
+      const inc = await recordSuccessfulScanServer(gate.identity);
+      if (inc?.ok) {
+        scanQuota = {
+          count: inc.count,
+          limit: inc.limit,
+          isPremium: inc.isPremium,
+          canScan: inc.canScan,
+        };
+      }
+    }
+
+    res.status(200).json(scanQuota ? { ...parsed, scanQuota } : parsed);
   } catch (error) {
     console.error("[Wilder] analyze error:", error);
     res.status(500).json({ erreur: "Erreur: " + error.message });

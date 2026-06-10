@@ -3,6 +3,7 @@ import {
   completePremiumActivation,
   recordPaymentSuccess,
 } from "@/lib/freemium";
+import { activatePremiumOnServer } from "@/lib/scanQuotaClient";
 import PremiumAuthStep from "@/components/PremiumAuthStep";
 
 export default function SubscriptionScreen({
@@ -23,8 +24,9 @@ export default function SubscriptionScreen({
     setStep("auth");
   };
 
-  const handleAuthComplete = () => {
+  const handleAuthComplete = async () => {
     completePremiumActivation();
+    await activatePremiumOnServer();
     onSubscribed?.(selectedPlan);
   };
 
