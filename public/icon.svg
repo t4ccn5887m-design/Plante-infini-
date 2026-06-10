@@ -1,48 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none" role="img" aria-label="Wilder">
-  <rect width="512" height="512" rx="96" fill="#1B3A2D"/>
-
-  <g fill="none" stroke="#F5F0E8" stroke-linecap="round" stroke-linejoin="round">
-    <!-- W — branches principales -->
-    <path
-      d="M 132 138
-         C 118 218, 128 318, 168 388
-         C 188 418, 218 402, 238 362
-         C 248 332, 252 302, 256 268"
-      stroke-width="18"
-    />
-    <path
-      d="M 380 138
-         C 394 218, 384 318, 344 388
-         C 324 418, 294 402, 274 362
-         C 264 332, 260 302, 256 268"
-      stroke-width="18"
-    />
-    <!-- Ramilles fines -->
-    <path d="M 168 248 C 148 268, 138 292, 132 318" stroke-width="7" opacity="0.75"/>
-    <path d="M 344 248 C 364 268, 374 292, 380 318" stroke-width="7" opacity="0.75"/>
-    <path d="M 256 268 C 262 318, 272 358, 286 388" stroke-width="8" opacity="0.7"/>
-    <path d="M 218 318 C 236 298, 248 278, 256 268" stroke-width="6" opacity="0.55"/>
-    <path d="M 294 318 C 276 298, 264 278, 256 268" stroke-width="6" opacity="0.55"/>
-  </g>
-
-  <!-- Feuilles blanc cassé (structure du W) -->
-  <g fill="#F5F0E8">
-    <path d="M 148 178 C 132 172, 124 188, 130 202 C 138 210, 152 206, 156 192 C 158 184, 154 180, 148 178Z"/>
-    <path d="M 364 178 C 380 172, 388 188, 382 202 C 374 210, 360 206, 356 192 C 354 184, 358 180, 364 178Z"/>
-    <path d="M 192 328 C 176 322, 168 340, 176 354 C 186 362, 200 356, 204 340 C 206 332, 200 328, 192 328Z"/>
-    <path d="M 320 328 C 336 322, 344 340, 336 354 C 326 362, 312 356, 308 340 C 306 332, 312 328, 320 328Z"/>
-    <path d="M 248 228 C 234 222, 226 238, 234 252 C 244 260, 258 254, 262 238 C 264 230, 256 226, 248 228Z"/>
-    <path d="M 264 228 C 278 222, 286 238, 278 252 C 268 260, 254 254, 250 238 C 248 230, 256 226, 264 228Z"/>
-  </g>
-
-  <!-- Feuilles vertes qui poussent -->
-  <g fill="#4CAF50">
-    <path d="M 118 302 C 100 296, 92 316, 102 332 C 114 342, 130 334, 134 314 C 136 304, 126 298, 118 302Z"/>
-    <path d="M 394 302 C 412 296, 420 316, 410 332 C 398 342, 382 334, 378 314 C 376 304, 386 298, 394 302Z"/>
-    <path d="M 156 398 C 140 392, 132 412, 142 426 C 154 436, 170 428, 174 408 C 176 398, 166 392, 156 398Z"/>
-    <path d="M 356 398 C 372 392, 380 412, 370 426 C 358 436, 342 428, 338 408 C 336 398, 346 392, 356 398Z"/>
-    <path d="M 276 408 C 262 402, 254 420, 264 434 C 276 444, 292 436, 296 416 C 298 406, 288 400, 276 408Z"/>
-    <path d="M 236 408 C 250 402, 258 420, 248 434 C 236 444, 220 436, 216 416 C 214 406, 224 400, 236 408Z"/>
-    <path d="M 256 152 C 242 146, 234 164, 244 178 C 256 188, 272 180, 276 160 C 278 150, 268 144, 256 152Z"/>
-  </g>
+  <defs>
+    <linearGradient id="wilder-icon-grad" x1="88" y1="88" x2="424" y2="424" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3D7A3D"/>
+      <stop offset="1" stop-color="#5BA85C"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#FAFAF7"/>
+  <path fill="url(#wilder-icon-grad)" d="M204 96C128 98 84 176 88 272C92 356 160 408 232 380C276 364 298 316 286 260C270 184 246 120 204 96Z"/>
+  <path d="M204 128C220 200 248 272 296 324C318 348 338 356 322 382" stroke="url(#wilder-icon-grad)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="368" cy="348" r="52" fill="#FAFAF7"/>
+  <circle cx="368" cy="348" r="72" stroke="url(#wilder-icon-grad)" stroke-width="30"/>
 </svg>

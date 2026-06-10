@@ -1,5 +1,5 @@
 import { activatePremium } from "@/lib/freemium";
-import WilderLogo from "@/components/WilderLogo";
+import Logo from "@/components/Logo";
 
 export default function SubscriptionScreen({ t, scanCount, onSubscribed, onClose }) {
   const handleSubscribe = (plan) => {
@@ -10,7 +10,7 @@ export default function SubscriptionScreen({ t, scanCount, onSubscribed, onClose
   return (
     <div className="subscription-screen screen-enter">
       <div className="subscription-content">
-        <WilderLogo size={52} />
+        <Logo size={52} />
         <h1 className="subscription-title">{t("freemium.title")}</h1>
         <p className="subscription-subtitle">
           {t("freemium.subtitle", { count: scanCount })}

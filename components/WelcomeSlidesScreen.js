@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import WilderLogo from "@/components/WilderLogo";
+import Logo from "@/components/Logo";
 
 const SLIDE_KEYS = ["slide1", "slide2", "slide3", "slide4"];
 
@@ -48,7 +48,7 @@ export default function WelcomeSlidesScreen({ t, onComplete }) {
       onTouchEnd={onTouchEnd}
     >
       <div className="welcome-slides-content">
-        <WilderLogo size={56} />
+        <Logo size={56} />
 
         <div className="welcome-slide-card" key={index}>
           <span className="welcome-slide-emoji" aria-hidden="true">

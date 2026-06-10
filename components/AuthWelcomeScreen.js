@@ -1,5 +1,5 @@
 import { useState } from "react";
-import WilderLogo from "@/components/WilderLogo";
+import Logo from "@/components/Logo";
 import {
   continueAnonymously,
   isCloudAvailable,
@@ -109,7 +109,7 @@ export default function AuthWelcomeScreen({ t, slogan, onComplete }) {
   return (
     <div className="auth-welcome auth-welcome--cream screen-enter">
       <div className="auth-welcome-content">
-        <WilderLogo size={64} />
+        <Logo size={64} />
         <h1 className="auth-welcome-title">{t("auth.title")}</h1>
         <p className="auth-welcome-slogan">{slogan}</p>
 

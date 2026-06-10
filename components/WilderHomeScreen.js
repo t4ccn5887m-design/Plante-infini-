@@ -1,11 +1,7 @@
 import { useMemo } from "react";
 import { buildPokedexCollection, POKEDEX_TYPES } from "@/lib/pokedex";
 import { getNatureStreak } from "@/lib/natureStreak";
-
-const DAILY_PICK = {
-  nom: "La Pâquerette",
-  photo: "https://images.unsplash.com/photo-1490682143684-43ec2efb3d60?w=240&q=80",
-};
+import { getDailySpecies } from "@/lib/dailySpecies";
 
 function IconCamera() {
   return (
@@ -40,6 +36,8 @@ export default function WilderHomeScreen({
         .slice(0, 3),
     [discoveries]
   );
+
+  const dailyPick = useMemo(() => getDailySpecies(), []);
 
   const dayLabel = streak <= 1 ? t("home.day_one") : t("home.day_many");
   const speciesLabel = speciesCount <= 1 ? t("home.species_one") : t("home.species_many");
@@ -83,13 +81,23 @@ export default function WilderHomeScreen({
         <section className="wilder-home-daily-card stagger-3" aria-label={t("home.daily_pick_title")}>
           <h2 className="wilder-home-daily-title">{t("home.daily_pick_title")}</h2>
           <div className="wilder-home-daily-body">
-            <img
-              src={DAILY_PICK.photo}
-              alt=""
-              className="wilder-home-daily-photo"
-              loading="lazy"
-            />
-            <p className="wilder-home-daily-name">{DAILY_PICK.nom}</p>
+            {dailyPick.image ? (
+              <img
+                src={dailyPick.image}
+                alt=""
+                className="wilder-home-daily-photo"
+                loading="lazy"
+              />
+            ) : (
+              <span className="wilder-home-daily-photo wilder-home-daily-photo--emoji" aria-hidden="true">
+                {dailyPick.emoji}
+              </span>
+            )}
+            <div className="wilder-home-daily-text">
+              <p className="wilder-home-daily-name">{dailyPick.nom}</p>
+              <p className="wilder-home-daily-latin">{dailyPick.latin}</p>
+              <p className="wilder-home-daily-fact">{dailyPick.fact}</p>
+            </div>
           </div>
         </section>
 

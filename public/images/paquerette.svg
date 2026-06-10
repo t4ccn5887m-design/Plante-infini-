@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" role="img" aria-label="Pâquerette">
+  <rect width="120" height="120" rx="18" fill="#E8F5E9"/>
+  <g transform="translate(60 58)">
+    <ellipse cx="0" cy="-22" rx="7" ry="14" fill="#fff" stroke="#C8E6C9" stroke-width="1"/>
+    <ellipse cx="19" cy="-14" rx="7" ry="14" fill="#fff" stroke="#C8E6C9" stroke-width="1" transform="rotate(45)"/>
+    <ellipse cx="22" cy="8" rx="7" ry="14" fill="#fff" stroke="#C8E6C9" stroke-width="1" transform="rotate(90)"/>
+    <ellipse cx="8" cy="22" rx="7" ry="14" fill="#fff" stroke="#C8E6C9" stroke-width="1" transform="rotate(135)"/>
+    <ellipse cx="-14" cy="19" rx="7" ry="14" fill="#fff" stroke="#C8E6C9" stroke-width="1" transform="rotate(180)"/>
+    <ellipse cx="-22" cy="0" rx="7" ry="14" fill="#fff" stroke="#C8E6C9" stroke-width="1" transform="rotate(225)"/>
+    <ellipse cx="-12" cy="-18" rx="7" ry="14" fill="#fff" stroke="#C8E6C9" stroke-width="1" transform="rotate(315)"/>
+    <ellipse cx="14" cy="-18" rx="7" ry="14" fill="#fff" stroke="#C8E6C9" stroke-width="1" transform="rotate(15)"/>
+    <circle cx="0" cy="0" r="11" fill="#FFD54F"/>
+    <circle cx="0" cy="0" r="6" fill="#FFB300"/>
+  </g>
+  <path d="M60 72 C58 82 56 92 54 104" stroke="#5BA85C" stroke-width="3" stroke-linecap="round"/>
+</svg>
