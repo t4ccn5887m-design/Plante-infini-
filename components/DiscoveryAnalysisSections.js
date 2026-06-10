@@ -1,6 +1,7 @@
 import { isTreeLikeAnalysis } from "@/lib/treeAge";
 import TreeTrunkAgeCalculator from "@/components/TreeTrunkAgeCalculator";
 import Accordion, { AccordionItem } from "@/components/Accordion";
+import { getFunFactText } from "@/components/DiscoveryFunFact";
 
 function textValue(value) {
   if (value == null || value === "") return null;
@@ -85,7 +86,6 @@ export function getAnalysisSections(data, t) {
     { key: "useful_info", title: t("discovery.useful_info"), text: textValue(data.infos_utiles) },
     { key: "protected_species", title: t("discovery.protected_species"), text: protectedSpecies },
     { key: "region_season", title: t("discovery.region_season"), text: textValue(data.region_saison) },
-    { key: "fun_fact", title: t("sound.fun_fact_title"), text: textValue(data.fun_fact) },
     { key: "history", title: t("discovery.history"), text: textValue(data.histoire) },
     {
       key: "construction_date",
@@ -99,6 +99,18 @@ export function getAnalysisSections(data, t) {
     },
     { key: "anecdotes", title: t("discovery.anecdotes"), text: textValue(data.anecdotes) },
   ].filter((s) => s.text);
+}
+
+function getAccordionSections(data, t) {
+  const headerFact = getFunFactText(data);
+  const sections = getAnalysisSections(data, t);
+
+  if (!headerFact) return sections;
+
+  return sections.filter((section) => {
+    if (section.key === "anecdotes" && !textValue(data?.fun_fact)) return false;
+    return true;
+  });
 }
 
 export function discoveryToAnalysisData(discovery) {
@@ -138,31 +150,67 @@ export function discoveryToAnalysisData(discovery) {
   };
 }
 
+function AgeAccordionContent({ section, data, t, lang, discoveryId, showTreeAge }) {
+  return (
+    <>
+      <SectionText text={section?.text} />
+      {showTreeAge && (
+        <TreeTrunkAgeCalculator
+          data={data}
+          t={t}
+          lang={lang}
+          discoveryId={discoveryId}
+          embedded
+        />
+      )}
+    </>
+  );
+}
+
 export default function DiscoveryAnalysisSections({ data, t, lang = "fr", discoveryId }) {
-  const sections = getAnalysisSections(data, t);
+  const sections = [...getAccordionSections(data, t)];
   const showTreeAge = isTreeLikeAnalysis(data);
 
-  if (!sections.length && !showTreeAge) return null;
+  if (showTreeAge && !sections.some((s) => s.key === "age_approx")) {
+    const habitatIdx = sections.findIndex((s) => s.key === "habitat");
+    const insertIdx = habitatIdx >= 0 ? habitatIdx : sections.length;
+    sections.splice(insertIdx, 0, {
+      key: "age_approx",
+      title: t("discovery.age_approx"),
+      text: null,
+    });
+  }
+
+  if (!sections.length) return null;
 
   return (
     <Accordion className="discovery-analysis-sections">
-      {sections.map((section) => (
-        <AccordionItem key={section.key} title={section.title}>
-          <SectionText text={section.text} />
-        </AccordionItem>
-      ))}
+      {sections.map((section) => {
+        if (section.key === "age_approx") {
+          return (
+            <AccordionItem
+              key="age_approx"
+              title={section.title}
+              className={showTreeAge ? "accordion-item--tree-age" : undefined}
+            >
+              <AgeAccordionContent
+                section={section}
+                data={data}
+                t={t}
+                lang={lang}
+                discoveryId={discoveryId}
+                showTreeAge={showTreeAge}
+              />
+            </AccordionItem>
+          );
+        }
 
-      {showTreeAge && (
-        <AccordionItem title={t("tree_age.title")} className="accordion-item--tree-age">
-          <TreeTrunkAgeCalculator
-            data={data}
-            t={t}
-            lang={lang}
-            discoveryId={discoveryId}
-            embedded
-          />
-        </AccordionItem>
-      )}
+        return (
+          <AccordionItem key={section.key} title={section.title}>
+            <SectionText text={section.text} />
+          </AccordionItem>
+        );
+      })}
     </Accordion>
   );
 }

@@ -1,54 +1,75 @@
+import { useState } from "react";
 import { activatePremium } from "@/lib/freemium";
-import Logo from "@/components/Logo";
+import PremiumAuthStep from "@/components/PremiumAuthStep";
 
-export default function SubscriptionScreen({ t, scanCount, onSubscribed, onClose }) {
-  const handleSubscribe = (plan) => {
+export default function SubscriptionScreen({ t, scanCount, onSubscribed, onClose, forced = false }) {
+  const [step, setStep] = useState("plans");
+  const [selectedPlan, setSelectedPlan] = useState(null);
+
+  const handleSelectPlan = (plan) => {
     activatePremium(plan);
-    onSubscribed?.(plan);
+    setSelectedPlan(plan);
+    setStep("auth");
+  };
+
+  const handleAuthComplete = () => {
+    onSubscribed?.(selectedPlan);
   };
 
   return (
-    <div className="subscription-screen screen-enter">
-      <div className="subscription-content">
-        <Logo size={52} />
-        <h1 className="subscription-title">{t("freemium.title")}</h1>
-        <p className="subscription-subtitle">
-          {t("freemium.subtitle", { count: scanCount })}
-        </p>
+    <div className="paywall-screen screen-enter">
+      <div className="wilder-home-bg" aria-hidden="true" />
+      <div className="wilder-home-aurora" aria-hidden="true" />
+      <div className="wilder-home-overlay paywall-screen-overlay" aria-hidden="true" />
 
-        <ul className="subscription-benefits">
-          <li>{t("freemium.benefit_scans")}</li>
-          <li>{t("freemium.benefit_cloud")}</li>
-          <li>{t("freemium.benefit_no_ads")}</li>
-        </ul>
+      <div className="paywall-content">
+        {step === "plans" ? (
+          <>
+            <h1 className="paywall-title">{t("freemium.title")}</h1>
+            <p className="paywall-subtitle">{t("freemium.subtitle")}</p>
 
-        <div className="subscription-plans">
-          <button
-            type="button"
-            className="subscription-plan subscription-plan--yearly"
-            onClick={() => handleSubscribe("yearly")}
-          >
-            <span className="subscription-plan-badge">{t("freemium.yearly_badge")}</span>
-            <span className="subscription-plan-price">{t("freemium.yearly_price")}</span>
-            <span className="subscription-plan-period">{t("freemium.yearly_period")}</span>
-          </button>
+            <ul className="paywall-benefits">
+              <li>{t("freemium.benefit_scans")}</li>
+              <li>{t("freemium.benefit_cloud")}</li>
+              <li>{t("freemium.benefit_no_ads")}</li>
+            </ul>
 
-          <button
-            type="button"
-            className="subscription-plan subscription-plan--monthly"
-            onClick={() => handleSubscribe("monthly")}
-          >
-            <span className="subscription-plan-price">{t("freemium.monthly_price")}</span>
-            <span className="subscription-plan-period">{t("freemium.monthly_period")}</span>
-          </button>
-        </div>
+            <div className="paywall-plans">
+              <button
+                type="button"
+                className="paywall-plan paywall-plan--primary"
+                onClick={() => handleSelectPlan("monthly")}
+              >
+                <span className="paywall-plan-label">{t("freemium.monthly_cta")}</span>
+              </button>
 
-        <p className="subscription-note">{t("freemium.payment_note")}</p>
+              <button
+                type="button"
+                className="paywall-plan paywall-plan--secondary"
+                onClick={() => handleSelectPlan("yearly")}
+              >
+                <span className="paywall-plan-label">{t("freemium.yearly_cta")}</span>
+              </button>
+            </div>
 
-        {onClose && (
-          <button type="button" className="subscription-close" onClick={onClose}>
-            {t("freemium.later")}
-          </button>
+            <p className="paywall-note">{t("freemium.payment_note")}</p>
+
+            {onClose && (
+              <button type="button" className="paywall-later" onClick={onClose}>
+                {t("freemium.later")}
+              </button>
+            )}
+          </>
+        ) : (
+          <PremiumAuthStep
+            t={t}
+            onComplete={handleAuthComplete}
+            onSkip={handleAuthComplete}
+          />
+        )}
+
+        {forced && step === "plans" && (
+          <p className="paywall-forced-hint">{t("freemium.forced_hint", { count: scanCount })}</p>
         )}
       </div>
     </div>

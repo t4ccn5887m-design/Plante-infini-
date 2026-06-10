@@ -3,7 +3,6 @@ import { buildPokedexCollection, POKEDEX_TYPES } from "@/lib/pokedex";
 import { getNatureStreak } from "@/lib/natureStreak";
 import { getDailySpecies } from "@/lib/dailySpecies";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
-import Logo from "@/components/Logo";
 
 const LONG_PRESS_MS = 520;
 
@@ -114,7 +113,6 @@ export default function WilderHomeScreen({
       <div className="wilder-home-content wilder-home-content--v2">
         <header className="wilder-home-top stagger-1">
           <div className="wilder-home-brand">
-            <Logo size={36} />
             <h1 className="wilder-home-brand-title">Wilder</h1>
           </div>
           <div className="wilder-home-streak-row" aria-label={t("home.streak_bar_label")}>

@@ -52,10 +52,6 @@ export default function OnboardingScreen({ t, onComplete }) {
             <span className="onboarding-feature-icon"><IconCamera size={22} /></span>
             <span>{t("onboarding.camera_detail")}</span>
           </li>
-          <li>
-            <span className="onboarding-feature-icon" aria-hidden="true">📍</span>
-            <span>{t("onboarding.location_detail")}</span>
-          </li>
         </ul>
 
         {error && <p className="onboarding-error">{error}</p>}

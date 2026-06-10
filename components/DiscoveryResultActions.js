@@ -2,55 +2,13 @@ import { useMemo, useState, useEffect } from "react";
 import { createT, getRarityLabel, getTypeLabel } from "@/lib/i18n";
 import { shareDiscovery, SHARE_FORMATS, generateShareImage } from "@/lib/share";
 
-export const ORGANIZE_DESTINATIONS = [
-  { id: "potager", emoji: "🥕", titleKey: "themes.potager.title" },
-  { id: "randos", emoji: "🥾", titleKey: "themes.randos.title" },
-  { id: "jardin", emoji: "🌳", titleKey: "themes.jardin.title" },
-  { id: "juniors", emoji: "🦊", titleKey: "nav.juniors" },
-];
-
-function OrganizeDestinationModal({ open, onClose, onSelect, t }) {
-  if (!open) return null;
-
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
-        <h2>{t("discovery.organize_title")}</h2>
-        <div className="theme-picker-grid">
-          {ORGANIZE_DESTINATIONS.map((dest) => (
-            <button
-              key={dest.id}
-              type="button"
-              className="theme-picker-btn"
-              onClick={() => onSelect(dest.id)}
-            >
-              <span className="theme-picker-emoji">{dest.emoji}</span>
-              <span>{t(dest.titleKey)}</span>
-            </button>
-          ))}
-        </div>
-        <button
-          type="button"
-          className="btn-secondary discovery-result-actions-cancel"
-          onClick={onClose}
-        >
-          {t("albums.cancel")}
-        </button>
-      </div>
-    </div>
-  );
-}
-
 export default function DiscoveryResultActions({
   discovery,
   t,
   lang,
   onScanAgain,
-  onOrganizeDestination,
   scanAgainLabel,
-  organizeHint,
 }) {
-  const [organizeOpen, setOrganizeOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [shareFormat, setShareFormat] = useState("story");
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -87,33 +45,15 @@ export default function DiscoveryResultActions({
     }
   };
 
-  const handleOrganize = (themeId) => {
-    setOrganizeOpen(false);
-    onOrganizeDestination?.(themeId);
-  };
-
   return (
     <>
       <div className="discovery-result-actions">
         <button
           type="button"
-          className="discovery-result-btn discovery-result-btn--organize"
-          onClick={() => setOrganizeOpen(true)}
-        >
-          <span aria-hidden="true">📂</span>
-          <span>{t("discovery.organize_in")}</span>
-          {organizeHint ? (
-            <span className="discovery-result-btn-hint">{organizeHint}</span>
-          ) : null}
-        </button>
-
-        <button
-          type="button"
           className="discovery-result-btn discovery-result-btn--scan"
           onClick={onScanAgain}
         >
-          <span aria-hidden="true">📸</span>
-          <span>{scanAgainLabel || t("discovery.scan_again")}</span>
+          {scanAgainLabel || t("discovery.scan_again")}
         </button>
 
         <button
@@ -122,8 +62,7 @@ export default function DiscoveryResultActions({
           onClick={() => setShareOpen(true)}
           disabled={sharing || !discovery}
         >
-          <span aria-hidden="true">📤</span>
-          <span>{sharing ? t("discovery.share_generating") : t("discovery.share")}</span>
+          {sharing ? t("discovery.share_generating") : t("discovery.share")}
         </button>
       </div>
 
@@ -170,13 +109,6 @@ export default function DiscoveryResultActions({
           </div>
         </div>
       )}
-
-      <OrganizeDestinationModal
-        open={organizeOpen}
-        onClose={() => setOrganizeOpen(false)}
-        onSelect={handleOrganize}
-        t={t}
-      />
     </>
   );
 }
