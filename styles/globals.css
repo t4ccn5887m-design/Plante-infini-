@@ -282,6 +282,40 @@ video {
   padding: 0.35rem 0 0.5rem;
 }
 
+.wilder-home-main--landing {
+  flex: 1;
+  justify-content: center;
+  padding: 1rem 0 2rem;
+  position: relative;
+}
+
+.wilder-home-logo {
+  margin: 0 auto 0.75rem;
+  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.35));
+}
+
+.home-scan-rings--landing {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.home-landing-cta {
+  position: relative;
+  z-index: 1;
+  flex-direction: column;
+  border-radius: 50%;
+}
+
+.home-landing-cta .btn-scanner-label {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
 .discovery-counter--link {
   background: none;
   border: none;
