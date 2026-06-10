@@ -107,11 +107,7 @@ export default function AuthWelcomeScreen({ t, slogan, onComplete }) {
   };
 
   return (
-    <div className="auth-welcome screen-enter">
-      <div className="auth-welcome-bg" aria-hidden="true" />
-      <div className="auth-welcome-aurora" aria-hidden="true" />
-      <div className="auth-welcome-overlay" aria-hidden="true" />
-
+    <div className="auth-welcome auth-welcome--cream screen-enter">
       <div className="auth-welcome-content">
         <WilderLogo size={64} />
         <h1 className="auth-welcome-title">{t("auth.title")}</h1>
@@ -247,11 +243,12 @@ export default function AuthWelcomeScreen({ t, slogan, onComplete }) {
         {mode === "main" && (
           <button
             type="button"
-            className="auth-skip-link"
+            className="auth-discovery-link"
             onClick={handleAnonymous}
             disabled={loading}
           >
-            {t("auth.continue_anonymous")}
+            <span className="auth-discovery-title">{t("auth.discovery_mode")}</span>
+            <span className="auth-discovery-hint">{t("auth.discovery_hint")}</span>
           </button>
         )}
       </div>
