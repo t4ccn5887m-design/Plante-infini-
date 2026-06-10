@@ -1,7 +1,10 @@
-import { useMemo } from "react";
+import { useMemo, useState, useRef, useEffect, useCallback } from "react";
 import { buildPokedexCollection, POKEDEX_TYPES } from "@/lib/pokedex";
 import { getNatureStreak } from "@/lib/natureStreak";
 import { getDailySpecies } from "@/lib/dailySpecies";
+import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
+
+const LONG_PRESS_MS = 520;
 
 function IconCamera() {
   return (
@@ -22,7 +25,14 @@ export default function WilderHomeScreen({
   onStartScan,
   onViewAll,
   onOpenDiscovery,
+  onDeleteDiscovery,
+  deleteLabels,
 }) {
+  const [revealedDeleteId, setRevealedDeleteId] = useState(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const longPressTimer = useRef(null);
+  const longPressTriggered = useRef(false);
+
   const streak = getNatureStreak();
   const speciesCount = useMemo(
     () => buildPokedexCollection(discoveries).caughtCount,
@@ -41,6 +51,58 @@ export default function WilderHomeScreen({
 
   const dayLabel = streak <= 1 ? t("home.day_one") : t("home.day_many");
   const speciesLabel = speciesCount <= 1 ? t("home.species_one") : t("home.species_many");
+
+  const clearLongPress = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!revealedDeleteId) return undefined;
+    const onDocPointer = (e) => {
+      if (e.target.closest(".wilder-home-recent-thumb-wrap")) return;
+      setRevealedDeleteId(null);
+    };
+    document.addEventListener("pointerdown", onDocPointer);
+    return () => document.removeEventListener("pointerdown", onDocPointer);
+  }, [revealedDeleteId]);
+
+  const handleThumbPointerDown = (discoveryId) => {
+    longPressTriggered.current = false;
+    clearLongPress();
+    longPressTimer.current = setTimeout(() => {
+      longPressTriggered.current = true;
+      setRevealedDeleteId(discoveryId);
+    }, LONG_PRESS_MS);
+  };
+
+  const handleThumbPointerUp = () => {
+    clearLongPress();
+  };
+
+  const handleThumbClick = (d) => {
+    if (longPressTriggered.current) {
+      longPressTriggered.current = false;
+      return;
+    }
+    if (revealedDeleteId === d.id) {
+      setRevealedDeleteId(null);
+      return;
+    }
+    if (revealedDeleteId) {
+      setRevealedDeleteId(null);
+      return;
+    }
+    onOpenDiscovery?.(d);
+  };
+
+  const handleConfirmDelete = () => {
+    if (confirmDeleteId) onDeleteDiscovery?.(confirmDeleteId);
+    setConfirmDeleteId(null);
+    setRevealedDeleteId(null);
+  };
 
   return (
     <div className="wilder-home wilder-home--v2 screen-enter">
@@ -116,26 +178,53 @@ export default function WilderHomeScreen({
           ) : (
             <div className="wilder-home-recent-row">
               {recent.map((d) => (
-                <button
-                  key={d.id}
-                  type="button"
-                  className="wilder-home-recent-thumb-btn"
-                  onClick={() => onOpenDiscovery?.(d)}
-                  aria-label={d.nom}
-                >
-                  {d.photo ? (
-                    <img src={d.photo} alt="" className="wilder-home-recent-thumb" />
-                  ) : (
-                    <span className="wilder-home-recent-thumb wilder-home-recent-thumb--empty">
-                      {typeEmoji(d.type)}
-                    </span>
+                <div key={d.id} className="wilder-home-recent-thumb-wrap">
+                  <button
+                    type="button"
+                    className={`wilder-home-recent-thumb-btn${revealedDeleteId === d.id ? " wilder-home-recent-thumb-btn--delete-mode" : ""}`}
+                    onPointerDown={() => handleThumbPointerDown(d.id)}
+                    onPointerUp={handleThumbPointerUp}
+                    onPointerLeave={handleThumbPointerUp}
+                    onPointerCancel={handleThumbPointerUp}
+                    onClick={() => handleThumbClick(d)}
+                    aria-label={d.nom}
+                  >
+                    {d.photo ? (
+                      <img src={d.photo} alt="" className="wilder-home-recent-thumb" />
+                    ) : (
+                      <span className="wilder-home-recent-thumb wilder-home-recent-thumb--empty">
+                        {typeEmoji(d.type)}
+                      </span>
+                    )}
+                  </button>
+                  {revealedDeleteId === d.id && (
+                    <button
+                      type="button"
+                      className="wilder-home-recent-delete"
+                      aria-label={deleteLabels?.deleteLabel || t("discovery.delete_action")}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setConfirmDeleteId(d.id);
+                      }}
+                    >
+                      🗑️
+                    </button>
                   )}
-                </button>
+                </div>
               ))}
             </div>
           )}
         </section>
       </div>
+
+      <DeleteConfirmDialog
+        open={Boolean(confirmDeleteId)}
+        message={deleteLabels?.confirmMessage || t("home.delete_find_confirm")}
+        cancelLabel={deleteLabels?.cancelLabel || t("albums.cancel")}
+        confirmLabel={deleteLabels?.confirmLabel || t("discovery.delete_action")}
+        onCancel={() => setConfirmDeleteId(null)}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 }

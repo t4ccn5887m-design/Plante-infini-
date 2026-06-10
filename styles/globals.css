@@ -563,6 +563,53 @@ video {
   padding: 0.25rem 0 0.5rem;
 }
 
+.wilder-home-recent-thumb-wrap {
+  position: relative;
+}
+
+.wilder-home-recent-thumb-btn--delete-mode {
+  outline: 2px solid rgba(255, 255, 255, 0.65);
+  outline-offset: 3px;
+  border-radius: 50%;
+}
+
+.wilder-home-recent-delete {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  background: rgba(180, 45, 45, 0.95);
+  color: #fff;
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  animation: homeDeletePop 0.2s ease;
+}
+
+@keyframes homeDeletePop {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.discovery-delete-btn {
+  width: 100%;
+  margin-top: 1.5rem;
+  color: #c62828;
+  border-color: rgba(198, 40, 40, 0.35);
+}
+
+.discovery-delete-btn:hover {
+  background: rgba(198, 40, 40, 0.08);
+}
+
 .wilder-home-recent-thumb-btn {
   padding: 0;
   border: none;
