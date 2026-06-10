@@ -321,7 +321,7 @@ video {
   justify-content: flex-start;
   gap: 1.35rem;
   min-height: auto;
-  padding-bottom: calc(7rem + env(safe-area-inset-bottom));
+  padding-bottom: calc(1.75rem + env(safe-area-inset-bottom));
 }
 
 .wilder-home-streak-bar {
@@ -500,8 +500,13 @@ video {
 
 .wilder-home-recent {
   width: 100%;
-  padding-bottom: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0.5rem 0 1.25rem;
   flex-shrink: 0;
+  margin-top: 0.25rem;
 }
 
 .wilder-home-recent-head {
@@ -554,7 +559,8 @@ video {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.1rem;
+  gap: 1.35rem;
+  padding: 0.25rem 0 0.5rem;
 }
 
 .wilder-home-recent-thumb-btn {
@@ -576,12 +582,12 @@ video {
 
 .wilder-home-recent-thumb {
   display: block;
-  width: 76px;
-  height: 76px;
+  width: 84px;
+  height: 84px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  border: 3px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.38);
 }
 
 .wilder-home-recent-thumb--empty {
@@ -4924,7 +4930,7 @@ video {
 }
 
 .with-bottom-nav {
-  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
 }
 
 .with-scanner-fab {
