@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { NAV_THEMES, THEME_META } from "@/lib/themes";
 import { getNextBadge } from "@/lib/badges";
-import { POKEDEX_TYPES } from "@/lib/pokedex";
+import { BIODEX_TYPES } from "@/lib/biodex";
 import { computeWildScore, getTipIndex } from "@/lib/homeAmbience";
 import { getHomeProgress } from "@/lib/homeEngagement";
 import { ThemeIcon } from "@/components/ThemeIcons";
@@ -86,7 +86,7 @@ export default function HomeDashboard({
 
   const hubScreens = [
     { id: "wrapped", emoji: "✨", label: t("home.wrapped") },
-    { id: "pokedex", emoji: "📖", label: t("home.pokedex") },
+    { id: "biodex", emoji: "📖", label: t("home.biodex") },
     { id: "world-map", emoji: "🌍", label: t("home.world_map") },
     { id: "account", emoji: "☁️", label: t("home.account") },
   ];
@@ -107,7 +107,7 @@ export default function HomeDashboard({
           wildScore={wildScore}
           onOpenStats={onOpenStats}
           onOpenTrophies={onOpenTrophies}
-          onOpenPokedex={() => onOpenScreen("pokedex")}
+          onOpenBiodex={() => onOpenScreen("biodex")}
           onOpenWrapped={() => onOpenScreen("wrapped")}
           showWrapped={showWrapped}
         />
@@ -230,7 +230,7 @@ export default function HomeDashboard({
           </div>
           <div className="home-recent-scroll">
             {recent.map((d) => {
-              const emoji = POKEDEX_TYPES.find((p) => p.id === d.type)?.emoji || "🌿";
+              const emoji = BIODEX_TYPES.find((p) => p.id === d.type)?.emoji || "🌿";
               return (
                 <button
                   key={d.id}

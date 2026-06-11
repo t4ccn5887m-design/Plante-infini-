@@ -1,10 +1,11 @@
 import { useMemo, useState, useRef, useEffect, useCallback } from "react";
-import { buildPokedexCollection, POKEDEX_TYPES } from "@/lib/pokedex";
+import { buildBiodexCollection, BIODEX_TYPES } from "@/lib/biodex";
 import { getNatureStreak } from "@/lib/natureStreak";
 import { getDailySpecies } from "@/lib/dailySpecies";
 import { shouldOfferInstallGuide } from "@/lib/installGuide";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import HomeScanCategories from "@/components/HomeScanCategories";
+import PremiumHamburgerMenu from "@/components/PremiumHamburgerMenu";
 
 const LONG_PRESS_MS = 520;
 
@@ -18,7 +19,7 @@ function IconCamera() {
 }
 
 function typeEmoji(type) {
-  return POKEDEX_TYPES.find((p) => p.id === type)?.emoji || "🌿";
+  return BIODEX_TYPES.find((p) => p.id === type)?.emoji || "🌿";
 }
 
 export default function WilderHomeScreen({
@@ -32,6 +33,15 @@ export default function WilderHomeScreen({
   selectedCategory,
   onCategoryChange,
   onOpenInstallGuide,
+  onSubscribe,
+  showSubscribe = false,
+  showPremiumMenu = false,
+  premiumUserEmail = "",
+  scanCount = 0,
+  locale = "fr-FR",
+  onNavigateStats,
+  onSignOut,
+  onCancelSubscription,
 }) {
   const [revealedDeleteId, setRevealedDeleteId] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
@@ -41,7 +51,7 @@ export default function WilderHomeScreen({
 
   const streak = getNatureStreak();
   const speciesCount = useMemo(
-    () => buildPokedexCollection(discoveries).caughtCount,
+    () => buildBiodexCollection(discoveries).caughtCount,
     [discoveries]
   );
 
@@ -118,17 +128,47 @@ export default function WilderHomeScreen({
 
       <div className="wilder-home-content wilder-home-content--v2">
         <header className="wilder-home-top stagger-1">
-          <div className="wilder-home-streak-row" aria-label={t("home.streak_bar_label")}>
-            <span className="wilder-home-streak-item">
-              🔥 {streak} {dayLabel}
-            </span>
-            <span className="wilder-home-streak-item">
-              🌿 {speciesCount} {speciesLabel}
-            </span>
+          <div className="wilder-home-top-row">
+            <div className="wilder-home-top-left">
+              {showSubscribe && onSubscribe && (
+                <button type="button" className="wilder-home-subscribe-btn" onClick={onSubscribe}>
+                  {t("home.subscribe")}
+                </button>
+              )}
+            </div>
+            <h1 className="wilder-home-brand-name">Wilder</h1>
+            <div className="wilder-home-top-right">
+              <div className="wilder-home-streak-row" aria-label={t("home.streak_bar_label")}>
+                <span className="wilder-home-streak-item">
+                  🔥 {streak} {dayLabel}
+                </span>
+                <span className="wilder-home-streak-item">
+                  🌿 {speciesCount} {speciesLabel}
+                </span>
+              </div>
+              {showPremiumMenu && (
+                <PremiumHamburgerMenu
+                  t={t}
+                  locale={locale}
+                  userEmail={premiumUserEmail}
+                  discoveries={discoveries}
+                  scanCount={scanCount}
+                  onNavigateStats={onNavigateStats}
+                  onSignOut={onSignOut}
+                  onCancelSubscription={onCancelSubscription}
+                />
+              )}
+            </div>
           </div>
         </header>
 
         <main className="wilder-home-scan-zone stagger-2">
+          <HomeScanCategories
+            t={t}
+            selectedId={selectedCategory}
+            onSelect={onCategoryChange}
+          />
+
           <div className="wilder-home-scan-main">
             <div className="home-scan-rings home-scan-rings--landing" aria-hidden="true">
               <span className="home-scan-ring home-scan-ring--1" />
@@ -149,22 +189,13 @@ export default function WilderHomeScreen({
             </button>
           </div>
 
-          <HomeScanCategories
-            t={t}
-            selectedId={selectedCategory}
-            onSelect={onCategoryChange}
-          />
-
           {showInstallGuide && onOpenInstallGuide && (
             <button
               type="button"
-              className="wilder-home-install-btn stagger-3"
+              className="wilder-home-install-link stagger-3"
               onClick={onOpenInstallGuide}
             >
-              <span className="wilder-home-install-icon" aria-hidden="true">
-                📲
-              </span>
-              <span>{t("home.install_cta")}</span>
+              {t("home.install_cta")}
             </button>
           )}
         </main>

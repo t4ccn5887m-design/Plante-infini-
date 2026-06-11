@@ -4,11 +4,11 @@ export default function HomeProgressBoard({
   wildScore,
   onOpenStats,
   onOpenTrophies,
-  onOpenPokedex,
+  onOpenBiodex,
   onOpenWrapped,
   showWrapped,
 }) {
-  const { pokedex, badges, rank, monthly } = progress;
+  const { biodex, badges, rank, monthly } = progress;
 
   return (
     <section className="home-progress-board" aria-label={t("home.stats")}>
@@ -34,7 +34,7 @@ export default function HomeProgressBoard({
       </button>
 
       <div className="home-progress-grid">
-        <button type="button" className="home-progress-card" onClick={onOpenPokedex}>
+        <button type="button" className="home-progress-card" onClick={onOpenBiodex}>
           <div className="home-progress-ring-wrap">
             <svg viewBox="0 0 40 40" className="home-progress-ring-svg" aria-hidden="true">
               <circle className="home-progress-ring-track" cx="20" cy="20" r="16" pathLength="100" />
@@ -45,14 +45,14 @@ export default function HomeProgressBoard({
                 r="16"
                 pathLength="100"
                 strokeDasharray="100"
-                strokeDashoffset={100 - pokedex.completionPct}
+                strokeDashoffset={100 - biodex.completionPct}
               />
             </svg>
-            <span className="home-progress-ring-val">{pokedex.completionPct}%</span>
+            <span className="home-progress-ring-val">{biodex.completionPct}%</span>
           </div>
-          <span className="home-progress-card-label">{t("home.pokedex_progress")}</span>
+          <span className="home-progress-card-label">{t("home.biodex_progress")}</span>
           <span className="home-progress-card-sub">
-            {pokedex.caughtCount} {t("home.species_label")}
+            {biodex.caughtCount} {t("home.species_label")}
           </span>
         </button>
 

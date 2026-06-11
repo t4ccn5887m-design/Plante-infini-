@@ -88,7 +88,7 @@ export default function DiscoveryResultActions({
         >
           <button
             type="button"
-            className="discovery-result-btn discovery-result-btn--light"
+            className="discovery-result-btn discovery-result-btn--scan"
             onClick={onScanAgain}
           >
             {scanAgainLabel || t("discovery.scan_again")}

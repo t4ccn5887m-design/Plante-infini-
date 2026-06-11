@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { POKEDEX_TYPES } from "@/lib/pokedex";
+import { BIODEX_TYPES } from "@/lib/biodex";
 
 const QUICK_SCANS = [
   { id: "plant", emoji: "🌿", labelKey: "home.quick_plant", scan: {} },
@@ -89,11 +89,11 @@ export default function HomeScanHero({ t, onStartScan, isNewUser, discoveries = 
             ))}
           </div>
           <div className="home-species-orbit" aria-hidden="true">
-            {POKEDEX_TYPES.map((type, i) => (
+            {BIODEX_TYPES.map((type, i) => (
               <span
                 key={type.id}
                 className="home-species-orbit-item"
-                style={{ "--orbit-i": i, "--orbit-n": POKEDEX_TYPES.length }}
+                style={{ "--orbit-i": i, "--orbit-n": BIODEX_TYPES.length }}
               >
                 {type.emoji}
               </span>
