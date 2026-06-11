@@ -1,8 +1,10 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useMemo } from "react";
+import { createT } from "@/lib/i18n";
 
 const SLIDE_KEYS = ["slide1", "slide2", "slide3"];
 
-export default function WelcomeSlidesScreen({ t, onComplete }) {
+export default function WelcomeSlidesScreen({ onComplete }) {
+  const t = useMemo(() => createT("fr"), []);
   const [index, setIndex] = useState(0);
   const touchStartX = useRef(null);
 
@@ -57,6 +59,8 @@ export default function WelcomeSlidesScreen({ t, onComplete }) {
         </div>
 
         <div className="welcome-slides-footer">
+          <p className="welcome-slide-french-badge">{t("welcome.french_app_badge")}</p>
+
           <div className="welcome-dots" role="tablist" aria-label={t("welcome.progress")}>
             {slides.map((_, i) => (
               <button

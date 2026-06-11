@@ -3413,6 +3413,15 @@ video {
   gap: 1.25rem;
 }
 
+.welcome-slide-french-badge {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 300;
+  color: rgba(245, 240, 232, 0.82);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
 .welcome-dots {
   display: flex;
   gap: 0.5rem;
