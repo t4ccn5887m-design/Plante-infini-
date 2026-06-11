@@ -4,7 +4,6 @@ import {
   enforceScanQuotaForAnalyze,
   recordSuccessfulScanServer,
 } from "@/lib/scanQuotaServer";
-import { isScanConfidenceTooLow, LOW_CONFIDENCE_MESSAGE } from "@/lib/scanConfidence";
 
 function imageMediaType(base64) {
   const head = base64.replace(/\s/g, "").slice(0, 12);
@@ -29,7 +28,6 @@ const LANG_LABEL = {
 const SHARED_FIELDS = `
 JSON uniquement, sans markdown ni texte autour :
 {
-  "confiance":0-100,
   "type":"animal|oiseau|insecte|reptile|papillon",
   "nom":"Nom commun exact de l'animal",
   "nom_latin":"Binôme latin ou null",
@@ -57,10 +55,9 @@ function buildSystem(mode, lang) {
   const base = `Tu es un naturaliste passionné et conteur. Tu crées une connexion émotionnelle — pas juste identifier, mais raconter une histoire vraie et touchante. Réponds entièrement en ${tone}.
 
 RÈGLES STRICTES :
-• Ne JAMAIS inventer. En cas de doute : explique dans identification_note et reste prudent dans heure_probable et chances_observer.
-• Évalue ton niveau de confiance dans l'identification (champ confiance : entier de 0 à 100). Sois honnête : si tu hésites fortement entre plusieurs espèces, si l'indice est très ambigu ou si un détail clé manque, confiance < 80.
-• Photo/spectrogramme flou ou illisible : {"erreur":"Enregistrement illisible — réessayez avec plus de clarté et de proximité."}
-• Sujet non identifiable : {"erreur":"Aucun animal identifiable"}
+• Ne JAMAIS inventer. En cas de doute : propose la meilleure identification possible et explique dans identification_note.
+• TOUJOURS renvoyer une identification si un animal, indice ou chant est plausible, même partiel ou incertain.
+• Réserve {"erreur":"Aucune decouverte identifiable"} UNIQUEMENT si la photo/enregistrement ne contient aucun animal, indice ou chant identifiable (mur, visage, voiture, bruit sans oiseau, photo vide…).
 `;
 
   if (mode === "animal") {
@@ -106,14 +103,14 @@ function buildUserPrompt(mode, meta = {}) {
   const context = `Contexte : enregistré le ${now.toLocaleDateString("fr-FR")} à ${timeOfDay}, saison : ${season}.`;
 
   if (mode === "animal") {
-    return `Analyse cette photo d'animal. ${context} Identifie l'animal, évalue ta confiance (0-100), et raconte son histoire dans cet environnement. JSON seul.`;
+    return `Analyse cette photo d'animal. ${context} Identifie l'animal et raconte son histoire dans cet environnement. JSON seul.`;
   }
   if (mode === "traces") {
-    return `Analyse ces indices laissés par un animal. ${context} Déduis quel animal est passé, évalue ta confiance (0-100), et raconte son passage. JSON seul.`;
+    return `Analyse ces indices laissés par un animal. ${context} Déduis quel animal est passé et raconte son passage. JSON seul.`;
   }
   if (mode === "sound") {
     const duration = meta.durationSec ? ` Durée de l'enregistrement : ${meta.durationSec} secondes.` : "";
-    return `Analyse ce spectrogramme d'un chant ou cri d'animal.${duration} ${context} Identifie l'espèce, évalue ta confiance (0-100), et raconte son histoire. JSON seul.`;
+    return `Analyse ce spectrogramme d'un chant ou cri d'animal.${duration} ${context} Identifie l'espèce et raconte son histoire. JSON seul.`;
   }
   return "Analyse et réponds en JSON.";
 }
@@ -175,13 +172,6 @@ export default async function handler(req, res) {
 
     if (parsed.erreur) {
       return res.status(422).json(parsed);
-    }
-
-    if (isScanConfidenceTooLow(parsed)) {
-      return res.status(422).json({
-        erreur: LOW_CONFIDENCE_MESSAGE,
-        low_confidence: true,
-      });
     }
 
     let scanQuota = null;

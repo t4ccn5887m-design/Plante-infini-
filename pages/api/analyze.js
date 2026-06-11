@@ -5,7 +5,6 @@ import {
   enforceScanQuotaForAnalyze,
   recordSuccessfulScanServer,
 } from "@/lib/scanQuotaServer";
-import { isScanConfidenceTooLow, LOW_CONFIDENCE_MESSAGE } from "@/lib/scanConfidence";
 
 function imageMediaType(base64) {
   const head = base64.replace(/\s/g, "").slice(0, 12);
@@ -21,11 +20,9 @@ export const config = { api: { bodyParser: { sizeLimit: "10mb" } } };
 const SYSTEM = `Tu es un botaniste et naturaliste expert de niveau mondial. Identifie avec une précision absolue ce que tu vois. Réponds en français.
 
 RÈGLES STRICTES :
-• Ne JAMAIS inventer. En cas de doute : mets null, ou explique l'incertitude dans identification_note.
-• Évalue ton niveau de confiance dans l'identification (champ confiance : entier de 0 à 100). Sois honnête : si tu hésites fortement entre plusieurs espèces, si la photo est très floue ou si un détail clé manque, confiance < 80.
-• Photo floue, trop sombre, trop éloignée ou ne permettant pas d'identifier le sujet : {"erreur":"Photo trop floue ou illisible — prenez une nouvelle photo plus nette, de préférence en lumière naturelle et plus proche du sujet."}
-• Photo vide/noire ou sans sujet naturel identifiable : {"erreur":"Aucune decouverte identifiable"}
-• Refuse monuments, bâtiments et patrimoine bâti sans sujet naturel : {"erreur":"Aucune decouverte identifiable"}
+• Ne JAMAIS inventer. En cas de doute : propose la meilleure identification possible et explique l'incertitude dans identification_note.
+• TOUJOURS renvoyer une identification si un élément naturel est visible (plante, animal, arbre, insecte, champignon…), même partiel, flou ou incertain.
+• Réserve {"erreur":"Aucune decouverte identifiable"} UNIQUEMENT si la photo ne contient aucun sujet naturel (mur, visage, voiture, intérieur sans plante, objet, bâtiment seul, photo vide/noire…).
 
 MISSION : identifier le sujet naturel principal (plante, arbre, arbuste, animal, insecte, champignon, fleur, fruit, légume, oiseau, reptile, papillon, mauvaise herbe…).
 
@@ -67,7 +64,6 @@ Insectes et champignons :
 
 JSON uniquement, sans markdown ni texte autour :
 {
-  "confiance":0-100,
   "type":"plante|animal|champignon|fleur|insecte|oiseau|arbre|fruit|legume|reptile|papillon|mauvaise_herbe",
   "nom":"Nom commun exact",
   "nom_latin":"Binôme latin ou null",
@@ -96,13 +92,14 @@ JSON uniquement, sans markdown ni texte autour :
 }`;
 
 const USER_PROMPT =
-  "Analyse cette photo. Tu es botaniste et naturaliste expert de niveau mondial — identifie avec une précision absolue ce que tu vois. " +
-  "Évalue honnêtement ton niveau de confiance (0-100) dans le champ confiance. Ne jamais inventer. " +
+  "Analyse cette photo. Tu es botaniste et naturaliste expert de niveau mondial — identifie ce que tu vois. " +
+  "Même en cas d'incertitude, renvoie toujours la meilleure identification possible (note l'incertitude dans identification_note). " +
+  "Ne renvoie une erreur que si la photo ne contient vraiment aucun élément naturel. Ne jamais inventer. " +
   "Plante ou arbre : identification (nom, latin, famille), description, âge approximatif si arbre visible, où le trouver, " +
   "état de santé avec causes et solutions, un fait surprenant. " +
   "Mauvaise herbe en potager : type mauvaise_herbe, nom, pourquoi nuisible, solution naturelle, astuces grand-mère, prévention. " +
   "Animal : nom, habitat, comportement, espèce protégée ou non, meilleure saison pour l'observer. " +
-  "Si la photo est floue, renvoie l'erreur prévue. Remplis le JSON (null si non applicable). JSON seul, sans markdown.";
+  "Remplis le JSON (null si non applicable). JSON seul, sans markdown.";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
@@ -162,13 +159,6 @@ export default async function handler(req, res) {
 
     if (parsed.erreur) {
       return res.status(422).json(parsed);
-    }
-
-    if (isScanConfidenceTooLow(parsed)) {
-      return res.status(422).json({
-        erreur: LOW_CONFIDENCE_MESSAGE,
-        low_confidence: true,
-      });
     }
 
     let scanQuota = null;
