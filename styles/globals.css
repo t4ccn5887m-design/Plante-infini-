@@ -3349,6 +3349,7 @@ video {
   justify-content: center;
   padding: calc(1.5rem + env(safe-area-inset-top)) 1.5rem calc(1.5rem + env(safe-area-inset-bottom));
   overflow: hidden;
+  cursor: pointer;
 }
 
 .welcome-slides-bg {

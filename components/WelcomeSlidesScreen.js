@@ -2,11 +2,19 @@ import { useCallback, useRef, useState, useMemo } from "react";
 import { createT } from "@/lib/i18n";
 
 const SLIDE_KEYS = ["slide1", "slide2", "slide3"];
+const SWIPE_THRESHOLD = 50;
+const TAP_THRESHOLD = 12;
 
-export default function WelcomeSlidesScreen({ onComplete }) {
+function isInteractiveTarget(target) {
+  return Boolean(target?.closest?.("button, a, [role='tab']"));
+}
+
+export default function WelcomeSlidesScreen({ onComplete}) {
   const t = useMemo(() => createT("fr"), []);
   const [index, setIndex] = useState(0);
   const touchStartX = useRef(null);
+  const touchStartY = useRef(null);
+  const tapHandledRef = useRef(false);
 
   const slides = SLIDE_KEYS.map((key) => ({
     emoji: t(`welcome.${key}_emoji`),
@@ -24,20 +32,46 @@ export default function WelcomeSlidesScreen({ onComplete }) {
     setIndex((i) => Math.min(i + 1, slides.length - 1));
   }, [isLast, onComplete, slides.length]);
 
-  const goPrev = () => setIndex((i) => Math.max(i - 1, 0));
+  const goPrev = useCallback(() => {
+    setIndex((i) => Math.max(i - 1, 0));
+  }, []);
 
   const onTouchStart = (e) => {
+    if (isInteractiveTarget(e.target)) return;
     touchStartX.current = e.touches[0]?.clientX ?? null;
+    touchStartY.current = e.touches[0]?.clientY ?? null;
   };
 
   const onTouchEnd = (e) => {
-    const start = touchStartX.current;
-    const end = e.changedTouches[0]?.clientX;
-    if (start == null || end == null) return;
-    const delta = end - start;
-    if (delta < -50) goNext();
-    else if (delta > 50) goPrev();
+    if (isInteractiveTarget(e.target)) return;
+    const startX = touchStartX.current;
+    const startY = touchStartY.current;
+    const endX = e.changedTouches[0]?.clientX;
+    const endY = e.changedTouches[0]?.clientY;
+    if (startX == null || endX == null || startY == null || endY == null) return;
+
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
+
+    if (Math.abs(deltaX) >= SWIPE_THRESHOLD && Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX < 0) goNext();
+      else goPrev();
+    } else if (Math.abs(deltaX) < TAP_THRESHOLD && Math.abs(deltaY) < TAP_THRESHOLD) {
+      tapHandledRef.current = true;
+      goNext();
+    }
+
     touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
+  const onScreenClick = (e) => {
+    if (tapHandledRef.current) {
+      tapHandledRef.current = false;
+      return;
+    }
+    if (isInteractiveTarget(e.target)) return;
+    goNext();
   };
 
   const slide = slides[index];
@@ -47,6 +81,8 @@ export default function WelcomeSlidesScreen({ onComplete }) {
       className="welcome-slides screen-enter"
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
+      onClick={onScreenClick}
+      role="presentation"
     >
       <div className="welcome-slides-bg" aria-hidden="true" />
       <div className="welcome-slides-content">
