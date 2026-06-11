@@ -1,7 +1,6 @@
 import { useCallback, useRef, useState } from "react";
-import Logo from "@/components/Logo";
 
-const SLIDE_KEYS = ["slide1", "slide2", "slide3", "slide4"];
+const SLIDE_KEYS = ["slide1", "slide2", "slide3"];
 
 export default function WelcomeSlidesScreen({ t, onComplete }) {
   const [index, setIndex] = useState(0);
@@ -47,9 +46,8 @@ export default function WelcomeSlidesScreen({ t, onComplete }) {
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
+      <div className="welcome-slides-bg" aria-hidden="true" />
       <div className="welcome-slides-content">
-        <Logo size={56} />
-
         <div className="welcome-slide-card" key={index}>
           <span className="welcome-slide-emoji" aria-hidden="true">
             {slide.emoji}
@@ -58,35 +56,29 @@ export default function WelcomeSlidesScreen({ t, onComplete }) {
           <p className="welcome-slide-text">{slide.text}</p>
         </div>
 
-        <div className="welcome-dots" role="tablist" aria-label={t("welcome.progress")}>
-          {slides.map((_, i) => (
-            <button
-              key={SLIDE_KEYS[i]}
-              type="button"
-              role="tab"
-              aria-selected={i === index}
-              aria-label={`${i + 1} / ${slides.length}`}
-              className={`welcome-dot${i === index ? " welcome-dot--active" : ""}`}
-              onClick={() => setIndex(i)}
-            />
-          ))}
+        <div className="welcome-slides-footer">
+          <div className="welcome-dots" role="tablist" aria-label={t("welcome.progress")}>
+            {slides.map((_, i) => (
+              <button
+                key={SLIDE_KEYS[i]}
+                type="button"
+                role="tab"
+                aria-selected={i === index}
+                aria-label={`${i + 1} / ${slides.length}`}
+                className={`welcome-dot${i === index ? " welcome-dot--active" : ""}`}
+                onClick={() => setIndex(i)}
+              />
+            ))}
+          </div>
+
+          {isLast ? (
+            <button type="button" className="welcome-cta" onClick={goNext}>
+              {t("welcome.cta")}
+            </button>
+          ) : (
+            <div className="welcome-cta-spacer" aria-hidden="true" />
+          )}
         </div>
-
-        {isLast ? (
-          <button type="button" className="btn-primary welcome-cta" onClick={goNext}>
-            {t("welcome.cta")}
-          </button>
-        ) : (
-          <button type="button" className="btn-primary welcome-cta" onClick={goNext}>
-            {t("welcome.next")}
-          </button>
-        )}
-
-        {!isLast && (
-          <button type="button" className="welcome-skip" onClick={onComplete}>
-            {t("welcome.skip")}
-          </button>
-        )}
       </div>
     </div>
   );
