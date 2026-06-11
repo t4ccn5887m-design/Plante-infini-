@@ -1,7 +1,7 @@
 import "leaflet/dist/leaflet.css";
 import "@/styles/globals.css";
 import { useEffect } from "react";
-import InstallBanner from "@/components/InstallBanner";
+import InstallGuideModalHost from "@/components/InstallGuideModalHost";
 import { detectLang } from "@/lib/i18n";
 import { checkPotagerReminders } from "@/lib/potagerNotifications";
 import { checkJardinMorningSurprise } from "@/lib/espaceVertNotifications";
@@ -66,7 +66,7 @@ export default function App({ Component, pageProps }) {
   return (
     <>
       <Component {...pageProps} />
-      <InstallBanner />
+      <InstallGuideModalHost />
     </>
   );
 }

@@ -1,6 +1,5 @@
 import { isTreeLikeAnalysis } from "@/lib/treeAge";
 import TreeTrunkAgeCalculator from "@/components/TreeTrunkAgeCalculator";
-import Accordion, { AccordionItem } from "@/components/Accordion";
 import { getFunFactText } from "@/components/DiscoveryFunFact";
 
 function textValue(value) {
@@ -101,7 +100,7 @@ export function getAnalysisSections(data, t) {
   ].filter((s) => s.text);
 }
 
-function getAccordionSections(data, t) {
+function getVisibleSections(data, t) {
   const headerFact = getFunFactText(data);
   const sections = getAnalysisSections(data, t);
 
@@ -150,7 +149,7 @@ export function discoveryToAnalysisData(discovery) {
   };
 }
 
-function AgeAccordionContent({ section, data, t, lang, discoveryId, showTreeAge }) {
+function AgeSectionContent({ section, data, t, lang, discoveryId, showTreeAge }) {
   return (
     <>
       <SectionText text={section?.text} />
@@ -168,7 +167,7 @@ function AgeAccordionContent({ section, data, t, lang, discoveryId, showTreeAge 
 }
 
 export default function DiscoveryAnalysisSections({ data, t, lang = "fr", discoveryId }) {
-  const sections = [...getAccordionSections(data, t)];
+  const sections = [...getVisibleSections(data, t)];
   const showTreeAge = isTreeLikeAnalysis(data);
 
   if (showTreeAge && !sections.some((s) => s.key === "age_approx")) {
@@ -184,33 +183,27 @@ export default function DiscoveryAnalysisSections({ data, t, lang = "fr", discov
   if (!sections.length) return null;
 
   return (
-    <Accordion className="discovery-analysis-sections">
-      {sections.map((section) => {
-        if (section.key === "age_approx") {
-          return (
-            <AccordionItem
-              key="age_approx"
-              title={section.title}
-              className={showTreeAge ? "accordion-item--tree-age" : undefined}
-            >
-              <AgeAccordionContent
-                section={section}
-                data={data}
-                t={t}
-                lang={lang}
-                discoveryId={discoveryId}
-                showTreeAge={showTreeAge}
-              />
-            </AccordionItem>
-          );
-        }
-
-        return (
-          <AccordionItem key={section.key} title={section.title}>
+    <div className="discovery-analysis-sections">
+      {sections.map((section) => (
+        <div
+          key={section.key}
+          className={`result-card${section.key === "age_approx" && showTreeAge ? " result-card--tree-age" : ""}`}
+        >
+          <h3 className="result-card-title">{section.title}</h3>
+          {section.key === "age_approx" ? (
+            <AgeSectionContent
+              section={section}
+              data={data}
+              t={t}
+              lang={lang}
+              discoveryId={discoveryId}
+              showTreeAge={showTreeAge}
+            />
+          ) : (
             <SectionText text={section.text} />
-          </AccordionItem>
-        );
-      })}
-    </Accordion>
+          )}
+        </div>
+      ))}
+    </div>
   );
 }

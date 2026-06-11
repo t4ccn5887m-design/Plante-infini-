@@ -5,6 +5,7 @@ import {
   enforceScanQuotaForAnalyze,
   recordSuccessfulScanServer,
 } from "@/lib/scanQuotaServer";
+import { isScanConfidenceTooLow, LOW_CONFIDENCE_MESSAGE } from "@/lib/scanConfidence";
 
 function imageMediaType(base64) {
   const head = base64.replace(/\s/g, "").slice(0, 12);
@@ -17,10 +18,11 @@ function imageMediaType(base64) {
 
 export const config = { api: { bodyParser: { sizeLimit: "10mb" } } };
 
-const SYSTEM = `Tu es un botaniste et naturaliste expert de niveau mondial. Identifie avec une précision absolue ce que tu vois. Si tu n'es pas sûr à 90 %, dis-le clairement. Réponds en français.
+const SYSTEM = `Tu es un botaniste et naturaliste expert de niveau mondial. Identifie avec une précision absolue ce que tu vois. Réponds en français.
 
 RÈGLES STRICTES :
 • Ne JAMAIS inventer. En cas de doute : mets null, ou explique l'incertitude dans identification_note.
+• Évalue ton niveau de confiance dans l'identification (champ confiance : entier de 0 à 100). Sois honnête : si tu hésites fortement entre plusieurs espèces, si la photo est très floue ou si un détail clé manque, confiance < 80.
 • Photo floue, trop sombre, trop éloignée ou ne permettant pas d'identifier le sujet : {"erreur":"Photo trop floue ou illisible — prenez une nouvelle photo plus nette, de préférence en lumière naturelle et plus proche du sujet."}
 • Photo vide/noire ou sans sujet naturel identifiable : {"erreur":"Aucune decouverte identifiable"}
 • Refuse monuments, bâtiments et patrimoine bâti sans sujet naturel : {"erreur":"Aucune decouverte identifiable"}
@@ -65,6 +67,7 @@ Insectes et champignons :
 
 JSON uniquement, sans markdown ni texte autour :
 {
+  "confiance":0-100,
   "type":"plante|animal|champignon|fleur|insecte|oiseau|arbre|fruit|legume|reptile|papillon|mauvaise_herbe",
   "nom":"Nom commun exact",
   "nom_latin":"Binôme latin ou null",
@@ -94,7 +97,7 @@ JSON uniquement, sans markdown ni texte autour :
 
 const USER_PROMPT =
   "Analyse cette photo. Tu es botaniste et naturaliste expert de niveau mondial — identifie avec une précision absolue ce que tu vois. " +
-  "Si tu n'es pas sûr à 90 %, dis-le clairement. Ne jamais inventer. " +
+  "Évalue honnêtement ton niveau de confiance (0-100) dans le champ confiance. Ne jamais inventer. " +
   "Plante ou arbre : identification (nom, latin, famille), description, âge approximatif si arbre visible, où le trouver, " +
   "état de santé avec causes et solutions, un fait surprenant. " +
   "Mauvaise herbe en potager : type mauvaise_herbe, nom, pourquoi nuisible, solution naturelle, astuces grand-mère, prévention. " +
@@ -129,7 +132,7 @@ export default async function handler(req, res) {
 
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     const response = await client.messages.create({
-      model: "claude-sonnet-4-6",
+      model: "claude-opus-4-6",
       max_tokens: 4096,
       system: SYSTEM,
       messages: [
@@ -159,6 +162,13 @@ export default async function handler(req, res) {
 
     if (parsed.erreur) {
       return res.status(422).json(parsed);
+    }
+
+    if (isScanConfidenceTooLow(parsed)) {
+      return res.status(422).json({
+        erreur: LOW_CONFIDENCE_MESSAGE,
+        low_confidence: true,
+      });
     }
 
     let scanQuota = null;

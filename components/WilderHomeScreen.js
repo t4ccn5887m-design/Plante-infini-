@@ -2,6 +2,7 @@ import { useMemo, useState, useRef, useEffect, useCallback } from "react";
 import { buildPokedexCollection, POKEDEX_TYPES } from "@/lib/pokedex";
 import { getNatureStreak } from "@/lib/natureStreak";
 import { getDailySpecies } from "@/lib/dailySpecies";
+import { shouldOfferInstallGuide } from "@/lib/installGuide";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import HomeScanCategories from "@/components/HomeScanCategories";
 
@@ -30,11 +31,13 @@ export default function WilderHomeScreen({
   deleteLabels,
   selectedCategory,
   onCategoryChange,
+  onOpenInstallGuide,
 }) {
   const [revealedDeleteId, setRevealedDeleteId] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const longPressTimer = useRef(null);
   const longPressTriggered = useRef(false);
+  const showInstallGuide = shouldOfferInstallGuide();
 
   const streak = getNatureStreak();
   const speciesCount = useMemo(
@@ -151,6 +154,19 @@ export default function WilderHomeScreen({
             selectedId={selectedCategory}
             onSelect={onCategoryChange}
           />
+
+          {showInstallGuide && onOpenInstallGuide && (
+            <button
+              type="button"
+              className="wilder-home-install-btn stagger-3"
+              onClick={onOpenInstallGuide}
+            >
+              <span className="wilder-home-install-icon" aria-hidden="true">
+                📲
+              </span>
+              <span>{t("home.install_cta")}</span>
+            </button>
+          )}
         </main>
 
         <section className="wilder-home-daily-card stagger-3" aria-label={t("home.daily_pick_title")}>

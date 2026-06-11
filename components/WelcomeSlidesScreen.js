@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState, useMemo } from "react";
 import { createT } from "@/lib/i18n";
 
-const SLIDE_KEYS = ["slide1", "slide2", "slide3"];
+const SLIDE_KEYS = ["slide1", "slide2", "slide3", "slide4"];
 const SWIPE_THRESHOLD = 50;
 const TAP_THRESHOLD = 12;
 
@@ -9,7 +9,7 @@ function isInteractiveTarget(target) {
   return Boolean(target?.closest?.("button, a, [role='tab']"));
 }
 
-export default function WelcomeSlidesScreen({ onComplete}) {
+export default function WelcomeSlidesScreen({ onComplete }) {
   const t = useMemo(() => createT("fr"), []);
   const [index, setIndex] = useState(0);
   const touchStartX = useRef(null);
@@ -25,12 +25,13 @@ export default function WelcomeSlidesScreen({ onComplete}) {
   const isLast = index >= slides.length - 1;
 
   const goNext = useCallback(() => {
-    if (isLast) {
-      onComplete?.();
-      return;
-    }
+    if (isLast) return;
     setIndex((i) => Math.min(i + 1, slides.length - 1));
-  }, [isLast, onComplete, slides.length]);
+  }, [isLast, slides.length]);
+
+  const complete = useCallback(() => {
+    onComplete?.();
+  }, [onComplete]);
 
   const goPrev = useCallback(() => {
     setIndex((i) => Math.max(i - 1, 0));
@@ -112,7 +113,7 @@ export default function WelcomeSlidesScreen({ onComplete}) {
           </div>
 
           {isLast ? (
-            <button type="button" className="welcome-cta" onClick={goNext}>
+            <button type="button" className="welcome-cta" onClick={complete}>
               {t("welcome.cta")}
             </button>
           ) : (

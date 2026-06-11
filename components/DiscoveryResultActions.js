@@ -19,6 +19,7 @@ export default function DiscoveryResultActions({
   const sentinelRef = useRef(null);
 
   const tr = useMemo(() => createT(lang), [lang]);
+  const tFr = useMemo(() => createT("fr"), []);
   const typeLbl = (type) => getTypeLabel(tr, type);
   const rarityLbl = (r) => getRarityLabel(tr, r);
 
@@ -60,7 +61,9 @@ export default function DiscoveryResultActions({
     setSharing(true);
     try {
       const format = mode === "native" ? "feed" : "story";
-      await shareDiscovery(discovery, t, typeLbl, rarityLbl, format);
+      const shareTextOverride =
+        mode === "native" ? tFr("discovery.share_app_invite") : undefined;
+      await shareDiscovery(discovery, t, typeLbl, rarityLbl, format, { shareText: shareTextOverride });
       setShareOpen(false);
     } catch {
       /* annulé */

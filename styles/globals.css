@@ -1903,7 +1903,8 @@ video {
   margin: 0;
 }
 
-.accordion-item--tree-age .tree-trunk-age--embedded {
+.accordion-item--tree-age .tree-trunk-age--embedded,
+.result-card--tree-age .tree-trunk-age--embedded {
   background: transparent;
   border: none;
   padding: 0;
@@ -6274,7 +6275,99 @@ video {
   min-height: 1rem;
 }
 
-/* PWA install banner */
+/* Install guide */
+.install-guide-overlay {
+  z-index: 10000;
+}
+
+.install-guide-sheet h2 {
+  margin-bottom: 0.35rem;
+}
+
+.install-guide-platform {
+  margin: 0 0 1.1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sunset-light);
+}
+
+.install-guide-steps {
+  list-style: none;
+  margin: 0 0 1.35rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.install-guide-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.install-guide-step-num {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(91, 168, 92, 0.22);
+  color: #b8e6b9;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.install-guide-step-text {
+  flex: 1;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  padding-top: 0.15rem;
+}
+
+.install-guide-close {
+  width: 100%;
+}
+
+.wilder-home-install-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  width: 100%;
+  margin-top: 0.95rem;
+  padding: 0.72rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.94);
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.wilder-home-install-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+.wilder-home-install-btn:active {
+  transform: scale(0.99);
+}
+
+.wilder-home-install-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+/* PWA install banner (legacy — removed) */
 .install-banner {
   position: fixed;
   bottom: 0;
