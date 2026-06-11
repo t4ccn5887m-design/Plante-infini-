@@ -2,7 +2,7 @@ import Document, { Html, Head, Main, NextScript } from "next/document";
 
 const OG_TITLE = "Wilder";
 const OG_DESCRIPTION = "Explorez la nature autour de vous";
-const PWA_ICON_VERSION = "20250605";
+const PWA_ICON_VERSION = "20250610";
 const v = (path) => `${path}?v=${PWA_ICON_VERSION}`;
 const OG_IMAGE_PATH = v("/icon-512.png");
 
@@ -45,13 +45,13 @@ class WilderDocument extends Document {
           <meta name="twitter:description" content={OG_DESCRIPTION} />
           <meta name="twitter:image" content={ogImage} />
           <link rel="manifest" href={v("/manifest.json")} />
-          <link rel="icon" href={v("/icon.svg")} type="image/svg+xml" />
+          <link rel="icon" href={v("/logowilder.png")} type="image/png" />
           <link rel="apple-touch-icon" sizes="180x180" href={v("/icon-180.png")} />
           <link rel="apple-touch-icon" sizes="192x192" href={v("/icon-192.png")} />
           <link rel="icon" type="image/png" sizes="32x32" href={v("/favicon-32.png")} />
           <link rel="icon" type="image/png" sizes="192x192" href={v("/icon-192.png")} />
           <link rel="icon" type="image/png" sizes="512x512" href={v("/icon-512.png")} />
-          <link rel="shortcut icon" href={v("/favicon.ico")} />
+          <link rel="shortcut icon" href={v("/favicon-32.png")} />
         </Head>
         <body>
           <Main />

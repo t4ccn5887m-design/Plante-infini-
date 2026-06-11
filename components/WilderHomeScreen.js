@@ -116,7 +116,12 @@ export default function WilderHomeScreen({
       <div className="wilder-home-content wilder-home-content--v2">
         <header className="wilder-home-top stagger-1">
           <div className="wilder-home-brand">
-            <h1 className="wilder-home-brand-title">Wilder</h1>
+            <img
+              src="/logowilder.png"
+              alt="Wilder"
+              className="wilder-home-brand-logo"
+              height={80}
+            />
           </div>
           <div className="wilder-home-streak-row" aria-label={t("home.streak_bar_label")}>
             <span className="wilder-home-streak-item">
