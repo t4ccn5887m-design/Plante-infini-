@@ -16,6 +16,8 @@ export default function RandoScanResult({
   scanAgainLabel,
   onOrganizeDestination,
   organizeHint,
+  onDelete,
+  deleteLabels,
   onEndRando,
 }) {
   const type = result?.type || "plante";
@@ -81,10 +83,10 @@ export default function RandoScanResult({
         discovery={discovery}
         t={t}
         lang={lang}
-        organizeHint={organizeHint}
-        onOrganizeDestination={onOrganizeDestination}
         onScanAgain={onScanAgain}
         scanAgainLabel={scanAgainLabel}
+        onDelete={onDelete}
+        deleteLabels={deleteLabels}
       />
 
       {onEndRando && (

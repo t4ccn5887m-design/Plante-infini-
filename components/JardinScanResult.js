@@ -13,6 +13,8 @@ export default function JardinScanResult({
   onScanAgain,
   onOrganizeDestination,
   organizeHint,
+  onDelete,
+  deleteLabels,
   saved = true,
 }) {
   const health = inferHealthFromEtatSante(result?.etat_sante);
@@ -76,9 +78,9 @@ export default function JardinScanResult({
         discovery={discovery}
         t={t}
         lang={lang}
-        organizeHint={organizeHint}
-        onOrganizeDestination={onOrganizeDestination}
         onScanAgain={onScanAgain}
+        onDelete={onDelete}
+        deleteLabels={deleteLabels}
       />
 
       {saved && (

@@ -13,6 +13,8 @@ export default function AnimalScanResult({
   onScanAgain,
   onOrganizeDestination,
   organizeHint,
+  onDelete,
+  deleteLabels,
   saved = true,
 }) {
   const protectedSpecies = isProtectedSpecies(result);
@@ -59,9 +61,9 @@ export default function AnimalScanResult({
         discovery={discovery}
         t={t}
         lang={lang}
-        organizeHint={organizeHint}
-        onOrganizeDestination={onOrganizeDestination}
         onScanAgain={onScanAgain}
+        onDelete={onDelete}
+        deleteLabels={deleteLabels}
       />
 
       {saved && (

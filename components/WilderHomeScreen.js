@@ -3,6 +3,7 @@ import { buildPokedexCollection, POKEDEX_TYPES } from "@/lib/pokedex";
 import { getNatureStreak } from "@/lib/natureStreak";
 import { getDailySpecies } from "@/lib/dailySpecies";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
+import HomeScanCategories from "@/components/HomeScanCategories";
 
 const LONG_PRESS_MS = 520;
 
@@ -27,6 +28,8 @@ export default function WilderHomeScreen({
   onOpenDiscovery,
   onDeleteDiscovery,
   deleteLabels,
+  selectedCategory,
+  onCategoryChange,
 }) {
   const [revealedDeleteId, setRevealedDeleteId] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
@@ -126,23 +129,31 @@ export default function WilderHomeScreen({
         </header>
 
         <main className="wilder-home-scan-zone stagger-2">
-          <div className="home-scan-rings home-scan-rings--landing" aria-hidden="true">
-            <span className="home-scan-ring home-scan-ring--1" />
-            <span className="home-scan-ring home-scan-ring--2" />
-            <span className="home-scan-ring home-scan-ring--3" />
+          <div className="wilder-home-scan-main">
+            <div className="home-scan-rings home-scan-rings--landing" aria-hidden="true">
+              <span className="home-scan-ring home-scan-ring--1" />
+              <span className="home-scan-ring home-scan-ring--2" />
+              <span className="home-scan-ring home-scan-ring--3" />
+            </div>
+
+            <button
+              type="button"
+              className="btn-scanner btn-scanner--hero btn-scanner--green wilder-home-scan-btn"
+              onClick={() => onStartScan?.()}
+            >
+              <span className="home-scan-cta-shimmer" aria-hidden="true" />
+              <span className="btn-scanner-icon">
+                <IconCamera />
+              </span>
+              <span className="btn-scanner-label">{t("home.scanner")}</span>
+            </button>
           </div>
 
-          <button
-            type="button"
-            className="btn-scanner btn-scanner--hero btn-scanner--green wilder-home-scan-btn"
-            onClick={() => onStartScan?.()}
-          >
-            <span className="home-scan-cta-shimmer" aria-hidden="true" />
-            <span className="btn-scanner-icon">
-              <IconCamera />
-            </span>
-            <span className="btn-scanner-label">{t("home.scanner")}</span>
-          </button>
+          <HomeScanCategories
+            t={t}
+            selectedId={selectedCategory}
+            onSelect={onCategoryChange}
+          />
         </main>
 
         <section className="wilder-home-daily-card stagger-3" aria-label={t("home.daily_pick_title")}>

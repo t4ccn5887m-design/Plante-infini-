@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 
-export function AccordionItem({ title, children, defaultOpen = false, className = "" }) {
+export function AccordionItem({ title, children, defaultOpen = true, className = "" }) {
   const [open, setOpen] = useState(defaultOpen);
   const panelId = useId();
 

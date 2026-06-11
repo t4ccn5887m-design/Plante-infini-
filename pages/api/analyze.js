@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { parseClaudeJson } from "@/lib/parseAnalysis";
+import { getScanCategoryHint, isValidScanCategory } from "@/lib/scanCategories";
 import {
   enforceScanQuotaForAnalyze,
   recordSuccessfulScanServer,
@@ -104,11 +105,17 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
 
   try {
-    const { image } = req.body;
+    const { image, category } = req.body;
 
     if (!image || typeof image !== "string") {
       return res.status(400).json({ erreur: "Image manquante" });
     }
+
+    const categoryHint =
+      category && isValidScanCategory(category) ? getScanCategoryHint(category) : null;
+    const userPrompt = categoryHint
+      ? `${USER_PROMPT}\n\nContexte utilisateur : ${categoryHint}`
+      : USER_PROMPT;
 
     const imageData = image.replace(/\s/g, "");
     const mediaType = imageMediaType(imageData);
@@ -122,7 +129,7 @@ export default async function handler(req, res) {
 
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     const response = await client.messages.create({
-      model: "claude-haiku-4-5-20251001",
+      model: "claude-sonnet-4-6",
       max_tokens: 4096,
       system: SYSTEM,
       messages: [
@@ -130,7 +137,7 @@ export default async function handler(req, res) {
           role: "user",
           content: [
             { type: "image", source: { type: "base64", media_type: mediaType, data: imageData } },
-            { type: "text", text: USER_PROMPT },
+            { type: "text", text: userPrompt },
           ],
         },
       ],
