@@ -9,6 +9,7 @@ const OG_IMAGE_PATH = v("/icon-512.png");
 class WilderDocument extends Document {
   static async getInitialProps(ctx) {
     const initialProps = await Document.getInitialProps(ctx);
+    const isAdminRoute = ctx.pathname === "/admin";
     const host = ctx.req?.headers?.host;
     const siteUrl =
       process.env.NEXT_PUBLIC_SITE_URL ||
@@ -16,21 +17,22 @@ class WilderDocument extends Document {
         ? `${process.env.NODE_ENV === "production" ? "https" : "http"}://${host}`
         : "");
 
-    return { ...initialProps, siteUrl };
+    return { ...initialProps, siteUrl, isAdminRoute };
   }
 
   render() {
-    const { siteUrl } = this.props;
+    const { siteUrl, isAdminRoute } = this.props;
     const ogImage = siteUrl ? `${siteUrl}${OG_IMAGE_PATH}` : OG_IMAGE_PATH;
+    const appTitle = isAdminRoute ? "Wilder Admin" : OG_TITLE;
 
     return (
       <Html lang="fr">
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
-          <meta name="application-name" content="Wilder" />
+          <meta name="application-name" content={appTitle} />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-          <meta name="apple-mobile-web-app-title" content="Wilder" />
+          <meta name="apple-mobile-web-app-title" content={appTitle} />
           <meta name="mobile-web-app-capable" content="yes" />
           <meta name="theme-color" content="#1B3D2F" />
           <meta name="description" content={OG_DESCRIPTION} />
@@ -44,7 +46,7 @@ class WilderDocument extends Document {
           <meta name="twitter:title" content={OG_TITLE} />
           <meta name="twitter:description" content={OG_DESCRIPTION} />
           <meta name="twitter:image" content={ogImage} />
-          <link rel="manifest" href={v("/manifest.json")} />
+          {!isAdminRoute && <link rel="manifest" href={v("/manifest.json")} />}
           <link rel="icon" href={v("/logowilder.png")} type="image/png" />
           <link rel="apple-touch-icon" sizes="180x180" href={v("/icon-180.png")} />
           <link rel="apple-touch-icon" sizes="192x192" href={v("/icon-192.png")} />

@@ -168,7 +168,7 @@ export default async function handler(req, res) {
 
     let scanQuota = null;
     if (!gate.skipped) {
-      const inc = await recordSuccessfulScanServer(gate.identity);
+      const inc = await recordSuccessfulScanServer(gate.identity, parsed.nom || null);
       if (inc?.ok) {
         scanQuota = {
           count: inc.count,

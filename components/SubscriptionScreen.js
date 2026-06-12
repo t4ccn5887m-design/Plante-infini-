@@ -52,17 +52,17 @@ export default function SubscriptionScreen({
               <button
                 type="button"
                 className="paywall-plan paywall-plan--primary"
-                onClick={() => handleSelectPlan("monthly")}
+                onClick={() => handleSelectPlan("yearly")}
               >
-                <span className="paywall-plan-label">{t("freemium.monthly_cta")}</span>
+                <span className="paywall-plan-label">{t("freemium.yearly_cta")}</span>
               </button>
 
               <button
                 type="button"
                 className="paywall-plan paywall-plan--secondary"
-                onClick={() => handleSelectPlan("yearly")}
+                onClick={() => handleSelectPlan("monthly")}
               >
-                <span className="paywall-plan-label">{t("freemium.yearly_cta")}</span>
+                <span className="paywall-plan-label">{t("freemium.monthly_cta")}</span>
               </button>
             </div>
 
