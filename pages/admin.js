@@ -221,7 +221,7 @@ function AdminDashboard({ onLogout }) {
       {stats?.scans?.logsTableMissing && !stats?.scans?.error && (
         <p className="admin-notice">
           Table <code>scan_logs</code> absente — exécutez le SQL ci-dessous dans Supabase.
-          Les totaux scans / visiteurs utilisent <code>scan_counts</code> en attendant.
+          Les totaux scans / visiteurs utilisent la table <code>scan_counts</code> (quota paywall).
         </p>
       )}
 
