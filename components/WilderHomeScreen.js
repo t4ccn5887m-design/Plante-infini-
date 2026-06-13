@@ -28,6 +28,7 @@ export default function WilderHomeScreen({
   onStartScan,
   onViewAll,
   onOpenDiscovery,
+  onOpenDailyPick,
   onDeleteDiscovery,
   deleteLabels,
   selectedCategory,
@@ -200,7 +201,12 @@ export default function WilderHomeScreen({
           )}
         </main>
 
-        <section className="wilder-home-daily-card stagger-3" aria-label={t("home.daily_pick_title")}>
+        <button
+          type="button"
+          className="wilder-home-daily-card stagger-3"
+          aria-label={`${t("home.daily_pick_title")} — ${dailyPick.nom}`}
+          onClick={() => onOpenDailyPick?.(dailyPick)}
+        >
           <h2 className="wilder-home-daily-title">{t("home.daily_pick_title")}</h2>
           <div className="wilder-home-daily-body">
             {dailyPick.image ? (
@@ -221,7 +227,7 @@ export default function WilderHomeScreen({
               <p className="wilder-home-daily-fact">{dailyPick.fact}</p>
             </div>
           </div>
-        </section>
+        </button>
 
         <section className="wilder-home-recent stagger-4" aria-label={t("home.recent_finds")}>
           <div className="wilder-home-recent-head">

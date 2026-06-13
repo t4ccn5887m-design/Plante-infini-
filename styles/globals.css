@@ -296,10 +296,13 @@ video {
 
 .home-scan-rings--landing {
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+  width: min(210px, 58vw);
+  height: min(210px, 58vw);
   pointer-events: none;
 }
 
@@ -677,13 +680,17 @@ video {
   min-height: min(230px, 64vw);
 }
 
-.wilder-home--v2 .home-scan-rings--landing {
-  width: min(230px, 64vw);
-  height: min(230px, 64vw);
+.wilder-home--v2 .home-scan-rings.home-scan-rings--landing {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(210px, 58vw);
+  height: min(210px, 58vw);
 }
 
 .wilder-home--v2 .home-scan-ring {
   border-color: rgba(91, 168, 92, 0.4);
+  transform-origin: center center;
 }
 
 .wilder-home-scan-btn.btn-scanner--hero.btn-scanner--green {
@@ -795,6 +802,21 @@ video {
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.16);
   margin-bottom: 0;
   flex-shrink: 0;
+  display: block;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.wilder-home-daily-card:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.wilder-home-daily-card:active {
+  transform: scale(0.985);
 }
 
 .wilder-home-daily-title {
@@ -11667,11 +11689,22 @@ button.theme-grid-card:active {
   pointer-events: none;
 }
 
+.home-scan-rings.home-scan-rings--landing {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+  width: min(210px, 58vw);
+  height: min(210px, 58vw);
+}
+
 .home-scan-ring {
   position: absolute;
   inset: 0;
   border-radius: 50%;
   border: 1px solid rgba(224, 122, 58, 0.25);
+  transform-origin: center center;
   animation: scanRingPulse 3.2s ease-out infinite;
 }
 

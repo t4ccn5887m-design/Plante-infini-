@@ -87,7 +87,6 @@ export default function HomeDashboard({
   const hubScreens = [
     { id: "wrapped", emoji: "✨", label: t("home.wrapped") },
     { id: "biodex", emoji: "📖", label: t("home.biodex") },
-    { id: "world-map", emoji: "🌍", label: t("home.world_map") },
     { id: "account", emoji: "☁️", label: t("home.account") },
   ];
 
