@@ -6,15 +6,9 @@ import {
   requestNatureNotificationPermission,
   wasNatureNotifyPromptShown,
 } from "@/lib/natureNotifications";
-
-function RarityPill({ rarete, t }) {
-  const key = ["commun", "peu_commun", "rare", "tres_rare"].includes(rarete) ? rarete : "commun";
-  return (
-    <span className={`first-celebration-rarity rarity-${key}`}>
-      ◆ {getRarityLabel(t, key)}
-    </span>
-  );
-}
+import AnimalSoundQuiz from "@/components/AnimalSoundQuiz";
+import DiscoveryAnalysisSections, { extractSummarySentence } from "@/components/DiscoveryAnalysisSections";
+import DiscoveryFunFact from "@/components/DiscoveryFunFact";
 
 export default function FirstDiscoveryCelebration({
   result,
@@ -22,7 +16,6 @@ export default function FirstDiscoveryCelebration({
   discovery,
   t,
   lang,
-  onViewFull,
   onScanAgain,
   onDismissNotify,
 }) {
@@ -33,6 +26,8 @@ export default function FirstDiscoveryCelebration({
   const tr = useMemo(() => createT(lang), [lang]);
   const typeLbl = (type) => getTypeLabel(tr, type);
   const rarityLbl = (r) => getRarityLabel(tr, r);
+
+  const summary = useMemo(() => extractSummarySentence(result?.description), [result?.description]);
 
   const handleShare = async () => {
     if (!discovery) return;
@@ -80,7 +75,6 @@ export default function FirstDiscoveryCelebration({
         {result?.nom_latin && (
           <p className="first-celebration-latin">{result.nom_latin}</p>
         )}
-        {result?.rarete && <RarityPill rarete={result.rarete} t={t} />}
 
         <p className="first-celebration-message">{t("first_discovery.message")}</p>
 
@@ -102,9 +96,19 @@ export default function FirstDiscoveryCelebration({
           </button>
         </div>
 
-        <button type="button" className="first-celebration-full-link" onClick={onViewFull}>
-          {t("first_discovery.view_full")} →
-        </button>
+        {result && (
+          <div className="first-celebration-detail">
+            {summary && <p className="first-celebration-summary">{summary}</p>}
+            <DiscoveryFunFact data={result} t={t} />
+            <AnimalSoundQuiz data={result} t={t} />
+            <DiscoveryAnalysisSections
+              data={result}
+              t={t}
+              lang={lang}
+              discoveryId={discovery?.id}
+            />
+          </div>
+        )}
 
         {showNotifyCard && notifyState !== "granted" && (
           <div className="first-celebration-notify" role="region" aria-label={t("first_discovery.notify_title")}>

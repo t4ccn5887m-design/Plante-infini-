@@ -129,7 +129,7 @@ export default function WilderHomeScreen({
 
       <div className="wilder-home-content wilder-home-content--v2">
         <header className="wilder-home-top stagger-1">
-          <div className="wilder-home-top-row">
+          <div className="wilder-home-top-bar">
             <div className="wilder-home-top-left">
               {showSubscribe && onSubscribe && (
                 <button type="button" className="wilder-home-subscribe-btn" onClick={onSubscribe}>
@@ -137,16 +137,7 @@ export default function WilderHomeScreen({
                 </button>
               )}
             </div>
-            <h1 className="wilder-home-brand-name">Wilder</h1>
             <div className="wilder-home-top-right">
-              <div className="wilder-home-streak-row" aria-label={t("home.streak_bar_label")}>
-                <span className="wilder-home-streak-item">
-                  🔥 {streak} {dayLabel}
-                </span>
-                <span className="wilder-home-streak-item">
-                  🌿 {speciesCount} {speciesLabel}
-                </span>
-              </div>
               {showPremiumMenu && (
                 <PremiumHamburgerMenu
                   t={t}
@@ -160,6 +151,17 @@ export default function WilderHomeScreen({
                 />
               )}
             </div>
+          </div>
+
+          <h1 className="wilder-home-brand-name">Wilder</h1>
+
+          <div className="wilder-home-streak-row" aria-label={t("home.streak_bar_label")}>
+            <span className="wilder-home-streak-item">
+              🔥 {streak} {dayLabel}
+            </span>
+            <span className="wilder-home-streak-item">
+              🌿 {speciesCount} {speciesLabel}
+            </span>
           </div>
         </header>
 
