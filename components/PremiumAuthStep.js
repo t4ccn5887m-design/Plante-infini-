@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   signInWithEmail,
   signInWithOAuth,
@@ -6,12 +6,22 @@ import {
   syncDiscoveriesToCloud,
 } from "@/lib/cloudSync";
 
-export default function PremiumAuthStep({ t, onComplete }) {
-  const [mode, setMode] = useState("signup");
+export default function PremiumAuthStep({
+  t,
+  onComplete,
+  titleKey = "freemium.auth_title",
+  subtitleKey = "freemium.auth_subtitle",
+  initialMode = "signup",
+}) {
+  const [mode, setMode] = useState(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    setMode(initialMode);
+  }, [initialMode]);
 
   const finish = async () => {
     await syncDiscoveriesToCloud().catch(() => {});
@@ -47,8 +57,8 @@ export default function PremiumAuthStep({ t, onComplete }) {
 
   return (
     <div className="premium-auth-step">
-      <h2 className="premium-auth-title">{t("freemium.auth_title")}</h2>
-      <p className="premium-auth-subtitle">{t("freemium.auth_subtitle")}</p>
+      <h2 className="premium-auth-title">{t(titleKey)}</h2>
+      <p className="premium-auth-subtitle">{t(subtitleKey)}</p>
 
       <button
         type="button"

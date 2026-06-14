@@ -9,6 +9,7 @@ import {
 import AnimalSoundQuiz from "@/components/AnimalSoundQuiz";
 import DiscoveryAnalysisSections, { extractSummarySentence } from "@/components/DiscoveryAnalysisSections";
 import DiscoveryFunFact from "@/components/DiscoveryFunFact";
+import SignupPromptBanner from "@/components/SignupPromptBanner";
 
 export default function FirstDiscoveryCelebration({
   result,
@@ -18,6 +19,8 @@ export default function FirstDiscoveryCelebration({
   lang,
   onScanAgain,
   onDismissNotify,
+  showSignupPrompt = false,
+  onCreateAccount,
 }) {
   const [sharing, setSharing] = useState(false);
   const [notifyState, setNotifyState] = useState("idle");
@@ -77,6 +80,10 @@ export default function FirstDiscoveryCelebration({
         )}
 
         <p className="first-celebration-message">{t("first_discovery.message")}</p>
+
+        {showSignupPrompt && onCreateAccount && (
+          <SignupPromptBanner t={t} onCreateAccount={onCreateAccount} />
+        )}
 
         <div className="first-celebration-actions">
           <button
