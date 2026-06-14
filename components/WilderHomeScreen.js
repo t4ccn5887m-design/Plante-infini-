@@ -289,12 +289,6 @@ export default function WilderHomeScreen({
             </div>
           )}
         </section>
-
-        {onOpenHerbier && (
-          <button type="button" className="wilder-home-herbier-link stagger-4" onClick={onOpenHerbier}>
-            🌿 {t("signup_prompt.herbier_link")}
-          </button>
-        )}
       </div>
 
       <DeleteConfirmDialog

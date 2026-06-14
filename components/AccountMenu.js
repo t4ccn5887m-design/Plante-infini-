@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import PremiumAuthStep from "@/components/PremiumAuthStep";
-import { loadPremiumProfile } from "@/lib/premiumProfile";
+import { loadPremiumProfile, savePremiumProfile } from "@/lib/premiumProfile";
 
 function IconMenu() {
   return (
@@ -27,13 +27,26 @@ function IconUser() {
   );
 }
 
-function formatUserLabel(displayName, email) {
-  const name = displayName?.trim();
-  if (name) return name;
-  const mail = email?.trim();
-  if (!mail) return "";
-  const local = mail.split("@")[0];
-  return local || mail;
+function ProfileSheet({ title, onClose, children }) {
+  return (
+    <div className="premium-menu-sheet-overlay" onClick={onClose} role="presentation">
+      <div
+        className="premium-menu-sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="account-menu-profile-title"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="premium-menu-sheet-head">
+          <h3 id="account-menu-profile-title">{title}</h3>
+          <button type="button" className="premium-menu-sheet-close" onClick={onClose} aria-label="Fermer">
+            ×
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
 }
 
 export default function AccountMenu({
@@ -47,18 +60,9 @@ export default function AccountMenu({
   const [open, setOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState("signup");
-  const [profileName, setProfileName] = useState("");
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [profile, setProfile] = useState(() => loadPremiumProfile());
   const wrapRef = useRef(null);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    setProfileName(loadPremiumProfile().displayName || "");
-  }, [isLoggedIn, userEmail, authOpen]);
-
-  const userLabel = useMemo(
-    () => formatUserLabel(profileName, userEmail),
-    [profileName, userEmail]
-  );
 
   const closeMenu = useCallback(() => setOpen(false), []);
 
@@ -90,6 +94,17 @@ export default function AccountMenu({
     onOpenHerbier?.();
   };
 
+  const handleOpenProfile = () => {
+    closeMenu();
+    setProfile(loadPremiumProfile());
+    setProfileOpen(true);
+  };
+
+  const handleSaveProfile = () => {
+    savePremiumProfile(profile);
+    setProfileOpen(false);
+  };
+
   const handleSignOut = async () => {
     closeMenu();
     await onSignOut?.();
@@ -118,9 +133,6 @@ export default function AccountMenu({
           <div className="premium-menu-dropdown account-menu-dropdown" role="menu">
             {isLoggedIn ? (
               <>
-                {userLabel && (
-                  <p className="account-menu-user-label" role="presentation">{userLabel}</p>
-                )}
                 <button
                   type="button"
                   className="premium-menu-item"
@@ -128,6 +140,14 @@ export default function AccountMenu({
                   onClick={handleOpenHerbier}
                 >
                   {t("account_menu.herbier")}
+                </button>
+                <button
+                  type="button"
+                  className="premium-menu-item"
+                  role="menuitem"
+                  onClick={handleOpenProfile}
+                >
+                  {t("premium_menu.profile")}
                 </button>
                 <div className="premium-menu-separator" aria-hidden="true" />
                 <button
@@ -182,6 +202,29 @@ export default function AccountMenu({
               />
             </div>
           </div>,
+          document.body
+        )}
+
+      {profileOpen &&
+        createPortal(
+          <ProfileSheet title={t("premium_menu.profile")} onClose={() => setProfileOpen(false)}>
+            <label className="premium-menu-field">
+              <span>{t("premium_menu.display_name")}</span>
+              <input
+                type="text"
+                value={profile.displayName}
+                onChange={(e) => setProfile((p) => ({ ...p, displayName: e.target.value }))}
+                placeholder={t("premium_menu.display_name_placeholder")}
+              />
+            </label>
+            <label className="premium-menu-field">
+              <span>{t("cloud.email")}</span>
+              <input type="email" value={userEmail || ""} readOnly className="premium-menu-input-readonly" />
+            </label>
+            <button type="button" className="btn-primary premium-menu-save" onClick={handleSaveProfile}>
+              {t("premium_menu.save")}
+            </button>
+          </ProfileSheet>,
           document.body
         )}
     </>

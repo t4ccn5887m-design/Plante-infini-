@@ -418,6 +418,38 @@ video {
   white-space: nowrap;
 }
 
+/* Accueil v2 — header et catégories plus impactants */
+.wilder-home--v2 .wilder-home-top {
+  gap: 0.35rem;
+  padding-bottom: 0.55rem;
+}
+
+.wilder-home--v2 .wilder-home-brand-name {
+  font-size: 1.52rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+}
+
+.wilder-home--v2 .wilder-home-top .wilder-home-streak-item {
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.wilder-home--v2 .home-scan-categories {
+  gap: 0.42rem;
+  margin-bottom: 0.65rem;
+}
+
+.wilder-home--v2 .home-scan-category {
+  padding: 0.4rem 0.72rem;
+  font-size: 0.82rem;
+  font-weight: 400;
+}
+
+.wilder-home--v2 .home-scan-category--active {
+  font-weight: 500;
+}
+
 /* Premium hamburger menu */
 .premium-menu-wrap {
   position: relative;
