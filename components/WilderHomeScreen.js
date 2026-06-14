@@ -1,10 +1,12 @@
 import { useMemo, useState, useRef, useEffect, useCallback } from "react";
 import { buildBiodexCollection, BIODEX_TYPES } from "@/lib/biodex";
 import { getNatureStreak } from "@/lib/natureStreak";
-import { getDailySpecies } from "@/lib/dailySpecies";
+import { getDailySpecies, getDailySpeciesIllustration } from "@/lib/dailySpecies";
+import { DiscoveryPhotoThumb, DailySpeciesMedia } from "@/components/DiscoveryPhotoThumb";
 import { shouldOfferInstallGuide } from "@/lib/installGuide";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import HomeScanCategories from "@/components/HomeScanCategories";
+import AccountMenu from "@/components/AccountMenu";
 import PremiumHamburgerMenu from "@/components/PremiumHamburgerMenu";
 
 const LONG_PRESS_MS = 520;
@@ -27,6 +29,10 @@ export default function WilderHomeScreen({
   discoveries = [],
   onStartScan,
   onViewAll,
+  onOpenHerbier,
+  isLoggedIn = false,
+  accountUserEmail = "",
+  onAccountCreated,
   onOpenDiscovery,
   onOpenDailyPick,
   onDeleteDiscovery,
@@ -65,6 +71,10 @@ export default function WilderHomeScreen({
   );
 
   const dailyPick = useMemo(() => getDailySpecies(), []);
+  const dailyIllustration = useMemo(
+    () => getDailySpeciesIllustration(dailyPick),
+    [dailyPick]
+  );
 
   const dayLabel = streak <= 1 ? t("home.day_one") : t("home.day_many");
   const speciesLabel = speciesCount <= 1 ? t("home.species_one") : t("home.species_many");
@@ -131,6 +141,14 @@ export default function WilderHomeScreen({
         <header className="wilder-home-top stagger-1">
           <div className="wilder-home-top-bar">
             <div className="wilder-home-top-left">
+              <AccountMenu
+                t={t}
+                isLoggedIn={isLoggedIn}
+                userEmail={accountUserEmail}
+                onOpenHerbier={onOpenHerbier}
+                onSignOut={onSignOut}
+                onAccountCreated={onAccountCreated}
+              />
               {showSubscribe && onSubscribe && (
                 <button type="button" className="wilder-home-subscribe-btn" onClick={onSubscribe}>
                   {t("home.subscribe")}
@@ -211,18 +229,12 @@ export default function WilderHomeScreen({
         >
           <h2 className="wilder-home-daily-title">{t("home.daily_pick_title")}</h2>
           <div className="wilder-home-daily-body">
-            {dailyPick.image ? (
-              <img
-                src={dailyPick.image}
-                alt=""
-                className="wilder-home-daily-photo"
-                loading="lazy"
-              />
-            ) : (
-              <span className="wilder-home-daily-photo wilder-home-daily-photo--emoji" aria-hidden="true">
-                {dailyPick.emoji}
-              </span>
-            )}
+            <DailySpeciesMedia
+              species={dailyPick}
+              illustration={dailyIllustration}
+              photoClassName="wilder-home-daily-photo"
+              emojiClassName="wilder-home-daily-photo wilder-home-daily-photo--emoji"
+            />
             <div className="wilder-home-daily-text">
               <p className="wilder-home-daily-name">{dailyPick.nom}</p>
               <p className="wilder-home-daily-latin">{dailyPick.latin}</p>
@@ -257,13 +269,7 @@ export default function WilderHomeScreen({
                     onClick={() => handleThumbClick(d)}
                     aria-label={d.nom}
                   >
-                    {d.photo ? (
-                      <img src={d.photo} alt="" className="wilder-home-recent-thumb" />
-                    ) : (
-                      <span className="wilder-home-recent-thumb wilder-home-recent-thumb--empty">
-                        {typeEmoji(d.type)}
-                      </span>
-                    )}
+                    <DiscoveryPhotoThumb discovery={d} typeEmoji={typeEmoji} />
                   </button>
                   {revealedDeleteId === d.id && (
                     <button
@@ -283,6 +289,12 @@ export default function WilderHomeScreen({
             </div>
           )}
         </section>
+
+        {onOpenHerbier && (
+          <button type="button" className="wilder-home-herbier-link stagger-4" onClick={onOpenHerbier}>
+            🌿 {t("signup_prompt.herbier_link")}
+          </button>
+        )}
       </div>
 
       <DeleteConfirmDialog

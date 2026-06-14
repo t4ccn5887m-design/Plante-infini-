@@ -25,43 +25,70 @@ import AnimalSoundQuiz from "@/components/AnimalSoundQuiz";
 import AnalyzeLoadingScreen from "@/components/AnalyzeLoadingScreen";
 import DiscoveryAnalysisSections, {
   discoveryToAnalysisData,
+  extractSummarySentence,
 } from "@/components/DiscoveryAnalysisSections";
 import DiscoveryResultActions from "@/components/DiscoveryResultActions";
+import DiscoveryFunFact from "@/components/DiscoveryFunFact";
 import { shareDiscovery } from "@/lib/share";
 import { computeStats } from "@/lib/stats";
 import { isHeritageType } from "@/lib/categories";
 import OnboardingScreen from "@/components/OnboardingScreen";
-import AuthWelcomeScreen from "@/components/AuthWelcomeScreen";
+import WelcomeSlidesScreen from "@/components/WelcomeSlidesScreen";
+import SubscriptionScreen from "@/components/SubscriptionScreen";
+import FreemiumAdBanner from "@/components/FreemiumAdBanner";
+import ScanQuotaNotice from "@/components/ScanQuotaNotice";
 import {
-  completeAuthWelcome,
-  isAuthWelcomeComplete,
-  shouldShowAuthWelcome,
-  shouldSkipAuthWelcomeForSession,
-} from "@/lib/authWelcome";
+  completeWelcomeSlides,
+  shouldShowWelcomeSlidesOnLaunch,
+} from "@/lib/welcomeSlides";
+import {
+  activatePremiumOnServer,
+  buildScanQuotaHeaders,
+  refreshScanQuota,
+} from "@/lib/scanQuotaClient";
+import {
+  canScan,
+  completePremiumActivation,
+  isPendingAccountSetup,
+  isPremium,
+  shouldShowPaywall,
+  shouldShowAdBanner,
+  syncScanQuotaFromServer,
+  cancelPremiumSubscription,
+} from "@/lib/freemium";
 import {
   bootstrapCloudSync,
-  completeAuthSession,
+  deleteDiscoveryFromCloud,
   flushPendingSync,
   getCloudSession,
-  isCloudAvailable,
+  signOutCloud,
 } from "@/lib/cloudSync";
-import { supabase } from "@/lib/supabase";
-import FloatingScannerButton from "@/components/FloatingScannerButton";
+import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
+import SignupPromptBanner from "@/components/SignupPromptBanner";
+import SignupPromptModal from "@/components/SignupPromptModal";
+import { useGuestAccount } from "@/hooks/useGuestAccount";
 import PotagerView from "@/components/PotagerView";
 import HerbierView from "@/components/HerbierView";
 import AnimalAudioRecorder from "@/components/AnimalAudioRecorder";
 import WilderWrapped from "@/components/WilderWrapped";
-import WorldDiscoveriesMap from "@/components/WorldDiscoveriesMap";
-import PokedexCollection from "@/components/PokedexCollection";
+import BiodexCollection from "@/components/BiodexCollection";
 import DuoModePanel from "@/components/DuoModePanel";
 import CloudAccountCard from "@/components/CloudAccountCard";
 import HomeDashboard from "@/components/HomeDashboard";
 import HomeGreeting from "@/components/HomeGreeting";
-import HomeScanHero from "@/components/HomeScanHero";
+import WilderHomeScreen from "@/components/WilderHomeScreen";
+import { buildDailySpeciesViewModel } from "@/lib/dailySpecies";
+import { DailySpeciesHero, DiscoveryHeroPhoto } from "@/components/DiscoveryPhotoThumb";
+import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
+import Logo from "@/components/Logo";
 import FirstDiscoveryCelebration from "@/components/FirstDiscoveryCelebration";
 import { getWrappedYear } from "@/lib/wrapped";
 import { recordDuoDiscovery } from "@/lib/duoMode";
 import { recordNatureActivity } from "@/lib/natureStreak";
+import {
+  scheduleInstallGuideAfterFirstScan,
+  tryConsumeInstallGuideAutoShow,
+} from "@/lib/installGuide";
 import { computeEspaceVertScore, getScoreTier } from "@/lib/espaceVertScore";
 import ThemeAlbumsList from "@/components/ThemeAlbumsList";
 import PotagerScanResult from "@/components/PotagerScanResult";
@@ -99,14 +126,10 @@ import RandoMap from "@/components/RandoMap";
 import {
   acquireCameraStream,
   completeOnboarding,
-  getCurrentLocation,
   isCameraGranted,
   isOnboardingComplete,
-  loadStoredLocation,
-  requestLocationPermission,
-  startLocationWatch,
 } from "@/lib/permissions";
-import { appendTrackPoint, computeTrackDistanceKm } from "@/lib/randos";
+import { computeTrackDistanceKm } from "@/lib/randos";
 import { compressDataUrl } from "@/lib/compressImage";
 import { captureViewfinderFrame } from "@/lib/cameraCapture";
 import {
@@ -128,7 +151,6 @@ import {
   getSubAlbums,
   isThemeScreen,
   normalizeAlbumTheme,
-  NAV_THEMES,
   resolveScanBackScreen,
   THEME_META,
 } from "@/lib/themes";
@@ -170,14 +192,6 @@ function defaultAlbumName(t, locale) {
 
 function generateId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-}
-
-function formatLocation(discovery) {
-  if (discovery?.placeName) return discovery.placeName;
-  if (discovery?.latitude != null && discovery?.longitude != null) {
-    return `${discovery.latitude.toFixed(4)}°, ${discovery.longitude.toFixed(4)}°`;
-  }
-  return null;
 }
 
 function getAlbumLocation(album, allDiscoveries) {
@@ -266,36 +280,9 @@ async function prepareAlbumsForMap() {
     photos: getAlbumPhotos(album, discoveries),
   }));
 
-  const missing = normalized.filter((album) => !getAlbumLocation(album, discoveries));
-
-  if (missing.length === 0) {
-    const changed = JSON.stringify(normalized) !== JSON.stringify(albums);
-    if (changed) saveAlbums(normalized);
-    return { albums: normalized, discoveries };
-  }
-
-  const location = await getCurrentLocation();
-  if (!location) {
-    const changed = JSON.stringify(normalized) !== JSON.stringify(albums);
-    if (changed) saveAlbums(normalized);
-    return { albums: normalized, discoveries };
-  }
-
-  let offsetIndex = 0;
-  const updated = normalized.map((album) => {
-    if (getAlbumLocation(album, discoveries)) return album;
-    const spread = offsetIndex * 0.0008;
-    offsetIndex += 1;
-    return {
-      ...album,
-      latitude: location.latitude + spread,
-      longitude: location.longitude + spread * 0.6,
-      placeName: location.placeName || null,
-    };
-  });
-
-  saveAlbums(updated);
-  return { albums: updated, discoveries };
+  const changed = JSON.stringify(normalized) !== JSON.stringify(albums);
+  if (changed) saveAlbums(normalized);
+  return { albums: normalized, discoveries };
 }
 
 function loadTheme() {
@@ -314,46 +301,6 @@ function applyTheme(theme) {
 }
 
 /* ── Icons ── */
-
-function IconWilderLogo({ size = 72 }) {
-  return (
-    <svg className="wilder-logo-icon" width={size} height={size} viewBox="0 0 512 512" fill="none" aria-hidden="true">
-      <rect width="512" height="512" rx="96" fill="#1B3A2D" />
-      <g fill="none" stroke="#F5F0E8" strokeLinecap="round" strokeLinejoin="round">
-        <path
-          d="M 132 138 C 118 218, 128 318, 168 388 C 188 418, 218 402, 238 362 C 248 332, 252 302, 256 268"
-          strokeWidth="18"
-        />
-        <path
-          d="M 380 138 C 394 218, 384 318, 344 388 C 324 418, 294 402, 274 362 C 264 332, 260 302, 256 268"
-          strokeWidth="18"
-        />
-        <path d="M 168 248 C 148 268, 138 292, 132 318" strokeWidth="7" opacity="0.75" />
-        <path d="M 344 248 C 364 268, 374 292, 380 318" strokeWidth="7" opacity="0.75" />
-        <path d="M 256 268 C 262 318, 272 358, 286 388" strokeWidth="8" opacity="0.7" />
-        <path d="M 218 318 C 236 298, 248 278, 256 268" strokeWidth="6" opacity="0.55" />
-        <path d="M 294 318 C 276 298, 264 278, 256 268" strokeWidth="6" opacity="0.55" />
-      </g>
-      <g fill="#F5F0E8">
-        <path d="M 148 178 C 132 172, 124 188, 130 202 C 138 210, 152 206, 156 192 C 158 184, 154 180, 148 178Z" />
-        <path d="M 364 178 C 380 172, 388 188, 382 202 C 374 210, 360 206, 356 192 C 354 184, 358 180, 364 178Z" />
-        <path d="M 192 328 C 176 322, 168 340, 176 354 C 186 362, 200 356, 204 340 C 206 332, 200 328, 192 328Z" />
-        <path d="M 320 328 C 336 322, 344 340, 336 354 C 326 362, 312 356, 308 340 C 306 332, 312 328, 320 328Z" />
-        <path d="M 248 228 C 234 222, 226 238, 234 252 C 244 260, 258 254, 262 238 C 264 230, 256 226, 248 228Z" />
-        <path d="M 264 228 C 278 222, 286 238, 278 252 C 268 260, 254 254, 250 238 C 248 230, 256 226, 264 228Z" />
-      </g>
-      <g fill="#4CAF50">
-        <path d="M 118 302 C 100 296, 92 316, 102 332 C 114 342, 130 334, 134 314 C 136 304, 126 298, 118 302Z" />
-        <path d="M 394 302 C 412 296, 420 316, 410 332 C 398 342, 382 334, 378 314 C 376 304, 386 298, 394 302Z" />
-        <path d="M 156 398 C 140 392, 132 412, 142 426 C 154 436, 170 428, 174 408 C 176 398, 166 392, 156 398Z" />
-        <path d="M 356 398 C 372 392, 380 412, 370 426 C 358 436, 342 428, 338 408 C 336 398, 346 392, 356 398Z" />
-        <path d="M 276 408 C 262 402, 254 420, 264 434 C 276 444, 292 436, 296 416 C 298 406, 288 400, 276 408Z" />
-        <path d="M 236 408 C 250 402, 258 420, 248 434 C 236 444, 220 436, 216 416 C 214 406, 224 400, 236 408Z" />
-        <path d="M 256 152 C 242 146, 234 164, 244 178 C 256 188, 272 180, 276 160 C 278 150, 268 144, 256 152Z" />
-      </g>
-    </svg>
-  );
-}
 
 function IconCamera({ size = 28, color = "currentColor" }) {
   return (
@@ -487,33 +434,6 @@ function ThemeToggle({ theme, onToggle, t, className = "" }) {
     >
       {isDark ? <IconSun size={20} /> : <IconMoon size={20} />}
     </button>
-  );
-}
-
-function BottomNav({ active, onNavigate, t }) {
-  const items = NAV_THEMES.map((id) => ({
-    id,
-    emoji: THEME_META[id].emoji,
-    label: t(THEME_META[id].navKey),
-  }));
-
-  return (
-    <nav className="bottom-nav bottom-nav--themes" aria-label="Navigation principale">
-      {items.map(({ id, emoji, label }) => (
-        <button
-          key={id}
-          type="button"
-          className={`bottom-nav-item${active === id ? " active" : ""}`}
-          onClick={() => onNavigate(id)}
-          aria-current={active === id ? "page" : undefined}
-        >
-          <span className="bottom-nav-emoji" aria-hidden="true">
-            {emoji}
-          </span>
-          <span className="bottom-nav-label">{label}</span>
-        </button>
-      ))}
-    </nav>
   );
 }
 
@@ -884,46 +804,6 @@ function Viewfinder({ viewfinderRef, label }) {
   );
 }
 
-function RarityBadge({ rarete, t }) {
-  const key = ["commun", "peu_commun", "rare", "tres_rare"].includes(rarete) ? rarete : "commun";
-  return (
-    <span className={`rarity-badge rarity-${key}`}>
-      ◆ {getRarityLabel(t, key)}
-    </span>
-  );
-}
-
-function LocationCard({ discovery, t }) {
-  const label = formatLocation(discovery);
-  if (!label) return null;
-  const mapUrl =
-    discovery.latitude != null && discovery.longitude != null
-      ? `https://maps.apple.com/?ll=${discovery.latitude},${discovery.longitude}&q=${encodeURIComponent(discovery.nom || "Wilder")}`
-      : null;
-
-  return (
-    <div className="result-card">
-      <div className="result-card-title">{t("discovery.location")}</div>
-      <div className="location-card">
-        <IconLocation className="location-card-icon" size={18} color="#F4A261" />
-        <div>
-          <p className="result-card-text">{label}</p>
-          {mapUrl && (
-            <a
-              className="location-map-link"
-              href={mapUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {t("discovery.map_link")}
-            </a>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function ShareButton({ discovery, t, lang }) {
   const [sharing, setSharing] = useState(false);
   const tr = useMemo(() => createT(lang), [lang]);
@@ -980,20 +860,35 @@ function OrganizeSavedToast({ message }) {
   );
 }
 
-function DiscoveryBody({ data, discovery, showNewBadge, t, lang, onShare, showInlineShare, children }) {
+function DiscoveryBody({
+  data,
+  discovery,
+  showNewBadge,
+  t,
+  lang,
+  onShare,
+  showInlineShare,
+  children,
+}) {
+  const summary = extractSummarySentence(data?.description);
+
   return (
     <>
       {showNewBadge && <span className="discovery-new-badge">{t("discovery.new")}</span>}
       <h1 className="discovery-name">{data.nom}</h1>
       {data.nom_latin && <p className="discovery-latin">{data.nom_latin}</p>}
 
-      {data.type && (
-        <span className={`discovery-type-chip${isHeritageType(data.type) ? " discovery-type-chip-heritage" : ""}`}>
-          {getTypeLabel(t, data.type)}
-        </span>
-      )}
+      <div className="discovery-tags-row">
+        {data.type && (
+          <span className={`discovery-type-chip${isHeritageType(data.type) ? " discovery-type-chip-heritage" : ""}`}>
+            {getTypeLabel(t, data.type)}
+          </span>
+        )}
+      </div>
 
-      <RarityBadge rarete={data.rarete} t={t} />
+      {summary && <p className="discovery-summary">{summary}</p>}
+
+      <DiscoveryFunFact data={data} t={t} />
 
       <AnimalSoundQuiz data={data} t={t} />
 
@@ -1003,8 +898,6 @@ function DiscoveryBody({ data, discovery, showNewBadge, t, lang, onShare, showIn
         lang={lang}
         discoveryId={discovery?.id}
       />
-
-      {discovery && <LocationCard discovery={discovery} t={t} />}
 
       {discovery && onShare !== false && showInlineShare !== false && (
         <ShareButton discovery={discovery} t={t} lang={lang} />
@@ -1140,7 +1033,6 @@ function ThemeAlbumsScreen({
   locale,
   theme,
   onToggleTheme,
-  navigateMain,
   onStartScan,
   onDeleteAlbum,
   swipeLabels,
@@ -1180,7 +1072,7 @@ function ThemeAlbumsScreen({
         </title>
       </Head>
       <div
-        className={`albums-screen screen-enter with-bottom-nav theme-screen theme-screen--${themeId}${themeId === "juniors" ? " theme-screen--juniors" : ""}`}
+        className={`albums-screen screen-enter theme-screen theme-screen--${themeId}${themeId === "juniors" ? " theme-screen--juniors" : ""}`}
       >
         <div className="albums-header theme-premium-header theme-premium-header--compact">
           <ThemeToggle theme={theme} onToggle={onToggleTheme} t={t} />
@@ -1209,13 +1101,12 @@ function ThemeAlbumsScreen({
           </AnimauxView>
         )}
       </div>
-      <BottomNav active={themeId} onNavigate={navigateMain} t={t} />
     </>
   );
 }
 
 export default function Wilder() {
-  const [screen, setScreen] = useState("herbier");
+  const [screen, setScreen] = useState("home");
   const [captured, setCaptured] = useState(null);
   const [result, setResult] = useState(null);
   const [currentDiscovery, setCurrentDiscovery] = useState(null);
@@ -1229,7 +1120,7 @@ export default function Wilder() {
   const [organizeSaved, setOrganizeSaved] = useState({});
   const [organizeSaveToast, setOrganizeSaveToast] = useState(null);
   const [savedToAlbum, setSavedToAlbum] = useState(false);
-  const [pokedexAnim, setPokedexAnim] = useState(true);
+  const [biodexAnim, setBiodexAnim] = useState(true);
   const [creatingAlbum, setCreatingAlbum] = useState(false);
   const [newAlbumName, setNewAlbumName] = useState("");
   const [albumsViewMode, setAlbumsViewMode] = useState("list");
@@ -1238,10 +1129,12 @@ export default function Wilder() {
   const [camError, setCamError] = useState("");
   const [camLoading, setCamLoading] = useState(false);
   const [camZoom, setCamZoom] = useState(1);
-  const [needsAuthWelcome, setNeedsAuthWelcome] = useState(false);
+  const [needsWelcomeSlides, setNeedsWelcomeSlides] = useState(false);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [viewingDiscovery, setViewingDiscovery] = useState(null);
-  const [returnScreen, setReturnScreen] = useState("herbier");
+  const [dailyPickView, setDailyPickView] = useState(null);
+  const [showDetailDeleteConfirm, setShowDetailDeleteConfirm] = useState(false);
+  const [returnScreen, setReturnScreen] = useState("home");
   const [creatingSubAlbum, setCreatingSubAlbum] = useState(false);
   const [newSubAlbumName, setNewSubAlbumName] = useState("");
   const [lang, setLangState] = useState(() => detectLang());
@@ -1250,7 +1143,8 @@ export default function Wilder() {
     saveLang(code);
     setLangState(code);
   }, []);
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState("light");
+  const [scanCount, setScanCount] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
   const [newBadge, setNewBadge] = useState(null);
   const [activeRandoAlbumId, setActiveRandoAlbumId] = useState(null);
@@ -1260,10 +1154,24 @@ export default function Wilder() {
   const [rescanDiscoveryId, setRescanDiscoveryId] = useState(null);
   const [scanTargetAlbumId, setScanTargetAlbumId] = useState(null);
   const [scanMode, setScanMode] = useState("single");
+  const [homeScanCategory, setHomeScanCategory] = useState(null);
   const [dailyCareSession, setDailyCareSession] = useState(null);
   const [careJournalRefreshKey, setCareJournalRefreshKey] = useState(0);
   const [jardinPlantDiscovery, setJardinPlantDiscovery] = useState(null);
   const [animalDiscovery, setAnimalDiscovery] = useState(null);
+  const [premiumUserEmail, setPremiumUserEmail] = useState(null);
+  const [signupModalOpen, setSignupModalOpen] = useState(false);
+  const [signupModalVariant, setSignupModalVariant] = useState("save");
+
+  const {
+    isGuest,
+    guestCanScan,
+    recordGuestScan,
+    refreshGuestAccount,
+  } = useGuestAccount();
+
+  const pendingGuestActionRef = useRef(null);
+  const guestAutoSavePromptedRef = useRef(false);
 
   const videoRef = useRef(null);
   const videoWrapRef = useRef(null);
@@ -1271,8 +1179,66 @@ export default function Wilder() {
   const streamRef = useRef(null);
   const pinchRef = useRef({ dist: 0, zoom: 1 });
   const hardwareZoomRef = useRef({ min: 1, max: 1, step: 0.1, supported: false });
-  const locationWatchStopRef = useRef(null);
   const organizeReturnTimerRef = useRef(null);
+
+  const openSignupSaveModal = useCallback((pendingAction) => {
+    pendingGuestActionRef.current = pendingAction ?? null;
+    setSignupModalVariant("save");
+    setSignupModalOpen(true);
+  }, []);
+
+  const openSignupHerbierModal = useCallback((pendingAction) => {
+    pendingGuestActionRef.current = pendingAction ?? null;
+    setSignupModalVariant("herbier");
+    setSignupModalOpen(true);
+  }, []);
+
+  const openSignupLimitModal = useCallback(() => {
+    pendingGuestActionRef.current = null;
+    setSignupModalVariant("limit");
+    setSignupModalOpen(true);
+  }, []);
+
+  const closeSignupModal = useCallback(() => {
+    setSignupModalOpen(false);
+    pendingGuestActionRef.current = null;
+  }, []);
+
+  const handleSignupAccountCreated = useCallback(async () => {
+    const session = await getCloudSession();
+    const user = session?.user;
+    if (user && !user.is_anonymous) {
+      setPremiumUserEmail(user.email || "");
+    }
+    await refreshGuestAccount();
+    setSignupModalOpen(false);
+    const fn = pendingGuestActionRef.current;
+    pendingGuestActionRef.current = null;
+    guestAutoSavePromptedRef.current = false;
+    if (fn) fn();
+  }, [refreshGuestAccount]);
+
+  const openHerbier = useCallback(() => {
+    if (isGuest) {
+      openSignupHerbierModal(() => {
+        setReturnScreen("home");
+        setScreen("herbier");
+      });
+      return;
+    }
+    setReturnScreen("home");
+    setScreen("herbier");
+  }, [isGuest, openSignupHerbierModal]);
+
+  const openSignupFromBanner = useCallback(() => {
+    openSignupSaveModal(null);
+  }, [openSignupSaveModal]);
+
+  const gateGuestScanBeforeCamera = useCallback(() => {
+    if (!isGuest || guestCanScan) return false;
+    openSignupLimitModal();
+    return true;
+  }, [isGuest, guestCanScan, openSignupLimitModal]);
 
   const t = useMemo(() => createT(lang), [lang]);
   const locale = useMemo(() => getLocale(lang), [lang]);
@@ -1293,9 +1259,9 @@ export default function Wilder() {
   );
 
   const randoCurrentPosition = useMemo(() => {
-    if (!randoTrack.length) return loadStoredLocation();
+    if (!randoTrack.length) return null;
     const last = randoTrack[randoTrack.length - 1];
-    return last?.latitude != null ? last : loadStoredLocation();
+    return last?.latitude != null ? last : null;
   }, [randoTrack]);
 
   useEffect(() => {
@@ -1324,6 +1290,56 @@ export default function Wilder() {
     return false;
   }, []);
 
+  useEffect(() => {
+    refreshScanQuota().then((quota) => {
+      syncScanQuotaFromServer(quota);
+      setScanCount(quota.count);
+    });
+  }, []);
+
+  const openSubscription = useCallback(() => {
+    setScreen("subscription");
+  }, []);
+
+  const openSubscriptionFromHome = useCallback(() => {
+    setReturnScreen("home");
+    setScreen("subscription");
+  }, []);
+
+  useEffect(() => {
+    if (screen !== "home") return;
+    let cancelled = false;
+    getCloudSession().then((session) => {
+      if (cancelled) return;
+      const user = session?.user;
+      if (user && !user.is_anonymous) {
+        setPremiumUserEmail(user.email || "");
+      } else {
+        setPremiumUserEmail(null);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [screen, isGuest]);
+
+  useEffect(() => {
+    if (isPendingAccountSetup()) {
+      setScreen("subscription");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isPendingAccountSetup() && screen !== "subscription") {
+      setScreen("subscription");
+    }
+  }, [screen]);
+
+  const freemiumAdBanner =
+    shouldShowAdBanner() && !isPremium() ? (
+      <FreemiumAdBanner t={t} onUpgrade={openSubscription} blocked />
+    ) : null;
+
   const finishDiscoveryFlow = useCallback(
     (updated, wasRescan) => {
       setDiscoveries(updated);
@@ -1331,14 +1347,23 @@ export default function Wilder() {
       setRescanDiscoveryId(null);
       if (wasRescan) setSavedToAlbum(true);
 
+      if (isGuest) recordGuestScan();
+
       const isFirstEver = !wasRescan && updated.length === 1;
       if (isFirstEver) {
+        scheduleInstallGuideAfterFirstScan();
         const seen = loadSeenBadges();
         const fresh = getNewBadgeIds(updated, seen);
         if (fresh.length > 0) saveSeenBadges([...seen, ...fresh]);
         setScreen("first-celebration");
         setShowConfetti(true);
         playBadgeUnlockSound();
+        return;
+      }
+
+      if (!isPremium() && shouldShowPaywall()) {
+        setScreen("subscription");
+        playDiscoverySound();
         return;
       }
 
@@ -1349,7 +1374,7 @@ export default function Wilder() {
         playDiscoverySound();
       }
     },
-    [checkNewBadges]
+    [checkNewBadges, isGuest, recordGuestScan]
   );
 
   const attachStreamToVideo = useCallback(async () => {
@@ -1405,86 +1430,53 @@ export default function Wilder() {
     setCamReady(false);
   }, []);
 
-  const handleAuthComplete = useCallback((result) => {
-    completeAuthWelcome();
-    if (result?.discoveries) setDiscoveries(result.discoveries);
-    setNeedsAuthWelcome(false);
-    if (!isOnboardingComplete()) {
+  const handleWelcomeComplete = useCallback(() => {
+    completeWelcomeSlides();
+    setNeedsWelcomeSlides(false);
+    const items = loadDiscoveries();
+    if (!isOnboardingComplete() && items.length === 0) {
       setNeedsOnboarding(true);
-    } else {
-      setReturnScreen("herbier");
-      setScreen("herbier");
     }
   }, []);
 
   useEffect(() => {
     let cancelled = false;
 
-    const initAuthGate = async () => {
-      const items = loadDiscoveries();
-      if (shouldShowAuthWelcome(items.length > 0)) {
-        if (isCloudAvailable() && supabase) {
-          const skip = await shouldSkipAuthWelcomeForSession(() => getCloudSession());
-          if (cancelled) return;
-          if (skip) {
-            setNeedsAuthWelcome(false);
-            if (!isOnboardingComplete() && items.length === 0) {
-              setNeedsOnboarding(true);
-            }
-            return;
-          }
-        }
-        setNeedsAuthWelcome(true);
+    const runWelcomeAndOnboardingCheck = async () => {
+      const showWelcome = await shouldShowWelcomeSlidesOnLaunch();
+      if (cancelled) return;
+
+      if (showWelcome) {
+        setNeedsWelcomeSlides(true);
         return;
       }
 
+      setNeedsWelcomeSlides(false);
+      const items = loadDiscoveries();
       if (isOnboardingComplete()) {
         setNeedsOnboarding(false);
       } else if (items.length > 0) {
         completeOnboarding();
-        if (!loadStoredLocation()) {
-          requestLocationPermission().catch(() => {});
-        }
         setNeedsOnboarding(false);
       } else {
         setNeedsOnboarding(true);
       }
     };
 
-    initAuthGate();
+    runWelcomeAndOnboardingCheck();
+
+    const onVisible = () => {
+      if (document.visibilityState === "visible") {
+        runWelcomeAndOnboardingCheck();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisible);
+
     return () => {
       cancelled = true;
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, []);
-
-  useEffect(() => {
-    if (!isCloudAvailable() || !supabase || !needsAuthWelcome) return undefined;
-
-    const finishOAuth = async () => {
-      const session = await getCloudSession();
-      if (session?.user && !session.user.is_anonymous) {
-        const result = await completeAuthSession();
-        if (result.ok) handleAuthComplete(result);
-      }
-    };
-    finishOAuth();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (
-        event === "SIGNED_IN" &&
-        session?.user &&
-        !session.user.is_anonymous &&
-        needsAuthWelcome
-      ) {
-        const result = await completeAuthSession();
-        if (result.ok) handleAuthComplete(result);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [needsAuthWelcome, handleAuthComplete]);
 
   useEffect(() => {
     if (isOnboardingComplete()) {
@@ -1494,16 +1486,20 @@ export default function Wilder() {
     const hasPriorUsage = loadDiscoveries().length > 0;
     if (hasPriorUsage) {
       completeOnboarding();
-      if (!loadStoredLocation()) {
-        requestLocationPermission().catch(() => {});
-      }
       setNeedsOnboarding(false);
       return;
     }
-    if (!needsAuthWelcome && isAuthWelcomeComplete()) {
+    if (!needsWelcomeSlides) {
       setNeedsOnboarding(true);
     }
-  }, [needsAuthWelcome]);
+  }, [needsWelcomeSlides]);
+
+  useEffect(() => {
+    if (screen === "analyzing" || screen === "first-celebration") return;
+    if (tryConsumeInstallGuideAutoShow()) {
+      openInstallGuideModal();
+    }
+  }, [screen]);
 
   useEffect(() => {
     const hw = hardwareZoomRef.current;
@@ -1518,7 +1514,7 @@ export default function Wilder() {
   }, [camZoom, camReady]);
 
   useEffect(() => {
-    if (needsAuthWelcome) return;
+    if (needsWelcomeSlides) return;
 
     const items = loadDiscoveries();
     setDiscoveries(items);
@@ -1531,11 +1527,29 @@ export default function Wilder() {
       if (result.ok && result.discoveries) {
         setDiscoveries(result.discoveries);
       }
+      if (
+        isPendingAccountSetup() &&
+        result.ok &&
+        result.user &&
+        !result.isAnonymous
+      ) {
+        completePremiumActivation();
+        activatePremiumOnServer().then((quota) => {
+          if (quota) {
+            syncScanQuotaFromServer(quota);
+            setScanCount(quota.count);
+          }
+        });
+        setNeedsWelcomeSlides(false);
+        setScreen("home");
+      } else if (isPendingAccountSetup()) {
+        setScreen("subscription");
+      }
     });
     const onFirstTouch = () => warmUpSounds();
     window.addEventListener("pointerdown", onFirstTouch, { once: true });
     return () => window.removeEventListener("pointerdown", onFirstTouch);
-  }, [needsAuthWelcome]);
+  }, [needsWelcomeSlides]);
 
   useEffect(() => {
     const onVisible = () => {
@@ -1565,21 +1579,11 @@ export default function Wilder() {
 
   useEffect(() => {
     if (screen === "result") {
-      setPokedexAnim(true);
-      const t = setTimeout(() => setPokedexAnim(false), 900);
+      setBiodexAnim(true);
+      const t = setTimeout(() => setBiodexAnim(false), 900);
       return () => clearTimeout(t);
     }
   }, [screen, result?.nom]);
-
-  const persistRandoTrack = useCallback((track, albumId) => {
-    if (!albumId || !Array.isArray(track)) return;
-    const allAlbums = loadAlbums();
-    const idx = allAlbums.findIndex((a) => a.id === albumId);
-    if (idx === -1) return;
-    allAlbums[idx] = { ...allAlbums[idx], gpsTrack: track };
-    saveAlbums(allAlbums);
-    setAlbums(allAlbums);
-  }, []);
 
   useEffect(() => {
     if (!activeRandoAlbumId) {
@@ -1589,30 +1593,6 @@ export default function Wilder() {
     const album = loadAlbums().find((a) => a.id === activeRandoAlbumId);
     if (album?.gpsTrack?.length) setRandoTrack(album.gpsTrack);
   }, [activeRandoAlbumId]);
-
-  useEffect(() => {
-    if (!activeRandoAlbumId) return undefined;
-
-    const stop = startLocationWatch(
-      (point) => {
-        setRandoTrack((prev) => {
-          const next = appendTrackPoint(prev, point);
-          if (next.length !== prev.length) {
-            persistRandoTrack(next, activeRandoAlbumId);
-          }
-          return next;
-        });
-      },
-      () => {}
-    );
-
-    locationWatchStopRef.current = stop;
-
-    return () => {
-      stop?.();
-      locationWatchStopRef.current = null;
-    };
-  }, [activeRandoAlbumId, persistRandoTrack]);
 
   const endRando = useCallback(() => {
     if (!activeRandoAlbumId) return;
@@ -1628,8 +1608,6 @@ export default function Wilder() {
       saveAlbums(allAlbums);
       setAlbums(allAlbums);
     }
-    locationWatchStopRef.current?.();
-    locationWatchStopRef.current = null;
     setActiveRandoAlbumId(null);
     setRandoTrack([]);
     setShowRandoMap(false);
@@ -1665,11 +1643,23 @@ export default function Wilder() {
   }, []);
 
   const startScan = useCallback(
-    (origin, { albumId: targetAlbumId, animalMode } = {}) => {
+    async (origin, { albumId: targetAlbumId, animalMode } = {}) => {
       if (animalMode === "sound") {
         setReturnScreen(origin);
         setRescanDiscoveryId(null);
         setScreen("animal-sound");
+        return;
+      }
+      const quota = await refreshScanQuota();
+      syncScanQuotaFromServer(quota);
+      setScanCount(quota.count);
+      if (gateGuestScanBeforeCamera()) {
+        setReturnScreen(origin);
+        return;
+      }
+      if (!canScan()) {
+        setReturnScreen(origin);
+        setScreen("subscription");
         return;
       }
       const juniorsModes = ["animal", "traces"];
@@ -1719,19 +1709,8 @@ export default function Wilder() {
       }
       setScreen("camera");
     },
-    [albums, t]
+    [albums, t, gateGuestScanBeforeCamera]
   );
-
-  const resultBackLabel = useCallback(() => {
-    if (activeRandoAlbumId) return t("themes.randos.resume");
-    if (returnScreen === "album-detail") return t("scanner.back");
-    if (returnScreen === "herbier") return t("discovery.home");
-    if (returnScreen === "potager") return t("themes.potager.back_to_garden");
-    if (returnScreen === "randos") return t("themes.randos.back_to_list");
-    if (returnScreen === "jardin") return t("themes.jardin.back_to_garden");
-    if (returnScreen === "juniors") return t("themes.juniors.back_to_animaux");
-    return t("discovery.home");
-  }, [activeRandoAlbumId, returnScreen, t]);
 
   const resumeRando = useCallback(() => {
     setShowRandoMap(false);
@@ -1756,44 +1735,32 @@ export default function Wilder() {
     clearScanSession();
     setErrorMsg("");
     setShowRandoMap(false);
-    setScreen("herbier");
+    setScreen("home");
   };
 
   const leaveResult = useCallback(() => {
     const back = resolveScanBackScreen(returnScreen);
     clearScanSession();
-    if (back === "herbier") {
+    if (back === "home") {
       setErrorMsg("");
       setShowRandoMap(false);
     }
     setScreen(back);
   }, [returnScreen, clearScanSession]);
 
-  const navigateMain = (target) => {
-    setReturnScreen(target);
-    setAlbumsViewMode("list");
-    setScreen(target);
-  };
-
-  const startRando = useCallback(async () => {
-    const location = await getCurrentLocation({ refresh: true });
+  const startRando = useCallback(() => {
     const createdAt = new Date().toISOString();
-    const initialTrack = location
-      ? [{ latitude: location.latitude, longitude: location.longitude, timestamp: Date.now() }]
-      : [];
     const album = buildAlbumRecord({
       name: defaultAlbumName(t, locale),
       createdAt,
       coverPhoto: null,
       discoveryIds: [],
-      location,
       theme: "randos",
     });
-    if (initialTrack.length) album.gpsTrack = initialTrack;
     const updated = [album, ...loadAlbums()];
     saveAlbums(updated);
     setAlbums(updated);
-    setRandoTrack(initialTrack);
+    setRandoTrack([]);
     setShowRandoMap(false);
     setActiveRandoAlbumId(album.id);
     setReturnScreen("randos");
@@ -1802,11 +1769,7 @@ export default function Wilder() {
 
   const startRandoFromTrail = useCallback(
     async (trail) => {
-      const location = await getCurrentLocation({ refresh: true });
       const createdAt = new Date().toISOString();
-      const initialTrack = location
-        ? [{ latitude: location.latitude, longitude: location.longitude, timestamp: Date.now() }]
-        : [];
       const albumName = trail?.name
         ? t("themes.randos.trail_album_name", { name: trail.name })
         : defaultAlbumName(t, locale);
@@ -1815,10 +1778,8 @@ export default function Wilder() {
         createdAt,
         coverPhoto: null,
         discoveryIds: [],
-        location,
         theme: "randos",
       });
-      if (initialTrack.length) album.gpsTrack = initialTrack;
       if (trail?.id) {
         album.suggestedTrailId = trail.id;
         album.suggestedTrailName = trail.name;
@@ -1826,7 +1787,7 @@ export default function Wilder() {
       const updated = [album, ...loadAlbums()];
       saveAlbums(updated);
       setAlbums(updated);
-      setRandoTrack(initialTrack);
+      setRandoTrack([]);
       setShowRandoMap(false);
       setActiveRandoAlbumId(album.id);
       setReturnScreen("randos");
@@ -1839,13 +1800,16 @@ export default function Wilder() {
     setCaptured(imgSrc);
     setScreen("analyzing");
     try {
-      const [res, location, photoStored] = await Promise.all([
+      const headers = await buildScanQuotaHeaders();
+      const [res, photoStored] = await Promise.all([
         fetch("/api/analyze", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: base64 }),
+          headers,
+          body: JSON.stringify({
+            image: base64,
+            ...(homeScanCategory ? { category: homeScanCategory } : {}),
+          }),
         }),
-        getCurrentLocation(),
         compressDataUrl(imgSrc),
       ]);
 
@@ -1855,10 +1819,23 @@ export default function Wilder() {
         setScreen("error");
         return;
       }
+      if (res.status === 402) {
+        if (data.scanQuota) {
+          syncScanQuotaFromServer(data.scanQuota);
+          setScanCount(data.scanQuota.count);
+        }
+        setScreen("subscription");
+        return;
+      }
       if (!res.ok || data.erreur) {
         setErrorMsg(data.erreur || t("error.analyze"));
         setScreen("error");
         return;
+      }
+
+      if (data.scanQuota) {
+        syncScanQuotaFromServer(data.scanQuota);
+        setScanCount(data.scanQuota.count);
       }
 
       const now = new Date().toISOString();
@@ -1907,7 +1884,6 @@ export default function Wilder() {
             alimentation: data.alimentation || prev.alimentation || "",
             espece_protegee: data.espece_protegee ?? prev.espece_protegee ?? null,
             region_saison: data.region_saison || prev.region_saison || "",
-            ...(location || {}),
             },
             CARE_SCAN,
             now
@@ -1953,7 +1929,6 @@ export default function Wilder() {
           discoveredAt: now,
           plantedAt: now,
           lastScannedAt: now,
-          ...(location || {}),
         };
         updated = [discovery, ...loadDiscoveries()];
       }
@@ -1977,7 +1952,7 @@ export default function Wilder() {
       setErrorMsg(t("error.generic"));
       setScreen("error");
     }
-  }, [t, finishDiscoveryFlow, lang, rescanDiscoveryId]);
+  }, [t, finishDiscoveryFlow, lang, rescanDiscoveryId, homeScanCategory]);
 
   const analyzeAnimal = useCallback(
     async (mode, base64, imgSrc, { durationSec } = {}) => {
@@ -1985,10 +1960,11 @@ export default function Wilder() {
       setScreen("analyzing");
       const context = getAnimalContext();
       try {
-        const [res, location, photoStored] = await Promise.all([
+        const headers = await buildScanQuotaHeaders();
+        const [res, photoStored] = await Promise.all([
           fetch("/api/analyze-animal", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers,
             body: JSON.stringify({
               image: base64,
               mode,
@@ -1997,7 +1973,6 @@ export default function Wilder() {
               season: context.season,
             }),
           }),
-          getCurrentLocation(),
           compressDataUrl(imgSrc),
         ]);
 
@@ -2007,10 +1982,23 @@ export default function Wilder() {
           setScreen("error");
           return;
         }
+        if (res.status === 402) {
+          if (data.scanQuota) {
+            syncScanQuotaFromServer(data.scanQuota);
+            setScanCount(data.scanQuota.count);
+          }
+          setScreen("subscription");
+          return;
+        }
         if (!res.ok || data.erreur) {
           setErrorMsg(data.erreur || t("error.analyze"));
           setScreen("error");
           return;
+        }
+
+        if (data.scanQuota) {
+          syncScanQuotaFromServer(data.scanQuota);
+          setScanCount(data.scanQuota.count);
         }
 
         const now = new Date().toISOString();
@@ -2041,7 +2029,6 @@ export default function Wilder() {
               espece_protegee: data.espece_protegee ?? prev.espece_protegee ?? null,
               region_saison: data.region_saison || prev.region_saison || "",
               ...animalFields,
-              ...(location || {}),
             };
             updated = loadDiscoveries().map((d) => (d.id === rescanDiscoveryId ? discovery : d));
           }
@@ -2071,7 +2058,6 @@ export default function Wilder() {
             discoveredAt: now,
             plantedAt: now,
             lastScannedAt: now,
-            ...(location || {}),
           };
           updated = [discovery, ...loadDiscoveries()];
         }
@@ -2201,7 +2187,7 @@ export default function Wilder() {
     [handleCapturedImage]
   );
 
-  const scanAgainFromResult = useCallback(() => {
+  const scanAgainFromResult = useCallback(async () => {
     if (organizeReturnTimerRef.current) {
       clearTimeout(organizeReturnTimerRef.current);
       organizeReturnTimerRef.current = null;
@@ -2213,8 +2199,18 @@ export default function Wilder() {
     setShowAlbumPicker(false);
     setAlbumPickerStartTheme(null);
     setOrganizeSaved({});
+    const quota = await refreshScanQuota();
+    syncScanQuotaFromServer(quota);
+    setScanCount(quota.count);
+    if (gateGuestScanBeforeCamera()) {
+      return;
+    }
+    if (!canScan()) {
+      setScreen("subscription");
+      return;
+    }
     setScreen("camera");
-  }, []);
+  }, [gateGuestScanBeforeCamera]);
 
   const confirmOrganizeSave = useCallback(
     (destination) => {
@@ -2230,8 +2226,12 @@ export default function Wilder() {
     [t, scanAgainFromResult]
   );
 
-  const addToAlbum = (albumId, { confirmReturn = false } = {}) => {
+  const addToAlbum = (albumId, { confirmReturn = false, skipGuestGate = false } = {}) => {
     if (!currentDiscovery) return;
+    if (!skipGuestGate && isGuest) {
+      openSignupSaveModal(() => addToAlbum(albumId, { confirmReturn, skipGuestGate: true }));
+      return;
+    }
     const allAlbums = loadAlbums();
     const idx = allAlbums.findIndex((a) => a.id === albumId);
     if (idx === -1) return;
@@ -2241,11 +2241,6 @@ export default function Wilder() {
     if (!ids.includes(currentDiscovery.id)) {
       album.discoveryIds = [currentDiscovery.id, ...ids];
       if (!album.coverPhoto) album.coverPhoto = currentDiscovery.photo;
-      if (album.latitude == null && currentDiscovery.latitude != null) {
-        album.latitude = currentDiscovery.latitude;
-        album.longitude = currentDiscovery.longitude;
-        album.placeName = currentDiscovery.placeName || null;
-      }
       if (!Array.isArray(album.photos)) album.photos = [];
       if (currentDiscovery.photo && !album.photos.includes(currentDiscovery.photo)) {
         album.photos = [currentDiscovery.photo, ...album.photos];
@@ -2270,9 +2265,11 @@ export default function Wilder() {
 
   const shareDiscoveryPayload = useMemo(() => {
     if (!currentDiscovery) return null;
+    const resolvedPhoto =
+      captured || getDiscoveryPhotoUrl(currentDiscovery) || currentDiscovery.photo;
     return {
       ...currentDiscovery,
-      photo: captured || currentDiscovery.photo,
+      photo: resolvedPhoto,
       nom: result?.nom || currentDiscovery.nom,
       nom_latin: result?.nom_latin || currentDiscovery.nom_latin,
       description: result?.description || currentDiscovery.description || "",
@@ -2291,8 +2288,12 @@ export default function Wilder() {
   }, [organizeSaved, returnScreen, activeRandoAlbumId, savedToAlbum, t]);
 
   const handleOrganizeDestination = useCallback(
-    (themeId) => {
+    (themeId, { skipGuestGate = false } = {}) => {
       if (!currentDiscovery || !result) return;
+      if (!skipGuestGate && isGuest) {
+        openSignupSaveModal(() => handleOrganizeDestination(themeId, { skipGuestGate: true }));
+        return;
+      }
       if (themeId === "potager") {
         upsertPotagerPlantFromDiscovery(currentDiscovery, result);
         recordPotagerWatering();
@@ -2307,8 +2308,12 @@ export default function Wilder() {
       setAlbumPickerStartTheme(themeId);
       setShowAlbumPicker(true);
     },
-    [currentDiscovery, result, activeRandoAlbumId, confirmOrganizeSave, t]
+    [currentDiscovery, result, activeRandoAlbumId, confirmOrganizeSave, t, isGuest, openSignupSaveModal]
   );
+
+  useEffect(() => {
+    if (screen !== "result") guestAutoSavePromptedRef.current = false;
+  }, [screen]);
 
   useEffect(
     () => () => {
@@ -2321,33 +2326,76 @@ export default function Wilder() {
 
   useEffect(() => {
     if (screen !== "result" || !activeRandoAlbumId || !currentDiscovery || savedToAlbum) return;
-    addToAlbum(activeRandoAlbumId);
-  }, [screen, activeRandoAlbumId, currentDiscovery?.id, savedToAlbum]);
+    if (isGuest) {
+      if (!guestAutoSavePromptedRef.current) {
+        guestAutoSavePromptedRef.current = true;
+        openSignupSaveModal(() => addToAlbum(activeRandoAlbumId, { skipGuestGate: true }));
+      }
+      return;
+    }
+    addToAlbum(activeRandoAlbumId, { skipGuestGate: true });
+  }, [
+    screen,
+    activeRandoAlbumId,
+    currentDiscovery?.id,
+    savedToAlbum,
+    isGuest,
+    openSignupSaveModal,
+  ]);
 
   useEffect(() => {
     if (screen !== "result" || !scanTargetAlbumId || !currentDiscovery || savedToAlbum) return;
-    addToAlbum(scanTargetAlbumId);
+    if (isGuest) {
+      if (!guestAutoSavePromptedRef.current) {
+        guestAutoSavePromptedRef.current = true;
+        openSignupSaveModal(() => {
+          addToAlbum(scanTargetAlbumId, { skipGuestGate: true });
+          setScanTargetAlbumId(null);
+        });
+      }
+      return;
+    }
+    addToAlbum(scanTargetAlbumId, { skipGuestGate: true });
     setScanTargetAlbumId(null);
-  }, [screen, scanTargetAlbumId, currentDiscovery?.id, savedToAlbum]);
+  }, [
+    screen,
+    scanTargetAlbumId,
+    currentDiscovery?.id,
+    savedToAlbum,
+    isGuest,
+    openSignupSaveModal,
+  ]);
 
   useEffect(() => {
     if (screen !== "result" || returnScreen !== "potager" || !currentDiscovery || !result) return;
+    if (isGuest) {
+      if (!guestAutoSavePromptedRef.current) {
+        guestAutoSavePromptedRef.current = true;
+        openSignupSaveModal(() => {
+          upsertPotagerPlantFromDiscovery(currentDiscovery, result);
+          recordPotagerWatering();
+          setOrganizeSaved((prev) => ({ ...prev, potager: true }));
+        });
+      }
+      return;
+    }
     upsertPotagerPlantFromDiscovery(currentDiscovery, result);
     recordPotagerWatering();
     setOrganizeSaved((prev) => ({ ...prev, potager: true }));
-  }, [screen, returnScreen, currentDiscovery?.id, result]);
+  }, [
+    screen,
+    returnScreen,
+    currentDiscovery,
+    result,
+    isGuest,
+    openSignupSaveModal,
+  ]);
 
-  const createAlbum = async (name, theme = DEFAULT_ALBUM_THEME) => {
+  const createAlbum = async (name, theme = DEFAULT_ALBUM_THEME, { skipGuestGate = false } = {}) => {
     if (!currentDiscovery) return;
-    let location = null;
-    if (currentDiscovery.latitude != null && currentDiscovery.longitude != null) {
-      location = {
-        latitude: currentDiscovery.latitude,
-        longitude: currentDiscovery.longitude,
-        placeName: currentDiscovery.placeName || null,
-      };
-    } else {
-      location = await getCurrentLocation();
+    if (!skipGuestGate && isGuest) {
+      openSignupSaveModal(() => createAlbum(name, theme, { skipGuestGate: true }));
+      return;
     }
     const albumName = name.trim() || defaultAlbumName(t, locale);
     const createdAt = new Date().toISOString();
@@ -2356,7 +2404,7 @@ export default function Wilder() {
       createdAt,
       coverPhoto: currentDiscovery.photo,
       discoveryIds: [currentDiscovery.id],
-      location,
+      location: null,
       theme,
     });
     const updated = [album, ...loadAlbums()];
@@ -2371,14 +2419,13 @@ export default function Wilder() {
 
   const createAlbumFromList = async (themeId, options = {}) => {
     const name = (options.name || newAlbumName).trim() || defaultAlbumName(t, locale);
-    const location = await getCurrentLocation();
     const createdAt = new Date().toISOString();
     const album = buildAlbumRecord({
       name,
       createdAt,
       coverPhoto: null,
       discoveryIds: [],
-      location,
+      location: null,
       theme: themeId,
       spaceKind: options.spaceKind || null,
     });
@@ -2391,14 +2438,13 @@ export default function Wilder() {
 
   const createSubAlbum = async (parentAlbum) => {
     const name = newSubAlbumName.trim() || defaultAlbumName(t, locale);
-    const location = await getCurrentLocation();
     const createdAt = new Date().toISOString();
     const album = buildAlbumRecord({
       name,
       createdAt,
       coverPhoto: null,
       discoveryIds: [],
-      location,
+      location: null,
       theme: parentAlbum.theme || DEFAULT_ALBUM_THEME,
       parentId: parentAlbum.id,
     });
@@ -2422,16 +2468,32 @@ export default function Wilder() {
   const pageTitle = `Wilder — ${slogan}`;
   const marquee = t("marquee");
 
-  const openDiscoveryDetail = (d, from) => {
-    setViewingDiscovery(d);
+  const openDiscoveryDetail = useCallback((d, from) => {
+    const discovery = typeof d === "string" ? discoveries.find((x) => x.id === d) : d;
+    if (!discovery) return;
+    setShowDetailDeleteConfirm(false);
+    setViewingDiscovery(discovery);
     setReturnScreen(from);
     setScreen("discovery-detail");
-  };
+  }, [discoveries]);
+
+  const openDailyPickDetail = useCallback((species) => {
+    const view = buildDailySpeciesViewModel(species);
+    if (!view) return;
+    setDailyPickView(view);
+    setReturnScreen("home");
+    setScreen("daily-pick-detail");
+  }, []);
+
+  const closeDailyPickDetail = useCallback(() => {
+    setDailyPickView(null);
+    setScreen("home");
+  }, []);
 
   const swipeDeleteLabels = useMemo(
     () => ({
       deleteLabel: t("discovery.delete_btn"),
-      confirmMessage: t("discovery.delete_confirm"),
+      confirmMessage: t("home.delete_find_confirm"),
       cancelLabel: t("albums.cancel"),
       confirmLabel: t("discovery.delete_action"),
     }),
@@ -2457,13 +2519,11 @@ export default function Wilder() {
       setAlbums(updated);
       if (selectedAlbumId === albumId) {
         setSelectedAlbumId(null);
-        setScreen(isThemeScreen(returnScreen) ? returnScreen : "herbier");
+        setScreen(isThemeScreen(returnScreen) ? returnScreen : "home");
       }
       if (activeRandoAlbumId === albumId) {
         setActiveRandoAlbumId(null);
         setRandoTrack([]);
-        locationWatchStopRef.current?.();
-        locationWatchStopRef.current = null;
       }
       if (randoJournalAlbumId === albumId) {
         setRandoJournalAlbumId(null);
@@ -2480,12 +2540,20 @@ export default function Wilder() {
       saveAlbums(result.albums);
       setDiscoveries(result.discoveries);
       setAlbums(result.albums);
+      setShowDetailDeleteConfirm(false);
       if (viewingDiscovery?.id === discoveryId) {
         setViewingDiscovery(null);
-        setScreen(isThemeScreen(returnScreen) ? returnScreen : "herbier");
+        const back =
+          returnScreen === "album-detail" ? "album-detail" : returnScreen || "home";
+        setScreen(back);
       }
       if (currentDiscovery?.id === discoveryId) {
         setCurrentDiscovery(null);
+        if (screen === "result") {
+          setResult(null);
+          setCaptured(null);
+          setScreen(returnScreen || "home");
+        }
       }
       if (jardinPlantDiscovery?.id === discoveryId) {
         setJardinPlantDiscovery(null);
@@ -2499,6 +2567,9 @@ export default function Wilder() {
           setScreen(isThemeScreen(returnScreen) ? returnScreen : "juniors");
         }
       }
+      deleteDiscoveryFromCloud(discoveryId).catch((err) => {
+        console.error("[Wilder] deleteDiscoveryFromCloud:", err);
+      });
     },
     [discoveries, albums, viewingDiscovery, currentDiscovery, jardinPlantDiscovery, animalDiscovery, screen, returnScreen]
   );
@@ -2513,6 +2584,11 @@ export default function Wilder() {
     },
     [handleDeleteDiscovery]
   );
+
+  const handleDeleteCurrentDiscovery = useCallback(() => {
+    if (!currentDiscovery?.id) return;
+    handleDeleteDiscovery(currentDiscovery.id);
+  }, [currentDiscovery?.id, handleDeleteDiscovery]);
 
   const confettiOverlay = (
     <>
@@ -2530,17 +2606,24 @@ export default function Wilder() {
         />
       )}
       {organizeSaveToast ? <OrganizeSavedToast message={organizeSaveToast} /> : null}
+      <SignupPromptModal
+        open={signupModalOpen}
+        variant={signupModalVariant}
+        t={t}
+        onClose={closeSignupModal}
+        onAccountCreated={handleSignupAccountCreated}
+      />
     </>
   );
 
-  if (needsAuthWelcome) {
+  if (needsWelcomeSlides) {
     return (
       <>
         <Head>
           <title>Wilder</title>
           <meta name="description" content={slogan} />
         </Head>
-        <AuthWelcomeScreen t={t} slogan={slogan} onComplete={handleAuthComplete} />
+        <WelcomeSlidesScreen onComplete={handleWelcomeComplete} />
       </>
     );
   }
@@ -2556,10 +2639,149 @@ export default function Wilder() {
           t={t}
           onComplete={() => {
             setNeedsOnboarding(false);
-            setReturnScreen("herbier");
-            startScan("herbier");
+            setReturnScreen("home");
+            setScreen("home");
           }}
         />
+      </>
+    );
+  }
+
+  /* ── SUBSCRIPTION ── */
+  if (screen === "subscription") {
+    const pendingAccountSetup = isPendingAccountSetup();
+    return (
+      <>
+        <Head>
+          <title>{t("freemium.title")} — Wilder</title>
+        </Head>
+        <SubscriptionScreen
+          t={t}
+          scanCount={scanCount}
+          forced={shouldShowPaywall()}
+          initialStep={pendingAccountSetup ? "auth" : "plans"}
+          onSubscribed={() => {
+            setNeedsWelcomeSlides(false);
+            setScreen(returnScreen || "home");
+          }}
+          onClose={
+            pendingAccountSetup
+              ? undefined
+              : () => setScreen(returnScreen || "home")
+          }
+        />
+      </>
+    );
+  }
+
+  /* ── HOME ── */
+  if (screen === "home") {
+    return (
+      <>
+        <Head>
+          <title>{pageTitle}</title>
+          <meta name="description" content={slogan} />
+        </Head>
+        <WilderHomeScreen
+          t={t}
+          discoveries={discoveries}
+          selectedCategory={homeScanCategory}
+          onCategoryChange={setHomeScanCategory}
+          onStartScan={() => startScan("home")}
+          onOpenInstallGuide={openInstallGuideModal}
+          onSubscribe={openSubscriptionFromHome}
+          showSubscribe={!isPremium()}
+          showPremiumMenu={Boolean(premiumUserEmail)}
+          premiumUserEmail={premiumUserEmail || ""}
+          scanCount={scanCount}
+          locale={locale}
+          onNavigateStats={() => {
+            setReturnScreen("home");
+            setScreen("stats");
+          }}
+          onSignOut={async () => {
+            await signOutCloud();
+            setPremiumUserEmail(null);
+            await refreshGuestAccount();
+          }}
+          onCancelSubscription={() => {
+            cancelPremiumSubscription();
+            refreshScanQuota().then((quota) => {
+              if (quota) {
+                syncScanQuotaFromServer(quota);
+                setScanCount(quota.count);
+              }
+            });
+          }}
+          onViewAll={() => {
+            setReturnScreen("home");
+            setScreen("biodex");
+          }}
+          onOpenHerbier={openHerbier}
+          isLoggedIn={!isGuest}
+          accountUserEmail={premiumUserEmail || ""}
+          onAccountCreated={handleSignupAccountCreated}
+          onOpenDiscovery={(d) => openDiscoveryDetail(d, "home")}
+          onOpenDailyPick={openDailyPickDetail}
+          onDeleteDiscovery={handleDeleteDiscovery}
+          deleteLabels={swipeDeleteLabels}
+        />
+        {freemiumAdBanner}
+        {confettiOverlay}
+      </>
+    );
+  }
+
+  /* ── DAILY PICK (read-only, no persistence) ── */
+  if (screen === "daily-pick-detail" && dailyPickView) {
+    const d = dailyPickView;
+    const data = {
+      nom: d.nom,
+      nom_latin: d.nom_latin,
+      type: d.type,
+      rarete: d.rarete,
+      ...discoveryToAnalysisData(d),
+    };
+
+    return (
+      <>
+        <Head>
+          <title>{d.nom} — Wilder</title>
+        </Head>
+        <div className="discovery-screen discovery-screen--detail screen-enter-fast">
+          <div className="discovery-hero">
+            <DailySpeciesHero
+              species={{ emoji: d.emoji }}
+              illustration={d.photo}
+              nom={d.nom}
+              emoji={d.emoji}
+            />
+            <button type="button" className="discovery-hero-back" onClick={closeDailyPickDetail}>
+              <IconBack size={16} /> {t("discovery.back")}
+            </button>
+          </div>
+
+          <div className="discovery-body discovery-body--detail">
+            <DiscoveryBody
+              data={data}
+              discovery={d}
+              showNewBadge={false}
+              showInlineShare={false}
+              t={t}
+              lang={lang}
+            />
+
+            <DiscoveryResultActions
+              discovery={d}
+              t={t}
+              lang={lang}
+              onScanAgain={() => {
+                closeDailyPickDetail();
+                startScan("home");
+              }}
+            />
+          </div>
+        </div>
       </>
     );
   }
@@ -2968,8 +3190,9 @@ export default function Wilder() {
           discovery={shareDiscoveryPayload}
           t={t}
           lang={lang}
-          onViewFull={() => setScreen("result")}
           onScanAgain={scanAgainFromResult}
+          showSignupPrompt={isGuest}
+          onCreateAccount={openSignupFromBanner}
         />
         <Confetti active={showConfetti} onDone={() => setShowConfetti(false)} />
       </>
@@ -3015,8 +3238,12 @@ export default function Wilder() {
               onOrganizeDestination={handleOrganizeDestination}
               onScanAgain={scanAgainFromResult}
               onBack={leaveResult}
+              onDelete={handleDeleteCurrentDiscovery}
+              deleteLabels={swipeDeleteLabels}
             />
           </div>
+          <ScanQuotaNotice t={t} scanCount={scanCount} />
+          {freemiumAdBanner}
           {resultAlbumPicker}
           {confettiOverlay}
         </>
@@ -3042,8 +3269,12 @@ export default function Wilder() {
               onOrganizeDestination={handleOrganizeDestination}
               onScanAgain={scanAgainFromResult}
               onBack={leaveResult}
+              onDelete={handleDeleteCurrentDiscovery}
+              deleteLabels={swipeDeleteLabels}
             />
           </div>
+          <ScanQuotaNotice t={t} scanCount={scanCount} />
+          {freemiumAdBanner}
           {resultAlbumPicker}
           {confettiOverlay}
         </>
@@ -3069,8 +3300,12 @@ export default function Wilder() {
               onOrganizeDestination={handleOrganizeDestination}
               onScanAgain={scanAgainFromResult}
               onBack={leaveResult}
+              onDelete={handleDeleteCurrentDiscovery}
+              deleteLabels={swipeDeleteLabels}
             />
           </div>
+          <ScanQuotaNotice t={t} scanCount={scanCount} />
+          {freemiumAdBanner}
           {resultAlbumPicker}
           {confettiOverlay}
         </>
@@ -3098,8 +3333,12 @@ export default function Wilder() {
               scanAgainLabel={t("themes.randos.scan_again")}
               onBack={resumeRando}
               onEndRando={endRando}
+              onDelete={handleDeleteCurrentDiscovery}
+              deleteLabels={swipeDeleteLabels}
             />
           </div>
+          <ScanQuotaNotice t={t} scanCount={scanCount} />
+          {freemiumAdBanner}
           {resultAlbumPicker}
           {confettiOverlay}
         </>
@@ -3112,28 +3351,25 @@ export default function Wilder() {
           <title>{result.nom} — Wilder</title>
         </Head>
         <div className="discovery-screen screen-enter-fast">
-          {pokedexAnim && (
+          {biodexAnim && (
             <>
-              <div className="pokedex-flash" />
-              <div className="pokedex-ring" />
+              <div className="biodex-flash" />
+              <div className="biodex-ring" />
             </>
           )}
 
           <div className="discovery-hero">
             {captured && <img src={captured} alt={result.nom} />}
+            <button
+              type="button"
+              className="discovery-hero-back"
+              onClick={inRando ? resumeRando : leaveResult}
+            >
+              <IconBack size={16} /> {t("discovery.back")}
+            </button>
           </div>
 
           <div className="discovery-body">
-            <button
-              type="button"
-              className="btn-secondary"
-              style={{ marginBottom: "1rem", padding: "0.5rem 0.85rem" }}
-              onClick={inRando ? resumeRando : leaveResult}
-            >
-              <IconBack size={16} />{" "}
-              {resultBackLabel()}
-            </button>
-
             <DiscoveryBody
               data={result}
               discovery={currentDiscovery}
@@ -3143,14 +3379,20 @@ export default function Wilder() {
               lang={lang}
             />
 
+            <ScanQuotaNotice t={t} scanCount={scanCount} />
+
+            {isGuest && <SignupPromptBanner t={t} onCreateAccount={openSignupFromBanner} />}
+
+            {freemiumAdBanner}
+
             <DiscoveryResultActions
               discovery={shareDiscoveryPayload}
               t={t}
               lang={lang}
-              organizeHint={getOrganizeHint()}
-              onOrganizeDestination={handleOrganizeDestination}
               onScanAgain={inRando ? resumeRando : scanAgainFromResult}
               scanAgainLabel={inRando ? t("themes.randos.scan_again") : undefined}
+              onDelete={handleDeleteCurrentDiscovery}
+              deleteLabels={swipeDeleteLabels}
             />
 
             {inRando && (
@@ -3465,13 +3707,13 @@ export default function Wilder() {
           <title>{d.nom} — Wilder</title>
         </Head>
         <div
-          className={`discovery-screen screen-enter-fast${isJuniorsView ? " discovery-screen--juniors" : ""}`}
+          className={`discovery-screen discovery-screen--detail screen-enter-fast${isJuniorsView ? " discovery-screen--juniors" : ""}`}
         >
           <div className="discovery-hero">
-            <img src={d.photo} alt={d.nom} />
+            <DiscoveryHeroPhoto discovery={d} nom={d.nom} fallbackEmoji="🌿" />
           </div>
 
-          <div className="discovery-body">
+          <div className="discovery-body discovery-body--detail">
             <button
               type="button"
               className="btn-secondary"
@@ -3488,19 +3730,41 @@ export default function Wilder() {
               <AnimalScanResult
                 result={discoveryToAnimalResult(d)}
                 photo={null}
+                discovery={d}
                 t={t}
+                lang={lang}
                 saved={false}
                 onBack={() => {
                   setViewingDiscovery(null);
                   setScreen(returnScreen === "album-detail" ? "album-detail" : returnScreen);
                 }}
+                onScanAgain={() => {
+                  setRescanDiscoveryId(d.id);
+                  startScan(returnScreen || "home");
+                }}
+                onDelete={() => handleDeleteDiscovery(d.id)}
+                deleteLabels={swipeDeleteLabels}
               />
             ) : (
-              <DiscoveryBody data={data} discovery={d} showNewBadge={false} t={t} lang={lang}>
-                <p style={{ fontSize: "0.82rem", color: "var(--text-muted)", marginTop: "0.5rem" }}>
-                  {t("discovery.discovered_on")} {formatDate(d.discoveredAt, locale)}
-                </p>
-              </DiscoveryBody>
+              <>
+                <DiscoveryBody data={data} discovery={d} showNewBadge={false} showInlineShare={false} t={t} lang={lang}>
+                  <p style={{ fontSize: "0.82rem", color: "var(--text-muted)", marginTop: "0.5rem" }}>
+                    {t("discovery.discovered_on")} {formatDate(d.discoveredAt, locale)}
+                  </p>
+                </DiscoveryBody>
+
+                <DiscoveryResultActions
+                  discovery={d}
+                  t={t}
+                  lang={lang}
+                  onScanAgain={() => {
+                    setRescanDiscoveryId(d.id);
+                    startScan(returnScreen || "home");
+                  }}
+                  onDelete={() => handleDeleteDiscovery(d.id)}
+                  deleteLabels={swipeDeleteLabels}
+                />
+              </>
             )}
           </div>
         </div>
@@ -3641,7 +3905,7 @@ export default function Wilder() {
                 type="button"
                 className="btn-primary"
                 style={{ marginTop: "1.5rem" }}
-                onClick={() => startScan("herbier")}
+                onClick={() => startScan("home")}
               >
                 {t("home.discover")}
               </button>
@@ -3653,7 +3917,6 @@ export default function Wilder() {
             </button>
           </div>
         </div>
-        <BottomNav active="herbier" onNavigate={navigateMain} t={t} />
       </>
     );
   }
@@ -3715,7 +3978,6 @@ export default function Wilder() {
             })}
           </div>
         </div>
-        <BottomNav active="herbier" onNavigate={navigateMain} t={t} />
       </>
     );
   }
@@ -3737,63 +3999,35 @@ export default function Wilder() {
           </div>
           <WilderWrapped discoveries={discoveries} albums={albums} t={t} year={wrappedYear} />
         </div>
-        <BottomNav active="herbier" onNavigate={navigateMain} t={t} />
       </>
     );
   }
 
-  /* ── WORLD MAP ── */
-  if (screen === "world-map") {
+  /* ── BIODEX ── */
+  if (screen === "biodex") {
     return (
       <>
         <Head>
-          <title>{t("world_map.title")} — Wilder</title>
+          <title>{t("biodex.title")} — Wilder</title>
         </Head>
-        <div className="world-map-screen screen-enter with-bottom-nav">
+        <div className="biodex-screen screen-enter with-bottom-nav">
           <div className="albums-header">
             <button type="button" className="btn-secondary" style={{ padding: "0.5rem 0.75rem" }} onClick={goHome} aria-label={t("discovery.back")}>
               <IconBack size={18} />
             </button>
-            <h1 className="albums-title">{t("world_map.title")}</h1>
+            <h1 className="albums-title">{t("biodex.title")}</h1>
           </div>
-          <p className="world-map-subtitle">{t("world_map.subtitle")}</p>
-          <WorldDiscoveriesMap
-            discoveries={discoveries}
-            t={t}
-            onSelectDiscovery={(d) => openDiscoveryDetail(d.id)}
-          />
-        </div>
-        <BottomNav active="herbier" onNavigate={navigateMain} t={t} />
-      </>
-    );
-  }
-
-  /* ── POKÉDEX ── */
-  if (screen === "pokedex") {
-    return (
-      <>
-        <Head>
-          <title>{t("pokedex.title")} — Wilder</title>
-        </Head>
-        <div className="pokedex-screen screen-enter with-bottom-nav">
-          <div className="albums-header">
-            <button type="button" className="btn-secondary" style={{ padding: "0.5rem 0.75rem" }} onClick={goHome} aria-label={t("discovery.back")}>
-              <IconBack size={18} />
-            </button>
-            <h1 className="albums-title">{t("pokedex.title")}</h1>
-          </div>
-          <p className="pokedex-subtitle">{t("pokedex.subtitle")}</p>
-          <PokedexCollection
+          <p className="biodex-subtitle">{t("biodex.subtitle")}</p>
+          <BiodexCollection
             discoveries={discoveries}
             t={t}
             locale={locale}
             onOpenDiscovery={(entry) => {
               const full = discoveries.find((d) => d.nom === entry.nom && d.type === entry.type);
-              if (full) openDiscoveryDetail(full.id);
+              if (full) openDiscoveryDetail(full, "biodex");
             }}
           />
         </div>
-        <BottomNav active="herbier" onNavigate={navigateMain} t={t} />
       </>
     );
   }
@@ -3817,7 +4051,6 @@ export default function Wilder() {
             onDiscoveriesSynced={(items) => setDiscoveries(items)}
           />
         </div>
-        <BottomNav active="herbier" onNavigate={navigateMain} t={t} />
       </>
     );
   }
@@ -3844,7 +4077,7 @@ export default function Wilder() {
           </div>
           <div className="about-content">
             <div className="about-logo-wrap">
-              <IconWilderLogo size={96} />
+              <Logo size={96} />
               <h2>Wilder</h2>
               <p className="about-tagline">{t("slogan")}</p>
               <p className="about-version">{t("about.version")}</p>
@@ -3922,7 +4155,6 @@ export default function Wilder() {
         locale={locale}
         theme={theme}
         onToggleTheme={toggleTheme}
-        navigateMain={navigateMain}
         onStartScan={(animalMode) =>
           startScan(screen, typeof animalMode === "string" ? { animalMode } : {})
         }

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" role="img" aria-label="Coquelicot">
+  <rect width="120" height="120" rx="18" fill="#FFF3E0"/>
+  <g transform="translate(60 52)">
+    <ellipse cx="0" cy="-24" rx="9" ry="18" fill="#E53935"/>
+    <ellipse cx="20" cy="-16" rx="9" ry="18" fill="#E53935" transform="rotate(40)"/>
+    <ellipse cx="24" cy="6" rx="9" ry="18" fill="#E53935" transform="rotate(80)"/>
+    <ellipse cx="10" cy="24" rx="9" ry="18" fill="#E53935" transform="rotate(130)"/>
+    <ellipse cx="-12" cy="24" rx="9" ry="18" fill="#E53935" transform="rotate(180)"/>
+    <ellipse cx="-24" cy="4" rx="9" ry="18" fill="#E53935" transform="rotate(230)"/>
+    <ellipse cx="-16" cy="-18" rx="9" ry="18" fill="#E53935" transform="rotate(300)"/>
+    <ellipse cx="6" cy="-26" rx="9" ry="18" fill="#E53935" transform="rotate(20)"/>
+    <circle cx="0" cy="0" r="10" fill="#212121"/>
+    <circle cx="0" cy="0" r="5" fill="#424242"/>
+  </g>
+  <path d="M60 68 C58 82 56 96 54 108" stroke="#388E3C" stroke-width="3.5" stroke-linecap="round"/>
+</svg>
