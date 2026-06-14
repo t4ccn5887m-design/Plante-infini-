@@ -419,6 +419,8 @@ video {
 
 /* Accueil v2 — header et catégories plus impactants */
 .wilder-home--v2 .wilder-home-top {
+  position: relative;
+  z-index: 9999;
   gap: 0.35rem;
   padding-bottom: 0.55rem;
 }
@@ -451,6 +453,11 @@ video {
 
 .wilder-home--v2 .home-scan-category--active {
   font-weight: 500;
+}
+
+.wilder-home--v2 .wilder-home-scan-zone {
+  position: relative;
+  z-index: 1;
 }
 
 /* Premium hamburger menu */
@@ -646,11 +653,14 @@ video {
 
 .account-menu-wrap {
   flex: 0 0 auto;
+  position: relative;
+  z-index: 10000;
 }
 
 .account-menu-dropdown {
   right: auto;
   left: 0;
+  z-index: 9999;
 }
 
 .account-menu-user-label {
