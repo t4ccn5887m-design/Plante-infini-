@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { buildBiodexCollection } from "@/lib/biodex";
 import { getPremiumPlan, getPremiumRenewalDate } from "@/lib/freemium";
 import { loadPremiumProfile, savePremiumProfile } from "@/lib/premiumProfile";
-import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
+import { shareWilderApp } from "@/lib/share";
 
 function IconMenu() {
   return (
@@ -87,14 +87,11 @@ export default function PremiumHamburgerMenu({
 
   const handleShare = async () => {
     closeAll();
-    const text = t("discovery.share_app_invite");
-    const url = typeof window !== "undefined" ? window.location.origin : "";
     try {
-      if (navigator.share) {
-        await navigator.share({ title: "Wilder", text, url });
-      } else if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(text);
-      }
+      await shareWilderApp({
+        speciesCount,
+        isLoggedIn: Boolean(userEmail?.trim()),
+      });
     } catch {
       /* cancelled */
     }

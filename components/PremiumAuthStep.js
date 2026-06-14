@@ -55,10 +55,25 @@ export default function PremiumAuthStep({
     await finish();
   };
 
+  const displayTitleKey =
+    mode === "signin"
+      ? "account_menu.sign_in_title"
+      : titleKey === "account_menu.sign_in_title"
+        ? "signup_prompt.auth_title"
+        : titleKey;
+  const displaySubtitleKey =
+    mode === "signin"
+      ? "account_menu.sign_in_subtitle"
+      : subtitleKey === "account_menu.sign_in_subtitle"
+        ? "signup_prompt.auth_subtitle"
+        : subtitleKey;
+  const submitLabel =
+    mode === "signup" ? t("freemium.auth_continue") : t("cloud.sign_in");
+
   return (
     <div className="premium-auth-step">
-      <h2 className="premium-auth-title">{t(titleKey)}</h2>
-      <p className="premium-auth-subtitle">{t(subtitleKey)}</p>
+      <h2 className="premium-auth-title">{t(displayTitleKey)}</h2>
+      <p className="premium-auth-subtitle">{t(displaySubtitleKey)}</p>
 
       <button
         type="button"
@@ -115,7 +130,7 @@ export default function PremiumAuthStep({
           disabled={loading}
         />
         <button type="submit" className="premium-auth-submit" disabled={loading}>
-          {loading ? t("freemium.auth_loading") : t("freemium.auth_continue")}
+          {loading ? t("freemium.auth_loading") : submitLabel}
         </button>
       </form>
 
