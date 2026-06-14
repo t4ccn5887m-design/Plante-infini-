@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import PremiumAuthStep from "@/components/PremiumAuthStep";
 import { loadPremiumProfile } from "@/lib/premiumProfile";
 
@@ -162,25 +163,27 @@ export default function AccountMenu({
         )}
       </div>
 
-      {authOpen && (
-        <div className="modal-overlay signup-prompt-modal-overlay" onClick={closeAuth}>
-          <div
-            className="modal-sheet signup-prompt-modal"
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-          >
-            <PremiumAuthStep
-              key={authMode}
-              t={t}
-              initialMode={authMode}
-              titleKey={authTitleKey}
-              subtitleKey={authSubtitleKey}
-              onComplete={handleAuthComplete}
-            />
-          </div>
-        </div>
-      )}
+      {authOpen &&
+        createPortal(
+          <div className="modal-overlay signup-prompt-modal-overlay" onClick={closeAuth}>
+            <div
+              className="modal-sheet signup-prompt-modal"
+              onClick={(e) => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+            >
+              <PremiumAuthStep
+                key={authMode}
+                t={t}
+                initialMode={authMode}
+                titleKey={authTitleKey}
+                subtitleKey={authSubtitleKey}
+                onComplete={handleAuthComplete}
+              />
+            </div>
+          </div>,
+          document.body
+        )}
     </>
   );
 }
