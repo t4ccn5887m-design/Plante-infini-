@@ -1,45 +1,89 @@
-import { useState } from "react";
-import {
-  completePremiumActivation,
-  recordPaymentSuccess,
-} from "@/lib/freemium";
-import { activatePremiumOnServer } from "@/lib/scanQuotaClient";
-import { recordCgvConsent } from "@/lib/userProfile";
+import { useEffect, useState } from "react";
+import { ensureCloudAuth, getCloudSession } from "@/lib/cloudSync";
+import { isPermanentAuthUser } from "@/lib/authUser";
+import { checkoutWithCgv } from "@/lib/subscribeCheckout";
 import PremiumAuthStep from "@/components/PremiumAuthStep";
 import { CgvConsentCheckbox } from "@/components/LegalConsentCheckbox";
+
+function checkoutErrorMessage(t, error) {
+  if (error === "auth_required") return t("freemium.auth_required");
+  if (error === "cgv_consent_failed") return t("legal.consent_save_error");
+  if (error === "stripe_unavailable" || error === "stripe_price_missing") {
+    return t("freemium.stripe_unavailable");
+  }
+  return t("freemium.checkout_error");
+}
 
 export default function SubscriptionScreen({
   t,
   scanCount,
-  onSubscribed,
   onClose,
   forced = false,
-  initialStep = "plans",
+  initialStep = "checkout",
+  defaultPlan = "yearly",
+  resumeCheckoutPlan = null,
 }) {
   const [step, setStep] = useState(initialStep);
-  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [selectedPlan, setSelectedPlan] = useState(defaultPlan);
   const [cgvAccepted, setCgvAccepted] = useState(false);
   const [paymentError, setPaymentError] = useState("");
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const authRequired = step === "auth";
 
-  const handleSelectPlan = async (plan) => {
-    if (!cgvAccepted) return;
+  useEffect(() => {
+    setStep(initialStep);
+    setSelectedPlan(defaultPlan);
     setPaymentError("");
-    const consent = await recordCgvConsent();
-    if (!consent.ok) {
-      setPaymentError(t("legal.consent_save_error"));
+  }, [initialStep, defaultPlan]);
+
+  const redirectToStripe = async (plan) => {
+    setCheckoutLoading(true);
+    setPaymentError("");
+    const result = await checkoutWithCgv(plan);
+    if (result.ok && result.redirecting) return;
+    setCheckoutLoading(false);
+    if (result.needsAuth) {
+      setSelectedPlan(plan);
+      setStep("auth");
       return;
     }
-    recordPaymentSuccess(plan);
+    setPaymentError(checkoutErrorMessage(t, result.error));
+  };
+
+  const handleSelectPlan = async (plan) => {
+    if (!cgvAccepted || checkoutLoading) return;
     setSelectedPlan(plan);
-    setStep("auth");
+    await redirectToStripe(plan);
   };
 
   const handleAuthComplete = async () => {
-    completePremiumActivation();
-    await activatePremiumOnServer();
-    onSubscribed?.(selectedPlan);
+    const plan = selectedPlan || defaultPlan || "yearly";
+    await redirectToStripe(plan);
   };
+
+  useEffect(() => {
+    if (!resumeCheckoutPlan || checkoutLoading) return;
+    let cancelled = false;
+
+    (async () => {
+      await ensureCloudAuth();
+      const session = await getCloudSession();
+      if (cancelled) return;
+      if (!isPermanentAuthUser(session?.user)) {
+        setStep("auth");
+        return;
+      }
+      setSelectedPlan(resumeCheckoutPlan);
+      setStep("checkout");
+      await redirectToStripe(resumeCheckoutPlan);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [resumeCheckoutPlan]);
+
+  const showCheckout = step === "checkout";
 
   return (
     <div className="paywall-screen screen-enter">
@@ -48,7 +92,7 @@ export default function SubscriptionScreen({
       <div className="wilder-home-overlay paywall-screen-overlay" aria-hidden="true" />
 
       <div className="paywall-content">
-        {step === "plans" ? (
+        {showCheckout ? (
           <>
             <h1 className="paywall-title">{t("freemium.title")}</h1>
             <p className="paywall-subtitle">{t("freemium.subtitle")}</p>
@@ -70,7 +114,7 @@ export default function SubscriptionScreen({
                 type="button"
                 className="paywall-plan paywall-plan--primary"
                 onClick={() => handleSelectPlan("yearly")}
-                disabled={!cgvAccepted}
+                disabled={!cgvAccepted || checkoutLoading}
               >
                 <span className="paywall-plan-label">{t("freemium.yearly_cta")}</span>
               </button>
@@ -79,11 +123,15 @@ export default function SubscriptionScreen({
                 type="button"
                 className="paywall-plan paywall-plan--secondary"
                 onClick={() => handleSelectPlan("monthly")}
-                disabled={!cgvAccepted}
+                disabled={!cgvAccepted || checkoutLoading}
               >
                 <span className="paywall-plan-label">{t("freemium.monthly_cta")}</span>
               </button>
             </div>
+
+            {checkoutLoading && (
+              <p className="paywall-note">{t("freemium.checkout_loading")}</p>
+            )}
 
             {paymentError && (
               <p className="paywall-consent-error" role="alert">{paymentError}</p>
@@ -98,14 +146,19 @@ export default function SubscriptionScreen({
             )}
           </>
         ) : (
-          <PremiumAuthStep t={t} onComplete={handleAuthComplete} />
+          <PremiumAuthStep
+            t={t}
+            onComplete={handleAuthComplete}
+            convertAnonymousOnly
+            pendingCheckoutPlan={selectedPlan || defaultPlan}
+          />
         )}
 
         {authRequired && (
           <p className="paywall-auth-required">{t("freemium.auth_required")}</p>
         )}
 
-        {forced && step === "plans" && (
+        {forced && showCheckout && (
           <p className="paywall-forced-hint">{t("freemium.forced_hint", { count: scanCount })}</p>
         )}
       </div>

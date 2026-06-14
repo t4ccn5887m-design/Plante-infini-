@@ -1,4 +1,6 @@
+import { resolveAuthUser } from "@/lib/apiAuth";
 import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export const config = { api: { bodyParser: { sizeLimit: "10mb" } } };
 
@@ -69,6 +71,15 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "POST") {
+    if (!supabaseAdmin) {
+      return res.status(503).json({ erreur: "Communauté non disponible" });
+    }
+
+    const user = await resolveAuthUser(req);
+    if (!user) {
+      return res.status(401).json({ erreur: "auth_required" });
+    }
+
     const {
       kind,
       comment = "",
@@ -109,9 +120,10 @@ export default async function handler(req, res) {
       latitude: lat,
       longitude: lon,
       place_name: placeName ? String(placeName).slice(0, 120) : null,
+      author_id: user.id,
     };
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("potager_community_posts")
       .insert(payload)
       .select("id, kind, comment, photo, plants, latitude, longitude, place_name, created_at")

@@ -43,23 +43,23 @@ import {
   shouldShowWelcomeSlides,
 } from "@/lib/welcomeSlides";
 import {
-  activatePremiumOnServer,
   buildScanQuotaHeaders,
   refreshScanQuota,
 } from "@/lib/scanQuotaClient";
 import {
   canScan,
-  completePremiumActivation,
-  isPendingAccountSetup,
   isPremium,
   shouldShowPaywall,
   shouldShowAdBanner,
   syncScanQuotaFromServer,
-  cancelPremiumSubscription,
 } from "@/lib/freemium";
+import { isPermanentAuthUser } from "@/lib/authUser";
+import { consumePendingCheckoutPlan } from "@/lib/subscribeFlow";
+import { resolveSubscribeEntry } from "@/lib/subscribeCheckout";
 import {
   bootstrapCloudSync,
   deleteDiscoveryFromCloud,
+  ensureCloudAuth,
   flushPendingSync,
   getCloudSession,
   signOutCloud,
@@ -1173,6 +1173,11 @@ export default function Wilder() {
   const [premiumUserEmail, setPremiumUserEmail] = useState(null);
   const [signupModalOpen, setSignupModalOpen] = useState(false);
   const [featureGateOpen, setFeatureGateOpen] = useState(false);
+  const [subscriptionEntry, setSubscriptionEntry] = useState({
+    initialStep: "checkout",
+    defaultPlan: "yearly",
+    resumeCheckoutPlan: null,
+  });
 
   const {
     isGuest,
@@ -1217,7 +1222,7 @@ export default function Wilder() {
     setNeedsWelcomeSlides(false);
     const session = await getCloudSession();
     const user = session?.user;
-    if (user && !user.is_anonymous) {
+    if (user && isPermanentAuthUser(user)) {
       setPremiumUserEmail(user.email || "");
     }
     await refreshGuestAccount();
@@ -1314,12 +1319,41 @@ export default function Wilder() {
     });
   }, []);
 
-  const openSubscription = useCallback(() => {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("stripe") !== "success") return;
+
+    let cancelled = false;
+    const pollPremiumFromServer = async () => {
+      for (let attempt = 0; attempt < 8; attempt += 1) {
+        if (cancelled) return;
+        const quota = await refreshScanQuota();
+        syncScanQuotaFromServer(quota);
+        setScanCount(quota.count);
+        if (quota.isPremium) break;
+        await new Promise((r) => setTimeout(r, 1500));
+      }
+    };
+    pollPremiumFromServer();
+
+    const url = new URL(window.location.href);
+    url.searchParams.delete("stripe");
+    url.searchParams.delete("session_id");
+    const next = url.pathname + url.search + url.hash;
+    window.history.replaceState({}, "", next);
+  }, []);
+
+  const openSubscription = useCallback(async () => {
+    const entry = await resolveSubscribeEntry();
+    setSubscriptionEntry(entry);
     setScreen("subscription");
   }, []);
 
-  const openSubscriptionFromHome = useCallback(() => {
+  const openSubscriptionFromHome = useCallback(async () => {
     setReturnScreen("home");
+    const entry = await resolveSubscribeEntry();
+    setSubscriptionEntry(entry);
     setScreen("subscription");
   }, []);
 
@@ -1329,7 +1363,7 @@ export default function Wilder() {
     getCloudSession().then((session) => {
       if (cancelled) return;
       const user = session?.user;
-      if (user && !user.is_anonymous) {
+      if (user && isPermanentAuthUser(user)) {
         setPremiumUserEmail(user.email || "");
       } else {
         setPremiumUserEmail(null);
@@ -1339,18 +1373,6 @@ export default function Wilder() {
       cancelled = true;
     };
   }, [screen, isGuest]);
-
-  useEffect(() => {
-    if (isPendingAccountSetup()) {
-      setScreen("subscription");
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isPendingAccountSetup() && screen !== "subscription") {
-      setScreen("subscription");
-    }
-  }, [screen]);
 
   const freemiumAdBanner =
     shouldShowAdBanner() && !isPremium() ? (
@@ -1465,7 +1487,7 @@ export default function Wilder() {
       (session) => {
         applyWelcomeSlidesFromSession(session);
         const user = session?.user;
-        if (user && !user.is_anonymous) {
+        if (user && isPermanentAuthUser(user)) {
           setPremiumUserEmail(user.email || "");
         }
       },
@@ -1476,7 +1498,31 @@ export default function Wilder() {
 
   useEffect(() => {
     if (authBootState !== "ready") return;
-    if (needsWelcomeSlides) return;
+
+    const pending = consumePendingCheckoutPlan();
+    if (!pending) return;
+
+    let cancelled = false;
+    (async () => {
+      await ensureCloudAuth();
+      const session = await getCloudSession();
+      if (cancelled || !isPermanentAuthUser(session?.user)) return;
+      setReturnScreen("home");
+      setSubscriptionEntry({
+        initialStep: "checkout",
+        defaultPlan: pending,
+        resumeCheckoutPlan: pending,
+      });
+      setScreen("subscription");
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authBootState]);
+
+  useEffect(() => {
+    if (authBootState !== "ready" || needsWelcomeSlides) return;
 
     const items = loadDiscoveries();
     if (isOnboardingComplete()) {
@@ -1521,25 +1567,6 @@ export default function Wilder() {
     bootstrapCloudSync().then((result) => {
       if (result.ok && result.discoveries) {
         setDiscoveries(result.discoveries);
-      }
-      if (
-        isPendingAccountSetup() &&
-        result.ok &&
-        result.user &&
-        !result.isAnonymous
-      ) {
-        markOnboardingVu();
-        completePremiumActivation();
-        activatePremiumOnServer().then((quota) => {
-          if (quota) {
-            syncScanQuotaFromServer(quota);
-            setScanCount(quota.count);
-          }
-        });
-        setNeedsWelcomeSlides(false);
-        setScreen("home");
-      } else if (isPendingAccountSetup()) {
-        setScreen("subscription");
       }
     });
     const onFirstTouch = () => warmUpSounds();
@@ -2665,7 +2692,6 @@ export default function Wilder() {
 
   /* ── SUBSCRIPTION ── */
   if (screen === "subscription") {
-    const pendingAccountSetup = isPendingAccountSetup();
     return (
       <>
         <Head>
@@ -2675,14 +2701,11 @@ export default function Wilder() {
           t={t}
           scanCount={scanCount}
           forced={shouldShowPaywall()}
-          initialStep={pendingAccountSetup ? "auth" : "plans"}
-          onSubscribed={() => {
-            markOnboardingVu();
-            setNeedsWelcomeSlides(false);
-            setScreen(returnScreen || "home");
-          }}
+          initialStep={subscriptionEntry.initialStep}
+          defaultPlan={subscriptionEntry.defaultPlan}
+          resumeCheckoutPlan={subscriptionEntry.resumeCheckoutPlan}
           onClose={
-            pendingAccountSetup
+            shouldShowPaywall() && !isPremium()
               ? undefined
               : () => setScreen(returnScreen || "home")
           }

@@ -15,6 +15,8 @@ export default function PremiumAuthStep({
   titleKey = "freemium.auth_title",
   subtitleKey = "freemium.auth_subtitle",
   initialMode = "signup",
+  convertAnonymousOnly = false,
+  pendingCheckoutPlan = null,
 }) {
   const [mode, setMode] = useState(initialMode);
   const [email, setEmail] = useState("");
@@ -60,7 +62,9 @@ export default function PremiumAuthStep({
         return;
       }
     }
-    const result = await signInWithOAuth("google");
+    const result = await signInWithOAuth("google", {
+      pendingCheckoutPlan: pendingCheckoutPlan || undefined,
+    });
     setLoading(false);
     if (!result.ok) {
       setError(result.error || t("cloud.error"));
@@ -75,6 +79,11 @@ export default function PremiumAuthStep({
     if (!canProceedSignup) return;
     setLoading(true);
     setError("");
+    if (convertAnonymousOnly && mode === "signin") {
+      setLoading(false);
+      setError(t("freemium.auth_convert_only"));
+      return;
+    }
     const fn = mode === "signup" ? signUpWithEmail : signInWithEmail;
     const result = await fn(email.trim(), password);
     setLoading(false);
@@ -144,24 +153,26 @@ export default function PremiumAuthStep({
         <span>{t("freemium.auth_or")}</span>
       </div>
 
-      <div className="premium-auth-tabs">
-        <button
-          type="button"
-          className={`premium-auth-tab${mode === "signup" ? " active" : ""}`}
-          onClick={() => setMode("signup")}
-          disabled={loading}
-        >
-          {t("cloud.sign_up")}
-        </button>
-        <button
-          type="button"
-          className={`premium-auth-tab${mode === "signin" ? " active" : ""}`}
-          onClick={() => setMode("signin")}
-          disabled={loading}
-        >
-          {t("cloud.sign_in")}
-        </button>
-      </div>
+      {!convertAnonymousOnly && (
+        <div className="premium-auth-tabs">
+          <button
+            type="button"
+            className={`premium-auth-tab${mode === "signup" ? " active" : ""}`}
+            onClick={() => setMode("signup")}
+            disabled={loading}
+          >
+            {t("cloud.sign_up")}
+          </button>
+          <button
+            type="button"
+            className={`premium-auth-tab${mode === "signin" ? " active" : ""}`}
+            onClick={() => setMode("signin")}
+            disabled={loading}
+          >
+            {t("cloud.sign_in")}
+          </button>
+        </div>
+      )}
 
       <form className="premium-auth-form" onSubmit={handleEmail}>
         <input

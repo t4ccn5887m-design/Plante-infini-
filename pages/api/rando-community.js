@@ -1,4 +1,6 @@
+import { resolveAuthUser } from "@/lib/apiAuth";
 import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export const config = { api: { bodyParser: { sizeLimit: "12mb" } } };
 
@@ -108,7 +110,8 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     const journalId = req.query.journalId;
-    const voterId = String(req.query.voterId || "").slice(0, 64);
+    const authUser = await resolveAuthUser(req);
+    const voterId = authUser?.id || String(req.query.voterId || "").slice(0, 64);
 
     if (journalId) {
       try {
@@ -153,6 +156,15 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "POST") {
+    if (!supabaseAdmin) {
+      return res.status(503).json({ erreur: "Communauté non disponible" });
+    }
+
+    const user = await resolveAuthUser(req);
+    if (!user) {
+      return res.status(401).json({ erreur: "auth_required" });
+    }
+
     const { action } = req.body || {};
 
     if (action === "share") {
@@ -184,9 +196,10 @@ export default async function handler(req, res) {
         longitude: lon,
         ended_at: journal.endedAt || new Date().toISOString(),
         payload,
+        author_id: user.id,
       };
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from("rando_community_journals")
         .insert(row)
         .select(
@@ -217,12 +230,13 @@ export default async function handler(req, res) {
         return res.status(400).json({ erreur: "Commentaire invalide" });
       }
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from("rando_community_comments")
         .insert({
           journal_id: journalId,
           author_name: String(authorName || "Randonneur·euse").slice(0, 40),
           body: text,
+          author_id: user.id,
         })
         .select("id, author_name, body, created_at")
         .single();
@@ -243,14 +257,14 @@ export default async function handler(req, res) {
     }
 
     if (action === "like") {
-      const { journalId, discoveryKey, voterId } = req.body;
+      const { journalId, discoveryKey } = req.body;
       const key = String(discoveryKey || "").slice(0, 80);
-      const voter = String(voterId || "").slice(0, 64);
-      if (!journalId || !key || !voter) {
+      const voter = user.id;
+      if (!journalId || !key) {
         return res.status(400).json({ erreur: "Like invalide" });
       }
 
-      const { data: existing } = await supabase
+      const { data: existing } = await supabaseAdmin
         .from("rando_community_discovery_likes")
         .select("id")
         .eq("journal_id", journalId)
@@ -259,9 +273,9 @@ export default async function handler(req, res) {
         .maybeSingle();
 
       if (existing?.id) {
-        await supabase.from("rando_community_discovery_likes").delete().eq("id", existing.id);
+        await supabaseAdmin.from("rando_community_discovery_likes").delete().eq("id", existing.id);
       } else {
-        await supabase.from("rando_community_discovery_likes").insert({
+        await supabaseAdmin.from("rando_community_discovery_likes").insert({
           journal_id: journalId,
           discovery_key: key,
           voter_id: voter,

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { buildBiodexCollection } from "@/lib/biodex";
 import { getPremiumPlan, getPremiumRenewalDate } from "@/lib/freemium";
 import { loadPremiumProfile, savePremiumProfile } from "@/lib/premiumProfile";
+import { openStripeCustomerPortal } from "@/lib/scanQuotaClient";
 import { shareWilderApp } from "@/lib/share";
 
 function IconMenu() {
@@ -44,7 +45,6 @@ export default function PremiumHamburgerMenu({
   scanCount = 0,
   onNavigateStats,
   onSignOut,
-  onCancelSubscription,
 }) {
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState(null);
@@ -102,10 +102,10 @@ export default function PremiumHamburgerMenu({
     setPanel(null);
   };
 
-  const handleUnsubscribe = () => {
-    onCancelSubscription?.();
+  const handleUnsubscribe = async () => {
     setConfirmUnsubscribe(false);
     closeAll();
+    await openStripeCustomerPortal();
   };
 
   const handleSignOut = async () => {
