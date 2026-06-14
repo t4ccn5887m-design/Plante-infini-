@@ -1,7 +1,16 @@
 import { useState, useEffect } from "react";
 import { getDiscoveryPhotoUrl } from "@/lib/discoveryPhoto";
 
-export function DiscoveryPhotoThumb({ discovery, typeEmoji, className = "wilder-home-recent-thumb", emptyClassName = "wilder-home-recent-thumb wilder-home-recent-thumb--empty" }) {
+function isRenderablePhoto(img) {
+  return Boolean(img?.naturalWidth && img.naturalHeight);
+}
+
+export function DiscoveryPhotoThumb({
+  discovery,
+  typeEmoji,
+  className = "wilder-home-recent-thumb",
+  emptyClassName = "wilder-home-recent-thumb wilder-home-recent-thumb--empty",
+}) {
   const photoSrc = getDiscoveryPhotoUrl(discovery);
   const [failed, setFailed] = useState(false);
 
@@ -10,6 +19,7 @@ export function DiscoveryPhotoThumb({ discovery, typeEmoji, className = "wilder-
   }, [photoSrc]);
 
   const showPhoto = Boolean(photoSrc) && !failed;
+  const emoji = typeEmoji?.(discovery?.type) || "🌿";
 
   if (showPhoto) {
     return (
@@ -20,13 +30,16 @@ export function DiscoveryPhotoThumb({ discovery, typeEmoji, className = "wilder-
         loading="lazy"
         decoding="async"
         onError={() => setFailed(true)}
+        onLoad={(e) => {
+          if (!isRenderablePhoto(e.currentTarget)) setFailed(true);
+        }}
       />
     );
   }
 
   return (
     <span className={emptyClassName} aria-hidden="true">
-      {typeEmoji(discovery?.type)}
+      {emoji}
     </span>
   );
 }
@@ -47,6 +60,9 @@ export function DiscoveryHeroPhoto({ discovery, nom, fallbackEmoji = "🌿" }) {
         loading="lazy"
         decoding="async"
         onError={() => setFailed(true)}
+        onLoad={(e) => {
+          if (!isRenderablePhoto(e.currentTarget)) setFailed(true);
+        }}
       />
     );
   }
@@ -58,19 +74,32 @@ export function DiscoveryHeroPhoto({ discovery, nom, fallbackEmoji = "🌿" }) {
   );
 }
 
-export function DailySpeciesMedia({ species, illustration, photoClassName, emojiClassName }) {
+export function DailySpeciesMedia({
+  species,
+  illustration,
+  photoClassName,
+  emojiClassName,
+}) {
   const [failed, setFailed] = useState(false);
+  const illustrationClass = `${photoClassName} wilder-home-daily-photo--illustration`;
   const showImage = Boolean(illustration) && !failed;
+
+  useEffect(() => {
+    setFailed(false);
+  }, [illustration]);
 
   if (showImage) {
     return (
       <img
         src={illustration}
         alt=""
-        className={photoClassName}
+        className={illustrationClass}
         loading="lazy"
         decoding="async"
         onError={() => setFailed(true)}
+        onLoad={(e) => {
+          if (!isRenderablePhoto(e.currentTarget)) setFailed(true);
+        }}
       />
     );
   }
@@ -86,15 +115,27 @@ export function DailySpeciesHero({ species, illustration, nom, emoji }) {
   const [failed, setFailed] = useState(false);
   const showImage = Boolean(illustration) && !failed;
 
+  useEffect(() => {
+    setFailed(false);
+  }, [illustration]);
+
   if (showImage) {
     return (
-      <img src={illustration} alt={nom} onError={() => setFailed(true)} />
+      <img
+        src={illustration}
+        alt={nom}
+        className="discovery-hero-illustration"
+        onError={() => setFailed(true)}
+        onLoad={(e) => {
+          if (!isRenderablePhoto(e.currentTarget)) setFailed(true);
+        }}
+      />
     );
   }
 
   return (
     <div className="discovery-photo-placeholder discovery-photo-placeholder--emoji" aria-hidden="true">
-      {emoji || "🌿"}
+      {emoji || species?.emoji || "🌿"}
     </div>
   );
 }
