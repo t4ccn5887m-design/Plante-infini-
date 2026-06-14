@@ -6,6 +6,8 @@ import {
   signUpWithEmail,
   syncDiscoveriesToCloud,
 } from "@/lib/cloudSync";
+import { recordCguConsent } from "@/lib/userProfile";
+import { CguConsentCheckbox } from "@/components/LegalConsentCheckbox";
 
 export default function PremiumAuthStep({
   t,
@@ -20,6 +22,10 @@ export default function PremiumAuthStep({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [resetSuccess, setResetSuccess] = useState(false);
+  const [legalAccepted, setLegalAccepted] = useState(false);
+
+  const needsLegalConsent = mode === "signup";
+  const canProceedSignup = !needsLegalConsent || legalAccepted;
 
   useEffect(() => {
     setMode(initialMode);
@@ -31,14 +37,29 @@ export default function PremiumAuthStep({
     }
   }, [mode]);
 
+  useEffect(() => {
+    if (mode !== "signup") {
+      setLegalAccepted(false);
+    }
+  }, [mode]);
+
   const finish = async () => {
     await syncDiscoveriesToCloud().catch(() => {});
     onComplete?.();
   };
 
   const handleGoogle = async () => {
+    if (!canProceedSignup) return;
     setLoading(true);
     setError("");
+    if (needsLegalConsent) {
+      const consent = await recordCguConsent();
+      if (!consent.ok) {
+        setLoading(false);
+        setError(t("legal.consent_save_error"));
+        return;
+      }
+    }
     const result = await signInWithOAuth("google");
     setLoading(false);
     if (!result.ok) {
@@ -51,6 +72,7 @@ export default function PremiumAuthStep({
 
   const handleEmail = async (e) => {
     e.preventDefault();
+    if (!canProceedSignup) return;
     setLoading(true);
     setError("");
     const fn = mode === "signup" ? signUpWithEmail : signInWithEmail;
@@ -59,6 +81,13 @@ export default function PremiumAuthStep({
     if (!result.ok) {
       setError(result.error || t("cloud.error"));
       return;
+    }
+    if (needsLegalConsent) {
+      const consent = await recordCguConsent();
+      if (!consent.ok) {
+        setError(t("legal.consent_save_error"));
+        return;
+      }
     }
     await finish();
   };
@@ -106,7 +135,7 @@ export default function PremiumAuthStep({
         type="button"
         className="premium-auth-google"
         onClick={handleGoogle}
-        disabled={loading}
+        disabled={loading || !canProceedSignup}
       >
         {t("auth.google")}
       </button>
@@ -166,7 +195,19 @@ export default function PremiumAuthStep({
             {t("cloud.forgot_password")}
           </button>
         )}
-        <button type="submit" className="premium-auth-submit" disabled={loading}>
+        {needsLegalConsent && (
+          <CguConsentCheckbox
+            checked={legalAccepted}
+            onChange={setLegalAccepted}
+            disabled={loading}
+            className="premium-auth-consent"
+          />
+        )}
+        <button
+          type="submit"
+          className="premium-auth-submit"
+          disabled={loading || !canProceedSignup}
+        >
           {loading ? t("freemium.auth_loading") : submitLabel}
         </button>
       </form>

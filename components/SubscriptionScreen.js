@@ -4,7 +4,9 @@ import {
   recordPaymentSuccess,
 } from "@/lib/freemium";
 import { activatePremiumOnServer } from "@/lib/scanQuotaClient";
+import { recordCgvConsent } from "@/lib/userProfile";
 import PremiumAuthStep from "@/components/PremiumAuthStep";
+import { CgvConsentCheckbox } from "@/components/LegalConsentCheckbox";
 
 export default function SubscriptionScreen({
   t,
@@ -16,9 +18,18 @@ export default function SubscriptionScreen({
 }) {
   const [step, setStep] = useState(initialStep);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [cgvAccepted, setCgvAccepted] = useState(false);
+  const [paymentError, setPaymentError] = useState("");
   const authRequired = step === "auth";
 
-  const handleSelectPlan = (plan) => {
+  const handleSelectPlan = async (plan) => {
+    if (!cgvAccepted) return;
+    setPaymentError("");
+    const consent = await recordCgvConsent();
+    if (!consent.ok) {
+      setPaymentError(t("legal.consent_save_error"));
+      return;
+    }
     recordPaymentSuccess(plan);
     setSelectedPlan(plan);
     setStep("auth");
@@ -48,11 +59,18 @@ export default function SubscriptionScreen({
               <li>{t("freemium.benefit_no_ads")}</li>
             </ul>
 
+            <CgvConsentCheckbox
+              checked={cgvAccepted}
+              onChange={setCgvAccepted}
+              className="paywall-consent"
+            />
+
             <div className="paywall-plans">
               <button
                 type="button"
                 className="paywall-plan paywall-plan--primary"
                 onClick={() => handleSelectPlan("yearly")}
+                disabled={!cgvAccepted}
               >
                 <span className="paywall-plan-label">{t("freemium.yearly_cta")}</span>
               </button>
@@ -61,10 +79,15 @@ export default function SubscriptionScreen({
                 type="button"
                 className="paywall-plan paywall-plan--secondary"
                 onClick={() => handleSelectPlan("monthly")}
+                disabled={!cgvAccepted}
               >
                 <span className="paywall-plan-label">{t("freemium.monthly_cta")}</span>
               </button>
             </div>
+
+            {paymentError && (
+              <p className="paywall-consent-error" role="alert">{paymentError}</p>
+            )}
 
             <p className="paywall-note">{t("freemium.payment_note")}</p>
 
