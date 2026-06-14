@@ -39,7 +39,8 @@ import FreemiumAdBanner from "@/components/FreemiumAdBanner";
 import ScanQuotaNotice from "@/components/ScanQuotaNotice";
 import {
   completeWelcomeSlides,
-  shouldShowWelcomeSlidesOnLaunch,
+  markOnboardingVu,
+  shouldShowWelcomeSlides,
 } from "@/lib/welcomeSlides";
 import {
   activatePremiumOnServer,
@@ -62,9 +63,11 @@ import {
   flushPendingSync,
   getCloudSession,
   signOutCloud,
+  subscribeToAuthSession,
 } from "@/lib/cloudSync";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import SignupPromptBanner from "@/components/SignupPromptBanner";
+import FeatureGateModal from "@/components/FeatureGateModal";
 import SignupPromptModal from "@/components/SignupPromptModal";
 import { useGuestAccount } from "@/hooks/useGuestAccount";
 import PotagerView from "@/components/PotagerView";
@@ -77,7 +80,7 @@ import CloudAccountCard from "@/components/CloudAccountCard";
 import HomeDashboard from "@/components/HomeDashboard";
 import HomeGreeting from "@/components/HomeGreeting";
 import WilderHomeScreen from "@/components/WilderHomeScreen";
-import { buildDailySpeciesViewModel } from "@/lib/dailySpecies";
+import { buildDailySpeciesViewModel, buildDailySpeciesAnalysisData } from "@/lib/dailySpecies";
 import { DailySpeciesHero, DiscoveryHeroPhoto } from "@/components/DiscoveryPhotoThumb";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
 import Logo from "@/components/Logo";
@@ -804,13 +807,14 @@ function Viewfinder({ viewfinderRef, label }) {
   );
 }
 
-function ShareButton({ discovery, t, lang }) {
+function ShareButton({ discovery, t, lang, onBeforeShare }) {
   const [sharing, setSharing] = useState(false);
   const tr = useMemo(() => createT(lang), [lang]);
   const typeLbl = (type) => getTypeLabel(tr, type);
   const rarityLbl = (r) => getRarityLabel(tr, r);
 
   const handleShare = async () => {
+    if (onBeforeShare?.()) return;
     setSharing(true);
     try {
       await shareDiscovery(discovery, t, typeLbl, rarityLbl);
@@ -868,6 +872,7 @@ function DiscoveryBody({
   lang,
   onShare,
   showInlineShare,
+  onShareGate,
   children,
 }) {
   const summary = extractSummarySentence(data?.description);
@@ -900,7 +905,12 @@ function DiscoveryBody({
       />
 
       {discovery && onShare !== false && showInlineShare !== false && (
-        <ShareButton discovery={discovery} t={t} lang={lang} />
+        <ShareButton
+          discovery={discovery}
+          t={t}
+          lang={lang}
+          onBeforeShare={onShareGate ? () => onShareGate() : undefined}
+        />
       )}
 
       {children}
@@ -1130,6 +1140,7 @@ export default function Wilder() {
   const [camLoading, setCamLoading] = useState(false);
   const [camZoom, setCamZoom] = useState(1);
   const [needsWelcomeSlides, setNeedsWelcomeSlides] = useState(false);
+  const [authBootState, setAuthBootState] = useState("loading");
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [viewingDiscovery, setViewingDiscovery] = useState(null);
   const [dailyPickView, setDailyPickView] = useState(null);
@@ -1161,7 +1172,7 @@ export default function Wilder() {
   const [animalDiscovery, setAnimalDiscovery] = useState(null);
   const [premiumUserEmail, setPremiumUserEmail] = useState(null);
   const [signupModalOpen, setSignupModalOpen] = useState(false);
-  const [signupModalVariant, setSignupModalVariant] = useState("save");
+  const [featureGateOpen, setFeatureGateOpen] = useState(false);
 
   const {
     isGuest,
@@ -1181,21 +1192,18 @@ export default function Wilder() {
   const hardwareZoomRef = useRef({ min: 1, max: 1, step: 0.1, supported: false });
   const organizeReturnTimerRef = useRef(null);
 
-  const openSignupSaveModal = useCallback((pendingAction) => {
+  const openFeatureGateModal = useCallback((pendingAction) => {
     pendingGuestActionRef.current = pendingAction ?? null;
-    setSignupModalVariant("save");
-    setSignupModalOpen(true);
+    setFeatureGateOpen(true);
   }, []);
 
-  const openSignupHerbierModal = useCallback((pendingAction) => {
-    pendingGuestActionRef.current = pendingAction ?? null;
-    setSignupModalVariant("herbier");
-    setSignupModalOpen(true);
+  const closeFeatureGateModal = useCallback(() => {
+    setFeatureGateOpen(false);
+    pendingGuestActionRef.current = null;
   }, []);
 
   const openSignupLimitModal = useCallback(() => {
     pendingGuestActionRef.current = null;
-    setSignupModalVariant("limit");
     setSignupModalOpen(true);
   }, []);
 
@@ -1205,6 +1213,8 @@ export default function Wilder() {
   }, []);
 
   const handleSignupAccountCreated = useCallback(async () => {
+    markOnboardingVu();
+    setNeedsWelcomeSlides(false);
     const session = await getCloudSession();
     const user = session?.user;
     if (user && !user.is_anonymous) {
@@ -1212,6 +1222,7 @@ export default function Wilder() {
     }
     await refreshGuestAccount();
     setSignupModalOpen(false);
+    setFeatureGateOpen(false);
     const fn = pendingGuestActionRef.current;
     pendingGuestActionRef.current = null;
     guestAutoSavePromptedRef.current = false;
@@ -1220,7 +1231,7 @@ export default function Wilder() {
 
   const openHerbier = useCallback(() => {
     if (isGuest) {
-      openSignupHerbierModal(() => {
+      openFeatureGateModal(() => {
         setReturnScreen("home");
         setScreen("herbier");
       });
@@ -1228,11 +1239,17 @@ export default function Wilder() {
     }
     setReturnScreen("home");
     setScreen("herbier");
-  }, [isGuest, openSignupHerbierModal]);
+  }, [isGuest, openFeatureGateModal]);
 
   const openSignupFromBanner = useCallback(() => {
-    openSignupSaveModal(null);
-  }, [openSignupSaveModal]);
+    openFeatureGateModal(null);
+  }, [openFeatureGateModal]);
+
+  const gateGuestShare = useCallback(() => {
+    if (!isGuest) return false;
+    openFeatureGateModal();
+    return true;
+  }, [isGuest, openFeatureGateModal]);
 
   const gateGuestScanBeforeCamera = useCallback(() => {
     if (!isGuest || guestCanScan) return false;
@@ -1439,67 +1456,45 @@ export default function Wilder() {
     }
   }, []);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    const runWelcomeAndOnboardingCheck = async () => {
-      const showWelcome = await shouldShowWelcomeSlidesOnLaunch();
-      if (cancelled) return;
-
-      if (showWelcome) {
-        setNeedsWelcomeSlides(true);
-        return;
-      }
-
-      setNeedsWelcomeSlides(false);
-      const items = loadDiscoveries();
-      if (isOnboardingComplete()) {
-        setNeedsOnboarding(false);
-      } else if (items.length > 0) {
-        completeOnboarding();
-        setNeedsOnboarding(false);
-      } else {
-        setNeedsOnboarding(true);
-      }
-    };
-
-    runWelcomeAndOnboardingCheck();
-
-    const onVisible = () => {
-      if (document.visibilityState === "visible") {
-        runWelcomeAndOnboardingCheck();
-      }
-    };
-    document.addEventListener("visibilitychange", onVisible);
-
-    return () => {
-      cancelled = true;
-      document.removeEventListener("visibilitychange", onVisible);
-    };
+  const applyWelcomeSlidesFromSession = useCallback((session) => {
+    setNeedsWelcomeSlides(shouldShowWelcomeSlides(session));
   }, []);
 
   useEffect(() => {
-    if (isOnboardingComplete()) {
-      setNeedsOnboarding(false);
-      return;
-    }
-    const hasPriorUsage = loadDiscoveries().length > 0;
-    if (hasPriorUsage) {
-      completeOnboarding();
-      setNeedsOnboarding(false);
-      return;
-    }
-    if (!needsWelcomeSlides) {
-      setNeedsOnboarding(true);
-    }
-  }, [needsWelcomeSlides]);
+    const unsubscribe = subscribeToAuthSession(
+      (session) => {
+        applyWelcomeSlidesFromSession(session);
+        const user = session?.user;
+        if (user && !user.is_anonymous) {
+          setPremiumUserEmail(user.email || "");
+        }
+      },
+      () => setAuthBootState("ready")
+    );
+    return unsubscribe;
+  }, [applyWelcomeSlidesFromSession]);
 
   useEffect(() => {
-    if (screen === "analyzing" || screen === "first-celebration") return;
+    if (authBootState !== "ready") return;
+    if (needsWelcomeSlides) return;
+
+    const items = loadDiscoveries();
+    if (isOnboardingComplete()) {
+      setNeedsOnboarding(false);
+    } else if (items.length > 0) {
+      completeOnboarding();
+      setNeedsOnboarding(false);
+    } else {
+      setNeedsOnboarding(true);
+    }
+  }, [authBootState, needsWelcomeSlides]);
+
+  useEffect(() => {
+    if (authBootState !== "ready" || needsWelcomeSlides) return;
     if (tryConsumeInstallGuideAutoShow()) {
       openInstallGuideModal();
     }
-  }, [screen]);
+  }, [screen, authBootState, needsWelcomeSlides]);
 
   useEffect(() => {
     const hw = hardwareZoomRef.current;
@@ -1514,7 +1509,7 @@ export default function Wilder() {
   }, [camZoom, camReady]);
 
   useEffect(() => {
-    if (needsWelcomeSlides) return;
+    if (authBootState !== "ready" || needsWelcomeSlides) return;
 
     const items = loadDiscoveries();
     setDiscoveries(items);
@@ -1533,6 +1528,7 @@ export default function Wilder() {
         result.user &&
         !result.isAnonymous
       ) {
+        markOnboardingVu();
         completePremiumActivation();
         activatePremiumOnServer().then((quota) => {
           if (quota) {
@@ -1549,7 +1545,7 @@ export default function Wilder() {
     const onFirstTouch = () => warmUpSounds();
     window.addEventListener("pointerdown", onFirstTouch, { once: true });
     return () => window.removeEventListener("pointerdown", onFirstTouch);
-  }, [needsWelcomeSlides]);
+  }, [authBootState, needsWelcomeSlides]);
 
   useEffect(() => {
     const onVisible = () => {
@@ -2229,7 +2225,7 @@ export default function Wilder() {
   const addToAlbum = (albumId, { confirmReturn = false, skipGuestGate = false } = {}) => {
     if (!currentDiscovery) return;
     if (!skipGuestGate && isGuest) {
-      openSignupSaveModal(() => addToAlbum(albumId, { confirmReturn, skipGuestGate: true }));
+      openFeatureGateModal(() => addToAlbum(albumId, { confirmReturn, skipGuestGate: true }));
       return;
     }
     const allAlbums = loadAlbums();
@@ -2291,7 +2287,7 @@ export default function Wilder() {
     (themeId, { skipGuestGate = false } = {}) => {
       if (!currentDiscovery || !result) return;
       if (!skipGuestGate && isGuest) {
-        openSignupSaveModal(() => handleOrganizeDestination(themeId, { skipGuestGate: true }));
+        openFeatureGateModal(() => handleOrganizeDestination(themeId, { skipGuestGate: true }));
         return;
       }
       if (themeId === "potager") {
@@ -2308,7 +2304,7 @@ export default function Wilder() {
       setAlbumPickerStartTheme(themeId);
       setShowAlbumPicker(true);
     },
-    [currentDiscovery, result, activeRandoAlbumId, confirmOrganizeSave, t, isGuest, openSignupSaveModal]
+    [currentDiscovery, result, activeRandoAlbumId, confirmOrganizeSave, t, isGuest, openFeatureGateModal]
   );
 
   useEffect(() => {
@@ -2329,7 +2325,7 @@ export default function Wilder() {
     if (isGuest) {
       if (!guestAutoSavePromptedRef.current) {
         guestAutoSavePromptedRef.current = true;
-        openSignupSaveModal(() => addToAlbum(activeRandoAlbumId, { skipGuestGate: true }));
+        openFeatureGateModal(() => addToAlbum(activeRandoAlbumId, { skipGuestGate: true }));
       }
       return;
     }
@@ -2340,7 +2336,7 @@ export default function Wilder() {
     currentDiscovery?.id,
     savedToAlbum,
     isGuest,
-    openSignupSaveModal,
+    openFeatureGateModal,
   ]);
 
   useEffect(() => {
@@ -2348,7 +2344,7 @@ export default function Wilder() {
     if (isGuest) {
       if (!guestAutoSavePromptedRef.current) {
         guestAutoSavePromptedRef.current = true;
-        openSignupSaveModal(() => {
+        openFeatureGateModal(() => {
           addToAlbum(scanTargetAlbumId, { skipGuestGate: true });
           setScanTargetAlbumId(null);
         });
@@ -2363,7 +2359,7 @@ export default function Wilder() {
     currentDiscovery?.id,
     savedToAlbum,
     isGuest,
-    openSignupSaveModal,
+    openFeatureGateModal,
   ]);
 
   useEffect(() => {
@@ -2371,7 +2367,7 @@ export default function Wilder() {
     if (isGuest) {
       if (!guestAutoSavePromptedRef.current) {
         guestAutoSavePromptedRef.current = true;
-        openSignupSaveModal(() => {
+        openFeatureGateModal(() => {
           upsertPotagerPlantFromDiscovery(currentDiscovery, result);
           recordPotagerWatering();
           setOrganizeSaved((prev) => ({ ...prev, potager: true }));
@@ -2388,13 +2384,13 @@ export default function Wilder() {
     currentDiscovery,
     result,
     isGuest,
-    openSignupSaveModal,
+    openFeatureGateModal,
   ]);
 
   const createAlbum = async (name, theme = DEFAULT_ALBUM_THEME, { skipGuestGate = false } = {}) => {
     if (!currentDiscovery) return;
     if (!skipGuestGate && isGuest) {
-      openSignupSaveModal(() => createAlbum(name, theme, { skipGuestGate: true }));
+      openFeatureGateModal(() => createAlbum(name, theme, { skipGuestGate: true }));
       return;
     }
     const albumName = name.trim() || defaultAlbumName(t, locale);
@@ -2606,15 +2602,35 @@ export default function Wilder() {
         />
       )}
       {organizeSaveToast ? <OrganizeSavedToast message={organizeSaveToast} /> : null}
+      <FeatureGateModal
+        open={featureGateOpen}
+        t={t}
+        onClose={closeFeatureGateModal}
+        onAccountCreated={handleSignupAccountCreated}
+      />
       <SignupPromptModal
         open={signupModalOpen}
-        variant={signupModalVariant}
+        variant="limit"
         t={t}
         onClose={closeSignupModal}
         onAccountCreated={handleSignupAccountCreated}
       />
     </>
   );
+
+  if (authBootState === "loading") {
+    return (
+      <>
+        <Head>
+          <title>Wilder</title>
+          <meta name="description" content={slogan} />
+        </Head>
+        <div className="app-boot-loading" role="status" aria-live="polite" aria-label={t("auth.loading")}>
+          <img src="/logowilder.png" alt="" className="app-boot-loading-logo" />
+        </div>
+      </>
+    );
+  }
 
   if (needsWelcomeSlides) {
     return (
@@ -2661,6 +2677,7 @@ export default function Wilder() {
           forced={shouldShowPaywall()}
           initialStep={pendingAccountSetup ? "auth" : "plans"}
           onSubscribed={() => {
+            markOnboardingVu();
             setNeedsWelcomeSlides(false);
             setScreen(returnScreen || "home");
           }}
@@ -2691,29 +2708,19 @@ export default function Wilder() {
           onOpenInstallGuide={openInstallGuideModal}
           onSubscribe={openSubscriptionFromHome}
           showSubscribe={!isPremium()}
-          showPremiumMenu={Boolean(premiumUserEmail)}
-          premiumUserEmail={premiumUserEmail || ""}
-          scanCount={scanCount}
-          locale={locale}
-          onNavigateStats={() => {
-            setReturnScreen("home");
-            setScreen("stats");
-          }}
           onSignOut={async () => {
             await signOutCloud();
             setPremiumUserEmail(null);
             await refreshGuestAccount();
           }}
-          onCancelSubscription={() => {
-            cancelPremiumSubscription();
-            refreshScanQuota().then((quota) => {
-              if (quota) {
-                syncScanQuotaFromServer(quota);
-                setScanCount(quota.count);
-              }
-            });
-          }}
           onViewAll={() => {
+            if (isGuest) {
+              openFeatureGateModal(() => {
+                setReturnScreen("home");
+                setScreen("biodex");
+              });
+              return;
+            }
             setReturnScreen("home");
             setScreen("biodex");
           }}
@@ -2735,13 +2742,14 @@ export default function Wilder() {
   /* ── DAILY PICK (read-only, no persistence) ── */
   if (screen === "daily-pick-detail" && dailyPickView) {
     const d = dailyPickView;
-    const data = {
-      nom: d.nom,
-      nom_latin: d.nom_latin,
-      type: d.type,
-      rarete: d.rarete,
-      ...discoveryToAnalysisData(d),
-    };
+    const data =
+      buildDailySpeciesAnalysisData(d) || {
+        nom: d.nom,
+        nom_latin: d.nom_latin,
+        type: d.type,
+        rarete: d.rarete,
+        ...discoveryToAnalysisData(d),
+      };
 
     return (
       <>
@@ -2752,7 +2760,7 @@ export default function Wilder() {
           <div className="discovery-hero">
             <DailySpeciesHero
               species={{ emoji: d.emoji }}
-              illustration={d.photo}
+              illustration={d.illustration || d.photo}
               nom={d.nom}
               emoji={d.emoji}
             />
@@ -3193,6 +3201,7 @@ export default function Wilder() {
           onScanAgain={scanAgainFromResult}
           showSignupPrompt={isGuest}
           onCreateAccount={openSignupFromBanner}
+          onBeforeShare={isGuest ? gateGuestShare : undefined}
         />
         <Confetti active={showConfetti} onDone={() => setShowConfetti(false)} />
       </>
@@ -3221,6 +3230,8 @@ export default function Wilder() {
       />
     ) : null;
 
+    const guestShareGate = isGuest ? gateGuestShare : undefined;
+
     if (inPotager) {
       return (
         <>
@@ -3240,6 +3251,7 @@ export default function Wilder() {
               onBack={leaveResult}
               onDelete={handleDeleteCurrentDiscovery}
               deleteLabels={swipeDeleteLabels}
+              onBeforeShare={guestShareGate}
             />
           </div>
           <ScanQuotaNotice t={t} scanCount={scanCount} />
@@ -3271,6 +3283,7 @@ export default function Wilder() {
               onBack={leaveResult}
               onDelete={handleDeleteCurrentDiscovery}
               deleteLabels={swipeDeleteLabels}
+              onBeforeShare={guestShareGate}
             />
           </div>
           <ScanQuotaNotice t={t} scanCount={scanCount} />
@@ -3302,6 +3315,7 @@ export default function Wilder() {
               onBack={leaveResult}
               onDelete={handleDeleteCurrentDiscovery}
               deleteLabels={swipeDeleteLabels}
+              onBeforeShare={guestShareGate}
             />
           </div>
           <ScanQuotaNotice t={t} scanCount={scanCount} />
@@ -3335,6 +3349,7 @@ export default function Wilder() {
               onEndRando={endRando}
               onDelete={handleDeleteCurrentDiscovery}
               deleteLabels={swipeDeleteLabels}
+              onBeforeShare={guestShareGate}
             />
           </div>
           <ScanQuotaNotice t={t} scanCount={scanCount} />
@@ -3389,6 +3404,7 @@ export default function Wilder() {
               discovery={shareDiscoveryPayload}
               t={t}
               lang={lang}
+              onBeforeShare={isGuest ? gateGuestShare : undefined}
               onScanAgain={inRando ? resumeRando : scanAgainFromResult}
               scanAgainLabel={inRando ? t("themes.randos.scan_again") : undefined}
               onDelete={handleDeleteCurrentDiscovery}
@@ -3757,6 +3773,7 @@ export default function Wilder() {
                   discovery={d}
                   t={t}
                   lang={lang}
+                  onBeforeShare={isGuest ? gateGuestShare : undefined}
                   onScanAgain={() => {
                     setRescanDiscoveryId(d.id);
                     startScan(returnScreen || "home");
