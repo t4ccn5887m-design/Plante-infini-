@@ -130,7 +130,7 @@ export default function WilderHomeScreen({
     try {
       const result = await shareWilderApp({
         speciesCount,
-        useSpeciesLine: true,
+        isLoggedIn,
       });
       if (result === "clipboard") {
         setShareCopied(true);
