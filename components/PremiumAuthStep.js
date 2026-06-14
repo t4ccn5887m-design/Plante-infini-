@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  resetPasswordForEmail,
   signInWithEmail,
   signInWithOAuth,
   signUpWithEmail,
@@ -18,10 +19,17 @@ export default function PremiumAuthStep({
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [resetSuccess, setResetSuccess] = useState(false);
 
   useEffect(() => {
     setMode(initialMode);
   }, [initialMode]);
+
+  useEffect(() => {
+    if (mode !== "signin") {
+      setResetSuccess(false);
+    }
+  }, [mode]);
 
   const finish = async () => {
     await syncDiscoveriesToCloud().catch(() => {});
@@ -53,6 +61,25 @@ export default function PremiumAuthStep({
       return;
     }
     await finish();
+  };
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setResetSuccess(false);
+    const trimmed = email.trim();
+    if (!trimmed) {
+      setError(t("cloud.reset_password_email_required"));
+      return;
+    }
+    setLoading(true);
+    setError("");
+    const result = await resetPasswordForEmail(trimmed);
+    setLoading(false);
+    if (!result.ok) {
+      setError(result.error || t("cloud.error"));
+      return;
+    }
+    setResetSuccess(true);
   };
 
   const displayTitleKey =
@@ -129,10 +156,26 @@ export default function PremiumAuthStep({
           minLength={6}
           disabled={loading}
         />
+        {mode === "signin" && (
+          <button
+            type="button"
+            className="premium-auth-forgot-link"
+            onClick={handleForgotPassword}
+            disabled={loading}
+          >
+            {t("cloud.forgot_password")}
+          </button>
+        )}
         <button type="submit" className="premium-auth-submit" disabled={loading}>
           {loading ? t("freemium.auth_loading") : submitLabel}
         </button>
       </form>
+
+      {resetSuccess && (
+        <p className="premium-auth-success" role="status">
+          {t("cloud.reset_password_sent")}
+        </p>
+      )}
 
       {error && (
         <p className="premium-auth-error" role="alert">
