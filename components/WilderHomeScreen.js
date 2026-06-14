@@ -7,6 +7,7 @@ import { shouldOfferInstallGuide } from "@/lib/installGuide";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import HomeScanCategories from "@/components/HomeScanCategories";
 import AccountMenu from "@/components/AccountMenu";
+import { shareWilderApp } from "@/lib/share";
 
 const LONG_PRESS_MS = 520;
 
@@ -45,6 +46,7 @@ export default function WilderHomeScreen({
 }) {
   const [revealedDeleteId, setRevealedDeleteId] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [shareCopied, setShareCopied] = useState(false);
   const longPressTimer = useRef(null);
   const longPressTriggered = useRef(false);
   const showInstallGuide = shouldOfferInstallGuide();
@@ -124,6 +126,26 @@ export default function WilderHomeScreen({
     setRevealedDeleteId(null);
   };
 
+  const handleShareApp = async () => {
+    try {
+      const result = await shareWilderApp({
+        speciesCount,
+        useSpeciesLine: true,
+      });
+      if (result === "clipboard") {
+        setShareCopied(true);
+      }
+    } catch {
+      /* cancelled or failed */
+    }
+  };
+
+  useEffect(() => {
+    if (!shareCopied) return undefined;
+    const timer = setTimeout(() => setShareCopied(false), 2000);
+    return () => clearTimeout(timer);
+  }, [shareCopied]);
+
   return (
     <div className="wilder-home wilder-home--v2 screen-enter">
       <div className="wilder-home-bg" aria-hidden="true" />
@@ -162,6 +184,14 @@ export default function WilderHomeScreen({
               🌿 {speciesCount} {speciesLabel}
             </span>
           </div>
+
+          <button
+            type="button"
+            className="wilder-home-share-app-btn"
+            onClick={handleShareApp}
+          >
+            {shareCopied ? t("home.share_app_copied") : t("home.share_app")}
+          </button>
         </header>
 
         <main className="wilder-home-scan-zone stagger-2">

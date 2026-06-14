@@ -417,6 +417,32 @@ video {
   white-space: nowrap;
 }
 
+.wilder-home-share-app-btn {
+  display: block;
+  margin: 0.28rem auto 0;
+  padding: 0.32rem 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(245, 240, 232, 0.88);
+  font-family: var(--font-display);
+  font-size: 0.74rem;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.wilder-home-share-app-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.wilder-home-share-app-btn:active {
+  transform: scale(0.98);
+}
+
 /* Accueil v2 — header compact, catégories lisibles */
 .wilder-home--v2 .wilder-home-top {
   position: relative;
