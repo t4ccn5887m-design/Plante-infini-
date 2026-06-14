@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useRouter } from "next/router";
 import { createT, getRarityLabel, getTypeLabel } from "@/lib/i18n";
 import { shareDiscovery } from "@/lib/share";
 import {
@@ -9,7 +10,24 @@ import {
 import AnimalSoundQuiz from "@/components/AnimalSoundQuiz";
 import DiscoveryAnalysisSections, { extractSummarySentence } from "@/components/DiscoveryAnalysisSections";
 import DiscoveryFunFact from "@/components/DiscoveryFunFact";
-import SignupPromptBanner from "@/components/SignupPromptBanner";
+
+function IconBack({ size = 20, color = "currentColor" }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M19 12H5M12 19l-7-7 7-7" />
+    </svg>
+  );
+}
 
 export default function FirstDiscoveryCelebration({
   result,
@@ -23,9 +41,11 @@ export default function FirstDiscoveryCelebration({
   onCreateAccount,
   onBeforeShare,
 }) {
+  const router = useRouter();
   const [sharing, setSharing] = useState(false);
   const [notifyState, setNotifyState] = useState("idle");
   const showNotifyCard = !wasNatureNotifyPromptShown();
+  const showCreateAccount = showSignupPrompt && onCreateAccount;
 
   const tr = useMemo(() => createT(lang), [lang]);
   const typeLbl = (type) => getTypeLabel(tr, type);
@@ -65,6 +85,14 @@ export default function FirstDiscoveryCelebration({
   return (
     <div className="first-celebration screen-enter-fast">
       <div className="first-celebration-bg" aria-hidden="true" />
+      <button
+        type="button"
+        className="first-celebration-back"
+        onClick={() => router.back()}
+        aria-label={t("auth.back")}
+      >
+        <IconBack size={20} color="#f5f3ec" />
+      </button>
       <div className="first-celebration-content">
         <p className="first-celebration-eyebrow">{t("first_discovery.eyebrow")}</p>
 
@@ -87,25 +115,34 @@ export default function FirstDiscoveryCelebration({
 
         <p className="first-celebration-message">{t("first_discovery.message")}</p>
 
-        {showSignupPrompt && onCreateAccount && (
-          <SignupPromptBanner t={t} onCreateAccount={onCreateAccount} />
+        {showCreateAccount && (
+          <p className="first-celebration-signup-hint">{t("signup_prompt.banner_text")}</p>
         )}
 
         <div className="first-celebration-actions">
+          {showCreateAccount && (
+            <button
+              type="button"
+              className="first-celebration-btn first-celebration-btn--primary"
+              onClick={onCreateAccount}
+            >
+              {t("signup_prompt.banner_cta")}
+            </button>
+          )}
           <button
             type="button"
-            className="btn-primary first-celebration-btn first-celebration-btn--share"
+            className={`first-celebration-btn first-celebration-btn--${showCreateAccount ? "secondary" : "primary"}`}
             onClick={handleShareClick}
             disabled={sharing || !discovery}
           >
-            {sharing ? t("discovery.share_generating") : `📤 ${t("first_discovery.share")}`}
+            {sharing ? t("discovery.share_generating") : t("first_discovery.share")}
           </button>
           <button
             type="button"
-            className="btn-scanner first-celebration-btn first-celebration-btn--scan"
+            className="first-celebration-btn first-celebration-btn--tertiary"
             onClick={onScanAgain}
           >
-            📸 {t("first_discovery.scan_again")}
+            {t("first_discovery.scan_again")}
           </button>
         </div>
 
@@ -130,7 +167,7 @@ export default function FirstDiscoveryCelebration({
             <div className="first-celebration-notify-actions">
               <button
                 type="button"
-                className="btn-primary first-celebration-notify-btn"
+                className="first-celebration-notify-btn"
                 onClick={handleEnableNotify}
                 disabled={notifyState === "loading"}
               >
