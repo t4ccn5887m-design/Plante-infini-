@@ -11,6 +11,7 @@ export default function DiscoveryResultActions({
   scanAgainLabel,
   onDelete,
   deleteLabels,
+  onBeforeShare,
 }) {
   const [shareOpen, setShareOpen] = useState(false);
   const [sharing, setSharing] = useState(false);
@@ -97,7 +98,10 @@ export default function DiscoveryResultActions({
           <button
             type="button"
             className="discovery-result-btn discovery-result-btn--light"
-            onClick={() => setShareOpen(true)}
+            onClick={() => {
+              if (onBeforeShare?.()) return;
+              setShareOpen(true);
+            }}
             disabled={sharing || !discovery}
           >
             {sharing ? t("discovery.share_generating") : t("discovery.share")}

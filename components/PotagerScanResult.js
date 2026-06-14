@@ -15,6 +15,7 @@ export default function PotagerScanResult({
   organizeHint,
   onDelete,
   deleteLabels,
+  onBeforeShare,
 }) {
   const health = inferHealthFromEtatSante(result?.etat_sante);
   const action = getPotagerActionLabel(result, t);
@@ -71,6 +72,7 @@ export default function PotagerScanResult({
         discovery={discovery}
         t={t}
         lang={lang}
+        onBeforeShare={onBeforeShare}
         onScanAgain={onScanAgain}
         onDelete={onDelete}
         deleteLabels={deleteLabels}

@@ -15,6 +15,7 @@ export default function AnimalScanResult({
   organizeHint,
   onDelete,
   deleteLabels,
+  onBeforeShare,
   saved = true,
 }) {
   const protectedSpecies = isProtectedSpecies(result);
@@ -61,6 +62,7 @@ export default function AnimalScanResult({
         discovery={discovery}
         t={t}
         lang={lang}
+        onBeforeShare={onBeforeShare}
         onScanAgain={onScanAgain}
         onDelete={onDelete}
         deleteLabels={deleteLabels}

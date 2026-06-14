@@ -21,6 +21,7 @@ export default function FirstDiscoveryCelebration({
   onDismissNotify,
   showSignupPrompt = false,
   onCreateAccount,
+  onBeforeShare,
 }) {
   const [sharing, setSharing] = useState(false);
   const [notifyState, setNotifyState] = useState("idle");
@@ -42,6 +43,11 @@ export default function FirstDiscoveryCelebration({
     } finally {
       setSharing(false);
     }
+  };
+
+  const handleShareClick = () => {
+    if (onBeforeShare?.()) return;
+    handleShare();
   };
 
   const handleEnableNotify = async () => {
@@ -89,7 +95,7 @@ export default function FirstDiscoveryCelebration({
           <button
             type="button"
             className="btn-primary first-celebration-btn first-celebration-btn--share"
-            onClick={handleShare}
+            onClick={handleShareClick}
             disabled={sharing || !discovery}
           >
             {sharing ? t("discovery.share_generating") : `📤 ${t("first_discovery.share")}`}

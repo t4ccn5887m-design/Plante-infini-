@@ -7,7 +7,6 @@ import { shouldOfferInstallGuide } from "@/lib/installGuide";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import HomeScanCategories from "@/components/HomeScanCategories";
 import AccountMenu from "@/components/AccountMenu";
-import PremiumHamburgerMenu from "@/components/PremiumHamburgerMenu";
 
 const LONG_PRESS_MS = 520;
 
@@ -42,13 +41,7 @@ export default function WilderHomeScreen({
   onOpenInstallGuide,
   onSubscribe,
   showSubscribe = false,
-  showPremiumMenu = false,
-  premiumUserEmail = "",
-  scanCount = 0,
-  locale = "fr-FR",
-  onNavigateStats,
   onSignOut,
-  onCancelSubscription,
 }) {
   const [revealedDeleteId, setRevealedDeleteId] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
@@ -149,24 +142,12 @@ export default function WilderHomeScreen({
                 onSignOut={onSignOut}
                 onAccountCreated={onAccountCreated}
               />
+            </div>
+            <div className="wilder-home-top-right">
               {showSubscribe && onSubscribe && (
                 <button type="button" className="wilder-home-subscribe-btn" onClick={onSubscribe}>
                   {t("home.subscribe")}
                 </button>
-              )}
-            </div>
-            <div className="wilder-home-top-right">
-              {showPremiumMenu && (
-                <PremiumHamburgerMenu
-                  t={t}
-                  locale={locale}
-                  userEmail={premiumUserEmail}
-                  discoveries={discoveries}
-                  scanCount={scanCount}
-                  onNavigateStats={onNavigateStats}
-                  onSignOut={onSignOut}
-                  onCancelSubscription={onCancelSubscription}
-                />
               )}
             </div>
           </div>

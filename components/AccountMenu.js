@@ -13,20 +13,6 @@ function IconMenu() {
   );
 }
 
-function IconUser() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <circle cx="10" cy="7" r="3.25" stroke="currentColor" strokeWidth="1.25" />
-      <path
-        d="M4.5 16.5c0-2.8 2.4-4.5 5.5-4.5s5.5 1.7 5.5 4.5"
-        stroke="currentColor"
-        strokeWidth="1.25"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
 function ProfileSheet({ title, onClose, children }) {
   return (
     <div className="premium-menu-sheet-overlay" onClick={onClose} role="presentation">
@@ -126,7 +112,7 @@ export default function AccountMenu({
           aria-haspopup="true"
           onClick={() => setOpen((v) => !v)}
         >
-          {isLoggedIn ? <IconUser /> : <IconMenu />}
+          <IconMenu />
         </button>
 
         {open && (
