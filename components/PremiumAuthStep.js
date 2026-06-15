@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import {
+  completeAuthSession,
   resetPasswordForEmail,
   signInWithEmail,
   signInWithOAuth,
   signUpWithEmail,
-  syncDiscoveriesToCloud,
 } from "@/lib/cloudSync";
 import { recordCguConsent } from "@/lib/userProfile";
 import { CguConsentCheckbox } from "@/components/LegalConsentCheckbox";
@@ -25,6 +25,7 @@ export default function PremiumAuthStep({
   const [error, setError] = useState("");
   const [resetSuccess, setResetSuccess] = useState(false);
   const [legalAccepted, setLegalAccepted] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
 
   const needsLegalConsent = mode === "signup";
   const canProceedSignup = !needsLegalConsent || legalAccepted;
@@ -46,7 +47,7 @@ export default function PremiumAuthStep({
   }, [mode]);
 
   const finish = async () => {
-    await syncDiscoveriesToCloud().catch(() => {});
+    await completeAuthSession().catch(() => {});
     onComplete?.();
   };
 
@@ -85,7 +86,10 @@ export default function PremiumAuthStep({
       return;
     }
     const fn = mode === "signup" ? signUpWithEmail : signInWithEmail;
-    const result = await fn(email.trim(), password);
+    const result =
+      mode === "signup"
+        ? await fn(email.trim(), password)
+        : await fn(email.trim(), password, { rememberMe });
     setLoading(false);
     if (!result.ok) {
       setError(result.error || t("cloud.error"));
@@ -205,6 +209,17 @@ export default function PremiumAuthStep({
           >
             {t("cloud.forgot_password")}
           </button>
+        )}
+        {mode === "signin" && (
+          <label className="auth-remember premium-auth-remember">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              disabled={loading}
+            />
+            {t("auth.remember_me")}
+          </label>
         )}
         {needsLegalConsent && (
           <CguConsentCheckbox

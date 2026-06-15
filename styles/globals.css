@@ -3865,6 +3865,16 @@ video {
   cursor: not-allowed;
 }
 
+.entry-choice-remember {
+  justify-content: flex-start;
+  margin: 0.15rem 0 0.35rem;
+}
+
+.premium-auth-remember {
+  justify-content: flex-start;
+  margin: 0.1rem 0 0.25rem;
+}
+
 .auth-remember {
   display: flex;
   align-items: center;

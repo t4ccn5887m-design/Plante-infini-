@@ -70,6 +70,7 @@ import {
   signOutCloud,
   subscribeToAuthSession,
 } from "@/lib/cloudSync";
+import { logPersistenceBootState } from "@/lib/persistenceBootLog";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import SignupPromptBanner from "@/components/SignupPromptBanner";
 import FeatureGateModal from "@/components/FeatureGateModal";
@@ -1234,6 +1235,11 @@ export default function Wilder() {
     const user = session?.user;
     if (user && isPermanentAuthUser(user)) {
       setPremiumUserEmail(user.email || "");
+      const syncResult = await bootstrapCloudSync();
+      if (syncResult.ok && syncResult.discoveries) {
+        setDiscoveries(syncResult.discoveries);
+      }
+      logPersistenceBootState(session, syncResult.discoveries?.length ?? loadDiscoveries().length);
     }
     await refreshGuestAccount();
     setSignupModalOpen(false);
@@ -1513,7 +1519,11 @@ export default function Wilder() {
           setPremiumUserEmail(user.email || "");
         }
       },
-      () => setAuthBootState("ready")
+      async () => {
+        setAuthBootState("ready");
+        const session = await getCloudSession();
+        logPersistenceBootState(session, loadDiscoveries().length);
+      }
     );
     return unsubscribe;
   }, [applyWelcomeSlidesFromSession, applyEntryChoiceFromSession]);
@@ -1586,10 +1596,13 @@ export default function Wilder() {
     if (seen.length === 0 && items.length > 0) {
       saveSeenBadges(computeUnlockedBadgeIds(items));
     }
-    bootstrapCloudSync().then((result) => {
+    bootstrapCloudSync().then(async (result) => {
+      const loaded = result.ok && result.discoveries ? result.discoveries : items;
       if (result.ok && result.discoveries) {
         setDiscoveries(result.discoveries);
       }
+      const session = await getCloudSession();
+      logPersistenceBootState(session, loaded.length);
     });
     const onFirstTouch = () => warmUpSounds();
     window.addEventListener("pointerdown", onFirstTouch, { once: true });

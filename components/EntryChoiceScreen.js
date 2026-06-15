@@ -1,10 +1,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import {
+  completeAuthSession,
   ensureCloudAuth,
   signInWithEmail,
   signUpWithEmail,
-  syncDiscoveriesToCloud,
 } from "@/lib/cloudSync";
 import { recordCguConsent } from "@/lib/userProfile";
 import { LEGAL_ROUTES } from "@/lib/legal";
@@ -19,12 +19,13 @@ export default function EntryChoiceScreen({ t, onComplete, onDiscoverGuest }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [legalAccepted, setLegalAccepted] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
 
   const isSignup = mode === "signup";
   const canSubmitSignup = !isSignup || legalAccepted;
 
   const finishAuth = async () => {
-    await syncDiscoveriesToCloud().catch(() => {});
+    await completeAuthSession().catch(() => {});
     onComplete?.();
   };
 
@@ -35,7 +36,9 @@ export default function EntryChoiceScreen({ t, onComplete, onDiscoverGuest }) {
     setError("");
 
     const fn = isSignup ? signUpWithEmail : signInWithEmail;
-    const result = await fn(email.trim(), password);
+    const result = isSignup
+      ? await fn(email.trim(), password)
+      : await fn(email.trim(), password, { rememberMe });
     if (!result.ok) {
       setLoading(false);
       setError(result.error || t("cloud.error"));
@@ -138,6 +141,18 @@ export default function EntryChoiceScreen({ t, onComplete, onDiscoverGuest }) {
               minLength={6}
               disabled={loading}
             />
+
+            {!isSignup && (
+              <label className="auth-remember entry-choice-remember">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  disabled={loading}
+                />
+                {t("auth.remember_me")}
+              </label>
+            )}
 
             {isSignup && (
               <CguConsentCheckbox
