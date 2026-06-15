@@ -1,6 +1,14 @@
 import { IconChevronRight } from "@/components/ThemeIcons";
 
-export function ThemeHubNavCard({ emoji, title, hint, onClick, variant = "default", delay = 0 }) {
+export function ThemeHubNavCard({
+  emoji,
+  icon,
+  title,
+  hint,
+  onClick,
+  variant = "default",
+  delay = 0,
+}) {
   return (
     <button
       type="button"
@@ -9,8 +17,11 @@ export function ThemeHubNavCard({ emoji, title, hint, onClick, variant = "defaul
       style={{ "--stagger": delay }}
     >
       <div className="theme-hub-card-glow" aria-hidden="true" />
-      <span className="theme-hub-card-emoji" aria-hidden="true">
-        {emoji}
+      <span
+        className={`theme-hub-card-emoji${icon ? " theme-hub-card-emoji--icon" : ""}`}
+        aria-hidden="true"
+      >
+        {icon ?? emoji}
       </span>
       <div className="theme-hub-card-text">
         <span className="theme-hub-card-title">{title}</span>

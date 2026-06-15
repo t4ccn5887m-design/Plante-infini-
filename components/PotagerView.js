@@ -6,6 +6,12 @@ import PotagerRecipesCard from "@/components/PotagerRecipesCard";
 import DiscoveryGallery from "@/components/DiscoveryGallery";
 import { ThemeInterior } from "@/components/ThemeInterior";
 import { ThemeHubNavCard, ThemeHubHeader, ThemeHubBack } from "@/components/ThemeHubNav";
+import {
+  IconCamera,
+  IconAlbums,
+  IconLightbulb,
+  IconCooking,
+} from "@/components/ThemeIcons";
 
 export default function PotagerView({
   onStartScan,
@@ -65,11 +71,9 @@ export default function PotagerView({
 
   return (
     <ThemeInterior themeId="potager">
-      <ThemeHubHeader title={t("themes.potager.title")} subtitle={t("themes.potager.subtitle")} />
-
       <div className="theme-hub-nav-list">
         <ThemeHubNavCard
-          emoji="📸"
+          icon={<IconCamera size={28} color="currentColor" />}
           title={t("themes.potager.hub_scan")}
           hint={t("themes.potager.hub_scan_hint")}
           onClick={() => onStartScan?.()}
@@ -77,7 +81,7 @@ export default function PotagerView({
           delay={0}
         />
         <ThemeHubNavCard
-          emoji="📁"
+          icon={<IconAlbums size={28} color="currentColor" />}
           title={t("themes.potager.hub_album")}
           hint={t("themes.potager.hub_album_hint")}
           onClick={() => setSubView("album")}
@@ -85,7 +89,7 @@ export default function PotagerView({
           delay={1}
         />
         <ThemeHubNavCard
-          emoji="💡"
+          icon={<IconLightbulb size={28} color="currentColor" />}
           title={t("themes.potager.hub_ideas")}
           hint={t("themes.potager.hub_ideas_hint")}
           onClick={() => setSubView("ideas")}
@@ -93,7 +97,7 @@ export default function PotagerView({
           delay={2}
         />
         <ThemeHubNavCard
-          emoji="🍳"
+          icon={<IconCooking size={28} color="currentColor" />}
           title={t("themes.potager.hub_recipes")}
           hint={t("themes.potager.hub_recipes_hint")}
           onClick={() => setSubView("recipes")}

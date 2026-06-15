@@ -2,16 +2,8 @@ import { useMemo } from "react";
 import { getRootAlbums } from "@/lib/themes";
 import { getAlbumDisplayName, getFirstDiscoveryPhoto } from "@/lib/albumUtils";
 import SwipeToDelete from "@/components/SwipeToDelete";
-
-function IconAlbums({ size = 28 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <rect x="3" y="4" width="18" height="16" rx="2" />
-      <circle cx="8.5" cy="10" r="1.5" fill="currentColor" stroke="none" />
-      <path d="M3 15l5-4 4 3 5-6 4 5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
+import WilderEmptyState from "@/components/WilderEmptyState";
+import { IconAlbums } from "@/components/ThemeIcons";
 
 function IconPlus({ size = 18 }) {
   return (
@@ -66,13 +58,14 @@ export default function ThemeAlbumsList({
   return (
     <section className="albums-list theme-albums-list" aria-label={t("albums.title")}>
       {rootAlbums.length === 0 && !creatingAlbum ? (
-        <div className="albums-empty theme-albums-empty">
-          <div className="theme-albums-empty-icon" aria-hidden="true">
-            <IconAlbums size={36} />
-          </div>
-          <p>{t("albums.empty")}</p>
-          <p className="album-examples">{t(`themes.${themeId}.empty_examples`)}</p>
-        </div>
+        <WilderEmptyState
+          icon={<IconAlbums size={32} color="currentColor" />}
+          message={t("albums.empty")}
+          hint={t(`themes.${themeId}.empty_examples`)}
+          ctaLabel={t("albums.create")}
+          onCta={() => setCreatingAlbum(true)}
+          className="theme-albums-empty"
+        />
       ) : (
         rootAlbums.map((album) => {
           const count = (album.discoveryIds || []).length;
@@ -120,7 +113,7 @@ export default function ThemeAlbumsList({
       {creatingAlbum ? (
         <>
           <input
-            className="modal-input"
+            className="wilder-field-light"
             placeholder={defaultAlbumName}
             value={newAlbumName}
             onChange={(e) => setNewAlbumName(e.target.value)}

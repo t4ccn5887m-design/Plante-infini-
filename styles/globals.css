@@ -27,6 +27,9 @@
   --wilder-shadow-soft: 0 4px 24px rgba(12, 29, 18, 0.06);
   --wilder-shadow-hover: 0 12px 36px rgba(12, 29, 18, 0.1);
   --wilder-accent-sage-light: #e8f5ec;
+  --wilder-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --wilder-duration: 0.35s;
+  --wilder-stagger: 70ms;
   --font-display: "Fraunces", Georgia, serif;
   --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
 
@@ -189,7 +192,7 @@ video {
 }
 
 .screen-enter {
-  animation: fadeIn 0.35s ease-out, slideUp 0.4s ease-out;
+  animation: fadeIn var(--wilder-duration) ease-out, slideUp calc(var(--wilder-duration) + 0.05s) var(--wilder-ease);
 }
 
 .screen-enter-fast {
@@ -4570,11 +4573,20 @@ body:has(.entry-choice-screen) .site-footer {
 .premium-auth-input {
   width: 100%;
   padding: 0.85rem 1rem;
-  border-radius: 12px;
+  border-radius: var(--wilder-r-field);
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(0, 0, 0, 0.22);
   color: #fff;
+  font-family: var(--font-body);
   font-size: 1rem;
+  transition: border-color var(--wilder-duration) var(--wilder-ease),
+    box-shadow var(--wilder-duration) var(--wilder-ease);
+}
+
+.premium-auth-input:focus {
+  outline: none;
+  border-color: rgba(127, 224, 160, 0.45);
+  box-shadow: 0 0 0 3px rgba(47, 168, 98, 0.15);
 }
 
 .premium-auth-submit {
@@ -11534,15 +11546,17 @@ button.theme-grid-card:active {
   text-align: left;
   color: inherit;
   overflow: hidden;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-  animation: themeStaggerIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--stagger, 0) * 70ms);
+  transition: transform var(--wilder-duration) var(--wilder-ease),
+    box-shadow var(--wilder-duration) var(--wilder-ease),
+    border-color var(--wilder-duration) var(--wilder-ease);
+  animation: themeStaggerIn 0.5s var(--wilder-ease) both;
+  animation-delay: calc(var(--stagger, 0) * var(--wilder-stagger));
 }
 
 .theme-hub-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--premium-shadow-hover);
-  border-color: rgba(224, 122, 58, 0.35);
+  border-color: rgba(47, 168, 98, 0.35);
 }
 
 .theme-hub-card:active {
@@ -11553,9 +11567,9 @@ button.theme-grid-card:active {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(135deg, rgba(224, 122, 58, 0.12) 0%, transparent 55%);
+  background: linear-gradient(135deg, rgba(47, 168, 98, 0.14) 0%, transparent 55%);
   opacity: 0;
-  transition: opacity 0.22s ease;
+  transition: opacity var(--wilder-duration) var(--wilder-ease);
 }
 
 .theme-hub-card:hover .theme-hub-card-glow {
@@ -11563,8 +11577,8 @@ button.theme-grid-card:active {
 }
 
 .theme-hub-card--primary {
-  background: linear-gradient(135deg, rgba(224, 122, 58, 0.22) 0%, rgba(15, 36, 25, 0.75) 100%);
-  border-color: rgba(224, 122, 58, 0.4);
+  background: linear-gradient(135deg, rgba(47, 168, 98, 0.22) 0%, rgba(15, 36, 25, 0.75) 100%);
+  border-color: rgba(47, 168, 98, 0.4);
 }
 
 .theme-hub-card--primary .theme-hub-card-glow {
@@ -14316,4 +14330,312 @@ button.theme-grid-card:active {
   opacity: 0.45;
   cursor: not-allowed;
   transform: none;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Phase 3 — motion, forest headers, empty states, skeletons
+   ══════════════════════════════════════════════════════════ */
+
+.wilder-screen-header {
+  position: relative;
+  padding: 0 1.25rem 1rem;
+}
+
+.wilder-screen-header-band {
+  position: absolute;
+  inset: 0 0 0.5rem;
+  border-radius: 0 0 28px 28px;
+  background: var(--wilder-bg-funnel);
+  pointer-events: none;
+}
+
+.wilder-screen-header-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 0.65rem;
+}
+
+.wilder-screen-header-back {
+  align-self: flex-start;
+  border: none;
+  background: rgba(245, 243, 236, 0.1);
+  color: var(--wilder-cream);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--wilder-duration) var(--wilder-ease);
+}
+
+.wilder-screen-header-back:hover {
+  background: rgba(245, 243, 236, 0.18);
+}
+
+.wilder-screen-header-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.wilder-screen-header-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 14px;
+  background: rgba(127, 224, 160, 0.18);
+  color: var(--wilder-green-light);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.wilder-screen-header-logo {
+  object-fit: contain;
+}
+
+.wilder-screen-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.wilder-screen-header-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--wilder-cream);
+}
+
+.wilder-screen-header-subtitle {
+  margin: 0.35rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--wilder-cream-muted);
+}
+
+.wilder-screen-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.wilder-screen-header .theme-toggle,
+.wilder-screen-header .theme-toggle--header {
+  color: var(--wilder-cream);
+  border-color: rgba(245, 243, 236, 0.22);
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: none;
+}
+
+.wilder-field-light {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: var(--wilder-r-field);
+  border: 1px solid var(--wilder-border-light);
+  background: var(--wilder-surface-elevated);
+  color: var(--wilder-text-forest);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  transition: border-color var(--wilder-duration) var(--wilder-ease),
+    box-shadow var(--wilder-duration) var(--wilder-ease);
+}
+
+.wilder-field-light::placeholder {
+  color: var(--wilder-text-muted-light);
+}
+
+.wilder-field-light:focus {
+  outline: none;
+  border-color: rgba(47, 168, 98, 0.45);
+  box-shadow: 0 0 0 3px rgba(47, 168, 98, 0.12);
+}
+
+.theme-screen .wilder-field-light,
+.theme-screen .modal-input {
+  border-color: var(--wilder-border-light);
+  background: var(--wilder-surface-elevated);
+  color: var(--wilder-text-forest);
+}
+
+.wilder-empty-state {
+  padding: 2rem 1.25rem;
+  border-radius: var(--wilder-r-field);
+  background: var(--wilder-surface-elevated);
+  box-shadow: var(--wilder-shadow-soft);
+  text-align: center;
+  animation: themeStaggerIn 0.5s var(--wilder-ease) both;
+}
+
+.wilder-empty-state-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1rem;
+  border-radius: 16px;
+  background: var(--wilder-accent-sage-light);
+  color: var(--forest-mid);
+}
+
+.wilder-empty-state-message {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--wilder-text-forest);
+  font-weight: 600;
+}
+
+.wilder-empty-state-hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--wilder-text-muted-light);
+}
+
+.wilder-empty-state-cta {
+  margin-top: 1.15rem;
+  width: 100%;
+  max-width: 280px;
+}
+
+@keyframes wilderSkeletonPulse {
+  0% { opacity: 0.55; }
+  50% { opacity: 1; }
+  100% { opacity: 0.55; }
+}
+
+.wilder-skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.wilder-skeleton {
+  border-radius: 14px;
+  background: linear-gradient(
+    90deg,
+    rgba(47, 168, 98, 0.08) 0%,
+    rgba(27, 61, 47, 0.06) 50%,
+    rgba(47, 168, 98, 0.08) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite, wilderSkeletonPulse 1.4s ease-in-out infinite;
+}
+
+.wilder-skeleton--text {
+  height: 0.85rem;
+  width: 100%;
+}
+
+.wilder-skeleton--row {
+  height: 3.5rem;
+  width: 100%;
+}
+
+.wilder-skeleton--card {
+  height: 5.5rem;
+  width: 100%;
+}
+
+.potager-recipes-skeleton {
+  margin-top: 0.5rem;
+}
+
+.theme-hub-card-emoji--icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 14px;
+  background: var(--premium-sage-light);
+  color: var(--premium-sage-deep);
+  font-size: inherit;
+  line-height: 1;
+}
+
+.theme-hub-card--primary .theme-hub-card-emoji--icon {
+  background: rgba(127, 224, 160, 0.22);
+  color: var(--wilder-green-light);
+}
+
+/* Dark mode — theme screens follow app theme */
+[data-theme="dark"] .theme-screen {
+  --premium-bg: var(--wilder-forest-deep);
+  --premium-text: var(--wilder-cream);
+  --premium-text-soft: var(--wilder-cream-muted);
+  --premium-text-muted: rgba(245, 243, 236, 0.5);
+  --premium-sage-light: rgba(61, 122, 92, 0.28);
+  background: var(--wilder-bg-funnel-alt) !important;
+  color: var(--wilder-cream);
+}
+
+[data-theme="dark"] .theme-screen .theme-hub-card {
+  background: rgba(27, 61, 47, 0.55);
+  border-color: rgba(245, 243, 236, 0.1);
+  color: var(--wilder-cream);
+}
+
+[data-theme="dark"] .theme-screen .theme-hub-card--primary {
+  background: linear-gradient(135deg, rgba(47, 168, 98, 0.28) 0%, rgba(12, 29, 18, 0.92) 100%);
+}
+
+[data-theme="dark"] .theme-screen .wilder-empty-state {
+  background: rgba(27, 61, 47, 0.55);
+  border: 1px solid rgba(245, 243, 236, 0.08);
+}
+
+[data-theme="dark"] .theme-screen .wilder-empty-state-message {
+  color: var(--wilder-cream);
+}
+
+[data-theme="dark"] .theme-screen .wilder-empty-state-hint {
+  color: var(--wilder-cream-muted);
+}
+
+[data-theme="dark"] .theme-screen .wilder-field-light {
+  background: rgba(0, 0, 0, 0.22);
+  border-color: rgba(245, 243, 236, 0.15);
+  color: var(--wilder-cream);
+}
+
+[data-theme="dark"] .theme-screen .album-card,
+[data-theme="dark"] .theme-screen .discovery-gallery-card {
+  background: rgba(27, 61, 47, 0.55);
+  border-color: rgba(245, 243, 236, 0.08);
+}
+
+[data-theme="dark"] .albums-screen.theme-screen + .bottom-nav {
+  background: rgba(15, 36, 25, 0.94);
+  border-top-color: rgba(245, 243, 236, 0.08);
+}
+
+[data-theme="dark"] .albums-screen.theme-screen + .bottom-nav .bottom-nav-item {
+  color: var(--wilder-cream-muted);
+}
+
+[data-theme="dark"] .albums-screen.theme-screen + .bottom-nav .bottom-nav-item.active {
+  color: var(--wilder-green-light);
+}
+
+[data-theme="dark"] .theme-screen .theme-hub-subtitle,
+[data-theme="dark"] .theme-screen .theme-hub-card-hint,
+[data-theme="dark"] .theme-screen .discovery-gallery-date {
+  color: rgba(245, 243, 236, 0.55);
+}
+
+[data-theme="dark"] .theme-screen .theme-hub-title,
+[data-theme="dark"] .theme-screen .theme-hub-card-title,
+[data-theme="dark"] .theme-screen .discovery-gallery-name {
+  color: var(--wilder-cream);
 }

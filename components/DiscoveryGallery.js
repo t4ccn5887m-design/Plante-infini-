@@ -1,3 +1,6 @@
+import WilderEmptyState from "@/components/WilderEmptyState";
+import { IconSprout } from "@/components/ThemeIcons";
+
 function formatDiscoveryDate(iso, locale) {
   if (!iso) return "—";
   try {
@@ -14,9 +17,10 @@ function formatDiscoveryDate(iso, locale) {
 export default function DiscoveryGallery({ items, locale, t, emptyMessage, onOpenDiscovery }) {
   if (!items?.length) {
     return (
-      <div className="discovery-gallery-empty">
-        <p>{emptyMessage || t("discovery.gallery_empty")}</p>
-      </div>
+      <WilderEmptyState
+        icon={<IconSprout size={32} color="currentColor" />}
+        message={emptyMessage || t("discovery.gallery_empty")}
+      />
     );
   }
 

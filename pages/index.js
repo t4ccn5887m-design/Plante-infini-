@@ -98,6 +98,7 @@ import {
 } from "@/lib/installGuide";
 import { computeEspaceVertScore, getScoreTier } from "@/lib/espaceVertScore";
 import ThemeAlbumsList from "@/components/ThemeAlbumsList";
+import WilderScreenHeader from "@/components/WilderScreenHeader";
 import PotagerScanResult from "@/components/PotagerScanResult";
 import PotagerDailyCareResult from "@/components/PotagerDailyCareResult";
 import {
@@ -1088,9 +1089,14 @@ function ThemeAlbumsScreen({
       <div
         className={`albums-screen screen-enter theme-screen theme-screen--${themeId}${themeId === "juniors" ? " theme-screen--juniors" : ""}`}
       >
-        <div className="albums-header theme-premium-header theme-premium-header--compact">
-          <ThemeToggle theme={theme} onToggle={onToggleTheme} t={t} />
-        </div>
+        <WilderScreenHeader
+          title={t(`themes.${themeId}.title`)}
+          subtitle={t(`themes.${themeId}.subtitle`)}
+          themeId={themeId}
+          onBack={() => setScreen("home")}
+          backLabel={t("wilder.back_home")}
+          actions={<ThemeToggle theme={theme} onToggle={onToggleTheme} t={t} className="theme-toggle--header" />}
+        />
 
         {themeId === "potager" ? (
           <PotagerView

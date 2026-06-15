@@ -138,6 +138,21 @@ export function IconLightbulb({ size = 24, color = "currentColor", strokeWidth =
   );
 }
 
+export function IconCooking({ size = 24, color = "currentColor", strokeWidth = 1.5 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M6 19h12M8 19V9a4 4 0 0 1 8 0v10"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M12 5V3M9 3h6" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function IconAlbums({ size = 24, color = "currentColor", strokeWidth = 1.5 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">

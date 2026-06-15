@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { ThemeInterior } from "@/components/ThemeInterior";
 import { ThemeHubNavCard, ThemeHubHeader, ThemeHubBack } from "@/components/ThemeHubNav";
+import { IconCamera, IconAlbums, IconFootprints } from "@/components/ThemeIcons";
 
 export default function AnimauxView({ onStartScan, t, children }) {
   const [subView, setSubView] = useState(null);
@@ -19,11 +20,9 @@ export default function AnimauxView({ onStartScan, t, children }) {
 
   return (
     <ThemeInterior themeId="juniors">
-      <ThemeHubHeader title={t("themes.juniors.title")} subtitle={t("themes.juniors.subtitle")} />
-
       <div className="theme-hub-nav-list">
         <ThemeHubNavCard
-          emoji="🔍"
+          icon={<IconFootprints size={28} color="currentColor" />}
           title={t("themes.juniors.hub_traces")}
           hint={t("themes.juniors.hub_traces_hint")}
           onClick={() => onStartScan?.("traces")}
@@ -31,7 +30,7 @@ export default function AnimauxView({ onStartScan, t, children }) {
           delay={0}
         />
         <ThemeHubNavCard
-          emoji="📸"
+          icon={<IconCamera size={28} color="currentColor" />}
           title={t("themes.juniors.hub_animal")}
           hint={t("themes.juniors.hub_animal_hint")}
           onClick={() => onStartScan?.("animal")}
@@ -39,7 +38,7 @@ export default function AnimauxView({ onStartScan, t, children }) {
           delay={1}
         />
         <ThemeHubNavCard
-          emoji="📁"
+          icon={<IconAlbums size={28} color="currentColor" />}
           title={t("themes.juniors.hub_albums")}
           hint={t("themes.juniors.hub_albums_hint")}
           onClick={() => setSubView("albums")}

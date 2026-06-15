@@ -1,5 +1,7 @@
 import { getPlantHealth } from "@/lib/espaceVertPlant";
 import SwipeToDelete from "@/components/SwipeToDelete";
+import WilderEmptyState from "@/components/WilderEmptyState";
+import { IconJardin } from "@/components/ThemeIcons";
 
 function HealthDot({ health, t }) {
   const label = t(`themes.jardin.health_status_${health}`);
@@ -48,7 +50,12 @@ export default function EspaceVertPlantList({
   swipeLabels,
 }) {
   if (!plants?.length) {
-    return <p className="jardin-plant-list-empty">{t("themes.jardin.empty_hint")}</p>;
+    return (
+      <WilderEmptyState
+        icon={<IconJardin size={32} color="currentColor" />}
+        message={t("themes.jardin.empty_hint")}
+      />
+    );
   }
 
   return (

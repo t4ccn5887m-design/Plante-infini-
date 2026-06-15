@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { fetchPotagerRecipes } from "@/lib/potagerRecipes";
+import WilderEmptyState from "@/components/WilderEmptyState";
+import { WilderSkeletonList } from "@/components/WilderSkeleton";
+import { IconCooking } from "@/components/ThemeIcons";
 
 function RecipeItem({ recipe, t }) {
   const [open, setOpen] = useState(false);
@@ -99,12 +102,13 @@ export default function PotagerRecipesCard({ harvestPlants, t, lang }) {
       </div>
 
       {status === "empty" && (
-        <p className="potager-recipes-empty">{t("themes.potager.recipes_empty")}</p>
+        <WilderEmptyState
+          icon={<IconCooking size={32} color="currentColor" />}
+          message={t("themes.potager.recipes_empty")}
+        />
       )}
 
-      {status === "loading" && (
-        <p className="potager-recipes-loading">{t("themes.potager.recipes_loading")}</p>
-      )}
+      {status === "loading" && <WilderSkeletonList count={3} variant="card" className="potager-recipes-skeleton" />}
 
       {status === "error" && (
         <div className="potager-recipes-error-wrap">
