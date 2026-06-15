@@ -119,6 +119,10 @@ export default function WelcomeSlidesScreen({ onComplete }) {
           ) : (
             <div className="welcome-cta-spacer" aria-hidden="true" />
           )}
+
+          <button type="button" className="welcome-discover-link" onClick={complete}>
+            {t("welcome.discover_without_account")}
+          </button>
         </div>
       </div>
     </div>

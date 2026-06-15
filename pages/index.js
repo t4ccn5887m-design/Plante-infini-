@@ -39,6 +39,7 @@ import FreemiumAdBanner from "@/components/FreemiumAdBanner";
 import ScanQuotaNotice from "@/components/ScanQuotaNotice";
 import {
   completeWelcomeSlides,
+  logOnboardingBootState,
   markOnboardingVu,
   shouldShowWelcomeSlides,
 } from "@/lib/welcomeSlides";
@@ -1479,6 +1480,7 @@ export default function Wilder() {
   }, []);
 
   const applyWelcomeSlidesFromSession = useCallback((session) => {
+    logOnboardingBootState(session);
     setNeedsWelcomeSlides(shouldShowWelcomeSlides(session));
   }, []);
 

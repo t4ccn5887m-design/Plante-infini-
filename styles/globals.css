@@ -3978,6 +3978,23 @@ video {
   transform: scale(0.98);
 }
 
+.welcome-discover-link {
+  margin-top: 0.75rem;
+  padding: 0.35rem 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--forest-mid);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.welcome-discover-link:active {
+  opacity: 0.75;
+}
+
 .welcome-cta-spacer {
   height: 3.25rem;
 }
