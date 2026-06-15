@@ -1,6 +1,7 @@
 import "leaflet/dist/leaflet.css";
 import "@/styles/globals.css";
 import { useEffect } from "react";
+import AppErrorBoundary from "@/components/AppErrorBoundary";
 import InstallGuideModalHost from "@/components/InstallGuideModalHost";
 import Footer from "@/components/Footer";
 import { detectLang } from "@/lib/i18n";
@@ -65,10 +66,10 @@ export default function App({ Component, pageProps }) {
   }, []);
 
   return (
-    <>
+    <AppErrorBoundary>
       <Component {...pageProps} />
       <Footer />
       <InstallGuideModalHost />
-    </>
+    </AppErrorBoundary>
   );
 }

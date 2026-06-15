@@ -27,11 +27,14 @@ export default function AnimalSoundQuiz({ data, t }) {
   }, []);
 
   useEffect(() => {
+    if (!data) return;
     setPhase(PHASE.idle);
     setCredit(null);
     setErrorKey("sound_error");
     stopCurrentSound();
-  }, [data.nom, data.nom_latin, data.type]);
+  }, [data?.nom, data?.nom_latin, data?.type]);
+
+  if (!data) return null;
 
   const funFact =
     data.fun_fact ||

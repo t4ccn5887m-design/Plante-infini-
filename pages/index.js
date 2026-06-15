@@ -88,7 +88,6 @@ import { buildDailySpeciesViewModel, buildDailySpeciesAnalysisData } from "@/lib
 import { DailySpeciesHero, DiscoveryHeroPhoto } from "@/components/DiscoveryPhotoThumb";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
 import Logo from "@/components/Logo";
-import FirstDiscoveryCelebration from "@/components/FirstDiscoveryCelebration";
 import { getWrappedYear } from "@/lib/wrapped";
 import { recordDuoDiscovery } from "@/lib/duoMode";
 import { recordNatureActivity } from "@/lib/natureStreak";
@@ -873,6 +872,7 @@ function DiscoveryBody({
   data,
   discovery,
   showNewBadge,
+  showFirstDiscoveryBadge,
   t,
   lang,
   onShare,
@@ -884,7 +884,12 @@ function DiscoveryBody({
 
   return (
     <>
-      {showNewBadge && <span className="discovery-new-badge">{t("discovery.new")}</span>}
+      {showFirstDiscoveryBadge && (
+        <span className="discovery-first-badge">{t("first_discovery.badge")}</span>
+      )}
+      {showNewBadge && !showFirstDiscoveryBadge && (
+        <span className="discovery-new-badge">{t("discovery.new")}</span>
+      )}
       <h1 className="discovery-name">{data.nom}</h1>
       {data.nom_latin && <p className="discovery-latin">{data.nom_latin}</p>}
 
@@ -1161,6 +1166,7 @@ export default function Wilder() {
   const [theme, setTheme] = useState("light");
   const [scanCount, setScanCount] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showFirstDiscoveryBadge, setShowFirstDiscoveryBadge] = useState(false);
   const [newBadge, setNewBadge] = useState(null);
   const [activeRandoAlbumId, setActiveRandoAlbumId] = useState(null);
   const [randoTrack, setRandoTrack] = useState([]);
@@ -1386,7 +1392,8 @@ export default function Wilder() {
         const seen = loadSeenBadges();
         const fresh = getNewBadgeIds(updated, seen);
         if (fresh.length > 0) saveSeenBadges([...seen, ...fresh]);
-        setScreen("first-celebration");
+        setShowFirstDiscoveryBadge(true);
+        setScreen("result");
         setShowConfetti(true);
         playBadgeUnlockSound();
         return;
@@ -1670,6 +1677,7 @@ export default function Wilder() {
     setScanTargetAlbumId(null);
     setScanMode("single");
     setDailyCareSession(null);
+    setShowFirstDiscoveryBadge(false);
   }, []);
 
   const startDailyCareScan = useCallback(() => {
@@ -2230,24 +2238,34 @@ export default function Wilder() {
       clearTimeout(organizeReturnTimerRef.current);
       organizeReturnTimerRef.current = null;
     }
-    setOrganizeSaveToast(null);
-    setResult(null);
-    setCaptured(null);
-    setSavedToAlbum(false);
-    setShowAlbumPicker(false);
-    setAlbumPickerStartTheme(null);
-    setOrganizeSaved({});
-    const quota = await refreshScanQuota();
-    syncScanQuotaFromServer(quota);
-    setScanCount(quota.count);
-    if (gateGuestScanBeforeCamera()) {
-      return;
+
+    try {
+      const quota = await refreshScanQuota();
+      syncScanQuotaFromServer(quota);
+      setScanCount(quota.count);
+      if (gateGuestScanBeforeCamera()) return;
+      if (!canScan()) {
+        setOrganizeSaveToast(null);
+        setScreen("subscription");
+        return;
+      }
+
+      setOrganizeSaveToast(null);
+      setSavedToAlbum(false);
+      setShowAlbumPicker(false);
+      setAlbumPickerStartTheme(null);
+      setOrganizeSaved({});
+      setShowFirstDiscoveryBadge(false);
+      setScreen("camera");
+      setResult(null);
+      setCaptured(null);
+    } catch (err) {
+      console.error("[Wilder] scanAgainFromResult:", err);
+      setShowFirstDiscoveryBadge(false);
+      setScreen("camera");
+      setResult(null);
+      setCaptured(null);
     }
-    if (!canScan()) {
-      setScreen("subscription");
-      return;
-    }
-    setScreen("camera");
   }, [gateGuestScanBeforeCamera]);
 
   const confirmOrganizeSave = useCallback(
@@ -3238,29 +3256,6 @@ export default function Wilder() {
     );
   }
 
-  /* ── FIRST DISCOVERY CELEBRATION ── */
-  if (screen === "first-celebration" && result) {
-    return (
-      <>
-        <Head>
-          <title>{result.nom} — Wilder</title>
-        </Head>
-        <FirstDiscoveryCelebration
-          result={result}
-          photo={captured}
-          discovery={shareDiscoveryPayload}
-          t={t}
-          lang={lang}
-          onScanAgain={scanAgainFromResult}
-          showSignupPrompt={isGuest}
-          onCreateAccount={openSignupFromBanner}
-          onBeforeShare={isGuest ? gateGuestShare : undefined}
-        />
-        <Confetti active={showConfetti} onDone={() => setShowConfetti(false)} />
-      </>
-    );
-  }
-
   /* ── RESULT ── */
   if (screen === "result" && result) {
     const inRando = Boolean(activeRandoAlbumId);
@@ -3441,7 +3436,8 @@ export default function Wilder() {
             <DiscoveryBody
               data={result}
               discovery={currentDiscovery}
-              showNewBadge
+              showNewBadge={!showFirstDiscoveryBadge}
+              showFirstDiscoveryBadge={showFirstDiscoveryBadge}
               showInlineShare={false}
               t={t}
               lang={lang}
