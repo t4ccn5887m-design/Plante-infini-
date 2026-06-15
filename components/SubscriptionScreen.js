@@ -5,7 +5,11 @@ import { checkoutWithCgv } from "@/lib/subscribeCheckout";
 import PremiumAuthStep from "@/components/PremiumAuthStep";
 import { CgvConsentCheckbox } from "@/components/LegalConsentCheckbox";
 
-function checkoutErrorMessage(t, error) {
+function checkoutErrorMessage(t, result) {
+  if (result?.message) return result.message;
+  if (result?.detail) return String(result.detail);
+
+  const error = result?.error;
   if (error === "auth_required") return t("freemium.auth_required");
   if (error === "cgv_consent_failed") return t("legal.consent_save_error");
   if (error === "stripe_unavailable" || error === "stripe_price_missing") {
@@ -42,12 +46,13 @@ export default function SubscriptionScreen({
     const result = await checkoutWithCgv(plan);
     if (result.ok && result.redirecting) return;
     setCheckoutLoading(false);
+    console.error("[Wilder] redirectToStripe failed:", result);
     if (result.needsAuth) {
       setSelectedPlan(plan);
       setStep("auth");
       return;
     }
-    setPaymentError(checkoutErrorMessage(t, result.error));
+    setPaymentError(checkoutErrorMessage(t, result));
   };
 
   const handleSelectPlan = async (plan) => {
