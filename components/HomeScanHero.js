@@ -4,7 +4,7 @@ import { BIODEX_TYPES } from "@/lib/biodex";
 const QUICK_SCANS = [
   { id: "plant", emoji: "🌿", labelKey: "home.quick_plant", scan: {} },
   { id: "animal", emoji: "🦊", labelKey: "home.quick_animal", scan: { animalMode: "animal" } },
-  { id: "mushroom", emoji: "🍄", labelKey: "home.quick_mushroom", scan: {} },
+  { id: "weeds", emoji: "🌾", labelKey: "home.category_weeds", scan: {} },
   { id: "bird", emoji: "🐦", labelKey: "home.quick_bird", scan: { animalMode: "sound" } },
 ];
 
