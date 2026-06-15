@@ -1,24 +1,46 @@
 :root {
-  --forest-deep: #1B3D2F;
-  --forest-mid: #2D5A45;
-  --forest-light: #3D7A5C;
-  --cream: #F5F2EB;
-  --cream-muted: rgba(245, 242, 235, 0.72);
-  --sunset: #E07A3A;
-  --sunset-light: #F4A261;
+  /* ── Wilder design tokens (funnel slides + entry choice) ── */
+  --wilder-cream: #f5f3ec;
+  --wilder-cream-muted: rgba(245, 243, 236, 0.78);
+  --wilder-green-light: #7fe0a0;
+  --wilder-forest-1: #0c1d12;
+  --wilder-forest-2: #15291b;
+  --wilder-forest-deep: #0f2419;
+  --wilder-cta-a: #6ee7a0;
+  --wilder-cta-b: #2fa862;
+  --wilder-cta-text: #06281a;
+  --wilder-cta-glow: rgba(47, 168, 98, 0.45);
+  --wilder-amber: #e3b069;
+  --wilder-r-field: 20px;
+  --wilder-r-pill: 32px;
+  --wilder-bg-funnel:
+    radial-gradient(120% 80% at 50% 0%, #1d3b26 0%, var(--wilder-forest-2) 50%, var(--wilder-forest-1) 100%);
+  --wilder-bg-funnel-alt:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(61, 122, 92, 0.35) 0%, transparent 70%),
+    linear-gradient(180deg, var(--wilder-forest-deep) 0%, #1b3d2f 50%, var(--wilder-forest-deep) 100%);
+  --wilder-cta-gradient: linear-gradient(135deg, var(--wilder-cta-a), var(--wilder-cta-b));
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+
+  /* Legacy aliases (reste de l'app) */
+  --forest-deep: #1b3d2f;
+  --forest-mid: #2d5a45;
+  --forest-light: #3d7a5c;
+  --cream: var(--wilder-cream);
+  --cream-muted: rgba(245, 243, 236, 0.72);
+  --sunset: #e07a3a;
+  --sunset-light: #f4a261;
   --sunset-glow: rgba(224, 122, 58, 0.35);
-  --bg-deep: #0F2419;
+  --bg-deep: var(--wilder-forest-deep);
   --bg-card: rgba(27, 61, 47, 0.55);
-  --text-primary: #F5F2EB;
-  --text-secondary: rgba(245, 242, 235, 0.75);
-  --text-muted: rgba(245, 242, 235, 0.5);
-  --border: rgba(245, 242, 235, 0.12);
-  --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
-  --rarity-commun: #7A9E8E;
-  --rarity-peu: #5B9BD5;
-  --rarity-rare: #9B6ED0;
-  --rarity-tres: #E07A3A;
+  --text-primary: var(--wilder-cream);
+  --text-secondary: rgba(245, 243, 236, 0.75);
+  --text-muted: rgba(245, 243, 236, 0.5);
+  --border: rgba(245, 243, 236, 0.12);
+  --rarity-commun: #7a9e8e;
+  --rarity-peu: #5b9bd5;
+  --rarity-rare: #9b6ed0;
+  --rarity-tres: #e07a3a;
   --photo-frame-aspect: 3 / 4;
 }
 
@@ -443,15 +465,15 @@ video {
   margin: 0.35rem auto 0;
   padding: 13px 24px;
   border: none;
-  border-radius: 30px;
-  background: linear-gradient(135deg, #6ee7a0, #2fa862);
-  color: #06281a;
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  border-radius: var(--wilder-r-pill);
+  background: var(--wilder-cta-gradient);
+  color: var(--wilder-cta-text);
+  font-family: var(--font-body);
   font-size: 0.88rem;
   font-weight: 700;
   line-height: 1.25;
   cursor: pointer;
-  box-shadow: 0 8px 22px rgba(47, 168, 98, 0.45);
+  box-shadow: 0 8px 22px var(--wilder-cta-glow);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -470,11 +492,9 @@ video {
   transform: scale(0.98);
 }
 
-/* Accueil v2 — typographie : Bricolage (titres) + Plus Jakarta (corps) */
+/* Accueil v2 — typographie alignée funnel (Fraunces + Jakarta) */
 .wilder-home--v2 {
-  --wilder-home-font-title: "Bricolage Grotesque", system-ui, sans-serif;
-  --wilder-home-font-body: "Plus Jakarta Sans", system-ui, sans-serif;
-  font-family: var(--wilder-home-font-body);
+  font-family: var(--font-body);
   margin-top: calc(-1 * env(safe-area-inset-top, 0px));
 }
 
@@ -482,7 +502,8 @@ video {
 .wilder-home--v2 .wilder-home-scan-btn .btn-scanner-label,
 .wilder-home--v2 .wilder-home-daily-title,
 .wilder-home--v2 .wilder-home-recent-title {
-  font-family: var(--wilder-home-font-title);
+  font-family: var(--font-display);
+  font-weight: 600;
 }
 
 .wilder-home--v2 .wilder-home-top .wilder-home-streak-item,
@@ -493,7 +514,7 @@ video {
 .wilder-home--v2 .wilder-home-recent-empty,
 .wilder-home--v2 .wilder-home-recent-all,
 .wilder-home--v2 .wilder-home-install-link {
-  font-family: var(--wilder-home-font-body);
+  font-family: var(--font-body);
 }
 
 .wilder-home--v2 .wilder-home-daily-name {
@@ -889,18 +910,18 @@ video {
   width: min(210px, 58vw);
   height: min(210px, 58vw);
   margin: 0;
-  background: linear-gradient(145deg, #72D073 0%, #5BA85C 50%, #48A049 100%);
+  background: var(--wilder-cta-gradient);
   box-shadow:
-    0 10px 36px rgba(91, 168, 92, 0.6),
-    0 0 0 7px rgba(91, 168, 92, 0.24),
+    0 10px 36px var(--wilder-cta-glow),
+    0 0 0 7px rgba(110, 231, 160, 0.24),
     inset 0 2px 0 rgba(255, 255, 255, 0.3);
 }
 
 .wilder-home-scan-btn.btn-scanner--hero.btn-scanner--green:hover {
   transform: scale(1.04);
   box-shadow:
-    0 14px 44px rgba(91, 168, 92, 0.72),
-    0 0 0 9px rgba(91, 168, 92, 0.3),
+    0 14px 44px rgba(47, 168, 98, 0.55),
+    0 0 0 9px rgba(110, 231, 160, 0.3),
     inset 0 2px 0 rgba(255, 255, 255, 0.34);
 }
 
@@ -909,10 +930,10 @@ video {
 }
 
 .btn-scanner--green {
-  background: linear-gradient(145deg, #72D073 0%, #5BA85C 50%, #48A049 100%);
+  background: var(--wilder-cta-gradient);
   box-shadow:
-    0 10px 40px rgba(91, 168, 92, 0.55),
-    0 0 0 8px rgba(91, 168, 92, 0.22),
+    0 10px 40px var(--wilder-cta-glow),
+    0 0 0 8px rgba(110, 231, 160, 0.22),
     inset 0 2px 0 rgba(255, 255, 255, 0.28);
 }
 
@@ -1880,19 +1901,25 @@ video {
   justify-content: center;
   gap: 0.5rem;
   padding: 1rem 1.75rem;
-  background: linear-gradient(135deg, var(--sunset), #c45f28);
-  color: white;
+  background: var(--wilder-cta-gradient);
+  color: var(--wilder-cta-text);
   border: none;
-  border-radius: 999px;
+  border-radius: var(--wilder-r-pill);
+  font-family: var(--font-body);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 20px var(--sunset-glow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 10px 28px var(--wilder-cta-glow), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
+  box-shadow: 0 12px 32px rgba(47, 168, 98, 0.52), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
 }
 
 .btn-primary:disabled {
@@ -3869,9 +3896,7 @@ video {
 .welcome-slides-bg {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(61, 122, 92, 0.35) 0%, transparent 70%),
-    linear-gradient(180deg, #0f2419 0%, #1b3d2f 50%, #0f2419 100%);
+  background: var(--wilder-bg-funnel-alt);
 }
 
 .welcome-slides-content {
@@ -3907,8 +3932,8 @@ video {
   margin: 0 0 0.85rem;
   font-family: var(--font-display);
   font-size: 1.85rem;
-  font-weight: 700;
-  color: #fafaf7;
+  font-weight: 600;
+  color: var(--wilder-cream);
   line-height: 1.25;
 }
 
@@ -3954,23 +3979,23 @@ video {
 }
 
 .welcome-dot--active {
-  background: #fafaf7;
+  background: var(--wilder-cream);
   transform: scale(1.2);
 }
 
 .welcome-cta {
   width: 100%;
   border: none;
-  border-radius: 30px;
-  font-family: var(--font-display);
+  border-radius: var(--wilder-r-pill);
+  font-family: var(--font-body);
   font-size: 1.05rem;
   font-weight: 700;
   line-height: 1.3;
   padding: 13px 24px;
   cursor: pointer;
-  color: #06281a;
-  background: linear-gradient(135deg, #6ee7a0, #2fa862);
-  box-shadow: 0 8px 22px rgba(47, 168, 98, 0.45);
+  color: var(--wilder-cta-text);
+  background: var(--wilder-cta-gradient);
+  box-shadow: 0 8px 22px var(--wilder-cta-glow);
   transition: transform 0.15s ease;
 }
 
@@ -3986,7 +4011,7 @@ video {
   cursor: pointer;
   font-size: 0.92rem;
   font-weight: 600;
-  color: var(--forest-mid);
+  color: var(--wilder-green-light);
   text-decoration: underline;
   text-underline-offset: 0.15em;
 }
@@ -4006,19 +4031,10 @@ body:has(.entry-choice-screen) .site-footer {
 }
 
 .entry-choice-screen {
-  --entry-cream: #f5f3ec;
-  --entry-green-light: #7fe0a0;
-  --entry-cta-a: #6ee7a0;
-  --entry-cta-b: #2fa862;
-  --entry-amber: #e3b069;
-  --entry-forest-1: #0c1d12;
-  --entry-forest-2: #15291b;
-  --entry-r-field: 20px;
-  --entry-r-pill: 32px;
   min-height: 100vh;
   min-height: 100dvh;
-  color: var(--entry-cream);
-  background: radial-gradient(120% 80% at 50% 0%, #1d3b26 0%, var(--entry-forest-2) 50%, var(--entry-forest-1) 100%);
+  color: var(--wilder-cream);
+  background: var(--wilder-bg-funnel);
 }
 
 .entry-choice-scroll {
@@ -4026,7 +4042,7 @@ body:has(.entry-choice-screen) .site-footer {
   min-height: 100dvh;
   overflow-y: auto;
   padding: calc(1.25rem + env(safe-area-inset-top)) 26px calc(1.5rem + env(safe-area-inset-bottom));
-  font-family: "Plus Jakarta Sans", var(--font-body), system-ui, sans-serif;
+  font-family: var(--font-body);
 }
 
 .entry-choice-scroll::-webkit-scrollbar {
@@ -4051,7 +4067,7 @@ body:has(.entry-choice-screen) .site-footer {
 .entry-choice-dot--active {
   width: 22px;
   border-radius: 4px;
-  background: var(--entry-green-light);
+  background: var(--wilder-green-light);
 }
 
 .entry-choice-hero {
@@ -4075,13 +4091,13 @@ body:has(.entry-choice-screen) .site-footer {
 }
 
 .entry-choice-title {
-  font-family: "Fraunces", Georgia, serif;
+  font-family: var(--font-display);
   font-weight: 600;
   font-size: clamp(2rem, 8vw, 2.375rem);
   letter-spacing: -0.01em;
   margin-top: 16px;
   line-height: 1.05;
-  color: var(--entry-cream);
+  color: var(--wilder-cream);
 }
 
 .entry-choice-badge {
@@ -4090,7 +4106,7 @@ body:has(.entry-choice-screen) .site-footer {
   padding: 5px 14px;
   border-radius: 20px;
   background: rgba(227, 176, 105, 0.16);
-  color: var(--entry-amber);
+  color: var(--wilder-amber);
   font-weight: 700;
   font-size: 13px;
   letter-spacing: 0.03em;
@@ -4111,7 +4127,7 @@ body:has(.entry-choice-screen) .site-footer {
   display: flex;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--entry-r-field);
+  border-radius: var(--wilder-r-field);
   padding: 5px;
   margin: 24px 0 18px;
   gap: 5px;
@@ -4133,7 +4149,7 @@ body:has(.entry-choice-screen) .site-footer {
 
 .entry-choice-seg-btn--active {
   background: rgba(127, 224, 160, 0.18);
-  color: var(--entry-cream);
+  color: var(--wilder-cream);
 }
 
 .entry-choice-seg-btn:disabled {
@@ -4149,13 +4165,13 @@ body:has(.entry-choice-screen) .site-footer {
 .entry-choice-field {
   width: 100%;
   border: 1.5px solid rgba(255, 255, 255, 0.14);
-  border-radius: var(--entry-r-field);
+  border-radius: var(--wilder-r-field);
   background: rgba(255, 255, 255, 0.05);
   padding: 16px 20px;
   margin-bottom: 12px;
   font-family: inherit;
   font-size: 16px;
-  color: var(--entry-cream);
+  color: var(--wilder-cream);
 }
 
 .entry-choice-field::placeholder {
@@ -4179,7 +4195,7 @@ body:has(.entry-choice-screen) .site-footer {
 }
 
 .entry-choice-consent .legal-consent-text a {
-  color: var(--entry-green-light);
+  color: var(--wilder-green-light);
 }
 
 .entry-choice-error {
@@ -4193,16 +4209,16 @@ body:has(.entry-choice-screen) .site-footer {
   width: 100%;
   border: none;
   cursor: pointer;
-  border-radius: var(--entry-r-pill);
+  border-radius: var(--wilder-r-pill);
   padding: 18px;
   margin-top: 4px;
   font-family: inherit;
   font-weight: 700;
   font-size: 17px;
-  color: #06281a;
-  background: linear-gradient(135deg, var(--entry-cta-a), var(--entry-cta-b));
+  color: var(--wilder-cta-text);
+  background: var(--wilder-cta-gradient);
   box-shadow:
-    0 10px 28px rgba(47, 168, 98, 0.45),
+    0 10px 28px var(--wilder-cta-glow),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
   transition: transform 0.15s ease;
 }
@@ -4236,12 +4252,12 @@ body:has(.entry-choice-screen) .site-footer {
 .entry-choice-btn-guest {
   width: 100%;
   cursor: pointer;
-  border-radius: var(--entry-r-pill);
+  border-radius: var(--wilder-r-pill);
   padding: 17px;
   font-family: inherit;
   font-weight: 700;
   font-size: 16px;
-  color: var(--entry-green-light);
+  color: var(--wilder-green-light);
   background: rgba(127, 224, 160, 0.08);
   border: 1.5px solid rgba(127, 224, 160, 0.55);
   transition: transform 0.15s ease, background 0.15s ease;
@@ -4377,9 +4393,9 @@ body:has(.entry-choice-screen) .site-footer {
 }
 
 .paywall-plan--primary {
-  color: #fff;
-  background: linear-gradient(135deg, #5ba85c 0%, #3d7a5c 55%, #2d5a45 100%);
-  box-shadow: 0 8px 24px rgba(45, 90, 69, 0.45);
+  color: var(--wilder-cta-text);
+  background: var(--wilder-cta-gradient);
+  box-shadow: 0 10px 28px var(--wilder-cta-glow);
 }
 
 .paywall-plan--secondary {
@@ -4433,7 +4449,7 @@ body:has(.entry-choice-screen) .site-footer {
   margin: 0 0 0.45rem;
   font-family: var(--font-display);
   font-size: 1.45rem;
-  font-weight: 800;
+  font-weight: 600;
   color: #fff;
   text-align: center;
 }
@@ -4542,11 +4558,12 @@ body:has(.entry-choice-screen) .site-footer {
 .premium-auth-submit {
   min-height: 3.1rem;
   border: none;
-  border-radius: 30px;
+  border-radius: var(--wilder-r-pill);
   padding: 13px 24px;
-  background: linear-gradient(135deg, #6ee7a0, #2fa862);
-  color: #06281a;
-  box-shadow: 0 8px 22px rgba(47, 168, 98, 0.45);
+  background: var(--wilder-cta-gradient);
+  color: var(--wilder-cta-text);
+  box-shadow: 0 8px 22px var(--wilder-cta-glow);
+  font-family: var(--font-body);
   font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
@@ -4800,9 +4817,7 @@ body:has(.entry-choice-screen) .site-footer {
 .onboarding-bg {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(61, 122, 92, 0.35) 0%, transparent 70%),
-    linear-gradient(180deg, #0F2419 0%, #1B3D2F 50%, #0F2419 100%);
+  background: var(--wilder-bg-funnel-alt);
 }
 
 .onboarding-overlay {
@@ -4827,7 +4842,7 @@ body:has(.entry-choice-screen) .site-footer {
 .onboarding-title {
   font-family: var(--font-display);
   font-size: 1.85rem;
-  font-weight: 700;
+  font-weight: 600;
   margin-bottom: 0.75rem;
   color: var(--text-primary);
 }
@@ -14188,11 +14203,11 @@ button.theme-grid-card:active {
 
 .legal-page-title {
   margin: 0 0 1.5rem;
-  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(1.5rem, 5vw, 2rem);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.15;
-  color: #f5f2eb;
+  color: var(--wilder-cream);
 }
 
 .legal-section {
@@ -14203,7 +14218,7 @@ button.theme-grid-card:active {
   margin: 0 0 0.5rem;
   font-size: 0.95rem;
   font-weight: 700;
-  color: #7fe0a0;
+  color: var(--wilder-green-light);
 }
 
 .legal-paragraph {
