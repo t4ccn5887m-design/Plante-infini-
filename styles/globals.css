@@ -30,6 +30,7 @@
   --wilder-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --wilder-duration: 0.35s;
   --wilder-stagger: 70ms;
+  --wilder-forest-photo: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80');
   --font-display: "Fraunces", Georgia, serif;
   --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
 
@@ -236,7 +237,7 @@ video {
   position: absolute;
   inset: 0;
   background:
-    url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80') center / cover no-repeat;
+    var(--wilder-forest-photo) center / cover no-repeat;
   transform: scale(1.04);
   animation: homeBgDrift 24s ease-in-out infinite alternate;
 }
@@ -2102,10 +2103,50 @@ video {
   min-height: 100dvh;
   max-width: 480px;
   margin: 0 auto;
-  background: var(--bg-deep);
+  background: transparent;
   position: relative;
   overflow-x: hidden;
   padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
+  isolation: isolate;
+}
+
+/* Fond forêt (même photo que l'accueil), version plus claire */
+.discovery-screen:not(.discovery-screen--juniors)::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  height: 100dvh;
+  z-index: -2;
+  pointer-events: none;
+  background: var(--wilder-forest-photo) center / cover no-repeat;
+  filter: brightness(1.12) saturate(0.92);
+}
+
+.discovery-screen:not(.discovery-screen--juniors)::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  height: 100dvh;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.38) 0%,
+      rgba(255, 255, 255, 0.52) 38%,
+      rgba(245, 242, 235, 0.78) 100%
+    ),
+    radial-gradient(ellipse 85% 55% at 50% 0%, rgba(255, 255, 255, 0.42) 0%, transparent 68%);
 }
 
 .biodex-flash {
@@ -2131,6 +2172,7 @@ video {
 
 .discovery-hero {
   position: relative;
+  z-index: 2;
   width: 100%;
   aspect-ratio: var(--photo-frame-aspect);
 }
@@ -2196,7 +2238,14 @@ video {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(transparent 40%, var(--bg-deep));
+  background: linear-gradient(
+    180deg,
+    rgba(15, 36, 25, 0.42) 0%,
+    rgba(15, 36, 25, 0.08) 32%,
+    transparent 52%,
+    rgba(15, 36, 25, 0.55) 82%,
+    rgba(15, 36, 25, 0.82) 100%
+  );
 }
 
 .discovery-body {
@@ -2205,6 +2254,25 @@ video {
   position: relative;
   z-index: 1;
   animation: biodexReveal 0.8s ease-out 0.35s both;
+}
+
+/* Dégradé sombre derrière titre, badge et 1er paragraphe (lisibilité sur fond clair) */
+.discovery-screen:not(.discovery-screen--juniors) .discovery-body::before {
+  content: '';
+  position: absolute;
+  left: -1.5rem;
+  right: -1.5rem;
+  top: -4.25rem;
+  height: min(24rem, 72vw);
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 36, 25, 0.78) 0%,
+    rgba(15, 36, 25, 0.62) 42%,
+    rgba(15, 36, 25, 0.28) 78%,
+    transparent 100%
+  );
 }
 
 .discovery-home-btn {
