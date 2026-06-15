@@ -49,7 +49,6 @@ export default function WilderHomeScreen({
   discoveries = [],
   onStartScan,
   onViewAll,
-  onOpenHerbier,
   isLoggedIn = false,
   accountUserEmail = "",
   onAccountCreated,
@@ -180,7 +179,6 @@ export default function WilderHomeScreen({
                 t={t}
                 isLoggedIn={isLoggedIn}
                 userEmail={accountUserEmail}
-                onOpenHerbier={onOpenHerbier}
                 onSignOut={onSignOut}
                 onAccountCreated={onAccountCreated}
               />

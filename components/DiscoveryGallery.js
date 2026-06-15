@@ -15,13 +15,13 @@ export default function DiscoveryGallery({ items, locale, t, emptyMessage, onOpe
   if (!items?.length) {
     return (
       <div className="discovery-gallery-empty">
-        <p>{emptyMessage || t("themes.herbier.empty")}</p>
+        <p>{emptyMessage || t("discovery.gallery_empty")}</p>
       </div>
     );
   }
 
   return (
-    <ul className="discovery-gallery" aria-label={t("themes.herbier.title")}>
+    <ul className="discovery-gallery" aria-label={t("discovery.gallery_label")}>
       {items.map((d) => (
         <li key={d.id}>
           <button

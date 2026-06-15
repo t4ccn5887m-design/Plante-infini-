@@ -39,7 +39,6 @@ export default function AccountMenu({
   t,
   isLoggedIn = false,
   userEmail = "",
-  onOpenHerbier,
   onSignOut,
   onAccountCreated,
 }) {
@@ -73,11 +72,6 @@ export default function AccountMenu({
   const handleAuthComplete = async () => {
     closeAuth();
     await onAccountCreated?.();
-  };
-
-  const handleOpenHerbier = () => {
-    closeMenu();
-    onOpenHerbier?.();
   };
 
   const handleOpenProfile = () => {
@@ -119,14 +113,6 @@ export default function AccountMenu({
           <div className="premium-menu-dropdown account-menu-dropdown" role="menu">
             {isLoggedIn ? (
               <>
-                <button
-                  type="button"
-                  className="premium-menu-item"
-                  role="menuitem"
-                  onClick={handleOpenHerbier}
-                >
-                  {t("account_menu.herbier")}
-                </button>
                 <button
                   type="button"
                   className="premium-menu-item"

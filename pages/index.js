@@ -34,15 +34,19 @@ import { computeStats } from "@/lib/stats";
 import { isHeritageType } from "@/lib/categories";
 import OnboardingScreen from "@/components/OnboardingScreen";
 import WelcomeSlidesScreen from "@/components/WelcomeSlidesScreen";
+import EntryChoiceScreen from "@/components/EntryChoiceScreen";
 import SubscriptionScreen from "@/components/SubscriptionScreen";
 import FreemiumAdBanner from "@/components/FreemiumAdBanner";
 import ScanQuotaNotice from "@/components/ScanQuotaNotice";
 import {
-  completeWelcomeSlides,
   logOnboardingBootState,
   markOnboardingVu,
   shouldShowWelcomeSlides,
 } from "@/lib/welcomeSlides";
+import {
+  markEntryChoiceDone,
+  shouldShowEntryChoice,
+} from "@/lib/entryChoice";
 import {
   buildScanQuotaHeaders,
   refreshScanQuota,
@@ -72,7 +76,6 @@ import FeatureGateModal from "@/components/FeatureGateModal";
 import SignupPromptModal from "@/components/SignupPromptModal";
 import { useGuestAccount } from "@/hooks/useGuestAccount";
 import PotagerView from "@/components/PotagerView";
-import HerbierView from "@/components/HerbierView";
 import AnimalAudioRecorder from "@/components/AnimalAudioRecorder";
 import WilderWrapped from "@/components/WilderWrapped";
 import BiodexCollection from "@/components/BiodexCollection";
@@ -1089,14 +1092,7 @@ function ThemeAlbumsScreen({
           <ThemeToggle theme={theme} onToggle={onToggleTheme} t={t} />
         </div>
 
-        {themeId === "herbier" ? (
-          <HerbierView
-            discoveries={discoveries}
-            locale={locale}
-            t={t}
-            onOpenDiscovery={openDiscovery}
-          />
-        ) : themeId === "potager" ? (
+        {themeId === "potager" ? (
           <PotagerView
             onStartScan={onStartScan}
             albums={albums}
@@ -1141,6 +1137,7 @@ export default function Wilder() {
   const [camLoading, setCamLoading] = useState(false);
   const [camZoom, setCamZoom] = useState(1);
   const [needsWelcomeSlides, setNeedsWelcomeSlides] = useState(false);
+  const [needsEntryChoice, setNeedsEntryChoice] = useState(false);
   const [authBootState, setAuthBootState] = useState("loading");
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [viewingDiscovery, setViewingDiscovery] = useState(null);
@@ -1234,18 +1231,6 @@ export default function Wilder() {
     guestAutoSavePromptedRef.current = false;
     if (fn) fn();
   }, [refreshGuestAccount]);
-
-  const openHerbier = useCallback(() => {
-    if (isGuest) {
-      openFeatureGateModal(() => {
-        setReturnScreen("home");
-        setScreen("herbier");
-      });
-      return;
-    }
-    setReturnScreen("home");
-    setScreen("herbier");
-  }, [isGuest, openFeatureGateModal]);
 
   const openSignupFromBanner = useCallback(() => {
     openFeatureGateModal(null);
@@ -1470,13 +1455,30 @@ export default function Wilder() {
     setCamReady(false);
   }, []);
 
-  const handleWelcomeComplete = useCallback(() => {
-    completeWelcomeSlides();
-    setNeedsWelcomeSlides(false);
+  const finishEntryFlow = useCallback(async () => {
+    markOnboardingVu();
+    markEntryChoiceDone();
+    setNeedsEntryChoice(false);
+    const session = await getCloudSession();
+    const user = session?.user;
+    if (user && isPermanentAuthUser(user)) {
+      setPremiumUserEmail(user.email || "");
+    }
+    await refreshGuestAccount();
     const items = loadDiscoveries();
     if (!isOnboardingComplete() && items.length === 0) {
       setNeedsOnboarding(true);
+    } else {
+      setNeedsOnboarding(false);
+      setReturnScreen("home");
+      setScreen("home");
     }
+  }, [refreshGuestAccount]);
+
+  const handleWelcomeComplete = useCallback(() => {
+    markOnboardingVu();
+    setNeedsWelcomeSlides(false);
+    setNeedsEntryChoice(true);
   }, []);
 
   const applyWelcomeSlidesFromSession = useCallback((session) => {
@@ -1484,10 +1486,15 @@ export default function Wilder() {
     setNeedsWelcomeSlides(shouldShowWelcomeSlides(session));
   }, []);
 
+  const applyEntryChoiceFromSession = useCallback((session) => {
+    setNeedsEntryChoice(shouldShowEntryChoice(session));
+  }, []);
+
   useEffect(() => {
     const unsubscribe = subscribeToAuthSession(
       (session) => {
         applyWelcomeSlidesFromSession(session);
+        applyEntryChoiceFromSession(session);
         const user = session?.user;
         if (user && isPermanentAuthUser(user)) {
           setPremiumUserEmail(user.email || "");
@@ -1496,7 +1503,7 @@ export default function Wilder() {
       () => setAuthBootState("ready")
     );
     return unsubscribe;
-  }, [applyWelcomeSlidesFromSession]);
+  }, [applyWelcomeSlidesFromSession, applyEntryChoiceFromSession]);
 
   useEffect(() => {
     if (authBootState !== "ready") return;
@@ -1524,7 +1531,7 @@ export default function Wilder() {
   }, [authBootState]);
 
   useEffect(() => {
-    if (authBootState !== "ready" || needsWelcomeSlides) return;
+    if (authBootState !== "ready" || needsWelcomeSlides || needsEntryChoice) return;
 
     const items = loadDiscoveries();
     if (isOnboardingComplete()) {
@@ -1535,14 +1542,14 @@ export default function Wilder() {
     } else {
       setNeedsOnboarding(true);
     }
-  }, [authBootState, needsWelcomeSlides]);
+  }, [authBootState, needsWelcomeSlides, needsEntryChoice]);
 
   useEffect(() => {
-    if (authBootState !== "ready" || needsWelcomeSlides) return;
+    if (authBootState !== "ready" || needsWelcomeSlides || needsEntryChoice) return;
     if (tryConsumeInstallGuideAutoShow()) {
       openInstallGuideModal();
     }
-  }, [screen, authBootState, needsWelcomeSlides]);
+  }, [screen, authBootState, needsWelcomeSlides, needsEntryChoice]);
 
   useEffect(() => {
     const hw = hardwareZoomRef.current;
@@ -1557,7 +1564,7 @@ export default function Wilder() {
   }, [camZoom, camReady]);
 
   useEffect(() => {
-    if (authBootState !== "ready" || needsWelcomeSlides) return;
+    if (authBootState !== "ready" || needsWelcomeSlides || needsEntryChoice) return;
 
     const items = loadDiscoveries();
     setDiscoveries(items);
@@ -1574,7 +1581,7 @@ export default function Wilder() {
     const onFirstTouch = () => warmUpSounds();
     window.addEventListener("pointerdown", onFirstTouch, { once: true });
     return () => window.removeEventListener("pointerdown", onFirstTouch);
-  }, [authBootState, needsWelcomeSlides]);
+  }, [authBootState, needsWelcomeSlides, needsEntryChoice]);
 
   useEffect(() => {
     const onVisible = () => {
@@ -2673,6 +2680,22 @@ export default function Wilder() {
     );
   }
 
+  if (needsEntryChoice) {
+    return (
+      <>
+        <Head>
+          <title>Wilder</title>
+          <meta name="description" content={slogan} />
+        </Head>
+        <EntryChoiceScreen
+          t={t}
+          onComplete={finishEntryFlow}
+          onDiscoverGuest={finishEntryFlow}
+        />
+      </>
+    );
+  }
+
   if (needsOnboarding) {
     return (
       <>
@@ -2749,7 +2772,6 @@ export default function Wilder() {
             setReturnScreen("home");
             setScreen("biodex");
           }}
-          onOpenHerbier={openHerbier}
           isLoggedIn={!isGuest}
           accountUserEmail={premiumUserEmail || ""}
           onAccountCreated={handleSignupAccountCreated}

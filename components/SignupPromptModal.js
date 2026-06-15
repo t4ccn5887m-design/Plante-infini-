@@ -6,10 +6,6 @@ const VARIANT_KEYS = {
     title: "signup_prompt.modal_save_title",
     body: "signup_prompt.modal_save_body",
   },
-  herbier: {
-    title: "signup_prompt.modal_herbier_title",
-    body: "signup_prompt.modal_herbier_body",
-  },
   limit: {
     title: "signup_prompt.modal_limit_title",
     body: "signup_prompt.modal_limit_body",
