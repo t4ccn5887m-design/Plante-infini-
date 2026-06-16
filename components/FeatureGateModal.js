@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import PremiumAuthStep from "@/components/PremiumAuthStep";
 
-export default function FeatureGateModal({ open, t, onClose, onAccountCreated }) {
+export default function FeatureGateModal({ open, t, messageKey = "feature_gate.message", onClose, onAccountCreated }) {
   const [step, setStep] = useState("prompt");
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function FeatureGateModal({ open, t, onClose, onAccountCreated })
         {step === "prompt" ? (
           <>
             <p id="feature-gate-modal-message" className="feature-gate-modal-message">
-              {t("feature_gate.message")}
+              {t(messageKey)}
             </p>
             <button
               type="button"

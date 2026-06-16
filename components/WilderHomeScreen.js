@@ -7,7 +7,7 @@ import { shouldOfferInstallGuide } from "@/lib/installGuide";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import HomeScanCategories from "@/components/HomeScanCategories";
 import AccountMenu from "@/components/AccountMenu";
-import { shareWilderApp } from "@/lib/share";
+import { GUEST_RECENT_PREVIEW } from "@/lib/guestRecentPreview";
 
 const LONG_PRESS_MS = 520;
 
@@ -56,6 +56,8 @@ export default function WilderHomeScreen({
   onOpenDailyPick,
   onDeleteDiscovery,
   deleteLabels,
+  findsLocked = false,
+  onLockedFinds,
   selectedCategory,
   onCategoryChange,
   onOpenInstallGuide,
@@ -78,10 +80,12 @@ export default function WilderHomeScreen({
 
   const recent = useMemo(
     () =>
-      [...discoveries]
-        .sort((a, b) => new Date(b.discoveredAt || 0) - new Date(a.discoveredAt || 0))
-        .slice(0, 3),
-    [discoveries]
+      findsLocked
+        ? GUEST_RECENT_PREVIEW
+        : [...discoveries]
+            .sort((a, b) => new Date(b.discoveredAt || 0) - new Date(a.discoveredAt || 0))
+            .slice(0, 3),
+    [discoveries, findsLocked]
   );
 
   const dailyPick = useMemo(() => getDailySpecies(), []);
@@ -111,6 +115,7 @@ export default function WilderHomeScreen({
   }, [revealedDeleteId]);
 
   const handleThumbPointerDown = (discoveryId) => {
+    if (findsLocked) return;
     longPressTriggered.current = false;
     clearLongPress();
     longPressTimer.current = setTimeout(() => {
@@ -124,6 +129,10 @@ export default function WilderHomeScreen({
   };
 
   const handleThumbClick = (d) => {
+    if (findsLocked) {
+      onLockedFinds?.();
+      return;
+    }
     if (longPressTriggered.current) {
       longPressTriggered.current = false;
       return;
@@ -280,7 +289,7 @@ export default function WilderHomeScreen({
         <section className="wilder-home-recent stagger-4" aria-label={t("home.recent_finds")}>
           <div className="wilder-home-recent-head">
             <h2 className="wilder-home-recent-title">{t("home.recent_finds")}</h2>
-            {recent.length > 0 && (
+            {recent.length > 0 && !findsLocked && (
               <button type="button" className="wilder-home-recent-all" onClick={() => onViewAll?.()}>
                 {t("home.view_all")}
               </button>
@@ -290,22 +299,30 @@ export default function WilderHomeScreen({
           {recent.length === 0 ? (
             <p className="wilder-home-recent-empty">{t("home.first_scan_cta")}</p>
           ) : (
-            <div className="wilder-home-recent-row">
+            <div className={`wilder-home-recent-row${findsLocked ? " wilder-home-recent-row--locked" : ""}`}>
               {recent.map((d) => (
-                <div key={d.id} className="wilder-home-recent-thumb-wrap">
+                <div
+                  key={d.id}
+                  className={`wilder-home-recent-thumb-wrap${findsLocked ? " wilder-home-recent-thumb-wrap--locked" : ""}`}
+                >
                   <button
                     type="button"
-                    className={`wilder-home-recent-thumb-btn${revealedDeleteId === d.id ? " wilder-home-recent-thumb-btn--delete-mode" : ""}`}
+                    className={`wilder-home-recent-thumb-btn${revealedDeleteId === d.id ? " wilder-home-recent-thumb-btn--delete-mode" : ""}${findsLocked ? " wilder-home-recent-thumb-btn--locked" : ""}`}
                     onPointerDown={() => handleThumbPointerDown(d.id)}
                     onPointerUp={handleThumbPointerUp}
                     onPointerLeave={handleThumbPointerUp}
                     onPointerCancel={handleThumbPointerUp}
                     onClick={() => handleThumbClick(d)}
-                    aria-label={d.nom}
+                    aria-label={findsLocked ? t("feature_gate.saves_message") : d.nom}
                   >
                     <DiscoveryPhotoThumb discovery={d} typeEmoji={typeEmoji} />
+                    {findsLocked && (
+                      <span className="wilder-home-recent-lock" aria-hidden="true">
+                        🔒
+                      </span>
+                    )}
                   </button>
-                  {revealedDeleteId === d.id && (
+                  {!findsLocked && revealedDeleteId === d.id && (
                     <button
                       type="button"
                       className="wilder-home-recent-delete"

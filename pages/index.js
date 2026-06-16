@@ -59,6 +59,7 @@ import {
   syncScanQuotaFromServer,
 } from "@/lib/freemium";
 import { isPermanentAuthUser } from "@/lib/authUser";
+import { getGuestScanCount } from "@/lib/guestAccount";
 import { consumePendingCheckoutPlan } from "@/lib/subscribeFlow";
 import { resolveSubscribeEntry } from "@/lib/subscribeCheckout";
 import {
@@ -1186,6 +1187,7 @@ export default function Wilder() {
   const [premiumUserEmail, setPremiumUserEmail] = useState(null);
   const [signupModalOpen, setSignupModalOpen] = useState(false);
   const [featureGateOpen, setFeatureGateOpen] = useState(false);
+  const [featureGateMessageKey, setFeatureGateMessageKey] = useState("feature_gate.message");
   const [subscriptionEntry, setSubscriptionEntry] = useState({
     initialStep: "checkout",
     defaultPlan: "yearly",
@@ -1210,13 +1212,15 @@ export default function Wilder() {
   const hardwareZoomRef = useRef({ min: 1, max: 1, step: 0.1, supported: false });
   const organizeReturnTimerRef = useRef(null);
 
-  const openFeatureGateModal = useCallback((pendingAction) => {
+  const openFeatureGateModal = useCallback((pendingAction, messageKey = "feature_gate.message") => {
     pendingGuestActionRef.current = pendingAction ?? null;
+    setFeatureGateMessageKey(messageKey);
     setFeatureGateOpen(true);
   }, []);
 
   const closeFeatureGateModal = useCallback(() => {
     setFeatureGateOpen(false);
+    setFeatureGateMessageKey("feature_gate.message");
     pendingGuestActionRef.current = null;
   }, []);
 
@@ -1253,7 +1257,7 @@ export default function Wilder() {
   }, [refreshGuestAccount]);
 
   const openSignupFromBanner = useCallback(() => {
-    openFeatureGateModal(null);
+    openFeatureGateModal(null, "feature_gate.saves_message");
   }, [openFeatureGateModal]);
 
   const gateGuestShare = useCallback(() => {
@@ -1387,19 +1391,24 @@ export default function Wilder() {
 
   const finishDiscoveryFlow = useCallback(
     (updated, wasRescan) => {
-      setDiscoveries(updated);
+      if (!isGuest) {
+        setDiscoveries(updated);
+      }
       recordNatureActivity();
       setRescanDiscoveryId(null);
       if (wasRescan) setSavedToAlbum(true);
 
+      const guestFirstScan = isGuest && !wasRescan && getGuestScanCount() === 0;
       if (isGuest) recordGuestScan();
 
-      const isFirstEver = !wasRescan && updated.length === 1;
+      const isFirstEver = guestFirstScan || (!isGuest && !wasRescan && updated.length === 1);
       if (isFirstEver) {
         scheduleInstallGuideAfterFirstScan();
-        const seen = loadSeenBadges();
-        const fresh = getNewBadgeIds(updated, seen);
-        if (fresh.length > 0) saveSeenBadges([...seen, ...fresh]);
+        if (!isGuest) {
+          const seen = loadSeenBadges();
+          const fresh = getNewBadgeIds(updated, seen);
+          if (fresh.length > 0) saveSeenBadges([...seen, ...fresh]);
+        }
         setShowFirstDiscoveryBadge(true);
         setScreen("result");
         setShowConfetti(true);
@@ -1414,7 +1423,7 @@ export default function Wilder() {
       }
 
       setScreen("result");
-      if (checkNewBadges(updated)) {
+      if (!isGuest && checkNewBadges(updated)) {
         playBadgeUnlockSound();
       } else {
         playDiscoverySound();
@@ -1591,24 +1600,48 @@ export default function Wilder() {
   useEffect(() => {
     if (authBootState !== "ready" || needsWelcomeSlides || needsEntryChoice) return;
 
-    const items = loadDiscoveries();
-    setDiscoveries(items);
-    setAlbums(loadAlbums());
-    const seen = loadSeenBadges();
-    if (seen.length === 0 && items.length > 0) {
-      saveSeenBadges(computeUnlockedBadgeIds(items));
-    }
-    bootstrapCloudSync().then(async (result) => {
-      const loaded = result.ok && result.discoveries ? result.discoveries : items;
-      if (result.ok && result.discoveries) {
-        setDiscoveries(result.discoveries);
-      }
+    let cancelled = false;
+
+    (async () => {
       const session = await getCloudSession();
-      logPersistenceBootState(session, loaded.length);
-    });
+      if (cancelled) return;
+
+      const permanent = isPermanentAuthUser(session?.user);
+
+      if (!permanent) {
+        saveDiscoveries([]);
+        saveAlbums([]);
+        setDiscoveries([]);
+        setAlbums([]);
+        logPersistenceBootState(session, 0);
+        return;
+      }
+
+      const items = loadDiscoveries();
+      setDiscoveries(items);
+      setAlbums(loadAlbums());
+      const seen = loadSeenBadges();
+      if (seen.length === 0 && items.length > 0) {
+        saveSeenBadges(computeUnlockedBadgeIds(items));
+      }
+
+      bootstrapCloudSync().then(async (result) => {
+        if (cancelled) return;
+        const loaded = result.ok && result.discoveries ? result.discoveries : items;
+        if (result.ok && result.discoveries) {
+          setDiscoveries(result.discoveries);
+        }
+        const bootSession = await getCloudSession();
+        logPersistenceBootState(bootSession, loaded.length);
+      });
+    })();
+
     const onFirstTouch = () => warmUpSounds();
     window.addEventListener("pointerdown", onFirstTouch, { once: true });
-    return () => window.removeEventListener("pointerdown", onFirstTouch);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("pointerdown", onFirstTouch);
+    };
   }, [authBootState, needsWelcomeSlides, needsEntryChoice]);
 
   useEffect(() => {
@@ -1993,8 +2026,8 @@ export default function Wilder() {
         };
         updated = [discovery, ...loadDiscoveries()];
       }
-      const saveResult = persistDiscoveries(updated, discovery);
-      if (!saveResult.ok) {
+      const saveResult = persistDiscoveries(updated, discovery, { isPermanent: !isGuest });
+      if (!isGuest && !saveResult.ok) {
         console.warn("[Wilder] Sauvegarde localStorage échouée:", saveResult.error);
         if (saveResult.error === "QuotaExceededError") {
           setErrorMsg(t("error.quota_exceeded"));
@@ -2013,7 +2046,7 @@ export default function Wilder() {
       setErrorMsg(t("error.generic"));
       setScreen("error");
     }
-  }, [t, finishDiscoveryFlow, lang, rescanDiscoveryId, homeScanCategory]);
+  }, [t, finishDiscoveryFlow, lang, rescanDiscoveryId, homeScanCategory, isGuest]);
 
   const analyzeAnimal = useCallback(
     async (mode, base64, imgSrc, { durationSec } = {}) => {
@@ -2123,8 +2156,8 @@ export default function Wilder() {
           updated = [discovery, ...loadDiscoveries()];
         }
 
-        const saveResult = persistDiscoveries(updated, discovery);
-        if (!saveResult.ok) {
+        const saveResult = persistDiscoveries(updated, discovery, { isPermanent: !isGuest });
+        if (!isGuest && !saveResult.ok) {
           console.warn("[Wilder] Sauvegarde localStorage échouée:", saveResult.error);
           setErrorMsg(
             saveResult.error === "QuotaExceededError"
@@ -2146,7 +2179,7 @@ export default function Wilder() {
         setScreen("error");
       }
     },
-    [t, finishDiscoveryFlow, lang, rescanDiscoveryId]
+    [t, finishDiscoveryFlow, lang, rescanDiscoveryId, isGuest]
   );
 
   const analyzeDailyCare = useCallback(
@@ -2680,6 +2713,7 @@ export default function Wilder() {
       <FeatureGateModal
         open={featureGateOpen}
         t={t}
+        messageKey={featureGateMessageKey}
         onClose={closeFeatureGateModal}
         onAccountCreated={handleSignupAccountCreated}
       />
@@ -2798,19 +2832,26 @@ export default function Wilder() {
           onSignOut={async () => {
             await signOutCloud();
             setPremiumUserEmail(null);
+            setDiscoveries([]);
+            setAlbums([]);
             await refreshGuestAccount();
           }}
           onViewAll={() => {
             if (isGuest) {
-              openFeatureGateModal(() => {
-                setReturnScreen("home");
-                setScreen("biodex");
-              });
+              openFeatureGateModal(
+                () => {
+                  setReturnScreen("home");
+                  setScreen("biodex");
+                },
+                "feature_gate.saves_message"
+              );
               return;
             }
             setReturnScreen("home");
             setScreen("biodex");
           }}
+          findsLocked={isGuest}
+          onLockedFinds={() => openFeatureGateModal(null, "feature_gate.saves_message")}
           isLoggedIn={!isGuest}
           accountUserEmail={premiumUserEmail || ""}
           onAccountCreated={handleSignupAccountCreated}
