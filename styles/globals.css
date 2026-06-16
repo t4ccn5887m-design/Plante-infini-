@@ -2103,14 +2103,20 @@ video {
   min-height: 100dvh;
   max-width: 480px;
   margin: 0 auto;
-  background: transparent;
+  background: var(--wilder-forest-deep);
   position: relative;
   overflow-x: hidden;
   padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
   isolation: isolate;
 }
 
-/* Fond forêt (même photo que l'accueil), version plus claire */
+/* Ambiance forêt discrète — visible sur les bords et entre les cartes, pas sous le texte */
+.discovery-screen:not(.discovery-screen--juniors) {
+  --discovery-surface: #1b3d2f;
+  --discovery-surface-deep: #0f2419;
+  --bg-card: var(--discovery-surface);
+}
+
 .discovery-screen:not(.discovery-screen--juniors)::before {
   content: '';
   position: fixed;
@@ -2121,10 +2127,10 @@ video {
   max-width: 480px;
   height: 100%;
   height: 100dvh;
-  z-index: -2;
+  z-index: 0;
   pointer-events: none;
   background: var(--wilder-forest-photo) center / cover no-repeat;
-  filter: brightness(1.12) saturate(0.92);
+  filter: brightness(0.72) saturate(0.88);
 }
 
 .discovery-screen:not(.discovery-screen--juniors)::after {
@@ -2137,16 +2143,21 @@ video {
   max-width: 480px;
   height: 100%;
   height: 100dvh;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
   background:
     linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.38) 0%,
-      rgba(255, 255, 255, 0.52) 38%,
-      rgba(245, 242, 235, 0.78) 100%
+      rgba(15, 36, 25, 0.45) 0%,
+      rgba(15, 36, 25, 0.62) 45%,
+      rgba(15, 36, 25, 0.78) 100%
     ),
-    radial-gradient(ellipse 85% 55% at 50% 0%, rgba(255, 255, 255, 0.42) 0%, transparent 68%);
+    radial-gradient(ellipse 90% 55% at 50% 0%, rgba(15, 36, 25, 0.35) 0%, transparent 70%);
+}
+
+.discovery-screen:not(.discovery-screen--juniors) > * {
+  position: relative;
+  z-index: 1;
 }
 
 .biodex-flash {
@@ -2238,14 +2249,7 @@ video {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(15, 36, 25, 0.42) 0%,
-    rgba(15, 36, 25, 0.08) 32%,
-    transparent 52%,
-    rgba(15, 36, 25, 0.55) 82%,
-    rgba(15, 36, 25, 0.82) 100%
-  );
+  background: linear-gradient(transparent 38%, var(--discovery-surface-deep, var(--wilder-forest-deep)) 100%);
 }
 
 .discovery-body {
@@ -2256,23 +2260,52 @@ video {
   animation: biodexReveal 0.8s ease-out 0.35s both;
 }
 
-/* Dégradé sombre derrière titre, badge et 1er paragraphe (lisibilité sur fond clair) */
-.discovery-screen:not(.discovery-screen--juniors) .discovery-body::before {
-  content: '';
-  position: absolute;
-  left: -1.5rem;
-  right: -1.5rem;
-  top: -4.25rem;
-  height: min(24rem, 72vw);
-  z-index: -1;
-  pointer-events: none;
+.discovery-intro-panel {
   background: linear-gradient(
-    180deg,
-    rgba(15, 36, 25, 0.78) 0%,
-    rgba(15, 36, 25, 0.62) 42%,
-    rgba(15, 36, 25, 0.28) 78%,
-    transparent 100%
+    165deg,
+    rgba(15, 36, 25, 0.98) 0%,
+    rgba(27, 61, 47, 0.97) 55%,
+    rgba(15, 36, 25, 0.96) 100%
   );
+  border: 1px solid rgba(245, 243, 236, 0.12);
+  border-radius: 18px;
+  padding: 1.15rem 1.2rem 1.05rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+}
+
+.discovery-screen:not(.discovery-screen--juniors) .discovery-fun-fact {
+  background: linear-gradient(145deg, #3d2a1f, #1b3d2f);
+  border: 1px solid rgba(224, 122, 58, 0.45);
+  backdrop-filter: none;
+}
+
+.discovery-screen:not(.discovery-screen--juniors) .accordion-item,
+.discovery-screen:not(.discovery-screen--juniors) .result-card,
+.discovery-screen:not(.discovery-screen--juniors) .tree-trunk-age {
+  background: var(--discovery-surface);
+  backdrop-filter: none;
+  border-color: rgba(245, 243, 236, 0.12);
+}
+
+.discovery-intro-panel .discovery-summary {
+  margin-bottom: 0;
+}
+
+.discovery-intro-panel .discovery-tags-row {
+  margin-bottom: 0.65rem;
+}
+
+.discovery-screen:not(.discovery-screen--juniors) .scan-quota-notice,
+.discovery-screen:not(.discovery-screen--juniors) .signup-prompt-banner,
+.discovery-screen:not(.discovery-screen--juniors) .animal-sound-status,
+.discovery-screen:not(.discovery-screen--juniors) .animal-sound-error,
+.discovery-screen:not(.discovery-screen--juniors) .animal-sound-quiz-panel,
+.discovery-screen:not(.discovery-screen--juniors) .animal-sound-response,
+.discovery-screen:not(.discovery-screen--juniors) .animal-sound-funfact {
+  background: var(--discovery-surface);
+  backdrop-filter: none;
+  border-color: rgba(245, 243, 236, 0.12);
 }
 
 .discovery-home-btn {

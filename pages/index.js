@@ -885,24 +885,26 @@ function DiscoveryBody({
 
   return (
     <>
-      {showFirstDiscoveryBadge && (
-        <span className="discovery-first-badge">{t("first_discovery.badge")}</span>
-      )}
-      {showNewBadge && !showFirstDiscoveryBadge && (
-        <span className="discovery-new-badge">{t("discovery.new")}</span>
-      )}
-      <h1 className="discovery-name">{data.nom}</h1>
-      {data.nom_latin && <p className="discovery-latin">{data.nom_latin}</p>}
-
-      <div className="discovery-tags-row">
-        {data.type && (
-          <span className={`discovery-type-chip${isHeritageType(data.type) ? " discovery-type-chip-heritage" : ""}`}>
-            {getTypeLabel(t, data.type)}
-          </span>
+      <div className="discovery-intro-panel">
+        {showFirstDiscoveryBadge && (
+          <span className="discovery-first-badge">{t("first_discovery.badge")}</span>
         )}
-      </div>
+        {showNewBadge && !showFirstDiscoveryBadge && (
+          <span className="discovery-new-badge">{t("discovery.new")}</span>
+        )}
+        <h1 className="discovery-name">{data.nom}</h1>
+        {data.nom_latin && <p className="discovery-latin">{data.nom_latin}</p>}
 
-      {summary && <p className="discovery-summary">{summary}</p>}
+        <div className="discovery-tags-row">
+          {data.type && (
+            <span className={`discovery-type-chip${isHeritageType(data.type) ? " discovery-type-chip-heritage" : ""}`}>
+              {getTypeLabel(t, data.type)}
+            </span>
+          )}
+        </div>
+
+        {summary && <p className="discovery-summary">{summary}</p>}
+      </div>
 
       <DiscoveryFunFact data={data} t={t} />
 
