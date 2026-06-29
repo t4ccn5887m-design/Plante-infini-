@@ -988,8 +988,8 @@ video {
 }
 
 .home-scan-categories {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
   justify-content: center;
   gap: 0.35rem;
   width: 100%;
