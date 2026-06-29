@@ -168,6 +168,15 @@ export default function WilderHomeScreen({
         <header className="wilder-home-top stagger-1">
           <div className="wilder-home-top-bar">
             <div className="wilder-home-top-left">
+              <AccountMenu
+                t={t}
+                isLoggedIn={isLoggedIn}
+                userEmail={accountUserEmail}
+                onSignOut={onSignOut}
+                onAccountCreated={onAccountCreated}
+              />
+            </div>
+            <div className="wilder-home-top-right">
               <button
                 type="button"
                 className="wilder-home-share-pill"
@@ -176,15 +185,6 @@ export default function WilderHomeScreen({
                 <IconShare size={14} />
                 <span>{t("home.share_pill")}</span>
               </button>
-            </div>
-            <div className="wilder-home-top-right">
-              <AccountMenu
-                t={t}
-                isLoggedIn={isLoggedIn}
-                userEmail={accountUserEmail}
-                onSignOut={onSignOut}
-                onAccountCreated={onAccountCreated}
-              />
             </div>
           </div>
 
