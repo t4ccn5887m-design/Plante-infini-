@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import PremiumAuthStep from "@/components/PremiumAuthStep";
 import { loadPremiumProfile, savePremiumProfile } from "@/lib/premiumProfile";
+import { shareWilderApp } from "@/lib/share";
 
 function IconMenu() {
   return (
@@ -90,6 +91,15 @@ export default function AccountMenu({
     await onSignOut?.();
   };
 
+  const handleShare = async () => {
+    closeMenu();
+    try {
+      await shareWilderApp();
+    } catch {
+      /* cancelled */
+    }
+  };
+
   const authTitleKey =
     authMode === "signin" ? "account_menu.sign_in_title" : "signup_prompt.auth_title";
   const authSubtitleKey =
@@ -111,6 +121,15 @@ export default function AccountMenu({
 
         {open && (
           <div className="premium-menu-dropdown account-menu-dropdown" role="menu">
+            <button
+              type="button"
+              className="premium-menu-item"
+              role="menuitem"
+              onClick={handleShare}
+            >
+              {t("home.share_pill")}
+            </button>
+            <div className="premium-menu-separator" aria-hidden="true" />
             {isLoggedIn ? (
               <>
                 <button

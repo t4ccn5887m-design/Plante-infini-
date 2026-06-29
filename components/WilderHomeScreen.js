@@ -59,14 +59,11 @@ export default function WilderHomeScreen({
   deleteLabels,
   findsLocked = false,
   onLockedFinds,
-  selectedCategory,
-  onCategoryChange,
   onOpenInstallGuide,
   onSignOut,
 }) {
   const [revealedDeleteId, setRevealedDeleteId] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-  const [shareCopied, setShareCopied] = useState(false);
   const longPressTimer = useRef(null);
   const longPressTriggered = useRef(false);
   const showInstallGuide = shouldOfferInstallGuide();
@@ -155,20 +152,11 @@ export default function WilderHomeScreen({
 
   const handleShareApp = async () => {
     try {
-      const result = await shareWilderApp();
-      if (result === "clipboard") {
-        setShareCopied(true);
-      }
+      await shareWilderApp();
     } catch {
       /* cancelled or failed */
     }
   };
-
-  useEffect(() => {
-    if (!shareCopied) return undefined;
-    const timer = setTimeout(() => setShareCopied(false), 2000);
-    return () => clearTimeout(timer);
-  }, [shareCopied]);
 
   return (
     <div className="wilder-home wilder-home--v2 screen-enter">
@@ -180,6 +168,16 @@ export default function WilderHomeScreen({
         <header className="wilder-home-top stagger-1">
           <div className="wilder-home-top-bar">
             <div className="wilder-home-top-left">
+              <button
+                type="button"
+                className="wilder-home-share-pill"
+                onClick={handleShareApp}
+              >
+                <IconShare size={14} />
+                <span>{t("home.share_pill")}</span>
+              </button>
+            </div>
+            <div className="wilder-home-top-right">
               <AccountMenu
                 t={t}
                 isLoggedIn={isLoggedIn}
@@ -188,7 +186,6 @@ export default function WilderHomeScreen({
                 onAccountCreated={onAccountCreated}
               />
             </div>
-            <div className="wilder-home-top-right" />
           </div>
 
           <h1 className="wilder-home-brand-name">Wilder</h1>
@@ -202,26 +199,10 @@ export default function WilderHomeScreen({
             </span>
           </div>
 
-          <button
-            type="button"
-            className="wilder-home-share-app-btn"
-            onClick={handleShareApp}
-          >
-            {!shareCopied && (
-              <span className="wilder-home-share-app-btn-icon">
-                <IconShare />
-              </span>
-            )}
-            <span>{shareCopied ? t("home.share_app_copied") : t("home.share_app")}</span>
-          </button>
         </header>
 
         <main className="wilder-home-scan-zone stagger-2">
-          <HomeScanCategories
-            t={t}
-            selectedId={selectedCategory}
-            onSelect={onCategoryChange}
-          />
+          <HomeScanCategories t={t} />
 
           <div className="wilder-home-scan-main">
             <div className="home-scan-rings home-scan-rings--landing" aria-hidden="true">

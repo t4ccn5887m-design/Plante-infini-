@@ -268,9 +268,16 @@ video {
   position: absolute;
   inset: 0;
   z-index: 1;
+  pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(15, 36, 25, 0.32) 0%, rgba(15, 36, 25, 0.5) 42%, rgba(15, 36, 25, 0.72) 100%),
-    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 90, 69, 0.22) 0%, transparent 70%);
+    linear-gradient(
+      180deg,
+      rgba(8, 18, 12, 0.78) 0%,
+      rgba(8, 18, 12, 0.28) 38%,
+      rgba(8, 18, 12, 0.22) 52%,
+      rgba(8, 18, 12, 0.28) 62%,
+      rgba(8, 18, 12, 0.82) 100%
+    );
 }
 
 .falling-leaves {
@@ -471,6 +478,39 @@ video {
   transform: scale(0.98);
 }
 
+.wilder-home-share-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+  padding: 0.28rem 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+  background: transparent;
+  color: #f5f0e8;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.wilder-home-share-pill:hover {
+  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.wilder-home-share-pill:active {
+  transform: scale(0.98);
+}
+
+.wilder-home-share-pill svg {
+  flex-shrink: 0;
+  opacity: 0.92;
+}
+
 .wilder-home-top .wilder-home-streak-row {
   justify-content: center;
   gap: 0.55rem;
@@ -533,7 +573,7 @@ video {
 }
 
 .wilder-home--v2 .wilder-home-top .wilder-home-streak-item,
-.wilder-home--v2 .home-scan-category,
+.wilder-home--v2 .home-scan-category-tag,
 .wilder-home--v2 .wilder-home-daily-name,
 .wilder-home--v2 .wilder-home-daily-latin,
 .wilder-home--v2 .wilder-home-daily-fact,
@@ -560,10 +600,6 @@ video {
   padding-bottom: 0.2rem;
 }
 
-.wilder-home--v2 .wilder-home-share-app-btn {
-  margin: 0.1rem auto 0;
-}
-
 .wilder-home--v2 .premium-menu-trigger {
   margin-top: 0;
 }
@@ -585,19 +621,15 @@ video {
   font-weight: 500;
 }
 
-.wilder-home--v2 .home-scan-categories {
-  gap: 0.42rem;
-  margin-bottom: 0.4rem;
+.wilder-home--v2 .home-scan-categories--tags {
+  gap: 0.28rem 0.55rem;
+  margin-bottom: 0.45rem;
 }
 
-.wilder-home--v2 .home-scan-category {
-  padding: 0.4rem 0.72rem;
+.wilder-home--v2 .home-scan-category-tag {
   font-size: 0.82rem;
-  font-weight: 400;
-}
-
-.wilder-home--v2 .home-scan-category--active {
-  font-weight: 500;
+  font-weight: 300;
+  letter-spacing: 0.01em;
 }
 
 .wilder-home--v2 .wilder-home-scan-zone {
@@ -936,19 +968,28 @@ video {
   width: min(210px, 58vw);
   height: min(210px, 58vw);
   margin: 0;
-  background: var(--wilder-cta-gradient);
+  background: linear-gradient(
+    180deg,
+    #8ef0b0 0%,
+    #6ee7a0 28%,
+    #45c878 58%,
+    #268f52 100%
+  );
+  color: #fff;
   box-shadow:
-    0 10px 36px var(--wilder-cta-glow),
-    0 0 0 7px rgba(110, 231, 160, 0.24),
-    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+    0 10px 36px rgba(38, 143, 82, 0.48),
+    0 0 0 7px rgba(110, 231, 160, 0.22),
+    inset 0 2px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -3px 8px rgba(20, 80, 45, 0.28);
 }
 
 .wilder-home-scan-btn.btn-scanner--hero.btn-scanner--green:hover {
   transform: scale(1.04);
   box-shadow:
-    0 14px 44px rgba(47, 168, 98, 0.55),
-    0 0 0 9px rgba(110, 231, 160, 0.3),
-    inset 0 2px 0 rgba(255, 255, 255, 0.34);
+    0 14px 44px rgba(38, 143, 82, 0.58),
+    0 0 0 9px rgba(110, 231, 160, 0.28),
+    inset 0 2px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -3px 8px rgba(20, 80, 45, 0.32);
 }
 
 .wilder-home-scan-btn.btn-scanner--hero.btn-scanner--green:active {
@@ -979,6 +1020,7 @@ video {
   font-size: 1.35rem;
   font-weight: 800;
   letter-spacing: 0.03em;
+  color: #fff;
 }
 
 .wilder-home-scan-btn .btn-scanner-icon {
@@ -996,38 +1038,26 @@ video {
   margin: 0 0 0.75rem;
   padding: 0;
   overflow: visible;
+  list-style: none;
 }
 
-.home-scan-categories::-webkit-scrollbar {
-  display: none;
+.home-scan-categories--tags {
+  pointer-events: none;
 }
 
-.home-scan-category {
+.home-scan-category-tag {
   flex: 0 0 auto;
-  padding: 0.3rem 0.55rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  background: transparent;
-  color: rgba(255, 255, 255, 0.92);
+  padding: 0.1rem 0.15rem;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.78);
   font-family: var(--font-display);
   font-size: 11px;
   font-weight: 300;
-  line-height: 1.2;
-  letter-spacing: 0;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
   white-space: nowrap;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-}
-
-.home-scan-category--active {
-  background: #fafaf7;
-  color: #1b3d2f;
-  border-color: #fafaf7;
-  font-weight: 400;
-}
-
-.home-scan-category:active {
-  transform: scale(0.98);
+  text-align: center;
 }
 
 .wilder-home-daily-card {
