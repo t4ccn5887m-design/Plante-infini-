@@ -7,10 +7,8 @@ import { shouldOfferInstallGuide } from "@/lib/installGuide";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import HomeScanCategories from "@/components/HomeScanCategories";
 import AccountMenu from "@/components/AccountMenu";
+import { shareWilderApp } from "@/lib/share";
 import { GUEST_RECENT_PREVIEW } from "@/lib/guestRecentPreview";
-
-const WILDER_HOME_SHARE_TEXT =
-  "🌿 « Vous voulez quoi dans votre jardin ? » La question de ton paysagiste à laquelle tu ne sais jamais répondre. Avec Wilder, scanne les plantes qui te plaisent et montre-lui exactement ce que tu veux. 👉 wilder-nature.com";
 
 const LONG_PRESS_MS = 520;
 
@@ -157,24 +155,12 @@ export default function WilderHomeScreen({
 
   const handleShareApp = async () => {
     try {
-      if (typeof navigator !== "undefined" && navigator.share) {
-        await navigator.share({ text: WILDER_HOME_SHARE_TEXT });
-        return;
-      }
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(WILDER_HOME_SHARE_TEXT);
+      const result = await shareWilderApp();
+      if (result === "clipboard") {
         setShareCopied(true);
       }
-    } catch (err) {
-      if (err?.name === "AbortError") return;
-      try {
-        if (navigator.clipboard?.writeText) {
-          await navigator.clipboard.writeText(WILDER_HOME_SHARE_TEXT);
-          setShareCopied(true);
-        }
-      } catch {
-        /* ignore */
-      }
+    } catch {
+      /* cancelled or failed */
     }
   };
 

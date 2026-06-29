@@ -88,10 +88,7 @@ export default function PremiumHamburgerMenu({
   const handleShare = async () => {
     closeAll();
     try {
-      await shareWilderApp({
-        speciesCount,
-        isLoggedIn: Boolean(userEmail?.trim()),
-      });
+      await shareWilderApp();
     } catch {
       /* cancelled */
     }
