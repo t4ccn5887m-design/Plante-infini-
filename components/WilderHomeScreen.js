@@ -7,6 +7,7 @@ import { shouldOfferInstallGuide } from "@/lib/installGuide";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import HomeScanCategories from "@/components/HomeScanCategories";
 import AccountMenu from "@/components/AccountMenu";
+import { shareWilderApp } from "@/lib/share";
 import { GUEST_RECENT_PREVIEW } from "@/lib/guestRecentPreview";
 
 const LONG_PRESS_MS = 520;
@@ -61,8 +62,6 @@ export default function WilderHomeScreen({
   selectedCategory,
   onCategoryChange,
   onOpenInstallGuide,
-  onSubscribe,
-  showSubscribe = false,
   onSignOut,
 }) {
   const [revealedDeleteId, setRevealedDeleteId] = useState(null);
@@ -192,13 +191,7 @@ export default function WilderHomeScreen({
                 onAccountCreated={onAccountCreated}
               />
             </div>
-            <div className="wilder-home-top-right">
-              {showSubscribe && onSubscribe && (
-                <button type="button" className="wilder-home-subscribe-btn" onClick={onSubscribe}>
-                  {t("home.subscribe")}
-                </button>
-              )}
-            </div>
+            <div className="wilder-home-top-right" />
           </div>
 
           <h1 className="wilder-home-brand-name">Wilder</h1>

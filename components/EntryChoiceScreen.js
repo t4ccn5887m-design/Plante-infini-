@@ -1,14 +1,10 @@
 import { useState } from "react";
-import Link from "next/link";
 import {
   completeAuthSession,
   ensureCloudAuth,
   signInWithEmail,
   signUpWithEmail,
 } from "@/lib/cloudSync";
-import { recordCguConsent } from "@/lib/userProfile";
-import { LEGAL_ROUTES } from "@/lib/legal";
-import { CguConsentCheckbox } from "@/components/LegalConsentCheckbox";
 
 const SLIDE_DOT_COUNT = 4;
 
@@ -18,11 +14,9 @@ export default function EntryChoiceScreen({ t, onComplete, onDiscoverGuest }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [legalAccepted, setLegalAccepted] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
   const isSignup = mode === "signup";
-  const canSubmitSignup = !isSignup || legalAccepted;
 
   const finishAuth = async () => {
     await completeAuthSession().catch(() => {});
@@ -31,7 +25,6 @@ export default function EntryChoiceScreen({ t, onComplete, onDiscoverGuest }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!canSubmitSignup) return;
     setLoading(true);
     setError("");
 
@@ -43,15 +36,6 @@ export default function EntryChoiceScreen({ t, onComplete, onDiscoverGuest }) {
       setLoading(false);
       setError(result.error || t("cloud.error"));
       return;
-    }
-
-    if (isSignup) {
-      const consent = await recordCguConsent();
-      if (!consent.ok) {
-        setLoading(false);
-        setError(t("legal.consent_save_error"));
-        return;
-      }
     }
 
     setLoading(false);
@@ -154,15 +138,6 @@ export default function EntryChoiceScreen({ t, onComplete, onDiscoverGuest }) {
               </label>
             )}
 
-            {isSignup && (
-              <CguConsentCheckbox
-                checked={legalAccepted}
-                onChange={setLegalAccepted}
-                disabled={loading}
-                className="entry-choice-consent"
-              />
-            )}
-
             {error && (
               <p className="entry-choice-error" role="alert">{error}</p>
             )}
@@ -170,7 +145,7 @@ export default function EntryChoiceScreen({ t, onComplete, onDiscoverGuest }) {
             <button
               type="submit"
               className="entry-choice-btn-primary"
-              disabled={loading || !canSubmitSignup}
+              disabled={loading}
             >
               {loading
                 ? t("entry_choice.loading")
@@ -194,14 +169,6 @@ export default function EntryChoiceScreen({ t, onComplete, onDiscoverGuest }) {
           </button>
           <p className="entry-choice-guest-note">{t("entry_choice.guest_note")}</p>
         </div>
-
-        <nav className="entry-choice-legal" aria-label={t("entry_choice.legal_nav")}>
-          <Link href={LEGAL_ROUTES.mentions}>{t("entry_choice.legal_mentions")}</Link>
-          <span aria-hidden="true"> · </span>
-          <Link href={LEGAL_ROUTES.cgu}>{t("entry_choice.legal_cgu")}</Link>
-          <span aria-hidden="true"> · </span>
-          <Link href={LEGAL_ROUTES.privacy}>{t("entry_choice.legal_privacy")}</Link>
-        </nav>
       </div>
     </div>
   );

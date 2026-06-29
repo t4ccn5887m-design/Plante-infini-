@@ -35,9 +35,7 @@ import { isHeritageType } from "@/lib/categories";
 import OnboardingScreen from "@/components/OnboardingScreen";
 import WelcomeSlidesScreen from "@/components/WelcomeSlidesScreen";
 import EntryChoiceScreen from "@/components/EntryChoiceScreen";
-import SubscriptionScreen from "@/components/SubscriptionScreen";
-import FreemiumAdBanner from "@/components/FreemiumAdBanner";
-import ScanQuotaNotice from "@/components/ScanQuotaNotice";
+import { buildScanQuotaHeaders } from "@/lib/scanQuotaClient";
 import {
   logOnboardingBootState,
   markOnboardingVu,
@@ -47,21 +45,7 @@ import {
   markEntryChoiceDone,
   shouldShowEntryChoice,
 } from "@/lib/entryChoice";
-import {
-  buildScanQuotaHeaders,
-  refreshScanQuota,
-} from "@/lib/scanQuotaClient";
-import {
-  canScan,
-  isPremium,
-  shouldShowPaywall,
-  shouldShowAdBanner,
-  syncScanQuotaFromServer,
-} from "@/lib/freemium";
 import { isPermanentAuthUser } from "@/lib/authUser";
-import { getGuestScanCount } from "@/lib/guestAccount";
-import { consumePendingCheckoutPlan } from "@/lib/subscribeFlow";
-import { resolveSubscribeEntry } from "@/lib/subscribeCheckout";
 import {
   bootstrapCloudSync,
   deleteDiscoveryFromCloud,
@@ -75,7 +59,6 @@ import { logPersistenceBootState } from "@/lib/persistenceBootLog";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import SignupPromptBanner from "@/components/SignupPromptBanner";
 import FeatureGateModal from "@/components/FeatureGateModal";
-import SignupPromptModal from "@/components/SignupPromptModal";
 import { useGuestAccount } from "@/hooks/useGuestAccount";
 import PotagerView from "@/components/PotagerView";
 import AnimalAudioRecorder from "@/components/AnimalAudioRecorder";
@@ -1168,7 +1151,6 @@ export default function Wilder() {
     setLangState(code);
   }, []);
   const [theme, setTheme] = useState("light");
-  const [scanCount, setScanCount] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showFirstDiscoveryBadge, setShowFirstDiscoveryBadge] = useState(false);
   const [newBadge, setNewBadge] = useState(null);
@@ -1185,21 +1167,10 @@ export default function Wilder() {
   const [jardinPlantDiscovery, setJardinPlantDiscovery] = useState(null);
   const [animalDiscovery, setAnimalDiscovery] = useState(null);
   const [premiumUserEmail, setPremiumUserEmail] = useState(null);
-  const [signupModalOpen, setSignupModalOpen] = useState(false);
   const [featureGateOpen, setFeatureGateOpen] = useState(false);
   const [featureGateMessageKey, setFeatureGateMessageKey] = useState("feature_gate.message");
-  const [subscriptionEntry, setSubscriptionEntry] = useState({
-    initialStep: "checkout",
-    defaultPlan: "yearly",
-    resumeCheckoutPlan: null,
-  });
 
-  const {
-    isGuest,
-    guestCanScan,
-    recordGuestScan,
-    refreshGuestAccount,
-  } = useGuestAccount();
+  const { isGuest, refreshGuestAccount } = useGuestAccount();
 
   const pendingGuestActionRef = useRef(null);
   const guestAutoSavePromptedRef = useRef(false);
@@ -1224,16 +1195,6 @@ export default function Wilder() {
     pendingGuestActionRef.current = null;
   }, []);
 
-  const openSignupLimitModal = useCallback(() => {
-    pendingGuestActionRef.current = null;
-    setSignupModalOpen(true);
-  }, []);
-
-  const closeSignupModal = useCallback(() => {
-    setSignupModalOpen(false);
-    pendingGuestActionRef.current = null;
-  }, []);
-
   const handleSignupAccountCreated = useCallback(async () => {
     markOnboardingVu();
     setNeedsWelcomeSlides(false);
@@ -1248,7 +1209,6 @@ export default function Wilder() {
       logPersistenceBootState(session, syncResult.discoveries?.length ?? loadDiscoveries().length);
     }
     await refreshGuestAccount();
-    setSignupModalOpen(false);
     setFeatureGateOpen(false);
     const fn = pendingGuestActionRef.current;
     pendingGuestActionRef.current = null;
@@ -1266,11 +1226,7 @@ export default function Wilder() {
     return true;
   }, [isGuest, openFeatureGateModal]);
 
-  const gateGuestScanBeforeCamera = useCallback(() => {
-    if (!isGuest || guestCanScan) return false;
-    openSignupLimitModal();
-    return true;
-  }, [isGuest, guestCanScan, openSignupLimitModal]);
+  const guestFirstScanRef = useRef(false);
 
   const t = useMemo(() => createT(lang), [lang]);
   const locale = useMemo(() => getLocale(lang), [lang]);
@@ -1323,51 +1279,6 @@ export default function Wilder() {
   }, []);
 
   useEffect(() => {
-    refreshScanQuota().then((quota) => {
-      syncScanQuotaFromServer(quota);
-      setScanCount(quota.count);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("stripe") !== "success") return;
-
-    let cancelled = false;
-    const pollPremiumFromServer = async () => {
-      for (let attempt = 0; attempt < 8; attempt += 1) {
-        if (cancelled) return;
-        const quota = await refreshScanQuota();
-        syncScanQuotaFromServer(quota);
-        setScanCount(quota.count);
-        if (quota.isPremium) break;
-        await new Promise((r) => setTimeout(r, 1500));
-      }
-    };
-    pollPremiumFromServer();
-
-    const url = new URL(window.location.href);
-    url.searchParams.delete("stripe");
-    url.searchParams.delete("session_id");
-    const next = url.pathname + url.search + url.hash;
-    window.history.replaceState({}, "", next);
-  }, []);
-
-  const openSubscription = useCallback(async () => {
-    const entry = await resolveSubscribeEntry();
-    setSubscriptionEntry(entry);
-    setScreen("subscription");
-  }, []);
-
-  const openSubscriptionFromHome = useCallback(async () => {
-    setReturnScreen("home");
-    const entry = await resolveSubscribeEntry();
-    setSubscriptionEntry(entry);
-    setScreen("subscription");
-  }, []);
-
-  useEffect(() => {
     if (screen !== "home") return;
     let cancelled = false;
     getCloudSession().then((session) => {
@@ -1384,11 +1295,6 @@ export default function Wilder() {
     };
   }, [screen, isGuest]);
 
-  const freemiumAdBanner =
-    shouldShowAdBanner() && !isPremium() ? (
-      <FreemiumAdBanner t={t} onUpgrade={openSubscription} blocked />
-    ) : null;
-
   const finishDiscoveryFlow = useCallback(
     (updated, wasRescan) => {
       if (!isGuest) {
@@ -1398,8 +1304,8 @@ export default function Wilder() {
       setRescanDiscoveryId(null);
       if (wasRescan) setSavedToAlbum(true);
 
-      const guestFirstScan = isGuest && !wasRescan && getGuestScanCount() === 0;
-      if (isGuest) recordGuestScan();
+      const guestFirstScan = isGuest && !wasRescan && !guestFirstScanRef.current;
+      if (isGuest && !wasRescan) guestFirstScanRef.current = true;
 
       const isFirstEver = guestFirstScan || (!isGuest && !wasRescan && updated.length === 1);
       if (isFirstEver) {
@@ -1416,12 +1322,6 @@ export default function Wilder() {
         return;
       }
 
-      if (!isPremium() && shouldShowPaywall()) {
-        setScreen("subscription");
-        playDiscoverySound();
-        return;
-      }
-
       setScreen("result");
       if (!isGuest && checkNewBadges(updated)) {
         playBadgeUnlockSound();
@@ -1429,7 +1329,7 @@ export default function Wilder() {
         playDiscoverySound();
       }
     },
-    [checkNewBadges, isGuest, recordGuestScan]
+    [checkNewBadges, isGuest]
   );
 
   const attachStreamToVideo = useCallback(async () => {
@@ -1538,31 +1438,6 @@ export default function Wilder() {
     );
     return unsubscribe;
   }, [applyWelcomeSlidesFromSession, applyEntryChoiceFromSession]);
-
-  useEffect(() => {
-    if (authBootState !== "ready") return;
-
-    const pending = consumePendingCheckoutPlan();
-    if (!pending) return;
-
-    let cancelled = false;
-    (async () => {
-      await ensureCloudAuth();
-      const session = await getCloudSession();
-      if (cancelled || !isPermanentAuthUser(session?.user)) return;
-      setReturnScreen("home");
-      setSubscriptionEntry({
-        initialStep: "checkout",
-        defaultPlan: pending,
-        resumeCheckoutPlan: pending,
-      });
-      setScreen("subscription");
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [authBootState]);
 
   useEffect(() => {
     if (authBootState !== "ready" || needsWelcomeSlides || needsEntryChoice) return;
@@ -1744,18 +1619,6 @@ export default function Wilder() {
         setScreen("animal-sound");
         return;
       }
-      const quota = await refreshScanQuota();
-      syncScanQuotaFromServer(quota);
-      setScanCount(quota.count);
-      if (gateGuestScanBeforeCamera()) {
-        setReturnScreen(origin);
-        return;
-      }
-      if (!canScan()) {
-        setReturnScreen(origin);
-        setScreen("subscription");
-        return;
-      }
       const juniorsModes = ["animal", "traces"];
       setScanMode(juniorsModes.includes(animalMode) ? animalMode : "single");
       setReturnScreen(origin);
@@ -1803,7 +1666,7 @@ export default function Wilder() {
       }
       setScreen("camera");
     },
-    [albums, t, gateGuestScanBeforeCamera]
+    [albums, t]
   );
 
   const resumeRando = useCallback(() => {
@@ -1913,23 +1776,10 @@ export default function Wilder() {
         setScreen("error");
         return;
       }
-      if (res.status === 402) {
-        if (data.scanQuota) {
-          syncScanQuotaFromServer(data.scanQuota);
-          setScanCount(data.scanQuota.count);
-        }
-        setScreen("subscription");
-        return;
-      }
       if (!res.ok || data.erreur) {
         setErrorMsg(data.erreur || t("error.analyze"));
         setScreen("error");
         return;
-      }
-
-      if (data.scanQuota) {
-        syncScanQuotaFromServer(data.scanQuota);
-        setScanCount(data.scanQuota.count);
       }
 
       const now = new Date().toISOString();
@@ -2076,23 +1926,10 @@ export default function Wilder() {
           setScreen("error");
           return;
         }
-        if (res.status === 402) {
-          if (data.scanQuota) {
-            syncScanQuotaFromServer(data.scanQuota);
-            setScanCount(data.scanQuota.count);
-          }
-          setScreen("subscription");
-          return;
-        }
         if (!res.ok || data.erreur) {
           setErrorMsg(data.erreur || t("error.analyze"));
           setScreen("error");
           return;
-        }
-
-        if (data.scanQuota) {
-          syncScanQuotaFromServer(data.scanQuota);
-          setScanCount(data.scanQuota.count);
         }
 
         const now = new Date().toISOString();
@@ -2288,16 +2125,6 @@ export default function Wilder() {
     }
 
     try {
-      const quota = await refreshScanQuota();
-      syncScanQuotaFromServer(quota);
-      setScanCount(quota.count);
-      if (gateGuestScanBeforeCamera()) return;
-      if (!canScan()) {
-        setOrganizeSaveToast(null);
-        setScreen("subscription");
-        return;
-      }
-
       setOrganizeSaveToast(null);
       setSavedToAlbum(false);
       setShowAlbumPicker(false);
@@ -2314,7 +2141,7 @@ export default function Wilder() {
       setResult(null);
       setCaptured(null);
     }
-  }, [gateGuestScanBeforeCamera]);
+  }, []);
 
   const confirmOrganizeSave = useCallback(
     (destination) => {
@@ -2717,13 +2544,6 @@ export default function Wilder() {
         onClose={closeFeatureGateModal}
         onAccountCreated={handleSignupAccountCreated}
       />
-      <SignupPromptModal
-        open={signupModalOpen}
-        variant="limit"
-        t={t}
-        onClose={closeSignupModal}
-        onAccountCreated={handleSignupAccountCreated}
-      />
     </>
   );
 
@@ -2788,30 +2608,6 @@ export default function Wilder() {
     );
   }
 
-  /* ── SUBSCRIPTION ── */
-  if (screen === "subscription") {
-    return (
-      <>
-        <Head>
-          <title>{t("freemium.title")} — Wilder</title>
-        </Head>
-        <SubscriptionScreen
-          t={t}
-          scanCount={scanCount}
-          forced={shouldShowPaywall()}
-          initialStep={subscriptionEntry.initialStep}
-          defaultPlan={subscriptionEntry.defaultPlan}
-          resumeCheckoutPlan={subscriptionEntry.resumeCheckoutPlan}
-          onClose={
-            shouldShowPaywall() && !isPremium()
-              ? undefined
-              : () => setScreen(returnScreen || "home")
-          }
-        />
-      </>
-    );
-  }
-
   /* ── HOME ── */
   if (screen === "home") {
     return (
@@ -2827,8 +2623,6 @@ export default function Wilder() {
           onCategoryChange={setHomeScanCategory}
           onStartScan={() => startScan("home")}
           onOpenInstallGuide={openInstallGuideModal}
-          onSubscribe={openSubscriptionFromHome}
-          showSubscribe={!isPremium()}
           onSignOut={async () => {
             await signOutCloud();
             setPremiumUserEmail(null);
@@ -2860,7 +2654,6 @@ export default function Wilder() {
           onDeleteDiscovery={handleDeleteDiscovery}
           deleteLabels={swipeDeleteLabels}
         />
-        {freemiumAdBanner}
         {confettiOverlay}
       </>
     );
@@ -3358,8 +3151,6 @@ export default function Wilder() {
               onBeforeShare={guestShareGate}
             />
           </div>
-          <ScanQuotaNotice t={t} scanCount={scanCount} />
-          {freemiumAdBanner}
           {resultAlbumPicker}
           {confettiOverlay}
         </>
@@ -3390,8 +3181,6 @@ export default function Wilder() {
               onBeforeShare={guestShareGate}
             />
           </div>
-          <ScanQuotaNotice t={t} scanCount={scanCount} />
-          {freemiumAdBanner}
           {resultAlbumPicker}
           {confettiOverlay}
         </>
@@ -3422,8 +3211,6 @@ export default function Wilder() {
               onBeforeShare={guestShareGate}
             />
           </div>
-          <ScanQuotaNotice t={t} scanCount={scanCount} />
-          {freemiumAdBanner}
           {resultAlbumPicker}
           {confettiOverlay}
         </>
@@ -3456,8 +3243,6 @@ export default function Wilder() {
               onBeforeShare={guestShareGate}
             />
           </div>
-          <ScanQuotaNotice t={t} scanCount={scanCount} />
-          {freemiumAdBanner}
           {resultAlbumPicker}
           {confettiOverlay}
         </>
@@ -3499,11 +3284,7 @@ export default function Wilder() {
               lang={lang}
             />
 
-            <ScanQuotaNotice t={t} scanCount={scanCount} />
-
             {isGuest && <SignupPromptBanner t={t} onCreateAccount={openSignupFromBanner} />}
-
-            {freemiumAdBanner}
 
             <DiscoveryResultActions
               discovery={shareDiscoveryPayload}
