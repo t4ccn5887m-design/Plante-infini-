@@ -132,9 +132,7 @@ export default function PaletteDiscoveryPicker({
   };
 
   const handleNext = () => {
-    const picked = candidates.filter(
-      (c) => selectedIds.has(c.discovery.id) && c.analysisId != null
-    );
+    const picked = candidates.filter((c) => selectedIds.has(c.discovery.id));
     setConfigureEntries(
       picked.map((c) => ({
         analysisId: c.analysisId,
@@ -171,8 +169,11 @@ export default function PaletteDiscoveryPicker({
 
     setSubmitting(true);
     setError(null);
-    await onConfirm(payload);
+    const result = await onConfirm(payload);
     setSubmitting(false);
+    if (result?.ok === false) {
+      setError(result.error || "unknown");
+    }
   };
 
   if (!open || typeof document === "undefined") return null;
@@ -198,7 +199,7 @@ export default function PaletteDiscoveryPicker({
                   const discoveryId = discovery.id;
                   const inZone = analysisId != null && excluded.has(analysisId);
                   const notSynced = analysisId == null;
-                  const disabled = inZone || notSynced;
+                  const disabled = inZone;
                   const checked = selectedIds.has(discoveryId);
                   return (
                     <li key={discoveryId}>
@@ -227,7 +228,7 @@ export default function PaletteDiscoveryPicker({
                             <span className="palette-picker-in-zone">{t("palette.item.already_in_zone")}</span>
                           )}
                           {notSynced && (
-                            <span className="palette-picker-in-zone">{t("palette.item.not_synced")}</span>
+                            <span className="palette-picker-sync-hint">{t("palette.item.sync_on_add")}</span>
                           )}
                         </div>
                       </label>
@@ -261,6 +262,9 @@ export default function PaletteDiscoveryPicker({
 
             {error === "invalid_quantity" && (
               <p className="palette-list-error">{t("palette.item.invalid_quantity")}</p>
+            )}
+            {error && error !== "invalid_quantity" && (
+              <p className="palette-list-error">{t("palette.item.add_sync_error")}</p>
             )}
 
             <ul className="palette-picker-config-list">

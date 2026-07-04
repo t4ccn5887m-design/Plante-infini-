@@ -12750,6 +12750,11 @@ button.theme-grid-card:active {
   cursor: not-allowed;
 }
 
+.palette-picker-sync-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted, #6b7280);
+}
+
 .palette-picker-option-text {
   display: flex;
   flex-direction: column;

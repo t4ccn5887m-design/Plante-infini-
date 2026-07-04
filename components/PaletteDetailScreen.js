@@ -403,11 +403,11 @@ export default function PaletteDetailScreen({
   };
 
   const handleConfirmAddItems = async (payload) => {
-    if (!pickerZoneId) return;
+    if (!pickerZoneId) return { ok: false, error: "invalid_input" };
     const result = await addZoneItems(pickerZoneId, payload);
     if (!result.ok) {
       setError(result.error || "unknown");
-      return;
+      return { ok: false, error: result.error || "unknown" };
     }
     if (result.data?.length) {
       setItems((prev) => {
@@ -420,6 +420,7 @@ export default function PaletteDetailScreen({
       });
     }
     setPickerZoneId(null);
+    return { ok: true };
   };
 
   const handleApplyStyle = async (styleId) => {
