@@ -12810,6 +12810,35 @@ button.theme-grid-card:active {
   padding: 0 1.25rem 0.65rem;
 }
 
+.palette-action-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.palette-export-sheet {
+  max-height: min(90vh, 720px);
+  overflow: auto;
+}
+
+.palette-export-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem 0.65rem;
+  margin-bottom: 0.75rem;
+}
+
+.palette-export-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.palette-export-field--full {
+  grid-column: 1 / -1;
+}
+
 .palette-style-bar-btn {
   width: 100%;
   font-size: 0.84rem;

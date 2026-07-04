@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import PaletteDiscoveryPicker from "@/components/PaletteDiscoveryPicker";
+import PaletteExportModal from "@/components/PaletteExportModal";
 import PaletteStylePicker from "@/components/PaletteStylePicker";
 import PaletteZoneItemList from "@/components/PaletteZoneItemList";
 import WilderEmptyState from "@/components/WilderEmptyState";
@@ -188,6 +189,12 @@ export default function PaletteDetailScreen({
   const [pickerZoneId, setPickerZoneId] = useState(null);
   const [stylePickerOpen, setStylePickerOpen] = useState(false);
   const [applyingStyle, setApplyingStyle] = useState(false);
+  const [exportModalOpen, setExportModalOpen] = useState(false);
+
+  const handleExportClick = () => {
+    // TODO: paywall 2€ export — vérifier achat/abonnement avant generatePalettePdf
+    setExportModalOpen(true);
+  };
 
   const massifs = useMemo(
     () => zones.filter((z) => !z.is_sujets_isoles),
@@ -483,7 +490,7 @@ export default function PaletteDetailScreen({
       <p className="palette-list-subtitle">{t("palette.zone.subtitle")}</p>
 
       {!loading && (
-        <div className="palette-style-bar">
+        <div className="palette-style-bar palette-action-bar">
           <button
             type="button"
             className={styleButtonClass}
@@ -491,6 +498,14 @@ export default function PaletteDetailScreen({
             disabled={loading || applyingStyle}
           >
             {t("palette.style.button")}
+          </button>
+          <button
+            type="button"
+            className="btn-secondary palette-style-bar-btn"
+            onClick={handleExportClick}
+            disabled={loading}
+          >
+            {t("palette.export.button")}
           </button>
         </div>
       )}
@@ -577,6 +592,15 @@ export default function PaletteDetailScreen({
         t={t}
         onClose={() => setStylePickerOpen(false)}
         onApply={handleApplyStyle}
+      />
+
+      <PaletteExportModal
+        open={exportModalOpen}
+        t={t}
+        palette={palette}
+        zones={zones}
+        items={items}
+        onClose={() => setExportModalOpen(false)}
       />
     </div>
   );
