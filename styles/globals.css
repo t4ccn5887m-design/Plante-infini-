@@ -12429,6 +12429,125 @@ button.theme-grid-card:active {
   margin: 1rem 1.25rem 0;
 }
 
+.palette-list-item-open {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.palette-list-item-open:disabled {
+  cursor: default;
+}
+
+.palette-detail-screen .wilder-empty-state {
+  margin-bottom: 0.75rem;
+}
+
+.palette-zone-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.palette-zone-item {
+  padding: 0.85rem 0.9rem;
+  border-radius: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.palette-zone-item--sujets {
+  border-color: rgba(61, 122, 92, 0.35);
+}
+
+.palette-zone-item-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.palette-zone-item-title-wrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.palette-zone-badge {
+  flex-shrink: 0;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.palette-zone-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.palette-zone-meta {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.palette-zone-meta--hint {
+  font-style: italic;
+}
+
+.palette-zone-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 0.85rem;
+  margin-top: 0.7rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--border);
+}
+
+.palette-zone-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: min(100%, 8.5rem);
+  flex: 1;
+}
+
+.palette-zone-field-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.palette-zone-input,
+.palette-zone-select {
+  width: 100%;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.12);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+}
+
+.palette-zone-select {
+  cursor: pointer;
+}
+
 .wrapped-cards {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

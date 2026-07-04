@@ -70,6 +70,7 @@ import HomeDashboard from "@/components/HomeDashboard";
 import HomeGreeting from "@/components/HomeGreeting";
 import WilderHomeScreen from "@/components/WilderHomeScreen";
 import PaletteListScreen from "@/components/PaletteListScreen";
+import PaletteDetailScreen from "@/components/PaletteDetailScreen";
 import { buildDailySpeciesViewModel, buildDailySpeciesAnalysisData } from "@/lib/dailySpecies";
 import { DailySpeciesHero, DiscoveryHeroPhoto } from "@/components/DiscoveryPhotoThumb";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
@@ -1143,6 +1144,7 @@ export default function Wilder() {
   const [dailyPickView, setDailyPickView] = useState(null);
   const [showDetailDeleteConfirm, setShowDetailDeleteConfirm] = useState(false);
   const [returnScreen, setReturnScreen] = useState("home");
+  const [activePaletteId, setActivePaletteId] = useState(null);
   const [creatingSubAlbum, setCreatingSubAlbum] = useState(false);
   const [newSubAlbumName, setNewSubAlbumName] = useState("");
   const [lang, setLangState] = useState(() => detectLang());
@@ -1210,6 +1212,12 @@ export default function Wilder() {
     setReturnScreen("home");
     setScreen("ma-palette");
   }, [isGuest, openFeatureGateModal]);
+
+  const openPaletteDetail = useCallback((palette) => {
+    if (!palette?.id) return;
+    setActivePaletteId(palette.id);
+    setScreen("ma-palette-detail");
+  }, []);
 
   const handleSignupAccountCreated = useCallback(async () => {
     markOnboardingVu();
@@ -2688,6 +2696,24 @@ export default function Wilder() {
           locale={locale}
           backLabel={t("discovery.back")}
           onBack={() => setScreen(returnScreen || "home")}
+          onOpenPalette={openPaletteDetail}
+        />
+      </>
+    );
+  }
+
+  /* ── MA PALETTE DETAIL (zones) ── */
+  if (screen === "ma-palette-detail" && activePaletteId) {
+    return (
+      <>
+        <Head>
+          <title>{t("palette.zone.title")} — Wilder</title>
+        </Head>
+        <PaletteDetailScreen
+          t={t}
+          paletteId={activePaletteId}
+          backLabel={t("discovery.back")}
+          onBack={() => setScreen("ma-palette")}
         />
       </>
     );

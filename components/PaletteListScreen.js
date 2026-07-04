@@ -31,6 +31,7 @@ function PaletteRow({
   onSaveRename,
   onCancelRename,
   onRequestDelete,
+  onOpen,
 }) {
   const created = palette.created_at;
   const updated = palette.updated_at;
@@ -45,7 +46,14 @@ function PaletteRow({
 
   return (
     <li className="palette-list-item">
-      <div className="palette-list-item-main">
+      <button
+        type="button"
+        className="palette-list-item-open"
+        onClick={() => !isEditing && onOpen?.(palette)}
+        disabled={isEditing}
+        aria-label={palette.nom}
+      >
+        <div className="palette-list-item-main">
         {isEditing ? (
           <input
             type="text"
@@ -65,12 +73,16 @@ function PaletteRow({
         )}
         <p className="palette-list-item-date">{dateLabel}</p>
       </div>
+      </button>
       {!isEditing && (
         <div className="palette-list-item-actions">
           <button
             type="button"
             className="palette-list-icon-btn"
-            onClick={onStartRename}
+            onClick={(e) => {
+              e.stopPropagation();
+              onStartRename();
+            }}
             aria-label={t("palette.rename")}
           >
             ✏️
@@ -78,7 +90,10 @@ function PaletteRow({
           <button
             type="button"
             className="palette-list-icon-btn palette-list-icon-btn--danger"
-            onClick={onRequestDelete}
+            onClick={(e) => {
+              e.stopPropagation();
+              onRequestDelete();
+            }}
             aria-label={t("palette.delete")}
           >
             🗑️
@@ -94,6 +109,7 @@ export default function PaletteListScreen({
   locale = "fr-FR",
   onBack,
   backLabel,
+  onOpenPalette,
 }) {
   const [palettes, setPalettes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -245,6 +261,7 @@ export default function PaletteListScreen({
               onSaveRename={handleSaveRename}
               onCancelRename={handleCancelRename}
               onRequestDelete={() => setDeleteId(palette.id)}
+              onOpen={onOpenPalette}
             />
           ))}
         </ul>
