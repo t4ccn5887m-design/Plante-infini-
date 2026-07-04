@@ -69,6 +69,7 @@ import CloudAccountCard from "@/components/CloudAccountCard";
 import HomeDashboard from "@/components/HomeDashboard";
 import HomeGreeting from "@/components/HomeGreeting";
 import WilderHomeScreen from "@/components/WilderHomeScreen";
+import PaletteListScreen from "@/components/PaletteListScreen";
 import { buildDailySpeciesViewModel, buildDailySpeciesAnalysisData } from "@/lib/dailySpecies";
 import { DailySpeciesHero, DiscoveryHeroPhoto } from "@/components/DiscoveryPhotoThumb";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
@@ -1194,6 +1195,21 @@ export default function Wilder() {
     setFeatureGateMessageKey("feature_gate.message");
     pendingGuestActionRef.current = null;
   }, []);
+
+  const openMaPalette = useCallback(() => {
+    if (isGuest) {
+      openFeatureGateModal(
+        () => {
+          setReturnScreen("home");
+          setScreen("ma-palette");
+        },
+        "feature_gate.saves_message"
+      );
+      return;
+    }
+    setReturnScreen("home");
+    setScreen("ma-palette");
+  }, [isGuest, openFeatureGateModal]);
 
   const handleSignupAccountCreated = useCallback(async () => {
     markOnboardingVu();
@@ -2653,8 +2669,26 @@ export default function Wilder() {
           onOpenDailyPick={openDailyPickDetail}
           onDeleteDiscovery={handleDeleteDiscovery}
           deleteLabels={swipeDeleteLabels}
+          onNavigatePalette={openMaPalette}
         />
         {confettiOverlay}
+      </>
+    );
+  }
+
+  /* ── MA PALETTE ── */
+  if (screen === "ma-palette") {
+    return (
+      <>
+        <Head>
+          <title>{t("palette.title")} — Wilder</title>
+        </Head>
+        <PaletteListScreen
+          t={t}
+          locale={locale}
+          backLabel={t("discovery.back")}
+          onBack={() => setScreen(returnScreen || "home")}
+        />
       </>
     );
   }

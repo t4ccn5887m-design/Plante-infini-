@@ -42,6 +42,7 @@ export default function AccountMenu({
   userEmail = "",
   onSignOut,
   onAccountCreated,
+  onNavigatePalette,
 }) {
   const [open, setOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
@@ -100,6 +101,11 @@ export default function AccountMenu({
     }
   };
 
+  const handleNavigatePalette = () => {
+    closeMenu();
+    onNavigatePalette?.();
+  };
+
   const authTitleKey =
     authMode === "signin" ? "account_menu.sign_in_title" : "signup_prompt.auth_title";
   const authSubtitleKey =
@@ -129,6 +135,16 @@ export default function AccountMenu({
             >
               {t("home.share_pill")}
             </button>
+            {onNavigatePalette && (
+              <button
+                type="button"
+                className="premium-menu-item"
+                role="menuitem"
+                onClick={handleNavigatePalette}
+              >
+                {t("account_menu.nav_palette")}
+              </button>
+            )}
             <div className="premium-menu-separator" aria-hidden="true" />
             {isLoggedIn ? (
               <>

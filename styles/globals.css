@@ -12295,8 +12295,138 @@ button.theme-grid-card:active {
 .wrapped-screen,
 .world-map-screen,
 .biodex-screen,
-.account-screen {
+.account-screen,
+.palette-list-screen {
   padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+}
+
+/* ── Ma Palette (liste) ── */
+.palette-list-screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--bg-deep);
+}
+
+.palette-list-header {
+  padding-top: calc(1rem + env(safe-area-inset-top, 0px));
+}
+
+.palette-list-back,
+.palette-list-add {
+  flex: 0 0 auto;
+  min-width: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.palette-list-subtitle {
+  margin: 0;
+  padding: 0.65rem 1.25rem 1rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.palette-list-status,
+.palette-list-error {
+  padding: 1rem 1.25rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.palette-list-error .btn-secondary {
+  margin-top: 0.75rem;
+}
+
+.palette-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.palette-list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 0.9rem;
+  border-radius: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.palette-list-item-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.palette-list-item-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.palette-list-item-date {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.palette-list-item-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.25rem;
+}
+
+.palette-list-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  transition: background 0.15s ease;
+}
+
+.palette-list-icon-btn:hover {
+  background: rgba(245, 242, 235, 0.08);
+}
+
+.palette-list-icon-btn--danger:hover {
+  background: rgba(198, 40, 40, 0.15);
+}
+
+.palette-list-rename-input {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.15);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.palette-list-screen .wilder-empty-state {
+  margin: 1rem 1.25rem 0;
 }
 
 .wrapped-cards {
