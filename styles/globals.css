@@ -12806,6 +12806,118 @@ button.theme-grid-card:active {
   flex: 1;
 }
 
+.palette-style-bar {
+  padding: 0 1.25rem 0.65rem;
+}
+
+.palette-style-bar-btn {
+  width: 100%;
+  font-size: 0.84rem;
+}
+
+.palette-style-bar-btn--prominent {
+  border-color: rgba(61, 122, 92, 0.45);
+}
+
+.palette-style-empty-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0.5rem 1.25rem 0;
+}
+
+.palette-style-empty-or {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.palette-style-empty-btn {
+  width: min(100%, 18rem);
+}
+
+.palette-style-sheet {
+  max-height: min(90vh, 760px);
+  overflow: auto;
+}
+
+.palette-style-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-bottom: 0.75rem;
+  max-height: 52vh;
+  overflow: auto;
+}
+
+.palette-style-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.palette-style-card--selected {
+  border-color: rgba(61, 122, 92, 0.55);
+  background: rgba(61, 122, 92, 0.12);
+}
+
+.palette-style-card-emoji {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.palette-style-card-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+}
+
+.palette-style-card-desc {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.palette-style-card-zones {
+  list-style: none;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.palette-style-card-zones li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.76rem;
+  color: var(--text-primary);
+}
+
+.palette-style-card-expo {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.palette-style-confirm-hint {
+  margin: 0 0 0.65rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
 .wrapped-cards {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

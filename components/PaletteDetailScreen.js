@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import PaletteDiscoveryPicker from "@/components/PaletteDiscoveryPicker";
+import PaletteStylePicker from "@/components/PaletteStylePicker";
 import PaletteZoneItemList from "@/components/PaletteZoneItemList";
 import WilderEmptyState from "@/components/WilderEmptyState";
+import { resolveStyleZones } from "@/lib/paletteStyles";
 import {
   addZoneItems,
+  applyPaletteStyle,
   buildDefaultMassifName,
   createZone,
   deleteZone,
@@ -183,6 +186,8 @@ export default function PaletteDetailScreen({
   const [editValue, setEditValue] = useState("");
   const [deleteId, setDeleteId] = useState(null);
   const [pickerZoneId, setPickerZoneId] = useState(null);
+  const [stylePickerOpen, setStylePickerOpen] = useState(false);
+  const [applyingStyle, setApplyingStyle] = useState(false);
 
   const massifs = useMemo(
     () => zones.filter((z) => !z.is_sujets_isoles),
@@ -410,6 +415,48 @@ export default function PaletteDetailScreen({
     setPickerZoneId(null);
   };
 
+  const handleApplyStyle = async (styleId) => {
+    if (applyingStyle) return;
+    setApplyingStyle(true);
+
+    const ensureResult = await ensureSujetsIsolesZone(
+      paletteId,
+      t("palette.zone.sujets_isoles_name")
+    );
+
+    const zoneDefs = resolveStyleZones(styleId, t);
+    const result = await applyPaletteStyle(paletteId, styleId, zoneDefs);
+
+    setApplyingStyle(false);
+
+    if (!result.ok) {
+      setError(result.error || "unknown");
+      return;
+    }
+
+    if (result.data?.length) {
+      setZones((prev) => {
+        const massifs = prev.filter((z) => !z.is_sujets_isoles);
+        let sujets = prev.filter((z) => z.is_sujets_isoles);
+        if (sujets.length === 0 && ensureResult.ok && ensureResult.data) {
+          sujets = [ensureResult.data];
+        }
+        return [...massifs, ...result.data, ...sujets];
+      });
+    }
+
+    if (result.styleSaved) {
+      setPalette((prev) => (prev ? { ...prev, style: styleId } : prev));
+    }
+
+    setStylePickerOpen(false);
+  };
+
+  const styleButtonClass =
+    massifs.length === 0
+      ? "btn-secondary palette-style-bar-btn palette-style-bar-btn--prominent"
+      : "btn-secondary palette-style-bar-btn";
+
   return (
     <div className="palette-list-screen palette-detail-screen biodex-screen screen-enter">
       <div className="albums-header palette-list-header">
@@ -435,6 +482,19 @@ export default function PaletteDetailScreen({
 
       <p className="palette-list-subtitle">{t("palette.zone.subtitle")}</p>
 
+      {!loading && (
+        <div className="palette-style-bar">
+          <button
+            type="button"
+            className={styleButtonClass}
+            onClick={() => setStylePickerOpen(true)}
+            disabled={loading || applyingStyle}
+          >
+            {t("palette.style.button")}
+          </button>
+        </div>
+      )}
+
       {loading && <p className="palette-list-status">{t("palette.zone.loading")}</p>}
 
       {!loading && error && (
@@ -447,13 +507,26 @@ export default function PaletteDetailScreen({
       )}
 
       {!loading && !error && massifs.length === 0 && (
-        <WilderEmptyState
-          icon="🌿"
-          message={t("palette.zone.empty_message")}
-          hint={t("palette.zone.empty_hint")}
-          ctaLabel={t("palette.zone.add")}
-          onCta={handleCreateZone}
-        />
+        <>
+          <WilderEmptyState
+            icon="🌿"
+            message={t("palette.zone.empty_message")}
+            hint={t("palette.zone.empty_hint")}
+            ctaLabel={t("palette.zone.add")}
+            onCta={handleCreateZone}
+          />
+          <div className="palette-style-empty-cta">
+            <span className="palette-style-empty-or">{t("palette.style.or")}</span>
+            <button
+              type="button"
+              className="btn-primary palette-style-empty-btn"
+              onClick={() => setStylePickerOpen(true)}
+              disabled={applyingStyle}
+            >
+              {t("palette.style.button")}
+            </button>
+          </div>
+        </>
       )}
 
       {!loading && !error && zones.length > 0 && (
@@ -497,6 +570,13 @@ export default function PaletteDetailScreen({
         t={t}
         onClose={() => setPickerZoneId(null)}
         onConfirm={handleConfirmAddItems}
+      />
+
+      <PaletteStylePicker
+        open={stylePickerOpen}
+        t={t}
+        onClose={() => setStylePickerOpen(false)}
+        onApply={handleApplyStyle}
       />
     </div>
   );
