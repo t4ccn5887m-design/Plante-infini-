@@ -1,13 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
+import PaletteDiscoveryPicker from "@/components/PaletteDiscoveryPicker";
+import PaletteZoneItemList from "@/components/PaletteZoneItemList";
 import WilderEmptyState from "@/components/WilderEmptyState";
 import {
+  addZoneItems,
   buildDefaultMassifName,
   createZone,
   deleteZone,
   ensureSujetsIsolesZone,
   fetchPalette,
+  fetchPaletteItems,
   fetchZones,
+  removePaletteItem,
+  updatePaletteItem,
   updateZone,
 } from "@/lib/paletteStorage";
 
@@ -37,6 +43,7 @@ function ZoneMeta({ zone, t }) {
 function ZoneRow({
   zone,
   t,
+  items,
   isEditing,
   editValue,
   onEditValueChange,
@@ -46,6 +53,9 @@ function ZoneRow({
   onRequestDelete,
   onSurfaceChange,
   onExpositionChange,
+  onAddPlant,
+  onUpdateItem,
+  onRemoveItem,
 }) {
   const surfaceValue =
     zone.surface_m2 == null || zone.surface_m2 === "" ? "" : String(zone.surface_m2);
@@ -141,6 +151,18 @@ function ZoneRow({
           </label>
         </div>
       )}
+
+      {!isEditing && (
+        <div className="palette-zone-plants">
+          <div className="palette-zone-plants-head">
+            <h3 className="palette-zone-plants-title">{t("palette.item.section_title")}</h3>
+            <button type="button" className="btn-secondary palette-zone-add-plant" onClick={onAddPlant}>
+              {t("palette.item.add")}
+            </button>
+          </div>
+          <PaletteZoneItemList items={items} t={t} onUpdate={onUpdateItem} onRemove={onRemoveItem} />
+        </div>
+      )}
     </li>
   );
 }
@@ -153,17 +175,34 @@ export default function PaletteDetailScreen({
 }) {
   const [palette, setPalette] = useState(null);
   const [zones, setZones] = useState([]);
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [creating, setCreating] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState("");
   const [deleteId, setDeleteId] = useState(null);
+  const [pickerZoneId, setPickerZoneId] = useState(null);
 
   const massifs = useMemo(
     () => zones.filter((z) => !z.is_sujets_isoles),
     [zones]
   );
+
+  const itemsByZone = useMemo(() => {
+    const map = new Map();
+    for (const item of items) {
+      const list = map.get(item.zone_id) || [];
+      list.push(item);
+      map.set(item.zone_id, list);
+    }
+    return map;
+  }, [items]);
+
+  const pickerExcludedIds = useMemo(() => {
+    if (!pickerZoneId) return [];
+    return (itemsByZone.get(pickerZoneId) || []).map((item) => item.analysis_id);
+  }, [pickerZoneId, itemsByZone]);
 
   const loadData = useCallback(async () => {
     if (!paletteId) return;
@@ -175,6 +214,7 @@ export default function PaletteDetailScreen({
       setError(paletteResult.error || "unknown");
       setPalette(null);
       setZones([]);
+      setItems([]);
       setLoading(false);
       return;
     }
@@ -182,12 +222,23 @@ export default function PaletteDetailScreen({
 
     await ensureSujetsIsolesZone(paletteId, t("palette.zone.sujets_isoles_name"));
 
-    const zonesResult = await fetchZones(paletteId);
+    const [zonesResult, itemsResult] = await Promise.all([
+      fetchZones(paletteId),
+      fetchPaletteItems(paletteId),
+    ]);
+
     if (!zonesResult.ok) {
       setError(zonesResult.error || "unknown");
       setZones([]);
     } else {
       setZones(zonesResult.data);
+    }
+
+    if (!itemsResult.ok) {
+      setError(itemsResult.error || "unknown");
+      setItems([]);
+    } else {
+      setItems(itemsResult.data);
     }
     setLoading(false);
   }, [paletteId, t]);
@@ -300,6 +351,63 @@ export default function PaletteDetailScreen({
       return;
     }
     setZones((prev) => prev.filter((z) => z.id !== id));
+    setItems((prev) => prev.filter((item) => item.zone_id !== id));
+  };
+
+  const patchItem = (itemId, patch) => {
+    setItems((prev) => prev.map((item) => (item.id === itemId ? { ...item, ...patch } : item)));
+  };
+
+  const handleUpdateItem = async (itemId, patch, options = {}) => {
+    const current = items.find((item) => item.id === itemId);
+    if (!current) return;
+
+    patchItem(itemId, patch);
+
+    const shouldPersist = options.persist || patch.type !== undefined;
+    if (!shouldPersist) return;
+
+    const result = await updatePaletteItem(itemId, {
+      type: patch.type !== undefined ? patch.type : current.type,
+      quantite: patch.quantite !== undefined ? patch.quantite : current.quantite,
+      note: patch.note !== undefined ? patch.note : current.note,
+    });
+
+    if (!result.ok) {
+      setError(result.error || "unknown");
+      await loadData();
+      return;
+    }
+    patchItem(itemId, result.data);
+  };
+
+  const handleRemoveItem = async (itemId) => {
+    const result = await removePaletteItem(itemId);
+    if (!result.ok) {
+      setError(result.error || "unknown");
+      return;
+    }
+    setItems((prev) => prev.filter((item) => item.id !== itemId));
+  };
+
+  const handleConfirmAddItems = async (payload) => {
+    if (!pickerZoneId) return;
+    const result = await addZoneItems(pickerZoneId, payload);
+    if (!result.ok) {
+      setError(result.error || "unknown");
+      return;
+    }
+    if (result.data?.length) {
+      setItems((prev) => {
+        const existing = new Set(prev.map((item) => item.id));
+        const merged = [...prev];
+        for (const row of result.data) {
+          if (!existing.has(row.id)) merged.push(row);
+        }
+        return merged;
+      });
+    }
+    setPickerZoneId(null);
   };
 
   return (
@@ -355,6 +463,7 @@ export default function PaletteDetailScreen({
               key={zone.id}
               zone={zone}
               t={t}
+              items={itemsByZone.get(zone.id) || []}
               isEditing={editingId === zone.id}
               editValue={editValue}
               onEditValueChange={setEditValue}
@@ -364,6 +473,9 @@ export default function PaletteDetailScreen({
               onRequestDelete={() => setDeleteId(zone.id)}
               onSurfaceChange={handleSurfaceChange}
               onExpositionChange={handleExpositionChange}
+              onAddPlant={() => setPickerZoneId(zone.id)}
+              onUpdateItem={handleUpdateItem}
+              onRemoveItem={handleRemoveItem}
             />
           ))}
         </ul>
@@ -376,6 +488,15 @@ export default function PaletteDetailScreen({
         confirmLabel={t("palette.zone.delete")}
         onCancel={() => setDeleteId(null)}
         onConfirm={handleConfirmDelete}
+      />
+
+      <PaletteDiscoveryPicker
+        open={Boolean(pickerZoneId)}
+        zoneId={pickerZoneId}
+        excludedAnalysisIds={pickerExcludedIds}
+        t={t}
+        onClose={() => setPickerZoneId(null)}
+        onConfirm={handleConfirmAddItems}
       />
     </div>
   );
