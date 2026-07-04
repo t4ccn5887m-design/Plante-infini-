@@ -122,20 +122,23 @@ export default function PaletteDiscoveryPicker({
     };
   }, [open, zoneId]);
 
-  const toggleSelection = (analysisId) => {
+  const toggleSelection = (discoveryId) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(analysisId)) next.delete(analysisId);
-      else next.add(analysisId);
+      if (next.has(discoveryId)) next.delete(discoveryId);
+      else next.add(discoveryId);
       return next;
     });
   };
 
   const handleNext = () => {
-    const picked = candidates.filter((c) => selectedIds.has(c.analysisId));
+    const picked = candidates.filter(
+      (c) => selectedIds.has(c.discovery.id) && c.analysisId != null
+    );
     setConfigureEntries(
       picked.map((c) => ({
         analysisId: c.analysisId,
+        discoveryId: c.discovery.id,
         discovery: c.discovery,
         type: inferPaletteItemType(c.discovery),
         quantite: defaultQuantityForType(inferPaletteItemType(c.discovery)),
@@ -161,6 +164,7 @@ export default function PaletteDiscoveryPicker({
       }
       payload.push({
         analysisId: entry.analysisId,
+        discoveryId: entry.discoveryId,
         ...normalized.data,
       });
     }
@@ -191,10 +195,13 @@ export default function PaletteDiscoveryPicker({
             {!loading && !error && candidates.length > 0 && (
               <ul className="palette-picker-list">
                 {candidates.map(({ analysisId, discovery }) => {
-                  const disabled = excluded.has(analysisId);
-                  const checked = selectedIds.has(analysisId);
+                  const discoveryId = discovery.id;
+                  const inZone = analysisId != null && excluded.has(analysisId);
+                  const notSynced = analysisId == null;
+                  const disabled = inZone || notSynced;
+                  const checked = selectedIds.has(discoveryId);
                   return (
-                    <li key={analysisId}>
+                    <li key={discoveryId}>
                       <label
                         className={`palette-picker-option${disabled ? " palette-picker-option--disabled" : ""}${
                           checked ? " palette-picker-option--selected" : ""
@@ -204,7 +211,7 @@ export default function PaletteDiscoveryPicker({
                           type="checkbox"
                           checked={checked}
                           disabled={disabled}
-                          onChange={() => !disabled && toggleSelection(analysisId)}
+                          onChange={() => !disabled && toggleSelection(discoveryId)}
                         />
                         {discovery.photo ? (
                           <img src={discovery.photo} alt="" className="palette-item-photo" />
@@ -216,8 +223,11 @@ export default function PaletteDiscoveryPicker({
                           {discovery.nom_latin && (
                             <span className="palette-item-latin">{discovery.nom_latin}</span>
                           )}
-                          {disabled && (
+                          {inZone && (
                             <span className="palette-picker-in-zone">{t("palette.item.already_in_zone")}</span>
+                          )}
+                          {notSynced && (
+                            <span className="palette-picker-in-zone">{t("palette.item.not_synced")}</span>
                           )}
                         </div>
                       </label>
@@ -256,12 +266,12 @@ export default function PaletteDiscoveryPicker({
             <ul className="palette-picker-config-list">
               {configureEntries.map((entry) => (
                 <ConfigureRow
-                  key={entry.analysisId}
+                  key={entry.discoveryId}
                   entry={entry}
                   t={t}
                   onChange={(next) =>
                     setConfigureEntries((prev) =>
-                      prev.map((row) => (row.analysisId === next.analysisId ? next : row))
+                      prev.map((row) => (row.discoveryId === next.discoveryId ? next : row))
                     )
                   }
                 />
