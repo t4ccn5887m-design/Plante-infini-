@@ -4,7 +4,7 @@ import {
   getDefaultExportContact,
   savePaletteExportContact,
 } from "@/lib/paletteExportContact";
-import { downloadPalettePdf } from "@/lib/palettePdf";
+import { downloadPalettePdf, canSharePalettePdf } from "@/lib/palettePdf";
 
 export default function PaletteExportModal({
   open,
@@ -24,6 +24,7 @@ export default function PaletteExportModal({
   const [loadingContact, setLoadingContact] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState(null);
+  const shareAvailable = canSharePalettePdf();
 
   useEffect(() => {
     if (!open) return undefined;
@@ -67,6 +68,7 @@ export default function PaletteExportModal({
     setExporting(false);
 
     if (!result.ok) {
+      if (result.cancelled) return;
       setError(t("palette.export.error"));
       return;
     }
@@ -151,7 +153,11 @@ export default function PaletteExportModal({
             onClick={handleDownload}
             disabled={exporting || loadingContact}
           >
-            {exporting ? t("palette.export.generating") : t("palette.export.download")}
+            {exporting
+              ? t("palette.export.generating")
+              : shareAvailable
+                ? t("palette.export.share")
+                : t("palette.export.download")}
           </button>
         </div>
       </div>
