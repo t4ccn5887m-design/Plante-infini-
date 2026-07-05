@@ -13047,6 +13047,16 @@ button.theme-grid-card:active {
 .cloud-tab { flex: 1; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; }
 .cloud-tab.active { background: var(--forest-mid); color: #fff; border-color: transparent; }
 .cloud-message { font-size: 0.82rem; color: var(--sunset); margin-top: 0.75rem; }
+.cloud-sync-error {
+  font-size: 0.82rem;
+  color: #b45309;
+  background: rgba(180, 83, 9, 0.08);
+  border: 1px solid rgba(180, 83, 9, 0.25);
+  border-radius: 10px;
+  padding: 0.55rem 0.65rem;
+  margin-top: 0.65rem;
+  line-height: 1.35;
+}
 
 .cloud-auto-status {
   display: flex;

@@ -6,6 +6,19 @@ import {
   signUpWithEmail,
   syncDiscoveriesToCloud,
 } from "@/lib/cloudSync";
+import { clearLastSyncError } from "@/lib/syncDiagnostics";
+
+function formatSyncError(t, entry) {
+  if (!entry) return "";
+  const when = entry.at ? new Date(entry.at).toLocaleString() : "";
+  const name = entry.discoveryName || entry.discoveryId || "—";
+  return t("cloud.last_sync_error_detail", {
+    when,
+    name,
+    error: entry.error || "unknown",
+    code: entry.code || "—",
+  });
+}
 
 export default function CloudAccountCard({ t, onDiscoveriesSynced }) {
   const [status, setStatus] = useState(null);
@@ -22,6 +35,9 @@ export default function CloudAccountCard({ t, onDiscoveriesSynced }) {
 
   useEffect(() => {
     refresh();
+    const onSyncError = () => refresh();
+    window.addEventListener("wilder-sync-error", onSyncError);
+    return () => window.removeEventListener("wilder-sync-error", onSyncError);
   }, [refresh]);
 
   const handleAuth = async () => {
@@ -42,14 +58,31 @@ export default function CloudAccountCard({ t, onDiscoveriesSynced }) {
 
   const handleForceSync = async () => {
     setActionStatus("loading");
+    clearLastSyncError();
     const result = await syncDiscoveriesToCloud();
     await refresh();
-    setActionStatus(result.ok ? "ready" : "error");
-    setMessage(
-      result.ok
-        ? t("cloud.synced_up", { count: result.synced })
-        : t("cloud.error")
-    );
+    if (!result.ok) {
+      setActionStatus("error");
+      setMessage(t("cloud.error"));
+      return;
+    }
+    if (result.failed > 0) {
+      setActionStatus("error");
+      const first = result.errors?.[0];
+      setMessage(
+        first
+          ? t("cloud.sync_failed_detail", {
+              failed: result.failed,
+              total: result.total,
+              error: first.error,
+              code: first.code || "—",
+            })
+          : t("cloud.sync_partial_failed", { failed: result.failed, total: result.total })
+      );
+      return;
+    }
+    setActionStatus("ready");
+    setMessage(t("cloud.synced_up", { count: result.synced }));
   };
 
   const handleSignOut = async () => {
@@ -86,6 +119,18 @@ export default function CloudAccountCard({ t, onDiscoveriesSynced }) {
           ? t("cloud.pending", { count: status.pending })
           : t("cloud.auto_ok")}
       </p>
+
+      {status.authenticated && status.isPermanent === false && (
+        <p className="cloud-sync-error" role="alert">
+          {t("cloud.not_permanent_hint")}
+        </p>
+      )}
+
+      {status.lastSyncError && (
+        <p className="cloud-sync-error" role="alert">
+          {formatSyncError(t, status.lastSyncError)}
+        </p>
+      )}
 
       {status.isAnonymous && (
         <p className="cloud-anon-hint">{t("cloud.anonymous_hint")}</p>
