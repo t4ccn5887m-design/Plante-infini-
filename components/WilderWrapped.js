@@ -55,13 +55,6 @@ export default function WilderWrapped({ discoveries, albums, t, year }) {
         </div>
       )}
 
-      {wrapped.randoKm > 0 && (
-        <div className="wrapped-card">
-          <p className="wrapped-card-label">{t("wrapped.rando_km")}</p>
-          <p className="wrapped-card-value">{wrapped.randoKm} km</p>
-        </div>
-      )}
-
       <div className="wrapped-card">
         <p className="wrapped-card-label">{t("wrapped.badges")}</p>
         <p className="wrapped-card-value">{wrapped.badgesUnlocked}</p>

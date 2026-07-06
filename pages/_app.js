@@ -1,14 +1,10 @@
-import "leaflet/dist/leaflet.css";
 import "@/styles/globals.css";
 import { useEffect } from "react";
 import AppErrorBoundary from "@/components/AppErrorBoundary";
 import InstallGuideModalHost from "@/components/InstallGuideModalHost";
 import Footer from "@/components/Footer";
 import { detectLang } from "@/lib/i18n";
-import { checkPotagerReminders } from "@/lib/potagerNotifications";
-import { checkJardinMorningSurprise } from "@/lib/espaceVertNotifications";
 import { checkNatureReminders } from "@/lib/natureNotifications";
-import { loadAlbums, loadDiscoveries } from "@/lib/discoveriesStorage";
 import { flushPendingSync } from "@/lib/cloudSync";
 
 export default function App({ Component, pageProps }) {
@@ -50,18 +46,12 @@ export default function App({ Component, pageProps }) {
   useEffect(() => {
     const onVisible = () => {
       if (document.visibilityState === "visible") {
-        const lang = detectLang();
-        checkPotagerReminders(lang);
-        checkJardinMorningSurprise(loadAlbums(), loadDiscoveries(), lang);
-        checkNatureReminders(lang);
+        checkNatureReminders(detectLang());
         flushPendingSync();
       }
     };
     document.addEventListener("visibilitychange", onVisible);
-    const lang = detectLang();
-    checkPotagerReminders(lang);
-    checkJardinMorningSurprise(loadAlbums(), loadDiscoveries(), lang);
-    checkNatureReminders(lang);
+    checkNatureReminders(detectLang());
     return () => document.removeEventListener("visibilitychange", onVisible);
   }, []);
 
