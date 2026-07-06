@@ -100,7 +100,7 @@ import { ThemeIcon } from "@/components/ThemeIcons";
 import EspaceVertPlantList from "@/components/EspaceVertPlantList";
 import JardinScanResult from "@/components/JardinScanResult";
 import AnimalScanResult from "@/components/AnimalScanResult";
-import { CARE_SCAN, applyCareToDiscovery } from "@/lib/espaceVertPlant";
+import { CARE_SCAN, applyCareToDiscovery } from "@/lib/discoveryCare";
 import {
   discoveryToScanResult,
   getDefaultJardinAlbumId,
@@ -111,7 +111,7 @@ import {
   getDefaultAnimauxAlbumId,
 } from "@/lib/animaux";
 import { getAnimalContext } from "@/lib/animalAudio";
-import { inferHealthFromEtatSante } from "@/lib/potagerHealth";
+import { inferHealthFromEtatSante } from "@/lib/discoveryHealth";
 import RandosView from "@/components/RandosView";
 import RandoScanResult from "@/components/RandoScanResult";
 import RandoNatureAlerts from "@/components/RandoNatureAlerts";
