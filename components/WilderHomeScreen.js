@@ -62,6 +62,7 @@ export default function WilderHomeScreen({
   onOpenInstallGuide,
   onSignOut,
   onNavigatePalette,
+  onNavigateMonJardinTest,
 }) {
   const [revealedDeleteId, setRevealedDeleteId] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
@@ -176,6 +177,7 @@ export default function WilderHomeScreen({
                 onSignOut={onSignOut}
                 onAccountCreated={onAccountCreated}
                 onNavigatePalette={onNavigatePalette}
+                onNavigateMonJardinTest={onNavigateMonJardinTest}
               />
             </div>
             <div className="wilder-home-top-right">

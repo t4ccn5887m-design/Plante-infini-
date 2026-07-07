@@ -64,6 +64,7 @@ import CloudAccountCard from "@/components/CloudAccountCard";
 import WilderHomeScreen from "@/components/WilderHomeScreen";
 import PaletteListScreen from "@/components/PaletteListScreen";
 import PaletteDetailScreen from "@/components/PaletteDetailScreen";
+import MonJardinScreen from "@/components/MonJardinScreen";
 import { buildDailySpeciesViewModel, buildDailySpeciesAnalysisData } from "@/lib/dailySpecies";
 import { DailySpeciesHero, DiscoveryHeroPhoto } from "@/components/DiscoveryPhotoThumb";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
@@ -1190,8 +1191,28 @@ export default function Wilder() {
           onDeleteDiscovery={handleDeleteDiscovery}
           deleteLabels={swipeDeleteLabels}
           onNavigatePalette={openMaPalette}
+          onNavigateMonJardinTest={() => {
+            setReturnScreen("home");
+            setScreen("mon-jardin");
+          }}
         />
         {confettiOverlay}
+      </>
+    );
+  }
+
+  /* ── MON JARDIN (test — écran isolé, données d'exemple) ── */
+  if (screen === "mon-jardin") {
+    return (
+      <>
+        <Head>
+          <title>Mon jardin — Wilder</title>
+        </Head>
+        <MonJardinScreen
+          onBack={() => setScreen(returnScreen || "home")}
+          onScan={() => startScan("mon-jardin")}
+          onOpenBrief={() => {}}
+        />
       </>
     );
   }
