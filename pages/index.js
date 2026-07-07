@@ -21,7 +21,6 @@ import {
   saveSeenBadges,
 } from "@/lib/badges";
 import { playBadgeUnlockSound, playDiscoverySound, warmUpSounds } from "@/lib/sounds";
-import AnimalSoundQuiz from "@/components/AnimalSoundQuiz";
 import AnalyzeLoadingScreen from "@/components/AnalyzeLoadingScreen";
 import DiscoveryAnalysisSections, {
   discoveryToAnalysisData,
@@ -309,8 +308,6 @@ function DiscoveryBody({
       </div>
 
       <DiscoveryFunFact data={data} t={t} />
-
-      <AnimalSoundQuiz data={data} t={t} />
 
       <DiscoveryAnalysisSections
         data={data}

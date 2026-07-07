@@ -1,5 +1,3 @@
-import { isTreeLikeAnalysis } from "@/lib/treeAge";
-import TreeTrunkAgeCalculator from "@/components/TreeTrunkAgeCalculator";
 import { getFunFactText } from "@/components/DiscoveryFunFact";
 
 function textValue(value) {
@@ -149,59 +147,17 @@ export function discoveryToAnalysisData(discovery) {
   };
 }
 
-function AgeSectionContent({ section, data, t, lang, discoveryId, showTreeAge }) {
-  return (
-    <>
-      <SectionText text={section?.text} />
-      {showTreeAge && (
-        <TreeTrunkAgeCalculator
-          data={data}
-          t={t}
-          lang={lang}
-          discoveryId={discoveryId}
-          embedded
-        />
-      )}
-    </>
-  );
-}
-
-export default function DiscoveryAnalysisSections({ data, t, lang = "fr", discoveryId }) {
-  const sections = [...getVisibleSections(data, t)];
-  const showTreeAge = isTreeLikeAnalysis(data);
-
-  if (showTreeAge && !sections.some((s) => s.key === "age_approx")) {
-    const habitatIdx = sections.findIndex((s) => s.key === "habitat");
-    const insertIdx = habitatIdx >= 0 ? habitatIdx : sections.length;
-    sections.splice(insertIdx, 0, {
-      key: "age_approx",
-      title: t("discovery.age_approx"),
-      text: null,
-    });
-  }
+export default function DiscoveryAnalysisSections({ data, t }) {
+  const sections = getVisibleSections(data, t);
 
   if (!sections.length) return null;
 
   return (
     <div className="discovery-analysis-sections">
       {sections.map((section) => (
-        <div
-          key={section.key}
-          className={`result-card${section.key === "age_approx" && showTreeAge ? " result-card--tree-age" : ""}`}
-        >
+        <div key={section.key} className="result-card">
           <h3 className="result-card-title">{section.title}</h3>
-          {section.key === "age_approx" ? (
-            <AgeSectionContent
-              section={section}
-              data={data}
-              t={t}
-              lang={lang}
-              discoveryId={discoveryId}
-              showTreeAge={showTreeAge}
-            />
-          ) : (
-            <SectionText text={section.text} />
-          )}
+          <SectionText text={section.text} />
         </div>
       ))}
     </div>
