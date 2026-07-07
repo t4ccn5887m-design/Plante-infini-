@@ -43,7 +43,6 @@ export default function AccountMenu({
   onSignOut,
   onAccountCreated,
   onNavigatePalette,
-  onNavigateMonJardinTest,
 }) {
   const [open, setOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
@@ -107,11 +106,6 @@ export default function AccountMenu({
     onNavigatePalette?.();
   };
 
-  const handleNavigateMonJardinTest = () => {
-    closeMenu();
-    onNavigateMonJardinTest?.();
-  };
-
   const authTitleKey =
     authMode === "signin" ? "account_menu.sign_in_title" : "signup_prompt.auth_title";
   const authSubtitleKey =
@@ -149,16 +143,6 @@ export default function AccountMenu({
                 onClick={handleNavigatePalette}
               >
                 {t("account_menu.nav_palette")}
-              </button>
-            )}
-            {onNavigateMonJardinTest && (
-              <button
-                type="button"
-                className="premium-menu-item"
-                role="menuitem"
-                onClick={handleNavigateMonJardinTest}
-              >
-                Mon jardin (test)
               </button>
             )}
             <div className="premium-menu-separator" aria-hidden="true" />

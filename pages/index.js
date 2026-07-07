@@ -61,7 +61,6 @@ import { useGuestAccount } from "@/hooks/useGuestAccount";
 import WilderWrapped from "@/components/WilderWrapped";
 import BiodexCollection from "@/components/BiodexCollection";
 import CloudAccountCard from "@/components/CloudAccountCard";
-import WilderHomeScreen from "@/components/WilderHomeScreen";
 import PaletteListScreen from "@/components/PaletteListScreen";
 import PaletteDetailScreen from "@/components/PaletteDetailScreen";
 import MonJardinScreen from "@/components/MonJardinScreen";
@@ -1153,13 +1152,10 @@ export default function Wilder() {
           <title>{pageTitle}</title>
           <meta name="description" content={slogan} />
         </Head>
-        <WilderHomeScreen
+        <MonJardinScreen
           t={t}
-          discoveries={discoveries}
-          selectedCategory={homeScanCategory}
-          onCategoryChange={setHomeScanCategory}
-          onStartScan={() => startScan("home")}
-          onOpenInstallGuide={openInstallGuideModal}
+          isLoggedIn={!isGuest}
+          accountUserEmail={premiumUserEmail || ""}
           onSignOut={async () => {
             await signOutCloud();
             setPremiumUserEmail(null);
@@ -1167,52 +1163,12 @@ export default function Wilder() {
             setAlbums([]);
             await refreshGuestAccount();
           }}
-          onViewAll={() => {
-            if (isGuest) {
-              openFeatureGateModal(
-                () => {
-                  setReturnScreen("home");
-                  setScreen("biodex");
-                },
-                "feature_gate.saves_message"
-              );
-              return;
-            }
-            setReturnScreen("home");
-            setScreen("biodex");
-          }}
-          findsLocked={isGuest}
-          onLockedFinds={() => openFeatureGateModal(null, "feature_gate.saves_message")}
-          isLoggedIn={!isGuest}
-          accountUserEmail={premiumUserEmail || ""}
           onAccountCreated={handleSignupAccountCreated}
-          onOpenDiscovery={(d) => openDiscoveryDetail(d, "home")}
-          onOpenDailyPick={openDailyPickDetail}
-          onDeleteDiscovery={handleDeleteDiscovery}
-          deleteLabels={swipeDeleteLabels}
           onNavigatePalette={openMaPalette}
-          onNavigateMonJardinTest={() => {
-            setReturnScreen("home");
-            setScreen("mon-jardin");
-          }}
-        />
-        {confettiOverlay}
-      </>
-    );
-  }
-
-  /* ── MON JARDIN (test — écran isolé, données d'exemple) ── */
-  if (screen === "mon-jardin") {
-    return (
-      <>
-        <Head>
-          <title>Mon jardin — Wilder</title>
-        </Head>
-        <MonJardinScreen
-          onBack={() => setScreen(returnScreen || "home")}
-          onScan={() => startScan("mon-jardin")}
+          onScan={() => startScan("home")}
           onOpenBrief={() => {}}
         />
+        {confettiOverlay}
       </>
     );
   }

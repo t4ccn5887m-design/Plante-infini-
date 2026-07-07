@@ -1,9 +1,14 @@
 /**
- * Mon jardin — coquille visuelle (ÉTAPE 1/3).
- * Reproduction fidèle de la maquette wilder_ecran_mon_jardin_v3.html.
- * Données d'EXEMPLE en dur, styles inline (aucun impact sur le CSS global).
- * Écran isolé : à brancher sur de vraies données plus tard.
+ * Mon jardin — écran d'accueil.
+ * Reproduction de la maquette wilder_ecran_mon_jardin_v3.html, branchée sur
+ * les vraies données de Ma Palette (paletteStorage : palette la plus récente
+ * → zones → plantes). État vide propre si aucune plante.
+ * Styles inline (aucun impact sur le CSS global).
  */
+
+import { useCallback, useEffect, useState } from "react";
+import AccountMenu from "@/components/AccountMenu";
+import { fetchPalettes, fetchPaletteItems, fetchZones } from "@/lib/paletteStorage";
 
 const COLORS = {
   ink: "#1e2b23",
@@ -20,25 +25,6 @@ const COLORS = {
   screen: "#ffffff",
 };
 
-const EXAMPLE_ZONES = [
-  {
-    id: "entree",
-    nom: "Entrée",
-    plantes: [
-      { id: "cornouiller", nom: "Cornouiller", exposition: "Mi-ombre", favori: true },
-      { id: "fougere", nom: "Fougère", exposition: "Ombre", favori: false },
-    ],
-  },
-  {
-    id: "terrasse",
-    nom: "Terrasse au soleil",
-    plantes: [
-      { id: "lavande", nom: "Lavande", exposition: "Plein soleil", favori: true },
-      { id: "graminee", nom: "Graminée", exposition: "Plein soleil", favori: false },
-    ],
-  },
-];
-
 const icStroke = {
   stroke: "currentColor",
   strokeWidth: 2,
@@ -47,14 +33,13 @@ const icStroke = {
   strokeLinejoin: "round",
 };
 
-function IconMenu() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
-      <line x1="3" y1="6" x2="21" y2="6" />
-      <line x1="3" y1="12" x2="21" y2="12" />
-      <line x1="3" y1="18" x2="21" y2="18" />
-    </svg>
-  );
+function expositionLabel(t, value) {
+  if (!value) return null;
+  return t(`palette.zone.exposition_${String(value).replace("-", "_")}`);
+}
+
+function plantsCountLabel(n) {
+  return n <= 1 ? `${n} plante` : `${n} plantes`;
 }
 
 function IconLeaf({ size = 26 }) {
@@ -124,7 +109,8 @@ function IconCamera() {
   );
 }
 
-function PlantCard({ plante }) {
+function PlantCard({ plante, t }) {
+  const expo = expositionLabel(t, plante.exposition);
   return (
     <div style={{ border: `0.5px solid ${COLORS.border}`, borderRadius: 12, overflow: "hidden" }}>
       <div
@@ -138,7 +124,15 @@ function PlantCard({ plante }) {
           position: "relative",
         }}
       >
-        <IconLeaf />
+        {plante.photo ? (
+          <img
+            src={plante.photo}
+            alt=""
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        ) : (
+          <IconLeaf />
+        )}
         {plante.favori && (
           <span
             style={{
@@ -163,47 +157,122 @@ function PlantCard({ plante }) {
         <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.ink, lineHeight: 1.3 }}>
           {plante.nom}
         </div>
-        <div
-          style={{
-            fontSize: 11,
-            color: COLORS.muted,
-            marginTop: 2,
-            display: "flex",
-            alignItems: "center",
-            gap: 4,
-          }}
-        >
-          <IconSun /> {plante.exposition}
-        </div>
+        {expo && (
+          <div
+            style={{
+              fontSize: 11,
+              color: COLORS.muted,
+              marginTop: 2,
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
+            <IconSun /> {expo}
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-export default function MonJardinScreen({ onBack, onScan, onOpenBrief }) {
+const screenWrap = {
+  minHeight: "100vh",
+  background: "radial-gradient(120% 120% at 50% 0%, #e2ddcf 0%, #cfc9ba 100%)",
+  display: "flex",
+  justifyContent: "center",
+  padding: "16px",
+  color: COLORS.ink,
+  fontFamily: 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif',
+};
+
+const cardWrap = {
+  width: "100%",
+  maxWidth: 380,
+  background: COLORS.screen,
+  borderRadius: 24,
+  overflow: "hidden",
+  alignSelf: "flex-start",
+};
+
+export default function MonJardinScreen({
+  t,
+  isLoggedIn = false,
+  accountUserEmail = "",
+  onSignOut,
+  onAccountCreated,
+  onNavigatePalette,
+  onScan,
+  onOpenBrief,
+}) {
+  const [loading, setLoading] = useState(true);
+  const [zones, setZones] = useState([]);
+  const [totalPlants, setTotalPlants] = useState(0);
+  const [totalFavoris, setTotalFavoris] = useState(0);
+
+  const loadGarden = useCallback(async () => {
+    setLoading(true);
+
+    const palettesRes = await fetchPalettes();
+    if (!palettesRes.ok || !palettesRes.data?.length) {
+      setZones([]);
+      setTotalPlants(0);
+      setTotalFavoris(0);
+      setLoading(false);
+      return;
+    }
+
+    const paletteId = palettesRes.data[0].id;
+    const [zonesRes, itemsRes] = await Promise.all([
+      fetchZones(paletteId),
+      fetchPaletteItems(paletteId),
+    ]);
+
+    const items = itemsRes.ok ? itemsRes.data : [];
+    const zoneList = zonesRes.ok ? zonesRes.data : [];
+
+    const grouped = zoneList
+      .map((zone) => {
+        const plants = items
+          .filter((item) => item.zone_id === zone.id)
+          .map((item) => ({
+            id: item.id,
+            nom: item.discovery?.nom || "Plante",
+            exposition: zone.exposition,
+            photo: item.discovery?.photo || item.discovery?.cloudImageUrl || null,
+            favori: Boolean(item.discovery?.favori),
+          }));
+        return { id: zone.id, nom: zone.nom, plants };
+      })
+      .filter((zone) => zone.plants.length > 0);
+
+    const plantCount = grouped.reduce((sum, z) => sum + z.plants.length, 0);
+    const favCount = grouped.reduce(
+      (sum, z) => sum + z.plants.filter((p) => p.favori).length,
+      0
+    );
+
+    setZones(grouped);
+    setTotalPlants(plantCount);
+    setTotalFavoris(favCount);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    loadGarden();
+  }, [loadGarden]);
+
+  const subtitle = loading
+    ? "…"
+    : totalFavoris > 0
+    ? `${plantsCountLabel(totalPlants)} · ${totalFavoris} coup${totalFavoris > 1 ? "s" : ""} de cœur`
+    : plantsCountLabel(totalPlants);
+
+  const isEmpty = !loading && zones.length === 0;
+
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "radial-gradient(120% 120% at 50% 0%, #e2ddcf 0%, #cfc9ba 100%)",
-        display: "flex",
-        justifyContent: "center",
-        padding: "16px",
-        color: COLORS.ink,
-        fontFamily:
-          'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif',
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 380,
-          background: COLORS.screen,
-          borderRadius: 24,
-          overflow: "hidden",
-          alignSelf: "flex-start",
-        }}
-      >
+    <div style={screenWrap}>
+      <div style={cardWrap}>
         <div
           style={{
             padding: "18px 16px 12px",
@@ -214,29 +283,16 @@ export default function MonJardinScreen({ onBack, onScan, onOpenBrief }) {
         >
           <div>
             <div style={{ fontSize: 20, fontWeight: 600, letterSpacing: "-0.01em" }}>Mon jardin</div>
-            <div style={{ fontSize: 12, color: COLORS.muted, marginTop: 2 }}>
-              6 plantes · 3 coups de cœur
-            </div>
+            <div style={{ fontSize: 12, color: COLORS.muted, marginTop: 2 }}>{subtitle}</div>
           </div>
-          <button
-            type="button"
-            aria-label="Menu"
-            onClick={onBack}
-            style={{
-              width: 36,
-              height: 36,
-              border: "none",
-              background: "transparent",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              color: COLORS.ink,
-            }}
-          >
-            <IconMenu />
-          </button>
+          <AccountMenu
+            t={t}
+            isLoggedIn={isLoggedIn}
+            userEmail={accountUserEmail}
+            onSignOut={onSignOut}
+            onAccountCreated={onAccountCreated}
+            onNavigatePalette={onNavigatePalette}
+          />
         </div>
 
         <div
@@ -263,37 +319,70 @@ export default function MonJardinScreen({ onBack, onScan, onOpenBrief }) {
           </div>
         </div>
 
-        {EXAMPLE_ZONES.map((zone) => (
-          <div key={zone.id}>
+        {loading && (
+          <div style={{ padding: "8px 16px 24px", fontSize: 13, color: COLORS.muted, textAlign: "center" }}>
+            Chargement…
+          </div>
+        )}
+
+        {isEmpty && (
+          <div style={{ padding: "8px 16px 24px", textAlign: "center" }}>
             <div
               style={{
-                padding: "0 16px",
-                marginBottom: 9,
+                width: 56,
+                height: 56,
+                margin: "8px auto 12px",
+                borderRadius: "50%",
+                background: COLORS.greenTint,
+                color: COLORS.greenInk,
                 display: "flex",
-                alignItems: "baseline",
-                justifyContent: "space-between",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              <span style={{ fontSize: 14, fontWeight: 600, color: COLORS.ink }}>{zone.nom}</span>
-              <span style={{ fontSize: 11, color: COLORS.muted }}>
-                {zone.plantes.length} plantes
-              </span>
+              <IconLeaf size={28} />
             </div>
-            <div
-              style={{
-                padding: "0 16px",
-                marginBottom: 18,
-                display: "grid",
-                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-                gap: 10,
-              }}
-            >
-              {zone.plantes.map((plante) => (
-                <PlantCard key={plante.id} plante={plante} />
-              ))}
+            <div style={{ fontSize: 15, fontWeight: 600, color: COLORS.ink }}>
+              Ton jardin est encore vide
+            </div>
+            <div style={{ fontSize: 12.5, color: COLORS.muted, lineHeight: 1.55, marginTop: 6 }}>
+              Scanne une plante, puis ajoute-la à une zone depuis Ma Palette pour la voir apparaître ici.
             </div>
           </div>
-        ))}
+        )}
+
+        {!loading &&
+          zones.map((zone) => (
+            <div key={zone.id}>
+              <div
+                style={{
+                  padding: "0 16px",
+                  marginBottom: 9,
+                  display: "flex",
+                  alignItems: "baseline",
+                  justifyContent: "space-between",
+                }}
+              >
+                <span style={{ fontSize: 14, fontWeight: 600, color: COLORS.ink }}>{zone.nom}</span>
+                <span style={{ fontSize: 11, color: COLORS.muted }}>
+                  {plantsCountLabel(zone.plants.length)}
+                </span>
+              </div>
+              <div
+                style={{
+                  padding: "0 16px",
+                  marginBottom: 18,
+                  display: "grid",
+                  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                  gap: 10,
+                }}
+              >
+                {zone.plants.map((plante) => (
+                  <PlantCard key={plante.id} plante={plante} t={t} />
+                ))}
+              </div>
+            </div>
+          ))}
 
         <div
           style={{
