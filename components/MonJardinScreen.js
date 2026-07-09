@@ -1,15 +1,17 @@
 /**
- * Mon projet jardin — écran d'accueil.
- * Maquette : wilder/wilder_ecran_mon_jardin_v3.html
+ * Accueil Wilder — maquette wilder_accueil_final.html
+ * États : jardin vide (hall) / jardin rempli (résumé + aperçu).
+ * Onglet « Mon jardin » = vue détaillée (zones, mot paysagiste).
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import AccountMenu from "@/components/AccountMenu";
 import { loadGardenIntention, saveGardenIntention } from "@/lib/gardenIntention";
 import { fetchPalettes, fetchPaletteItems, fetchZones } from "@/lib/paletteStorage";
 
 const COLORS = {
   ink: "#1e2b23",
+  secondary: "#4c554a",
   muted: "#8b9084",
   border: "#e6e2d8",
   borderStrong: "#cbc6b8",
@@ -19,7 +21,7 @@ const COLORS = {
   purpleInk: "#6a58a2",
   heart: "#c6504c",
   note: "#f4f2ea",
-  primary: "#2f5a3c",
+  active: "#2f5a3c",
   screen: "#ffffff",
   stoneTint: "#eae6de",
   stoneInk: "#6b6455",
@@ -38,17 +40,25 @@ function expositionLabel(t, value) {
   return t(`palette.zone.exposition_${String(value).replace("-", "_")}`);
 }
 
-function plantsCountLabel(n) {
-  return n <= 1 ? `${n} plante` : `${n} plantes`;
+function elementsCountLabel(n) {
+  return n <= 1 ? `${n} élément` : `${n} éléments`;
 }
 
 function favorisCountLabel(n) {
+  if (n <= 0) return null;
   if (n <= 1) return `${n} coup de cœur`;
   return `${n} coups de cœur`;
 }
 
-function subtitleLabel(totalPlants, totalFavoris) {
-  return `${plantsCountLabel(totalPlants)} · ${favorisCountLabel(totalFavoris)}`;
+function getInitials(email = "") {
+  const trimmed = email.trim();
+  if (!trimmed) return "W";
+  const local = trimmed.split("@")[0] || "";
+  const parts = local.split(/[._-]+/).filter(Boolean);
+  if (parts.length >= 2) {
+    return `${parts[0][0] || ""}${parts[1][0] || ""}`.toUpperCase();
+  }
+  return local.slice(0, 2).toUpperCase() || "W";
 }
 
 function IconLeaf({ size = 26 }) {
@@ -72,20 +82,16 @@ function IconSun() {
   );
 }
 
-function IconHeart() {
+function IconHeart({ size = 10 }) {
   return (
-    <svg width="13" height="13" viewBox="0 0 24 24" style={{ fill: "currentColor", stroke: "none" }} aria-hidden="true">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      style={{ fill: "currentColor", stroke: "none" }}
+      aria-hidden="true"
+    >
       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z" />
-    </svg>
-  );
-}
-
-function IconBulb() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
-      <path d="M9 18h6" />
-      <path d="M10 21h4" />
-      <path d="M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 3z" />
     </svg>
   );
 }
@@ -98,9 +104,9 @@ function IconMessage() {
   );
 }
 
-function IconBrief() {
+function IconBrief({ size = 19 }) {
   return (
-    <svg width="19" height="19" viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+    <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
       <polyline points="14 2 14 8 20 8" />
       <line x1="8" y1="13" x2="16" y2="13" />
@@ -109,21 +115,226 @@ function IconBrief() {
   );
 }
 
-function IconCamera() {
+function IconCamera({ size = 18 }) {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+    <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
       <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
       <circle cx="12" cy="13" r="4" />
     </svg>
   );
 }
 
-function IconStone({ size = 26 }) {
+function IconStone({ size = 19 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
-      <polygon points="6 3 18 3 21 9 12 21 3 9" />
-      <line x1="3" y1="9" x2="21" y2="9" />
+      <path d="M5 15l3-7 5 2 3-4 3 6-2 6H4z" />
     </svg>
+  );
+}
+
+function IconHome({ size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+      <path d="M3 11l9-8 9 8" />
+      <path d="M5 10v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10" />
+    </svg>
+  );
+}
+
+function IconScans({ size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+      <rect x="3" y="4" width="7" height="7" rx="1" />
+      <rect x="14" y="4" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="7" height="7" rx="1" />
+    </svg>
+  );
+}
+
+function IconCatalogue({ size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+      <rect x="4" y="4" width="7" height="7" rx="1" />
+      <rect x="13" y="4" width="7" height="7" rx="1" />
+      <rect x="4" y="13" width="7" height="7" rx="1" />
+      <rect x="13" y="13" width="7" height="7" rx="1" />
+    </svg>
+  );
+}
+
+function IconAmbiance({ size = 21 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+      <circle cx="12" cy="12" r="3" />
+      <circle cx="12" cy="5" r="2" />
+      <circle cx="12" cy="19" r="2" />
+      <circle cx="5" cy="12" r="2" />
+      <circle cx="19" cy="12" r="2" />
+    </svg>
+  );
+}
+
+function HeroAvatar({ initials, menu }) {
+  return (
+    <div style={{ position: "absolute", top: 14, right: 15, zIndex: 2 }}>
+      <div
+        style={{
+          width: 32,
+          height: 32,
+          borderRadius: "50%",
+          background: "#ffffff33",
+          color: "#fff",
+          border: "0.5px solid #ffffff55",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 12,
+          fontWeight: 700,
+          position: "relative",
+        }}
+      >
+        {initials}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            opacity: 0,
+            overflow: "hidden",
+            borderRadius: "50%",
+          }}
+        >
+          {menu}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DoorCard({ iconWrapClass, icon, title, desc, onClick }) {
+  const bg =
+    iconWrapClass === "g1"
+      ? COLORS.greenTint
+      : iconWrapClass === "g2"
+        ? COLORS.stoneTint
+        : COLORS.purpleTint;
+  const fg =
+    iconWrapClass === "g1"
+      ? COLORS.greenInk
+      : iconWrapClass === "g2"
+        ? COLORS.stoneInk
+        : COLORS.purpleInk;
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        border: `0.5px solid ${COLORS.border}`,
+        borderRadius: 14,
+        padding: 12,
+        background: "#fff",
+        cursor: "pointer",
+        textAlign: "left",
+        fontFamily: "inherit",
+        width: "100%",
+      }}
+    >
+      <div
+        style={{
+          width: 42,
+          height: 42,
+          borderRadius: 11,
+          flex: "none",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: bg,
+          color: fg,
+        }}
+      >
+        {icon}
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 13.5, fontWeight: 600, color: COLORS.ink }}>{title}</div>
+        <div style={{ fontSize: 10.5, color: COLORS.muted, marginTop: 2 }}>{desc}</div>
+      </div>
+      <span style={{ marginLeft: "auto", color: COLORS.muted, fontSize: 18, lineHeight: 1 }}>›</span>
+    </button>
+  );
+}
+
+function PreviewCard({ item }) {
+  const isMineral =
+    item.kind === "mineral" || item.type === "mineral" || Boolean(item.catalogue_mineral_id);
+  const tint = isMineral ? COLORS.stoneTint : COLORS.greenTint;
+  const ink = isMineral ? COLORS.stoneInk : COLORS.greenInk;
+
+  return (
+    <div
+      style={{
+        border: `0.5px solid ${COLORS.border}`,
+        borderRadius: 11,
+        overflow: "hidden",
+        background: "#fff",
+      }}
+    >
+      <div
+        style={{
+          height: 58,
+          background: tint,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: ink,
+          position: "relative",
+        }}
+      >
+        {item.photo ? (
+          <img src={item.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        ) : isMineral ? (
+          <IconStone />
+        ) : (
+          <IconLeaf size={19} />
+        )}
+        {item.favori && (
+          <span
+            style={{
+              position: "absolute",
+              top: 5,
+              right: 5,
+              width: 18,
+              height: 18,
+              borderRadius: "50%",
+              background: "#fff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: COLORS.heart,
+            }}
+          >
+            <IconHeart />
+          </span>
+        )}
+      </div>
+      <div style={{ padding: "6px 8px 8px" }}>
+        <div
+          style={{
+            fontSize: 11.5,
+            fontWeight: 600,
+            color: COLORS.ink,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {item.nom}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -137,6 +348,7 @@ function PlantCard({ plante, t }) {
   const expo = !isMineral ? expositionLabel(t, plante.exposition) : null;
   const mineralLine =
     isMineral && (plante.resume || [plante.materiau, plante.finition].filter(Boolean).join(" · "));
+
   return (
     <div style={{ border: `0.5px solid ${COLORS.border}`, borderRadius: 12, overflow: "hidden" }}>
       <div
@@ -157,7 +369,7 @@ function PlantCard({ plante, t }) {
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         ) : isMineral ? (
-          <IconStone />
+          <IconStone size={26} />
         ) : (
           <IconLeaf />
         )}
@@ -177,7 +389,7 @@ function PlantCard({ plante, t }) {
               color: COLORS.heart,
             }}
           >
-            <IconHeart />
+            <IconHeart size={13} />
           </span>
         )}
       </div>
@@ -209,6 +421,95 @@ function PlantCard({ plante, t }) {
   );
 }
 
+function TabBar({
+  activeTab,
+  onAccueil,
+  onJardin,
+  onBrief,
+  onScans,
+  onCatalogue,
+}) {
+  const tabStyle = (on) => ({
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 3,
+    color: on ? COLORS.active : COLORS.muted,
+    border: "none",
+    background: "transparent",
+    cursor: "pointer",
+    fontFamily: "inherit",
+    padding: 0,
+  });
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "flex-end",
+        borderTop: `0.5px solid ${COLORS.border}`,
+        background: COLORS.screen,
+        padding: "7px 3px 9px",
+        flex: "none",
+      }}
+    >
+      <button type="button" style={tabStyle(activeTab === "accueil")} onClick={onAccueil}>
+        <IconHome />
+        <span style={{ fontSize: 9, fontWeight: 500 }}>Accueil</span>
+      </button>
+      <button type="button" style={tabStyle(activeTab === "jardin")} onClick={onJardin}>
+        <IconLeaf size={20} />
+        <span style={{ fontSize: 9, fontWeight: 500 }}>Mon jardin</span>
+      </button>
+      <button
+        type="button"
+        onClick={onBrief}
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 3,
+          color: COLORS.muted,
+          border: "none",
+          background: "transparent",
+          cursor: "pointer",
+          fontFamily: "inherit",
+          padding: 0,
+        }}
+      >
+        <div
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: "50%",
+            background: COLORS.active,
+            color: "#fff",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: -16,
+            boxShadow: "0 4px 10px rgba(47,90,60,.35)",
+            border: "3px solid #fff",
+          }}
+        >
+          <IconBrief size={22} />
+        </div>
+        <span style={{ fontSize: 9, fontWeight: 500 }}>Brief</span>
+      </button>
+      <button type="button" style={tabStyle(false)} onClick={onScans}>
+        <IconScans />
+        <span style={{ fontSize: 9, fontWeight: 500 }}>Mes scans</span>
+      </button>
+      <button type="button" style={tabStyle(false)} onClick={onCatalogue}>
+        <IconCatalogue />
+        <span style={{ fontSize: 9, fontWeight: 500 }}>Catalogue</span>
+      </button>
+    </div>
+  );
+}
+
 const screenWrap = {
   minHeight: "100vh",
   background: "radial-gradient(120% 120% at 50% 0%, #e2ddcf 0%, #cfc9ba 100%)",
@@ -226,6 +527,9 @@ const cardWrap = {
   borderRadius: 24,
   overflow: "hidden",
   alignSelf: "flex-start",
+  display: "flex",
+  flexDirection: "column",
+  minHeight: "min(92vh, 680px)",
 };
 
 export default function MonJardinScreen({
@@ -244,9 +548,11 @@ export default function MonJardinScreen({
 }) {
   const [loading, setLoading] = useState(true);
   const [zones, setZones] = useState([]);
+  const [allItems, setAllItems] = useState([]);
   const [totalPlants, setTotalPlants] = useState(0);
   const [totalFavoris, setTotalFavoris] = useState(0);
   const [gardenIntention, setGardenIntention] = useState("");
+  const [navTab, setNavTab] = useState("accueil");
 
   const loadGarden = useCallback(async () => {
     setLoading(true);
@@ -254,6 +560,7 @@ export default function MonJardinScreen({
     const palettesRes = await fetchPalettes();
     if (!palettesRes.ok || !palettesRes.data?.length) {
       setZones([]);
+      setAllItems([]);
       setTotalPlants(0);
       setTotalFavoris(0);
       setLoading(false);
@@ -290,13 +597,18 @@ export default function MonJardinScreen({
       })
       .filter((zone) => zone.plants.length > 0);
 
-    const plantCount = grouped.reduce((sum, z) => sum + z.plants.length, 0);
-    const favCount = grouped.reduce(
-      (sum, z) => sum + z.plants.filter((p) => p.favori).length,
-      0
-    );
+    const flat = grouped
+      .flatMap((z) => z.plants)
+      .sort((a, b) => {
+        if (a.favori !== b.favori) return a.favori ? -1 : 1;
+        return a.nom.localeCompare(b.nom, "fr");
+      });
+
+    const plantCount = flat.length;
+    const favCount = flat.filter((p) => p.favori).length;
 
     setZones(grouped);
+    setAllItems(flat);
     setTotalPlants(plantCount);
     setTotalFavoris(favCount);
     setLoading(false);
@@ -316,242 +628,381 @@ export default function MonJardinScreen({
     saveGardenIntention(value);
   };
 
-  const subtitle = loading ? "…" : subtitleLabel(totalPlants, totalFavoris);
+  const isEmpty = !loading && totalPlants === 0;
+  const previewItems = useMemo(() => allItems.slice(0, 3), [allItems]);
+  const initials = useMemo(() => getInitials(accountUserEmail), [accountUserEmail]);
 
-  const isEmpty = !loading && zones.length === 0;
+  const filledSubtitle = useMemo(() => {
+    const parts = [elementsCountLabel(totalPlants)];
+    const fav = favorisCountLabel(totalFavoris);
+    if (fav) parts.push(fav);
+    parts.push("brief prêt");
+    return parts.join(" · ");
+  }, [totalPlants, totalFavoris]);
+
+  const accountMenu = (
+    <AccountMenu
+      t={t}
+      isLoggedIn={isLoggedIn}
+      userEmail={accountUserEmail}
+      onSignOut={onSignOut}
+      onAccountCreated={onAccountCreated}
+      onNavigatePalette={onNavigatePalette}
+      onNavigateMesScans={onNavigateMesScans}
+      onNavigateCatalogue={onNavigateCatalogue}
+      onNavigateIdeesJardins={onNavigateIdeesJardins}
+      triggerColor="#fff"
+    />
+  );
 
   return (
     <div style={screenWrap}>
       <div style={cardWrap}>
-        <div
-          style={{
-            padding: "18px 16px 12px",
-            display: "flex",
-            alignItems: "flex-start",
-            gap: 12,
-          }}
-        >
-          <AccountMenu
-            t={t}
-            isLoggedIn={isLoggedIn}
-            userEmail={accountUserEmail}
-            onSignOut={onSignOut}
-            onAccountCreated={onAccountCreated}
-            onNavigatePalette={onNavigatePalette}
-            onNavigateMesScans={onNavigateMesScans}
-            onNavigateCatalogue={onNavigateCatalogue}
-            onNavigateIdeesJardins={onNavigateIdeesJardins}
-            triggerColor={COLORS.primary}
-          />
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 20, fontWeight: 600, letterSpacing: "-0.01em" }}>
-              Mon projet jardin
-            </div>
-            <div style={{ fontSize: 12, color: COLORS.muted, marginTop: 2 }}>{subtitle}</div>
-          </div>
-        </div>
+        <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
+          {navTab === "accueil" && (
+            <>
+              {isEmpty && !loading && (
+                <>
+                  <div
+                    style={{
+                      height: 190,
+                      position: "relative",
+                      background: "linear-gradient(160deg,#7fa07f,#3d6b47 55%,#2c5236)",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-end",
+                      padding: 16,
+                      flex: "none",
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        background:
+                          "linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.35))",
+                      }}
+                      aria-hidden="true"
+                    />
+                    <HeroAvatar initials={initials} menu={accountMenu} />
+                    <div style={{ position: "relative", zIndex: 1 }}>
+                      <div
+                        style={{
+                          fontSize: 21,
+                          fontWeight: 700,
+                          color: "#fff",
+                          lineHeight: 1.2,
+                        }}
+                      >
+                        Composez le jardin
+                        <br />
+                        qui vous ressemble
+                      </div>
+                      <div
+                        style={{
+                          fontSize: 11.5,
+                          color: "#ffffffdd",
+                          marginTop: 6,
+                          lineHeight: 1.45,
+                        }}
+                      >
+                        Rassemblez ce que vous aimez, on en fait un brief pour votre paysagiste.
+                      </div>
+                    </div>
+                  </div>
 
-        <div
-          style={{
-            margin: "0 16px 18px",
-            background: COLORS.purpleTint,
-            borderRadius: 12,
-            padding: "12px 14px",
-            display: "flex",
-            gap: 10,
-            alignItems: "flex-start",
-          }}
-        >
-          <span style={{ flex: "none", marginTop: 1, color: COLORS.purpleInk }}>
-            <IconBulb />
-          </span>
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.purpleInk }}>
-              Ton style se dessine
-            </div>
-            <div style={{ fontSize: 12, color: COLORS.purpleInk, lineHeight: 1.5, marginTop: 2 }}>
-              Mi-ombre · floraisons violettes · feuillages persistants
-            </div>
-          </div>
-        </div>
+                  <div
+                    style={{
+                      padding: "15px 15px 7px",
+                      fontSize: 11.5,
+                      fontWeight: 600,
+                      color: COLORS.secondary,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.03em",
+                    }}
+                  >
+                    Par où commencer&nbsp;?
+                  </div>
 
-        {loading && (
-          <div style={{ padding: "8px 16px 24px", fontSize: 13, color: COLORS.muted, textAlign: "center" }}>
-            Chargement…
-          </div>
-        )}
+                  <div
+                    style={{
+                      padding: "0 15px 16px",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 9,
+                    }}
+                  >
+                    <DoorCard
+                      iconWrapClass="g1"
+                      icon={<IconCamera size={21} />}
+                      title="Scanner une plante"
+                      desc="J'ai vu un truc joli dehors"
+                      onClick={onScan}
+                    />
+                    <DoorCard
+                      iconWrapClass="g2"
+                      icon={<IconLeaf size={21} />}
+                      title="Parcourir le catalogue"
+                      desc="Plantes, minéral & idées"
+                      onClick={onNavigateCatalogue}
+                    />
+                    <DoorCard
+                      iconWrapClass="g3"
+                      icon={<IconAmbiance />}
+                      title="Piocher une ambiance"
+                      desc="Méditerranéen, japonais…"
+                      onClick={onNavigateIdeesJardins}
+                    />
+                  </div>
+                </>
+              )}
 
-        {isEmpty && (
-          <div style={{ padding: "8px 16px 24px", textAlign: "center" }}>
-            <div
-              style={{
-                width: 56,
-                height: 56,
-                margin: "8px auto 12px",
-                borderRadius: "50%",
-                background: COLORS.greenTint,
-                color: COLORS.greenInk,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <IconLeaf size={28} />
-            </div>
-            <div style={{ fontSize: 15, fontWeight: 600, color: COLORS.ink }}>
-              Ton projet est encore vide
-            </div>
-            <div style={{ fontSize: 12.5, color: COLORS.muted, lineHeight: 1.55, marginTop: 6 }}>
-              Scanne une plante qui te plaît, puis ajoute-la à ton jardin depuis Mes scans.
-            </div>
-            <button
-              type="button"
-              onClick={onScan}
-              style={{
-                marginTop: 14,
-                height: 40,
-                padding: "0 18px",
-                background: COLORS.primary,
-                color: "#fff",
-                border: "none",
-                borderRadius: 12,
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: "pointer",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
-                fontFamily: "inherit",
-              }}
-            >
-              <IconCamera /> Scanner une plante
-            </button>
-          </div>
-        )}
+              {loading && (
+                <div style={{ padding: 24, fontSize: 13, color: COLORS.muted, textAlign: "center" }}>
+                  Chargement…
+                </div>
+              )}
 
-        {!loading &&
-          zones.map((zone) => (
-            <div key={zone.id}>
-              <div
-                style={{
-                  padding: "0 16px",
-                  marginBottom: 9,
-                  display: "flex",
-                  alignItems: "baseline",
-                  justifyContent: "space-between",
-                }}
-              >
-                <span style={{ fontSize: 14, fontWeight: 600, color: COLORS.ink }}>{zone.nom}</span>
-                <span style={{ fontSize: 11, color: COLORS.muted }}>
-                  {plantsCountLabel(zone.plants.length)}
-                </span>
+              {!isEmpty && !loading && (
+                <>
+                  <div
+                    style={{
+                      height: 140,
+                      position: "relative",
+                      background: "linear-gradient(160deg,#7fa07f,#3d6b47)",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-end",
+                      padding: 15,
+                      flex: "none",
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        background:
+                          "linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.35))",
+                      }}
+                      aria-hidden="true"
+                    />
+                    <HeroAvatar initials={initials} menu={accountMenu} />
+                    <div style={{ position: "relative", zIndex: 1 }}>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>
+                        Votre jardin prend forme 🌿
+                      </div>
+                      <div style={{ fontSize: 11.5, color: "#ffffffdd", marginTop: 4 }}>
+                        {filledSubtitle}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ padding: "13px 15px 9px", display: "flex", gap: 9 }}>
+                    <button
+                      type="button"
+                      onClick={onOpenBrief}
+                      style={{
+                        flex: 1,
+                        background: COLORS.active,
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 12,
+                        padding: 11,
+                        fontSize: 12,
+                        fontWeight: 600,
+                        textAlign: "center",
+                        cursor: "pointer",
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      Voir mon brief
+                    </button>
+                    <button
+                      type="button"
+                      onClick={onNavigateCatalogue}
+                      style={{
+                        flex: 1,
+                        border: `0.5px solid ${COLORS.borderStrong}`,
+                        borderRadius: 12,
+                        padding: 11,
+                        fontSize: 12,
+                        fontWeight: 600,
+                        textAlign: "center",
+                        background: "#fff",
+                        color: COLORS.ink,
+                        cursor: "pointer",
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      + Ajouter
+                    </button>
+                  </div>
+
+                  <div
+                    style={{
+                      padding: "2px 15px 7px",
+                      fontSize: 11,
+                      fontWeight: 600,
+                      color: COLORS.secondary,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.03em",
+                    }}
+                  >
+                    Aperçu de mon jardin
+                  </div>
+
+                  <div
+                    style={{
+                      padding: "0 15px 16px",
+                      display: "grid",
+                      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                      gap: 8,
+                    }}
+                  >
+                    {previewItems.map((item) => (
+                      <PreviewCard key={item.id} item={item} />
+                    ))}
+                  </div>
+                </>
+              )}
+            </>
+          )}
+
+          {navTab === "jardin" && (
+            <div style={{ padding: "16px 0 8px" }}>
+              <div style={{ padding: "0 16px 14px" }}>
+                <div style={{ fontSize: 20, fontWeight: 600, letterSpacing: "-0.01em" }}>
+                  Mon jardin
+                </div>
+                <div style={{ fontSize: 12, color: COLORS.muted, marginTop: 2 }}>
+                  {loading
+                    ? "…"
+                    : `${elementsCountLabel(totalPlants)}${
+                        totalFavoris > 0 ? ` · ${favorisCountLabel(totalFavoris)}` : ""
+                      }`}
+                </div>
               </div>
-              <div
-                style={{
-                  padding: "0 16px",
-                  marginBottom: 18,
-                  display: "grid",
-                  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-                  gap: 10,
-                }}
-              >
-                {zone.plants.map((plante) => (
-                  <PlantCard key={plante.id} plante={plante} t={t} />
+
+              {loading && (
+                <div style={{ padding: "8px 16px 24px", fontSize: 13, color: COLORS.muted, textAlign: "center" }}>
+                  Chargement…
+                </div>
+              )}
+
+              {isEmpty && !loading && (
+                <div style={{ padding: "8px 16px 24px", textAlign: "center" }}>
+                  <div
+                    style={{
+                      width: 56,
+                      height: 56,
+                      margin: "8px auto 12px",
+                      borderRadius: "50%",
+                      background: COLORS.greenTint,
+                      color: COLORS.greenInk,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <IconLeaf size={28} />
+                  </div>
+                  <div style={{ fontSize: 15, fontWeight: 600, color: COLORS.ink }}>
+                    Ton projet est encore vide
+                  </div>
+                  <div style={{ fontSize: 12.5, color: COLORS.muted, lineHeight: 1.55, marginTop: 6 }}>
+                    Scanne une plante ou parcours le catalogue pour commencer.
+                  </div>
+                </div>
+              )}
+
+              {!loading &&
+                zones.map((zone) => (
+                  <div key={zone.id}>
+                    <div
+                      style={{
+                        padding: "0 16px",
+                        marginBottom: 9,
+                        display: "flex",
+                        alignItems: "baseline",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <span style={{ fontSize: 14, fontWeight: 600, color: COLORS.ink }}>{zone.nom}</span>
+                      <span style={{ fontSize: 11, color: COLORS.muted }}>
+                        {zone.plants.length <= 1
+                          ? `${zone.plants.length} élément`
+                          : `${zone.plants.length} éléments`}
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        padding: "0 16px",
+                        marginBottom: 18,
+                        display: "grid",
+                        gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                        gap: 10,
+                      }}
+                    >
+                      {zone.plants.map((plante) => (
+                        <PlantCard key={plante.id} plante={plante} t={t} />
+                      ))}
+                    </div>
+                  </div>
                 ))}
+
+              <div
+                style={{
+                  margin: "2px 16px 18px",
+                  border: `0.5px dashed ${COLORS.borderStrong}`,
+                  borderRadius: 13,
+                  background: COLORS.note,
+                  padding: "13px 14px",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: COLORS.ink,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 7,
+                  }}
+                >
+                  <IconMessage /> Mon mot pour le paysagiste
+                </div>
+                <textarea
+                  value={gardenIntention}
+                  onChange={handleIntentionChange}
+                  placeholder="Ex : un jardin facile à vivre, un coin ombragé pour manger dehors, cacher le mur du fond côté voisin…"
+                  rows={3}
+                  style={{
+                    width: "100%",
+                    marginTop: 8,
+                    padding: 0,
+                    border: "none",
+                    background: "transparent",
+                    resize: "vertical",
+                    fontSize: 12,
+                    color: COLORS.ink,
+                    lineHeight: 1.55,
+                    fontFamily: "inherit",
+                    outline: "none",
+                  }}
+                />
               </div>
             </div>
-          ))}
-
-        <div
-          style={{
-            margin: "2px 16px 18px",
-            border: `0.5px dashed ${COLORS.borderStrong}`,
-            borderRadius: 13,
-            background: COLORS.note,
-            padding: "13px 14px",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 13,
-              fontWeight: 600,
-              color: COLORS.ink,
-              display: "flex",
-              alignItems: "center",
-              gap: 7,
-            }}
-          >
-            <IconMessage /> Mon mot pour le paysagiste
-          </div>
-          <textarea
-            value={gardenIntention}
-            onChange={handleIntentionChange}
-            placeholder="Ex : un jardin facile à vivre, un coin ombragé pour manger dehors, cacher le mur du fond côté voisin…"
-            rows={3}
-            style={{
-              width: "100%",
-              marginTop: 8,
-              padding: 0,
-              border: "none",
-              background: "transparent",
-              resize: "vertical",
-              fontSize: 12,
-              color: COLORS.ink,
-              lineHeight: 1.55,
-              fontFamily: "inherit",
-              outline: "none",
-            }}
-          />
+          )}
         </div>
 
-        <div style={{ borderTop: `0.5px solid ${COLORS.border}`, padding: "14px 16px 18px" }}>
-          <button
-            type="button"
-            onClick={onOpenBrief}
-            style={{
-              width: "100%",
-              height: 48,
-              background: COLORS.primary,
-              color: "#fff",
-              border: "none",
-              borderRadius: 12,
-              fontSize: 15,
-              fontWeight: 600,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-              fontFamily: "inherit",
-            }}
-          >
-            <IconBrief /> Voir mon brief
-          </button>
-          <button
-            type="button"
-            onClick={onScan}
-            style={{
-              width: "100%",
-              height: 44,
-              marginTop: 8,
-              background: "transparent",
-              border: `0.5px solid ${COLORS.borderStrong}`,
-              borderRadius: 12,
-              fontSize: 14,
-              fontWeight: 500,
-              color: COLORS.ink,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-              fontFamily: "inherit",
-            }}
-          >
-            <IconCamera /> Scanner une plante
-          </button>
-        </div>
+        <TabBar
+          activeTab={navTab}
+          onAccueil={() => setNavTab("accueil")}
+          onJardin={() => setNavTab("jardin")}
+          onBrief={onOpenBrief}
+          onScans={onNavigateMesScans}
+          onCatalogue={onNavigateCatalogue}
+        />
       </div>
     </div>
   );
