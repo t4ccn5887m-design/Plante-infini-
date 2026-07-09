@@ -21,6 +21,8 @@ const COLORS = {
   note: "#f4f2ea",
   primary: "#2f5a3c",
   screen: "#ffffff",
+  stoneTint: "#eae6de",
+  stoneInk: "#6b6455",
 };
 
 const icStroke = {
@@ -116,18 +118,35 @@ function IconCamera() {
   );
 }
 
+function IconStone({ size = 26 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+      <polygon points="6 3 18 3 21 9 12 21 3 9" />
+      <line x1="3" y1="9" x2="21" y2="9" />
+    </svg>
+  );
+}
+
 function PlantCard({ plante, t }) {
-  const expo = expositionLabel(t, plante.exposition);
+  const isMineral =
+    plante.kind === "mineral" ||
+    plante.type === "mineral" ||
+    Boolean(plante.catalogue_mineral_id);
+  const tint = isMineral ? COLORS.stoneTint : COLORS.greenTint;
+  const ink = isMineral ? COLORS.stoneInk : COLORS.greenInk;
+  const expo = !isMineral ? expositionLabel(t, plante.exposition) : null;
+  const mineralLine =
+    isMineral && (plante.resume || [plante.materiau, plante.finition].filter(Boolean).join(" · "));
   return (
     <div style={{ border: `0.5px solid ${COLORS.border}`, borderRadius: 12, overflow: "hidden" }}>
       <div
         style={{
           height: 78,
-          background: COLORS.greenTint,
+          background: tint,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: COLORS.greenInk,
+          color: ink,
           position: "relative",
         }}
       >
@@ -137,6 +156,8 @@ function PlantCard({ plante, t }) {
             alt=""
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
+        ) : isMineral ? (
+          <IconStone />
         ) : (
           <IconLeaf />
         )}
@@ -176,6 +197,11 @@ function PlantCard({ plante, t }) {
             }}
           >
             <IconSun /> {expo}
+          </div>
+        )}
+        {mineralLine && (
+          <div style={{ fontSize: 11, color: COLORS.muted, marginTop: 2, lineHeight: 1.35 }}>
+            {mineralLine}
           </div>
         )}
       </div>
@@ -249,6 +275,12 @@ export default function MonJardinScreen({
           .map((item) => ({
             id: item.id,
             nom: item.discovery?.nom || "Plante",
+            kind: item.discovery?.kind,
+            type: item.discovery?.type,
+            catalogue_mineral_id: item.discovery?.catalogue_mineral_id,
+            materiau: item.discovery?.materiau,
+            finition: item.discovery?.finition,
+            resume: item.discovery?.resume,
             exposition: zone.exposition,
             photo: item.discovery?.photo || item.discovery?.cloudImageUrl || null,
             favori: Boolean(item.discovery?.favori),
