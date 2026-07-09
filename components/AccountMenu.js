@@ -45,6 +45,7 @@ export default function AccountMenu({
   onNavigatePalette,
   onNavigateMesScans,
   onNavigateCatalogue,
+  onNavigateIdeesJardins,
   triggerColor,
 }) {
   const [open, setOpen] = useState(false);
@@ -119,6 +120,11 @@ export default function AccountMenu({
     onNavigateCatalogue?.();
   };
 
+  const handleNavigateIdeesJardins = () => {
+    closeMenu();
+    onNavigateIdeesJardins?.();
+  };
+
   const authTitleKey =
     authMode === "signin" ? "account_menu.sign_in_title" : "signup_prompt.auth_title";
   const authSubtitleKey =
@@ -167,6 +173,16 @@ export default function AccountMenu({
                 onClick={handleNavigateCatalogue}
               >
                 {t("catalogue.menu_label")}
+              </button>
+            )}
+            {onNavigateIdeesJardins && (
+              <button
+                type="button"
+                className="premium-menu-item"
+                role="menuitem"
+                onClick={handleNavigateIdeesJardins}
+              >
+                {t("idees_jardins.menu_label")}
               </button>
             )}
             {onNavigatePalette && (

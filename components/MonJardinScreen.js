@@ -237,6 +237,7 @@ export default function MonJardinScreen({
   onNavigatePalette,
   onNavigateMesScans,
   onNavigateCatalogue,
+  onNavigateIdeesJardins,
   onScan,
   onOpenBrief,
   gardenRefreshTick = 0,
@@ -339,6 +340,7 @@ export default function MonJardinScreen({
             onNavigatePalette={onNavigatePalette}
             onNavigateMesScans={onNavigateMesScans}
             onNavigateCatalogue={onNavigateCatalogue}
+            onNavigateIdeesJardins={onNavigateIdeesJardins}
             triggerColor={COLORS.primary}
           />
           <div style={{ flex: 1, minWidth: 0 }}>

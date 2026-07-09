@@ -67,6 +67,7 @@ import MonJardinScreen from "@/components/MonJardinScreen";
 import MesScansScreen from "@/components/MesScansScreen";
 import ResultatScanScreen from "@/components/ResultatScanScreen";
 import CataloguePepiniereScreen from "@/components/CataloguePepiniereScreen";
+import IdeesJardinsScreen from "@/components/IdeesJardinsScreen";
 import { buildDailySpeciesViewModel, buildDailySpeciesAnalysisData } from "@/lib/dailySpecies";
 import { DailySpeciesHero, DiscoveryHeroPhoto } from "@/components/DiscoveryPhotoThumb";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
@@ -417,6 +418,11 @@ export default function Wilder() {
   const openCatalogue = useCallback(() => {
     setReturnScreen("home");
     setScreen("catalogue");
+  }, []);
+
+  const openIdeesJardins = useCallback(() => {
+    setReturnScreen("home");
+    setScreen("idees-jardins");
   }, []);
 
   const openPaletteDetail = useCallback((palette) => {
@@ -1205,6 +1211,7 @@ export default function Wilder() {
           onNavigatePalette={openMaPalette}
           onNavigateMesScans={openMesScans}
           onNavigateCatalogue={openCatalogue}
+          onNavigateIdeesJardins={openIdeesJardins}
           onScan={() => startScan("home")}
           onOpenBrief={() => {}}
           gardenRefreshTick={homeGardenRefreshTick}
@@ -1240,6 +1247,23 @@ export default function Wilder() {
           <title>{t("catalogue.title")} — Wilder</title>
         </Head>
         <CataloguePepiniereScreen
+          t={t}
+          canAddToGarden={!isGuest}
+          onBack={() => setScreen(returnScreen || "home")}
+          onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
+        />
+      </>
+    );
+  }
+
+  /* ── IDÉES DE JARDINS ── */
+  if (screen === "idees-jardins") {
+    return (
+      <>
+        <Head>
+          <title>{t("idees_jardins.title")} — Wilder</title>
+        </Head>
+        <IdeesJardinsScreen
           t={t}
           canAddToGarden={!isGuest}
           onBack={() => setScreen(returnScreen || "home")}
