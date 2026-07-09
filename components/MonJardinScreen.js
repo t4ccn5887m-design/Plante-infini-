@@ -294,15 +294,9 @@ export default function MonJardinScreen({
             padding: "18px 16px 12px",
             display: "flex",
             alignItems: "flex-start",
-            justifyContent: "space-between",
+            gap: 12,
           }}
         >
-          <div>
-            <div style={{ fontSize: 20, fontWeight: 600, letterSpacing: "-0.01em" }}>
-              Mon projet jardin
-            </div>
-            <div style={{ fontSize: 12, color: COLORS.muted, marginTop: 2 }}>{subtitle}</div>
-          </div>
           <AccountMenu
             t={t}
             isLoggedIn={isLoggedIn}
@@ -311,7 +305,14 @@ export default function MonJardinScreen({
             onAccountCreated={onAccountCreated}
             onNavigatePalette={onNavigatePalette}
             onNavigateMesScans={onNavigateMesScans}
+            triggerColor={COLORS.primary}
           />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 20, fontWeight: 600, letterSpacing: "-0.01em" }}>
+              Mon projet jardin
+            </div>
+            <div style={{ fontSize: 12, color: COLORS.muted, marginTop: 2 }}>{subtitle}</div>
+          </div>
         </div>
 
         <div

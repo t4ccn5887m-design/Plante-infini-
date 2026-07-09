@@ -44,6 +44,7 @@ export default function AccountMenu({
   onAccountCreated,
   onNavigatePalette,
   onNavigateMesScans,
+  triggerColor,
 }) {
   const [open, setOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
@@ -123,6 +124,7 @@ export default function AccountMenu({
         <button
           type="button"
           className="premium-menu-trigger"
+          style={triggerColor ? { color: triggerColor } : undefined}
           aria-label={t("account_menu.open")}
           aria-expanded={open}
           aria-haspopup="true"
