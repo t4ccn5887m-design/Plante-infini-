@@ -1,13 +1,11 @@
 /**
- * Mon jardin — écran d'accueil.
- * Reproduction de la maquette wilder_ecran_mon_jardin_v3.html, branchée sur
- * les vraies données de Ma Palette (paletteStorage : palette la plus récente
- * → zones → plantes). État vide propre si aucune plante.
- * Styles inline (aucun impact sur le CSS global).
+ * Mon projet jardin — écran d'accueil.
+ * Maquette : wilder/wilder_ecran_mon_jardin_v3.html
  */
 
 import { useCallback, useEffect, useState } from "react";
 import AccountMenu from "@/components/AccountMenu";
+import { loadGardenIntention, saveGardenIntention } from "@/lib/gardenIntention";
 import { fetchPalettes, fetchPaletteItems, fetchZones } from "@/lib/paletteStorage";
 
 const COLORS = {
@@ -40,6 +38,15 @@ function expositionLabel(t, value) {
 
 function plantsCountLabel(n) {
   return n <= 1 ? `${n} plante` : `${n} plantes`;
+}
+
+function favorisCountLabel(n) {
+  if (n <= 1) return `${n} coup de cœur`;
+  return `${n} coups de cœur`;
+}
+
+function subtitleLabel(totalPlants, totalFavoris) {
+  return `${plantsCountLabel(totalPlants)} · ${favorisCountLabel(totalFavoris)}`;
 }
 
 function IconLeaf({ size = 26 }) {
@@ -205,11 +212,13 @@ export default function MonJardinScreen({
   onNavigateMesScans,
   onScan,
   onOpenBrief,
+  gardenRefreshTick = 0,
 }) {
   const [loading, setLoading] = useState(true);
   const [zones, setZones] = useState([]);
   const [totalPlants, setTotalPlants] = useState(0);
   const [totalFavoris, setTotalFavoris] = useState(0);
+  const [gardenIntention, setGardenIntention] = useState("");
 
   const loadGarden = useCallback(async () => {
     setLoading(true);
@@ -260,14 +269,20 @@ export default function MonJardinScreen({
   }, []);
 
   useEffect(() => {
-    loadGarden();
-  }, [loadGarden]);
+    setGardenIntention(loadGardenIntention());
+  }, []);
 
-  const subtitle = loading
-    ? "…"
-    : totalFavoris > 0
-    ? `${plantsCountLabel(totalPlants)} · ${totalFavoris} coup${totalFavoris > 1 ? "s" : ""} de cœur`
-    : plantsCountLabel(totalPlants);
+  useEffect(() => {
+    loadGarden();
+  }, [loadGarden, gardenRefreshTick]);
+
+  const handleIntentionChange = (event) => {
+    const value = event.target.value;
+    setGardenIntention(value);
+    saveGardenIntention(value);
+  };
+
+  const subtitle = loading ? "…" : subtitleLabel(totalPlants, totalFavoris);
 
   const isEmpty = !loading && zones.length === 0;
 
@@ -283,7 +298,9 @@ export default function MonJardinScreen({
           }}
         >
           <div>
-            <div style={{ fontSize: 20, fontWeight: 600, letterSpacing: "-0.01em" }}>Mon jardin</div>
+            <div style={{ fontSize: 20, fontWeight: 600, letterSpacing: "-0.01em" }}>
+              Mon projet jardin
+            </div>
             <div style={{ fontSize: 12, color: COLORS.muted, marginTop: 2 }}>{subtitle}</div>
           </div>
           <AccountMenu
@@ -345,11 +362,34 @@ export default function MonJardinScreen({
               <IconLeaf size={28} />
             </div>
             <div style={{ fontSize: 15, fontWeight: 600, color: COLORS.ink }}>
-              Ton jardin est encore vide
+              Ton projet est encore vide
             </div>
             <div style={{ fontSize: 12.5, color: COLORS.muted, lineHeight: 1.55, marginTop: 6 }}>
-              Scanne une plante, puis ajoute-la à une zone depuis Ma Palette pour la voir apparaître ici.
+              Scanne une plante qui te plaît, puis ajoute-la à ton jardin depuis Mes scans.
             </div>
+            <button
+              type="button"
+              onClick={onScan}
+              style={{
+                marginTop: 14,
+                height: 40,
+                padding: "0 18px",
+                background: COLORS.primary,
+                color: "#fff",
+                border: "none",
+                borderRadius: 12,
+                fontSize: 14,
+                fontWeight: 600,
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                fontFamily: "inherit",
+              }}
+            >
+              <IconCamera /> Scanner une plante
+            </button>
           </div>
         )}
 
@@ -407,18 +447,25 @@ export default function MonJardinScreen({
           >
             <IconMessage /> Mon mot pour le paysagiste
           </div>
-          <div
+          <textarea
+            value={gardenIntention}
+            onChange={handleIntentionChange}
+            placeholder="Ex : un jardin facile à vivre, un coin ombragé pour manger dehors, cacher le mur du fond côté voisin…"
+            rows={3}
             style={{
-              fontSize: 12,
-              color: COLORS.muted,
-              lineHeight: 1.55,
+              width: "100%",
               marginTop: 8,
-              fontStyle: "italic",
+              padding: 0,
+              border: "none",
+              background: "transparent",
+              resize: "vertical",
+              fontSize: 12,
+              color: COLORS.ink,
+              lineHeight: 1.55,
+              fontFamily: "inherit",
+              outline: "none",
             }}
-          >
-            Ex : un jardin facile à vivre, un coin ombragé pour manger dehors, cacher le mur du fond
-            côté voisin…
-          </div>
+          />
         </div>
 
         <div style={{ borderTop: `0.5px solid ${COLORS.border}`, padding: "14px 16px 18px" }}>

@@ -365,6 +365,7 @@ export default function Wilder() {
   const [rescanDiscoveryId, setRescanDiscoveryId] = useState(null);
   const [homeScanCategory, setHomeScanCategory] = useState(null);
   const [premiumUserEmail, setPremiumUserEmail] = useState(null);
+  const [homeGardenRefreshTick, setHomeGardenRefreshTick] = useState(0);
   const [featureGateOpen, setFeatureGateOpen] = useState(false);
   const [featureGateMessageKey, setFeatureGateMessageKey] = useState("feature_gate.message");
 
@@ -453,6 +454,12 @@ export default function Wilder() {
   const locale = useMemo(() => getLocale(lang), [lang]);
   const typeLabel = useCallback((type) => getTypeLabel(t, type), [t]);
   const rarityLabel = useCallback((r) => getRarityLabel(t, r), [t]);
+
+  useEffect(() => {
+    if (screen === "home") {
+      setHomeGardenRefreshTick((tick) => tick + 1);
+    }
+  }, [screen]);
 
   useEffect(() => {
     const savedTheme = loadTheme();
@@ -1171,6 +1178,7 @@ export default function Wilder() {
           onNavigateMesScans={openMesScans}
           onScan={() => startScan("home")}
           onOpenBrief={() => {}}
+          gardenRefreshTick={homeGardenRefreshTick}
         />
         {confettiOverlay}
       </>
