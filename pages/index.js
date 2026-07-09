@@ -66,6 +66,7 @@ import PaletteDetailScreen from "@/components/PaletteDetailScreen";
 import MonJardinScreen from "@/components/MonJardinScreen";
 import MesScansScreen from "@/components/MesScansScreen";
 import ResultatScanScreen from "@/components/ResultatScanScreen";
+import CataloguePepiniereScreen from "@/components/CataloguePepiniereScreen";
 import { buildDailySpeciesViewModel, buildDailySpeciesAnalysisData } from "@/lib/dailySpecies";
 import { DailySpeciesHero, DiscoveryHeroPhoto } from "@/components/DiscoveryPhotoThumb";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
@@ -411,6 +412,11 @@ export default function Wilder() {
   const openMesScans = useCallback(() => {
     setReturnScreen("home");
     setScreen("mes-scans");
+  }, []);
+
+  const openCatalogue = useCallback(() => {
+    setReturnScreen("home");
+    setScreen("catalogue");
   }, []);
 
   const openPaletteDetail = useCallback((palette) => {
@@ -1198,6 +1204,7 @@ export default function Wilder() {
           onAccountCreated={handleSignupAccountCreated}
           onNavigatePalette={openMaPalette}
           onNavigateMesScans={openMesScans}
+          onNavigateCatalogue={openCatalogue}
           onScan={() => startScan("home")}
           onOpenBrief={() => {}}
           gardenRefreshTick={homeGardenRefreshTick}
@@ -1220,6 +1227,23 @@ export default function Wilder() {
           canAddToGarden={!isGuest}
           onBack={() => setScreen(returnScreen || "home")}
           onScan={() => startScan("mes-scans")}
+        />
+      </>
+    );
+  }
+
+  /* ── CATALOGUE PÉPINIÈRE ── */
+  if (screen === "catalogue") {
+    return (
+      <>
+        <Head>
+          <title>{t("catalogue.title")} — Wilder</title>
+        </Head>
+        <CataloguePepiniereScreen
+          t={t}
+          canAddToGarden={!isGuest}
+          onBack={() => setScreen(returnScreen || "home")}
+          onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
         />
       </>
     );

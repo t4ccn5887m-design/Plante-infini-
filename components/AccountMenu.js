@@ -44,6 +44,7 @@ export default function AccountMenu({
   onAccountCreated,
   onNavigatePalette,
   onNavigateMesScans,
+  onNavigateCatalogue,
   triggerColor,
 }) {
   const [open, setOpen] = useState(false);
@@ -113,6 +114,11 @@ export default function AccountMenu({
     onNavigateMesScans?.();
   };
 
+  const handleNavigateCatalogue = () => {
+    closeMenu();
+    onNavigateCatalogue?.();
+  };
+
   const authTitleKey =
     authMode === "signin" ? "account_menu.sign_in_title" : "signup_prompt.auth_title";
   const authSubtitleKey =
@@ -151,6 +157,16 @@ export default function AccountMenu({
                 onClick={handleNavigateMesScans}
               >
                 Mes scans
+              </button>
+            )}
+            {onNavigateCatalogue && (
+              <button
+                type="button"
+                className="premium-menu-item"
+                role="menuitem"
+                onClick={handleNavigateCatalogue}
+              >
+                {t("catalogue.menu_label")}
               </button>
             )}
             {onNavigatePalette && (

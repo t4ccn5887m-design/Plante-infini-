@@ -210,6 +210,7 @@ export default function MonJardinScreen({
   onAccountCreated,
   onNavigatePalette,
   onNavigateMesScans,
+  onNavigateCatalogue,
   onScan,
   onOpenBrief,
   gardenRefreshTick = 0,
@@ -305,6 +306,7 @@ export default function MonJardinScreen({
             onAccountCreated={onAccountCreated}
             onNavigatePalette={onNavigatePalette}
             onNavigateMesScans={onNavigateMesScans}
+            onNavigateCatalogue={onNavigateCatalogue}
             triggerColor={COLORS.primary}
           />
           <div style={{ flex: 1, minWidth: 0 }}>

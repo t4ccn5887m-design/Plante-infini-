@@ -1,0 +1,579 @@
+/**
+ * Catalogue pépinière — onglet Végétal (Option C mock).
+ * Maquette : wilder/wilder_ecran_catalogue.html
+ */
+
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  CATALOGUE_ENVIE_TAGS,
+  CATALOGUE_FAMILLES,
+  countByFamille,
+  filterCataloguePlants,
+} from "@/lib/cataloguePlants";
+import {
+  demoteCataloguePlantFromGarden,
+  loadCatalogueGardenState,
+  promoteCataloguePlantToGarden,
+} from "@/lib/promoteCatalogueToGarden";
+
+const COLORS = {
+  ink: "#1e2b23",
+  secondary: "#4c554a",
+  muted: "#8b9084",
+  border: "#e6e2d8",
+  borderStrong: "#cbc6b8",
+  greenTint: "#e7efe6",
+  greenInk: "#3c6b47",
+  purpleTint: "#efedfb",
+  purpleInk: "#6a58a2",
+  primary: "#2f5a3c",
+  screen: "#ffffff",
+};
+
+const icStroke = {
+  stroke: "currentColor",
+  strokeWidth: 2,
+  fill: "none",
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+};
+
+const screenWrap = {
+  minHeight: "100vh",
+  background: "radial-gradient(120% 120% at 50% 0%, #e2ddcf 0%, #cfc9ba 100%)",
+  display: "flex",
+  justifyContent: "center",
+  padding: "16px",
+  color: COLORS.ink,
+  fontFamily: 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif',
+};
+
+const cardWrap = {
+  width: "100%",
+  maxWidth: 380,
+  background: COLORS.screen,
+  borderRadius: 24,
+  overflow: "hidden",
+  alignSelf: "flex-start",
+};
+
+function IconBack() {
+  return (
+    <svg width="19" height="19" viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+      <line x1="19" y1="12" x2="5" y2="12" />
+      <polyline points="12 19 5 12 12 5" />
+    </svg>
+  );
+}
+
+function IconLeaf({ size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+      <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+      <path d="M2 21c0-3 1.85-5.36 5.08-6" />
+    </svg>
+  );
+}
+
+function IconPlus() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  );
+}
+
+function IconCheck() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
+function FamilleIcon({ famille }) {
+  if (famille === "coniferes") {
+    return (
+      <svg width="21" height="21" viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+        <polygon points="12 3 7 11 17 11" />
+        <polygon points="12 8 6 18 18 18" />
+        <line x1="12" y1="18" x2="12" y2="21" />
+      </svg>
+    );
+  }
+  if (famille === "arbres") {
+    return (
+      <svg width="21" height="21" viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+        <circle cx="12" cy="9" r="6" />
+        <line x1="12" y1="15" x2="12" y2="21" />
+      </svg>
+    );
+  }
+  if (famille === "rosiers") {
+    return (
+      <svg width="21" height="21" viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 9c0-3 2-4 2-4s0 3-2 4z" />
+        <path d="M12 15c0 3-2 4-2 4s0-3 2-4z" />
+        <path d="M9 12c-3 0-4-2-4-2s3 0 4 2z" />
+        <path d="M15 12c3 0 4 2 4 2s-3 0-4-2z" />
+      </svg>
+    );
+  }
+  if (famille === "fleurs" || famille === "vivaces") {
+    return (
+      <svg width="21" height="21" viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+        <circle cx="12" cy="6" r="2.1" />
+        <circle cx="12" cy="18" r="2.1" />
+        <circle cx="6" cy="12" r="2.1" />
+        <circle cx="18" cy="12" r="2.1" />
+        <circle cx="12" cy="12" r="2.5" />
+      </svg>
+    );
+  }
+  return <IconLeaf size={21} />;
+}
+
+function PlantRow({ plant, inGarden, toggling, onToggle, t }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 11,
+        border: `0.5px solid ${COLORS.border}`,
+        borderRadius: 13,
+        padding: "8px 10px 8px 8px",
+        background: "#fff",
+      }}
+    >
+      <div
+        style={{
+          width: 44,
+          height: 44,
+          borderRadius: 10,
+          background: COLORS.greenTint,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flex: "none",
+          color: COLORS.greenInk,
+          overflow: "hidden",
+        }}
+      >
+        {plant.photo_url ? (
+          <img src={plant.photo_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        ) : (
+          <IconLeaf />
+        )}
+      </div>
+
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div
+          style={{
+            fontSize: 13.5,
+            fontWeight: 600,
+            color: COLORS.ink,
+            lineHeight: 1.25,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {plant.nom}
+        </div>
+        <div
+          style={{
+            fontSize: 11,
+            color: COLORS.muted,
+            marginTop: 2,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {plant.resume}
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => onToggle(plant)}
+        disabled={toggling}
+        style={{
+          flex: "none",
+          height: 33,
+          padding: "0 12px",
+          borderRadius: 20,
+          fontSize: 11,
+          fontWeight: 600,
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 5,
+          cursor: toggling ? "wait" : "pointer",
+          fontFamily: "inherit",
+          border: inGarden ? "none" : `0.5px solid ${COLORS.borderStrong}`,
+          background: inGarden ? COLORS.greenTint : "#fff",
+          color: inGarden ? COLORS.greenInk : COLORS.ink,
+          opacity: toggling ? 0.65 : 1,
+        }}
+      >
+        {inGarden ? (
+          <>
+            <IconCheck /> {t("catalogue.in_garden")}
+          </>
+        ) : (
+          <>
+            <IconPlus /> {t("catalogue.add_to_garden")}
+          </>
+        )}
+      </button>
+    </div>
+  );
+}
+
+export default function CataloguePepiniereScreen({
+  t,
+  canAddToGarden = true,
+  onBack,
+  onGardenChange,
+}) {
+  const [activeTab, setActiveTab] = useState("vegetal");
+  const [envieTag, setEnvieTag] = useState(null);
+  const [famille, setFamille] = useState(null);
+  const [inGarden, setInGarden] = useState(() => new Set());
+  const [itemIdsByPlant, setItemIdsByPlant] = useState(() => new Map());
+  const [gardenLoading, setGardenLoading] = useState(true);
+  const [togglingId, setTogglingId] = useState(null);
+  const [error, setError] = useState(null);
+
+  const familleCounts = useMemo(() => countByFamille(), []);
+
+  const popularPlants = useMemo(
+    () =>
+      filterCataloguePlants({
+        envieTag,
+        famille,
+        populaireOnly: true,
+      }),
+    [envieTag, famille]
+  );
+
+  const refreshGarden = useCallback(async () => {
+    setGardenLoading(true);
+    try {
+      const state = await loadCatalogueGardenState();
+      setInGarden(state.inGarden);
+      setItemIdsByPlant(state.itemIdsByPlant);
+    } catch {
+      setInGarden(new Set());
+      setItemIdsByPlant(new Map());
+    }
+    setGardenLoading(false);
+  }, []);
+
+  useEffect(() => {
+    refreshGarden();
+  }, [refreshGarden]);
+
+  const handleToggleEnvie = (tag) => {
+    setEnvieTag((current) => (current === tag ? null : tag));
+  };
+
+  const handleToggleFamille = (key) => {
+    setFamille((current) => (current === key ? null : key));
+  };
+
+  const handleTogglePlant = async (plant) => {
+    if (!plant?.id || togglingId) return;
+    setError(null);
+
+    const alreadyIn = inGarden.has(plant.id);
+
+    if (!alreadyIn && !canAddToGarden) {
+      setError(t("mes_scans.garden_gate"));
+      return;
+    }
+
+    setTogglingId(plant.id);
+    try {
+      if (alreadyIn) {
+        const result = await demoteCataloguePlantFromGarden(plant.id, itemIdsByPlant);
+        if (!result.ok) setError(result.error || "unknown");
+        else {
+          await refreshGarden();
+          onGardenChange?.();
+        }
+      } else {
+        const result = await promoteCataloguePlantToGarden(plant, t);
+        if (!result.ok) setError(result.error || "unknown");
+        else {
+          await refreshGarden();
+          onGardenChange?.();
+        }
+      }
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
+  return (
+    <div style={screenWrap} className="screen-enter-fast">
+      <div style={cardWrap}>
+        <div
+          style={{
+            padding: "15px 16px 10px",
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+          }}
+        >
+          <button
+            type="button"
+            onClick={onBack}
+            aria-label={t("discovery.back")}
+            style={{
+              width: 32,
+              height: 32,
+              border: "none",
+              background: "transparent",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              color: COLORS.ink,
+            }}
+          >
+            <IconBack />
+          </button>
+          <span style={{ fontSize: 14, color: COLORS.muted }}>{t("catalogue.menu_crumb")}</span>
+        </div>
+
+        <div style={{ padding: "2px 16px 14px" }}>
+          <h1 style={{ margin: 0, fontSize: 21, fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.15 }}>
+            {t("catalogue.title")}
+          </h1>
+          <p style={{ margin: "4px 0 0", fontSize: 12, color: COLORS.muted, lineHeight: 1.5 }}>
+            {t("catalogue.subtitle")}
+          </p>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            gap: 0,
+            margin: "0 16px 14px",
+            border: `0.5px solid ${COLORS.border}`,
+            borderRadius: 12,
+            overflow: "hidden",
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setActiveTab("vegetal")}
+            style={{
+              flex: 1,
+              height: 36,
+              border: "none",
+              fontSize: 12.5,
+              fontWeight: 600,
+              fontFamily: "inherit",
+              cursor: "pointer",
+              background: activeTab === "vegetal" ? COLORS.greenTint : "#fff",
+              color: activeTab === "vegetal" ? COLORS.greenInk : COLORS.muted,
+            }}
+          >
+            {t("catalogue.tab_vegetal")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("mineral")}
+            style={{
+              flex: 1,
+              height: 36,
+              border: "none",
+              borderLeft: `0.5px solid ${COLORS.border}`,
+              fontSize: 12.5,
+              fontWeight: 600,
+              fontFamily: "inherit",
+              cursor: "pointer",
+              background: activeTab === "mineral" ? COLORS.greenTint : "#fff",
+              color: activeTab === "mineral" ? COLORS.greenInk : COLORS.muted,
+            }}
+          >
+            {t("catalogue.tab_mineral")}
+          </button>
+        </div>
+
+        {activeTab === "mineral" ? (
+          <div
+            style={{
+              margin: "0 16px 24px",
+              padding: "20px 16px",
+              borderRadius: 13,
+              border: `0.5px solid ${COLORS.border}`,
+              background: "#fafaf8",
+              fontSize: 13,
+              color: COLORS.muted,
+              lineHeight: 1.5,
+              textAlign: "center",
+            }}
+          >
+            {t("catalogue.mineral_coming_soon")}
+          </div>
+        ) : (
+          <>
+            <div
+              style={{
+                display: "flex",
+                gap: 7,
+                overflowX: "auto",
+                padding: "0 16px 16px",
+                scrollbarWidth: "none",
+              }}
+            >
+              {CATALOGUE_ENVIE_TAGS.map((tag) => {
+                const active = envieTag === tag;
+                return (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => handleToggleEnvie(tag)}
+                    style={{
+                      flex: "none",
+                      height: 32,
+                      padding: "0 13px",
+                      borderRadius: 20,
+                      fontSize: 12,
+                      fontWeight: active ? 600 : 500,
+                      fontFamily: "inherit",
+                      cursor: "pointer",
+                      border: active ? "none" : `0.5px solid ${COLORS.borderStrong}`,
+                      background: active ? COLORS.purpleTint : "#fff",
+                      color: active ? COLORS.purpleInk : COLORS.secondary,
+                    }}
+                  >
+                    {t(`catalogue.envie_${tag}`)}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div
+              style={{
+                padding: "0 16px",
+                marginBottom: 9,
+                fontSize: 12,
+                fontWeight: 600,
+                color: COLORS.secondary,
+                letterSpacing: "0.02em",
+                textTransform: "uppercase",
+              }}
+            >
+              {t("catalogue.section_familles")}
+            </div>
+
+            <div
+              style={{
+                padding: "0 16px",
+                display: "grid",
+                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                gap: 10,
+                marginBottom: 20,
+              }}
+            >
+              {CATALOGUE_FAMILLES.map((key) => {
+                const active = famille === key;
+                const count = familleCounts[key] || 0;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => handleToggleFamille(key)}
+                    style={{
+                      border: `0.5px solid ${active ? COLORS.greenInk : COLORS.border}`,
+                      borderRadius: 13,
+                      padding: "13px 12px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 11,
+                      background: active ? COLORS.greenTint : "#fff",
+                      cursor: "pointer",
+                      textAlign: "left",
+                      fontFamily: "inherit",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 11,
+                        background: COLORS.greenTint,
+                        flex: "none",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: COLORS.greenInk,
+                      }}
+                    >
+                      <FamilleIcon famille={key} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 13.5, fontWeight: 600, color: COLORS.ink, lineHeight: 1.2 }}>
+                        {t(`catalogue.famille_${key}`)}
+                      </div>
+                      <div style={{ fontSize: 11, color: COLORS.muted, marginTop: 2 }}>
+                        {t("catalogue.varieties_count", { count })}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div
+              style={{
+                padding: "0 16px",
+                marginBottom: 9,
+                fontSize: 12,
+                fontWeight: 600,
+                color: COLORS.secondary,
+                letterSpacing: "0.02em",
+                textTransform: "uppercase",
+              }}
+            >
+              {t("catalogue.section_popular")}
+            </div>
+
+            <div style={{ padding: "0 16px 6px", display: "flex", flexDirection: "column", gap: 9 }}>
+              {popularPlants.length === 0 ? (
+                <p style={{ fontSize: 12.5, color: COLORS.muted, padding: "8px 0 12px" }}>
+                  {t("catalogue.no_results")}
+                </p>
+              ) : (
+                popularPlants.map((plant) => (
+                  <PlantRow
+                    key={plant.id}
+                    plant={plant}
+                    inGarden={inGarden.has(plant.id)}
+                    toggling={togglingId === plant.id || gardenLoading}
+                    onToggle={handleTogglePlant}
+                    t={t}
+                  />
+                ))
+              )}
+            </div>
+          </>
+        )}
+
+        {error && (
+          <p style={{ margin: "12px 16px 0", fontSize: 12, color: "#c6504c", lineHeight: 1.4 }}>{error}</p>
+        )}
+
+        <div style={{ padding: "14px 16px 20px" }} />
+      </div>
+    </div>
+  );
+}
