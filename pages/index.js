@@ -64,6 +64,7 @@ import CloudAccountCard from "@/components/CloudAccountCard";
 import PaletteListScreen from "@/components/PaletteListScreen";
 import PaletteDetailScreen from "@/components/PaletteDetailScreen";
 import MonJardinScreen from "@/components/MonJardinScreen";
+import MesScansScreen from "@/components/MesScansScreen";
 import { buildDailySpeciesViewModel, buildDailySpeciesAnalysisData } from "@/lib/dailySpecies";
 import { DailySpeciesHero, DiscoveryHeroPhoto } from "@/components/DiscoveryPhotoThumb";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
@@ -405,6 +406,11 @@ export default function Wilder() {
     setScreen("ma-palette");
   }, [isGuest, openFeatureGateModal]);
 
+  const openMesScans = useCallback(() => {
+    setReturnScreen("home");
+    setScreen("mes-scans");
+  }, []);
+
   const openPaletteDetail = useCallback((palette) => {
     if (!palette?.id) return;
     setActivePaletteId(palette.id);
@@ -493,9 +499,7 @@ export default function Wilder() {
 
   const finishDiscoveryFlow = useCallback(
     (updated, wasRescan) => {
-      if (!isGuest) {
-        setDiscoveries(updated);
-      }
+      setDiscoveries(updated);
       recordNatureActivity();
       setRescanDiscoveryId(null);
 
@@ -678,16 +682,15 @@ export default function Wilder() {
 
       const permanent = isPermanentAuthUser(session?.user);
 
+      const items = loadDiscoveries();
+
       if (!permanent) {
-        saveDiscoveries([]);
-        saveAlbums([]);
-        setDiscoveries([]);
-        setAlbums([]);
-        logPersistenceBootState(session, 0);
+        setDiscoveries(items);
+        setAlbums(loadAlbums());
+        logPersistenceBootState(session, items.length);
         return;
       }
 
-      const items = loadDiscoveries();
       setDiscoveries(items);
       setAlbums(loadAlbums());
       const seen = loadSeenBadges();
@@ -902,7 +905,7 @@ export default function Wilder() {
         updated = [discovery, ...loadDiscoveries()];
       }
       const saveResult = persistDiscoveries(updated, discovery, { isPermanent: !isGuest });
-      if (!isGuest && !saveResult.ok) {
+      if (!saveResult.ok) {
         console.warn("[Wilder] Sauvegarde localStorage échouée:", saveResult.error);
         if (saveResult.error === "QuotaExceededError") {
           setErrorMsg(t("error.quota_exceeded"));
@@ -1165,10 +1168,29 @@ export default function Wilder() {
           }}
           onAccountCreated={handleSignupAccountCreated}
           onNavigatePalette={openMaPalette}
+          onNavigateMesScans={openMesScans}
           onScan={() => startScan("home")}
           onOpenBrief={() => {}}
         />
         {confettiOverlay}
+      </>
+    );
+  }
+
+  /* ── MES SCANS ── */
+  if (screen === "mes-scans") {
+    return (
+      <>
+        <Head>
+          <title>Mes scans — Wilder</title>
+        </Head>
+        <MesScansScreen
+          t={t}
+          discoveries={discoveries}
+          canAddToGarden={!isGuest}
+          onBack={() => setScreen(returnScreen || "home")}
+          onScan={() => startScan("mes-scans")}
+        />
       </>
     );
   }

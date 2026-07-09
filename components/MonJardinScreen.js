@@ -202,6 +202,7 @@ export default function MonJardinScreen({
   onSignOut,
   onAccountCreated,
   onNavigatePalette,
+  onNavigateMesScans,
   onScan,
   onOpenBrief,
 }) {
@@ -292,6 +293,7 @@ export default function MonJardinScreen({
             onSignOut={onSignOut}
             onAccountCreated={onAccountCreated}
             onNavigatePalette={onNavigatePalette}
+            onNavigateMesScans={onNavigateMesScans}
           />
         </div>
 
