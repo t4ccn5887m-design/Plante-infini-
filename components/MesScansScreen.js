@@ -6,18 +6,10 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  addZoneItems,
-  createPalette,
-  ensureSujetsIsolesZone,
-  fetchPaletteItems,
-  fetchPalettes,
-  removePaletteItem,
-} from "@/lib/paletteStorage";
-import {
-  defaultQuantityForType,
-  inferPaletteItemType,
-  normalizePaletteItemPayload,
-} from "@/lib/palettePlants";
+  demoteScanFromGarden,
+  loadScanGardenState,
+  promoteScanToGarden,
+} from "@/lib/promoteScanToGarden";
 import { getDiscoveryPhotoUrl } from "@/lib/discoveryPhoto";
 import { loadDiscoveries } from "@/lib/discoveriesStorage";
 
@@ -120,82 +112,6 @@ export function formatScanCharacteristics(discovery) {
   if (parts.length > 0) return parts.slice(0, 2).join(" · ");
   if (discovery?.nom_latin) return discovery.nom_latin;
   return "Plante scannée";
-}
-
-function buildGardenIndex(items) {
-  const inGarden = new Set();
-  const itemIdsByDiscovery = new Map();
-
-  for (const item of items) {
-    const discoveryId = item.discovery?.id;
-    if (!discoveryId) continue;
-    inGarden.add(discoveryId);
-    const list = itemIdsByDiscovery.get(discoveryId) || [];
-    list.push(item.id);
-    itemIdsByDiscovery.set(discoveryId, list);
-  }
-
-  return { inGarden, itemIdsByDiscovery };
-}
-
-async function loadGardenState() {
-  const palettesRes = await fetchPalettes();
-  if (!palettesRes.ok || !palettesRes.data?.length) {
-    return { inGarden: new Set(), itemIdsByDiscovery: new Map(), paletteId: null };
-  }
-
-  const paletteId = palettesRes.data[0].id;
-  const itemsRes = await fetchPaletteItems(paletteId);
-  const items = itemsRes.ok ? itemsRes.data : [];
-  const { inGarden, itemIdsByDiscovery } = buildGardenIndex(items);
-
-  return { inGarden, itemIdsByDiscovery, paletteId };
-}
-
-async function ensureDefaultPalette(t) {
-  const palettesRes = await fetchPalettes();
-  if (palettesRes.ok && palettesRes.data?.length) {
-    return { ok: true, paletteId: palettesRes.data[0].id };
-  }
-
-  const created = await createPalette(t("palette.default_name"));
-  if (!created.ok) return { ok: false, error: created.error };
-  return { ok: true, paletteId: created.data.id };
-}
-
-async function promoteScanToGarden(discovery, t) {
-  const paletteResult = await ensureDefaultPalette(t);
-  if (!paletteResult.ok) return paletteResult;
-
-  const zoneResult = await ensureSujetsIsolesZone(
-    paletteResult.paletteId,
-    t("palette.zone.sujets_isoles_name")
-  );
-  if (!zoneResult.ok) return zoneResult;
-
-  const itemType = inferPaletteItemType(discovery);
-  const normalized = normalizePaletteItemPayload({
-    type: itemType,
-    quantite: defaultQuantityForType(itemType),
-    note: null,
-  });
-  if (!normalized.ok) return { ok: false, error: normalized.error };
-
-  return addZoneItems(zoneResult.data.id, [
-    {
-      discoveryId: discovery.id,
-      ...normalized.data,
-    },
-  ]);
-}
-
-async function demoteScanFromGarden(discoveryId, itemIdsByDiscovery) {
-  const itemIds = itemIdsByDiscovery.get(discoveryId) || [];
-  for (const itemId of itemIds) {
-    const result = await removePaletteItem(itemId);
-    if (!result.ok) return result;
-  }
-  return { ok: true };
 }
 
 const screenWrap = {
@@ -342,7 +258,7 @@ export default function MesScansScreen({
     setScans(merged);
 
     try {
-      const garden = await loadGardenState();
+      const garden = await loadScanGardenState();
       setInGarden(garden.inGarden);
       setItemIdsByDiscovery(garden.itemIdsByDiscovery);
     } catch (e) {

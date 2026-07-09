@@ -65,6 +65,7 @@ import PaletteListScreen from "@/components/PaletteListScreen";
 import PaletteDetailScreen from "@/components/PaletteDetailScreen";
 import MonJardinScreen from "@/components/MonJardinScreen";
 import MesScansScreen from "@/components/MesScansScreen";
+import ResultatScanScreen from "@/components/ResultatScanScreen";
 import { buildDailySpeciesViewModel, buildDailySpeciesAnalysisData } from "@/lib/dailySpecies";
 import { DailySpeciesHero, DiscoveryHeroPhoto } from "@/components/DiscoveryPhotoThumb";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
@@ -863,6 +864,7 @@ export default function Wilder() {
             alimentation: data.alimentation || prev.alimentation || "",
             espece_protegee: data.espece_protegee ?? prev.espece_protegee ?? null,
             region_saison: data.region_saison || prev.region_saison || "",
+            favori: prev.favori ?? false,
             },
             CARE_SCAN,
             now
@@ -908,6 +910,7 @@ export default function Wilder() {
           discoveredAt: now,
           plantedAt: now,
           lastScannedAt: now,
+          favori: false,
         };
         updated = [discovery, ...loadDiscoveries()];
       }
@@ -1001,6 +1004,25 @@ export default function Wilder() {
       rarete: result?.rarete || currentDiscovery.rarete,
     };
   }, [currentDiscovery, result, captured]);
+
+  const handleUpdateCurrentDiscovery = useCallback(
+    (updated) => {
+      if (!updated?.id) return { ok: false, error: "missing_id" };
+      const list = loadDiscoveries().map((d) => (d.id === updated.id ? updated : d));
+      const saveResult = persistDiscoveries(list, updated, { isPermanent: !isGuest });
+      if (!saveResult.ok) return { ok: false, error: saveResult.error };
+      setDiscoveries(list);
+      setCurrentDiscovery(updated);
+      return { ok: true };
+    },
+    [isGuest]
+  );
+
+  const handleShareFromResult = useCallback(async () => {
+    if (!shareDiscoveryPayload) return;
+    if (isGuest && gateGuestShare()) return;
+    await shareDiscovery(shareDiscoveryPayload, t, typeLabel, rarityLabel, "feed");
+  }, [shareDiscoveryPayload, isGuest, gateGuestShare, t, typeLabel, rarityLabel]);
 
   const slogan = t("slogan");
   const pageTitle = `Wilder — ${slogan}`;
@@ -1447,57 +1469,27 @@ export default function Wilder() {
   }
 
   /* ── RESULT ── */
-  if (screen === "result" && result) {
+  if (screen === "result" && result && currentDiscovery) {
+    const resultPhoto =
+      captured || getDiscoveryPhotoUrl(currentDiscovery) || currentDiscovery.photo;
+
     return (
       <>
         <Head>
-          <title>{result.nom} — Wilder</title>
+          <title>{currentDiscovery.nom} — Wilder</title>
         </Head>
-        <div className="discovery-screen screen-enter-fast">
-          {biodexAnim && (
-            <>
-              <div className="biodex-flash" />
-              <div className="biodex-ring" />
-            </>
-          )}
-
-          <div className="discovery-hero">
-            {captured && <img src={captured} alt={result.nom} />}
-            <button
-              type="button"
-              className="discovery-hero-back"
-              onClick={leaveResult}
-            >
-              <IconBack size={16} /> {t("discovery.back")}
-            </button>
-          </div>
-
-          <div className="discovery-body">
-            <DiscoveryBody
-              data={result}
-              discovery={currentDiscovery}
-              showNewBadge={!showFirstDiscoveryBadge}
-              showFirstDiscoveryBadge={showFirstDiscoveryBadge}
-              showInlineShare={false}
-              t={t}
-              lang={lang}
-            />
-
-            {isGuest && <SignupPromptBanner t={t} onCreateAccount={openSignupFromBanner} />}
-
-            <DiscoveryResultActions
-              discovery={shareDiscoveryPayload}
-              t={t}
-              lang={lang}
-              onBeforeShare={isGuest ? gateGuestShare : undefined}
-              onScanAgain={scanAgainFromResult}
-              onDelete={handleDeleteCurrentDiscovery}
-              deleteLabels={swipeDeleteLabels}
-            />
-          </div>
-
-          {confettiOverlay}
-        </div>
+        <ResultatScanScreen
+          t={t}
+          discovery={currentDiscovery}
+          photoSrc={resultPhoto}
+          canAddToGarden={!isGuest}
+          onBack={leaveResult}
+          onScanAgain={scanAgainFromResult}
+          onShare={handleShareFromResult}
+          onDiscoveryUpdate={handleUpdateCurrentDiscovery}
+          onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
+        />
+        {confettiOverlay}
       </>
     );
   }
