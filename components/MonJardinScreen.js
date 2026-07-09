@@ -177,7 +177,7 @@ function IconAmbiance({ size = 21 }) {
 
 function HeroAvatar({ initials, menu }) {
   return (
-    <div style={{ position: "absolute", top: 14, right: 15, zIndex: 2 }}>
+    <div style={{ position: "absolute", top: 14, right: 15, zIndex: 2 }} className="wilder-v2-hero-avatar">
       <div
         style={{
           width: 32,
@@ -445,6 +445,7 @@ function TabBar({
 
   return (
     <div
+      className="wilder-v2-tabbar"
       style={{
         display: "flex",
         alignItems: "flex-end",
@@ -656,14 +657,15 @@ export default function MonJardinScreen({
   );
 
   return (
-    <div style={screenWrap}>
-      <div style={cardWrap}>
+    <div className="wilder-v2-shell" style={screenWrap}>
+      <div className="wilder-v2-card" style={cardWrap}>
         <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
           {navTab === "accueil" && (
             <>
               {isEmpty && !loading && (
                 <>
                   <div
+                    className="wilder-v2-hero wilder-v2-hero--tall"
                     style={{
                       height: 190,
                       position: "relative",
@@ -766,6 +768,7 @@ export default function MonJardinScreen({
               {!isEmpty && !loading && (
                 <>
                   <div
+                    className="wilder-v2-hero wilder-v2-hero--short"
                     style={{
                       height: 140,
                       position: "relative",

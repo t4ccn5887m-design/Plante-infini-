@@ -73,10 +73,21 @@
   --border: rgba(27, 61, 47, 0.12);
 }
 
+html {
+  background-color: #2c5236;
+}
+
 html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+}
+
+html,
+body,
+#__next {
+  min-height: 100%;
+  min-height: 100dvh;
 }
 
 body {
@@ -87,6 +98,63 @@ body {
   padding-top: env(safe-area-inset-top);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
+}
+
+/* PWA installée : plein écran, sans cadre beige ni marges latérales */
+@media (display-mode: standalone) {
+  html {
+    background-color: #2c5236;
+  }
+
+  body {
+    padding: 0;
+    background: #ffffff;
+  }
+
+  body:has(.wilder-v2-shell) .site-footer {
+    display: none;
+  }
+
+  .wilder-v2-shell {
+    min-height: 100dvh !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    justify-content: stretch !important;
+  }
+
+  .wilder-v2-card {
+    width: 100% !important;
+    max-width: none !important;
+    border-radius: 0 !important;
+    min-height: 100dvh !important;
+    align-self: stretch !important;
+  }
+
+  .wilder-v2-card:not(:has(.wilder-v2-hero)) {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  .wilder-v2-card:not(:has(.wilder-v2-tabbar)) {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .wilder-v2-hero--tall {
+    height: calc(190px + env(safe-area-inset-top, 0px)) !important;
+    padding-top: calc(16px + env(safe-area-inset-top, 0px)) !important;
+  }
+
+  .wilder-v2-hero--short {
+    height: calc(140px + env(safe-area-inset-top, 0px)) !important;
+    padding-top: calc(15px + env(safe-area-inset-top, 0px)) !important;
+  }
+
+  .wilder-v2-hero-avatar {
+    top: calc(14px + env(safe-area-inset-top, 0px)) !important;
+  }
+
+  .wilder-v2-tabbar {
+    padding-bottom: calc(9px + env(safe-area-inset-bottom, 0px)) !important;
+  }
 }
 
 * {

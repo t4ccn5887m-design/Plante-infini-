@@ -231,8 +231,8 @@ export default function ResultatScanScreen({
   if (!discovery) return null;
 
   return (
-    <div style={screenWrap} className="screen-enter-fast">
-      <div style={cardWrap}>
+    <div style={screenWrap} className="wilder-v2-shell screen-enter-fast">
+      <div className="wilder-v2-card" style={cardWrap}>
         <div style={{ position: "relative", background: COLORS.greenTint }}>
           {photoSrc ? (
             <img

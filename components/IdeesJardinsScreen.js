@@ -309,8 +309,8 @@ export default function IdeesJardinsScreen({
   };
 
   return (
-    <div style={screenWrap} className="screen-enter-fast">
-      <div style={cardWrap}>
+    <div style={screenWrap} className="wilder-v2-shell screen-enter-fast">
+      <div className="wilder-v2-card" style={cardWrap}>
         <div
           style={{
             padding: "15px 16px 10px",

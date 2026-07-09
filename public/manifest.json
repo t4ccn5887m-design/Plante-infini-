@@ -5,8 +5,8 @@
   "description": "Explorez la nature autour de vous",
   "start_url": "/?source=pwa",
   "display": "standalone",
-  "background_color": "#1B3A2D",
-  "theme_color": "#1B3A2D",
+  "background_color": "#FFFFFF",
+  "theme_color": "#2C5236",
   "orientation": "portrait-primary",
   "icons": [
     {
