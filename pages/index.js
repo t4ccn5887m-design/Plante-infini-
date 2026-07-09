@@ -68,6 +68,7 @@ import MesScansScreen from "@/components/MesScansScreen";
 import ResultatScanScreen from "@/components/ResultatScanScreen";
 import CataloguePepiniereScreen from "@/components/CataloguePepiniereScreen";
 import IdeesJardinsScreen from "@/components/IdeesJardinsScreen";
+import ApercuBriefScreen from "@/components/ApercuBriefScreen";
 import { buildDailySpeciesViewModel, buildDailySpeciesAnalysisData } from "@/lib/dailySpecies";
 import { DailySpeciesHero, DiscoveryHeroPhoto } from "@/components/DiscoveryPhotoThumb";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
@@ -423,6 +424,11 @@ export default function Wilder() {
   const openIdeesJardins = useCallback(() => {
     setReturnScreen("home");
     setScreen("idees-jardins");
+  }, []);
+
+  const openBrief = useCallback(() => {
+    setReturnScreen("home");
+    setScreen("brief");
   }, []);
 
   const openPaletteDetail = useCallback((palette) => {
@@ -1213,7 +1219,7 @@ export default function Wilder() {
           onNavigateCatalogue={openCatalogue}
           onNavigateIdeesJardins={openIdeesJardins}
           onScan={() => startScan("home")}
-          onOpenBrief={() => {}}
+          onOpenBrief={openBrief}
           gardenRefreshTick={homeGardenRefreshTick}
         />
         {confettiOverlay}
@@ -1269,6 +1275,18 @@ export default function Wilder() {
           onBack={() => setScreen(returnScreen || "home")}
           onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
         />
+      </>
+    );
+  }
+
+  /* ── APERÇU DU BRIEF ── */
+  if (screen === "brief") {
+    return (
+      <>
+        <Head>
+          <title>{t("brief.title")} — Wilder</title>
+        </Head>
+        <ApercuBriefScreen t={t} onBack={() => setScreen(returnScreen || "home")} />
       </>
     );
   }
