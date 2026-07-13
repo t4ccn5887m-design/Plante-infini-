@@ -55,7 +55,6 @@ import {
   subscribeToAuthSession,
 } from "@/lib/cloudSync";
 import { logPersistenceBootState } from "@/lib/persistenceBootLog";
-import SignupPromptBanner from "@/components/SignupPromptBanner";
 import FeatureGateModal from "@/components/FeatureGateModal";
 import { useGuestAccount } from "@/hooks/useGuestAccount";
 import WilderWrapped from "@/components/WilderWrapped";
@@ -456,10 +455,6 @@ export default function Wilder() {
     pendingGuestActionRef.current = null;
     if (fn) fn();
   }, [refreshGuestAccount]);
-
-  const openSignupFromBanner = useCallback(() => {
-    openFeatureGateModal(null, "feature_gate.saves_message");
-  }, [openFeatureGateModal]);
 
   const gateGuestShare = useCallback(() => {
     if (!isGuest) return false;
