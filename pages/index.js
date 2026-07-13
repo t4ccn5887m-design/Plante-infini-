@@ -7,9 +7,6 @@ import {
   getLocale,
   getRarityLabel,
   getTypeLabel,
-  saveLang,
-  SUPPORTED_LANGS,
-  LANG_LABELS,
 } from "@/lib/i18n";
 import {
   BADGE_DEFS,
@@ -22,15 +19,8 @@ import {
 } from "@/lib/badges";
 import { playBadgeUnlockSound, playDiscoverySound, warmUpSounds } from "@/lib/sounds";
 import AnalyzeLoadingScreen from "@/components/AnalyzeLoadingScreen";
-import DiscoveryAnalysisSections, {
-  discoveryToAnalysisData,
-  extractSummarySentence,
-} from "@/components/DiscoveryAnalysisSections";
-import DiscoveryResultActions from "@/components/DiscoveryResultActions";
-import DiscoveryFunFact from "@/components/DiscoveryFunFact";
 import { shareDiscovery } from "@/lib/share";
 import { computeStats } from "@/lib/stats";
-import { isHeritageType } from "@/lib/categories";
 import OnboardingScreen from "@/components/OnboardingScreen";
 import WelcomeSlidesScreen from "@/components/WelcomeSlidesScreen";
 import EntryChoiceScreen from "@/components/EntryChoiceScreen";
@@ -47,7 +37,6 @@ import {
 import { isPermanentAuthUser } from "@/lib/authUser";
 import {
   bootstrapCloudSync,
-  deleteDiscoveryFromCloud,
   ensureCloudAuth,
   flushPendingSync,
   getCloudSession,
@@ -57,9 +46,6 @@ import {
 import { logPersistenceBootState } from "@/lib/persistenceBootLog";
 import FeatureGateModal from "@/components/FeatureGateModal";
 import { useGuestAccount } from "@/hooks/useGuestAccount";
-import WilderWrapped from "@/components/WilderWrapped";
-import BiodexCollection from "@/components/BiodexCollection";
-import CloudAccountCard from "@/components/CloudAccountCard";
 import PaletteListScreen from "@/components/PaletteListScreen";
 import PaletteDetailScreen from "@/components/PaletteDetailScreen";
 import MonJardinScreen from "@/components/MonJardinScreen";
@@ -68,10 +54,7 @@ import ResultatScanScreen from "@/components/ResultatScanScreen";
 import CataloguePepiniereScreen from "@/components/CataloguePepiniereScreen";
 import IdeesJardinsScreen from "@/components/IdeesJardinsScreen";
 import ApercuBriefScreen from "@/components/ApercuBriefScreen";
-import { DiscoveryHeroPhoto } from "@/components/DiscoveryPhotoThumb";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
-import Logo from "@/components/Logo";
-import { getWrappedYear } from "@/lib/wrapped";
 import { recordNatureActivity } from "@/lib/natureStreak";
 import {
   scheduleInstallGuideAfterFirstScan,
@@ -94,7 +77,6 @@ import {
   saveDiscoveries,
 } from "@/lib/discoveriesStorage";
 import { persistDiscoveries } from "@/lib/persistDiscovery";
-import { removeDiscoveryById } from "@/lib/removeDiscovery";
 import { getDiscoveryPhotoUrl } from "@/lib/discoveryPhoto";
 import { resolveScanBackScreen } from "@/lib/themes";
 
@@ -110,19 +92,6 @@ async function parseApiResponse(res) {
   } catch {
     console.error("[Wilder] Réponse API non-JSON:", text.slice(0, 300));
     return { data: null, parseError: true };
-  }
-}
-
-function formatDate(iso, locale) {
-  if (!iso) return "—";
-  try {
-    return new Date(iso).toLocaleDateString(locale, {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  } catch {
-    return "—";
   }
 }
 
@@ -174,16 +143,6 @@ function IconAlbums({ size = 20, color = "currentColor" }) {
   );
 }
 
-function IconShare({ size = 20, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-      <polyline points="16 6 12 2 8 6" />
-      <line x1="12" y1="2" x2="12" y2="15" />
-    </svg>
-  );
-}
-
 function IconSun({ size = 20, color = "currentColor" }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
@@ -224,37 +183,6 @@ function Viewfinder({ viewfinderRef, label }) {
   );
 }
 
-function ShareButton({ discovery, t, lang, onBeforeShare }) {
-  const [sharing, setSharing] = useState(false);
-  const tr = useMemo(() => createT(lang), [lang]);
-  const typeLbl = (type) => getTypeLabel(tr, type);
-  const rarityLbl = (r) => getRarityLabel(tr, r);
-
-  const handleShare = async () => {
-    if (onBeforeShare?.()) return;
-    setSharing(true);
-    try {
-      await shareDiscovery(discovery, t, typeLbl, rarityLbl);
-    } catch {
-      /* user cancelled */
-    } finally {
-      setSharing(false);
-    }
-  };
-
-  return (
-    <button
-      type="button"
-      className="btn-share"
-      onClick={handleShare}
-      disabled={sharing}
-    >
-      <IconShare size={18} />
-      {sharing ? t("discovery.share_generating") : t("discovery.share")}
-    </button>
-  );
-}
-
 function BadgeUnlockToast({ badge, t, onClose, onViewTrophies }) {
   return (
     <div className="badge-unlock-toast" role="alert">
@@ -273,66 +201,6 @@ function BadgeUnlockToast({ badge, t, onClose, onViewTrophies }) {
   );
 }
 
-function DiscoveryBody({
-  data,
-  discovery,
-  showNewBadge,
-  showFirstDiscoveryBadge,
-  t,
-  lang,
-  onShare,
-  showInlineShare,
-  onShareGate,
-  children,
-}) {
-  const summary = extractSummarySentence(data?.description);
-
-  return (
-    <>
-      <div className="discovery-intro-panel">
-        {showFirstDiscoveryBadge && (
-          <span className="discovery-first-badge">{t("first_discovery.badge")}</span>
-        )}
-        {showNewBadge && !showFirstDiscoveryBadge && (
-          <span className="discovery-new-badge">{t("discovery.new")}</span>
-        )}
-        <h1 className="discovery-name">{data.nom}</h1>
-        {data.nom_latin && <p className="discovery-latin">{data.nom_latin}</p>}
-
-        <div className="discovery-tags-row">
-          {data.type && (
-            <span className={`discovery-type-chip${isHeritageType(data.type) ? " discovery-type-chip-heritage" : ""}`}>
-              {getTypeLabel(t, data.type)}
-            </span>
-          )}
-        </div>
-
-        {summary && <p className="discovery-summary">{summary}</p>}
-      </div>
-
-      <DiscoveryFunFact data={data} t={t} />
-
-      <DiscoveryAnalysisSections
-        data={data}
-        t={t}
-        lang={lang}
-        discoveryId={discovery?.id}
-      />
-
-      {discovery && onShare !== false && showInlineShare !== false && (
-        <ShareButton
-          discovery={discovery}
-          t={t}
-          lang={lang}
-          onBeforeShare={onShareGate ? () => onShareGate() : undefined}
-        />
-      )}
-
-      {children}
-    </>
-  );
-}
-
 export default function Wilder() {
   const [screen, setScreen] = useState("home");
   const [captured, setCaptured] = useState(null);
@@ -342,7 +210,6 @@ export default function Wilder() {
   const [camReady, setCamReady] = useState(false);
   const [discoveries, setDiscoveries] = useState([]);
   const [albums, setAlbums] = useState([]);
-  const [biodexAnim, setBiodexAnim] = useState(true);
   const [camError, setCamError] = useState("");
   const [camLoading, setCamLoading] = useState(false);
   const [camZoom, setCamZoom] = useState(1);
@@ -350,15 +217,9 @@ export default function Wilder() {
   const [needsEntryChoice, setNeedsEntryChoice] = useState(false);
   const [authBootState, setAuthBootState] = useState("loading");
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
-  const [viewingDiscovery, setViewingDiscovery] = useState(null);
   const [returnScreen, setReturnScreen] = useState("home");
   const [activePaletteId, setActivePaletteId] = useState(null);
-  const [lang, setLangState] = useState(() => detectLang());
-  const setLang = useCallback((code) => {
-    if (!SUPPORTED_LANGS.includes(code)) return;
-    saveLang(code);
-    setLangState(code);
-  }, []);
+  const [lang] = useState(() => detectLang());
   const [theme, setTheme] = useState("light");
   const [showConfetti, setShowConfetti] = useState(false);
   const [showFirstDiscoveryBadge, setShowFirstDiscoveryBadge] = useState(false);
@@ -756,14 +617,6 @@ export default function Wilder() {
     if (screen === "camera" && camReady) attachStreamToVideo();
   }, [screen, camReady, attachStreamToVideo]);
 
-  useEffect(() => {
-    if (screen === "result") {
-      setBiodexAnim(true);
-      const t = setTimeout(() => setBiodexAnim(false), 900);
-      return () => clearTimeout(t);
-    }
-  }, [screen, result?.nom]);
-
   const clearScanSession = useCallback(() => {
     setResult(null);
     setCaptured(null);
@@ -1037,56 +890,6 @@ export default function Wilder() {
 
   const slogan = t("slogan");
   const pageTitle = `Wilder — ${slogan}`;
-
-  const openDiscoveryDetail = useCallback((d, from) => {
-    const discovery = typeof d === "string" ? discoveries.find((x) => x.id === d) : d;
-    if (!discovery) return;
-    setViewingDiscovery(discovery);
-    setReturnScreen(from);
-    setScreen("discovery-detail");
-  }, [discoveries]);
-
-  const swipeDeleteLabels = useMemo(
-    () => ({
-      deleteLabel: t("discovery.delete_btn"),
-      confirmMessage: t("home.delete_find_confirm"),
-      cancelLabel: t("albums.cancel"),
-      confirmLabel: t("discovery.delete_action"),
-    }),
-    [t]
-  );
-
-  const handleDeleteDiscovery = useCallback(
-    (discoveryId) => {
-      const result = removeDiscoveryById(discoveryId, discoveries, albums);
-      if (!result) return;
-      saveDiscoveries(result.discoveries);
-      saveAlbums(result.albums);
-      setDiscoveries(result.discoveries);
-      setAlbums(result.albums);
-      if (viewingDiscovery?.id === discoveryId) {
-        setViewingDiscovery(null);
-        setScreen(returnScreen || "home");
-      }
-      if (currentDiscovery?.id === discoveryId) {
-        setCurrentDiscovery(null);
-        if (screen === "result") {
-          setResult(null);
-          setCaptured(null);
-          setScreen(returnScreen || "home");
-        }
-      }
-      deleteDiscoveryFromCloud(discoveryId).catch((err) => {
-        console.error("[Wilder] deleteDiscoveryFromCloud:", err);
-      });
-    },
-    [discoveries, albums, viewingDiscovery, currentDiscovery, screen, returnScreen]
-  );
-
-  const handleDeleteCurrentDiscovery = useCallback(() => {
-    if (!currentDiscovery?.id) return;
-    handleDeleteDiscovery(currentDiscovery.id);
-  }, [currentDiscovery?.id, handleDeleteDiscovery]);
 
   const confettiOverlay = (
     <>
@@ -1485,64 +1288,6 @@ export default function Wilder() {
     );
   }
 
-  /* ── DISCOVERY DETAIL ── */
-  if (screen === "discovery-detail" && viewingDiscovery) {
-    const d = viewingDiscovery;
-    const data = {
-      nom: d.nom,
-      nom_latin: d.nom_latin,
-      type: d.type,
-      rarete: d.rarete,
-      ...discoveryToAnalysisData(d),
-    };
-
-    return (
-      <>
-        <Head>
-          <title>{d.nom} — Wilder</title>
-        </Head>
-        <div className="discovery-screen discovery-screen--detail screen-enter-fast">
-          <div className="discovery-hero">
-            <DiscoveryHeroPhoto discovery={d} nom={d.nom} fallbackEmoji="🌿" />
-          </div>
-
-          <div className="discovery-body discovery-body--detail">
-            <button
-              type="button"
-              className="btn-secondary"
-              style={{ marginBottom: "1rem", padding: "0.5rem 0.85rem" }}
-              onClick={() => {
-                setViewingDiscovery(null);
-                setScreen(returnScreen || "home");
-              }}
-            >
-              <IconBack size={16} /> {t("discovery.back")}
-            </button>
-
-            <DiscoveryBody data={data} discovery={d} showNewBadge={false} showInlineShare={false} t={t} lang={lang}>
-              <p style={{ fontSize: "0.82rem", color: "var(--text-muted)", marginTop: "0.5rem" }}>
-                {t("discovery.discovered_on")} {formatDate(d.discoveredAt, locale)}
-              </p>
-            </DiscoveryBody>
-
-            <DiscoveryResultActions
-              discovery={d}
-              t={t}
-              lang={lang}
-              onBeforeShare={isGuest ? gateGuestShare : undefined}
-              onScanAgain={() => {
-                setRescanDiscoveryId(d.id);
-                startScan(returnScreen || "home");
-              }}
-              onDelete={() => handleDeleteDiscovery(d.id)}
-              deleteLabels={swipeDeleteLabels}
-            />
-          </div>
-        </div>
-      </>
-    );
-  }
-
   /* ── STATS ── */
   if (screen === "stats") {
     const stats = computeStats(discoveries);
@@ -1747,157 +1492,6 @@ export default function Wilder() {
                 </div>
               );
             })}
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  /* ── WRAPPED ── */
-  if (screen === "wrapped") {
-    const wrappedYear = getWrappedYear();
-    return (
-      <>
-        <Head>
-          <title>{t("wrapped.title", { year: wrappedYear })} — Wilder</title>
-        </Head>
-        <div className="wrapped-screen screen-enter with-bottom-nav">
-          <div className="albums-header">
-            <button type="button" className="btn-secondary" style={{ padding: "0.5rem 0.75rem" }} onClick={goHome} aria-label={t("discovery.back")}>
-              <IconBack size={18} />
-            </button>
-            <h1 className="albums-title">{t("wrapped.title", { year: wrappedYear })}</h1>
-          </div>
-          <WilderWrapped discoveries={discoveries} albums={albums} t={t} year={wrappedYear} />
-        </div>
-      </>
-    );
-  }
-
-  /* ── BIODEX ── */
-  if (screen === "biodex") {
-    return (
-      <>
-        <Head>
-          <title>{t("biodex.title")} — Wilder</title>
-        </Head>
-        <div className="biodex-screen screen-enter with-bottom-nav">
-          <div className="albums-header">
-            <button type="button" className="btn-secondary" style={{ padding: "0.5rem 0.75rem" }} onClick={goHome} aria-label={t("discovery.back")}>
-              <IconBack size={18} />
-            </button>
-            <h1 className="albums-title">{t("biodex.title")}</h1>
-          </div>
-          <p className="biodex-subtitle">{t("biodex.subtitle")}</p>
-          <BiodexCollection
-            discoveries={discoveries}
-            t={t}
-            locale={locale}
-            onOpenDiscovery={(entry) => {
-              const full = discoveries.find((d) => d.nom === entry.nom && d.type === entry.type);
-              if (full) openDiscoveryDetail(full, "biodex");
-            }}
-          />
-        </div>
-      </>
-    );
-  }
-
-  /* ── CLOUD ACCOUNT ── */
-  if (screen === "account") {
-    return (
-      <>
-        <Head>
-          <title>{t("cloud.title")} — Wilder</title>
-        </Head>
-        <div className="account-screen screen-enter with-bottom-nav">
-          <div className="albums-header">
-            <button type="button" className="btn-secondary" style={{ padding: "0.5rem 0.75rem" }} onClick={goHome} aria-label={t("discovery.back")}>
-              <IconBack size={18} />
-            </button>
-            <h1 className="albums-title">{t("cloud.title")}</h1>
-          </div>
-          <CloudAccountCard
-            t={t}
-            onDiscoveriesSynced={(items) => setDiscoveries(items)}
-          />
-        </div>
-      </>
-    );
-  }
-
-  /* ── ABOUT ── */
-  if (screen === "about") {
-    return (
-      <>
-        <Head>
-          <title>{t("about.title")} — Wilder</title>
-        </Head>
-        <div className="about-screen screen-enter">
-          <div className="albums-header">
-            <button
-              type="button"
-              className="btn-secondary"
-              style={{ padding: "0.5rem 0.75rem" }}
-              onClick={goHome}
-              aria-label={t("discovery.back")}
-            >
-              <IconBack size={18} />
-            </button>
-            <h1 className="albums-title">{t("about.title")}</h1>
-          </div>
-          <div className="about-content">
-            <div className="about-logo-wrap">
-              <Logo size={96} />
-              <h2>Wilder</h2>
-              <p className="about-tagline">{t("slogan")}</p>
-              <p className="about-version">{t("about.version")}</p>
-            </div>
-            <div className="about-section">
-              <h3>{t("about.vision_title")}</h3>
-              <p>{t("about.vision")}</p>
-              <p>{t("about.vision_highlight")}</p>
-            </div>
-            <div className="about-section">
-              <h3>{t("about.how_title")}</h3>
-              <p>{t("about.how")}</p>
-            </div>
-            <div className="about-section">
-              <h3>{t("about.audience_title")}</h3>
-              <p>{t("about.audience_1")}</p>
-              <p>{t("about.audience_2")}</p>
-              <p>{t("about.audience_3")}</p>
-              <p>{t("about.audience_4")}</p>
-              <p>{t("about.audience_5")}</p>
-            </div>
-            <div className="about-section">
-              <h3>{t("about.mission_title")}</h3>
-              <p>{t("about.mission")}</p>
-            </div>
-            <div className="about-section about-lang-section">
-              <h3>{t("settings.language")}</h3>
-              <p className="about-lang-hint">{t("settings.language_hint")}</p>
-              <div className="about-lang-grid">
-                {SUPPORTED_LANGS.map((code) => (
-                  <button
-                    key={code}
-                    type="button"
-                    className={`about-lang-btn${lang === code ? " active" : ""}`}
-                    onClick={() => setLang(code)}
-                  >
-                    {LANG_LABELS[code] || code}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <a
-              className="btn-primary about-rate-btn"
-              href="https://apps.apple.com/app/wilder"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              ⭐ {t("about.rate")}
-            </a>
           </div>
         </div>
       </>
