@@ -149,15 +149,20 @@ body {
   }
 
   .wilder-v2-tabbar {
-    padding-bottom: calc(9px + env(safe-area-inset-bottom, 0px)) !important;
+    bottom: calc(var(--wilder-tabbar-margin-bottom, 10px) + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: 9px !important;
   }
 
   .wilder-v2-main-layout .wilder-v2-tabbar {
+    left: var(--wilder-tabbar-margin-x, 14px) !important;
+    right: var(--wilder-tabbar-margin-x, 14px) !important;
+    width: auto !important;
     max-width: none !important;
+    transform: none !important;
   }
 }
 
-/* Layout principal — barre fixe en bas */
+/* Layout principal — barre flottante translucide en bas */
 .wilder-v2-main-layout-card {
   position: relative;
 }
@@ -167,18 +172,39 @@ body {
   overflow: auto;
   display: flex;
   flex-direction: column;
-  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  /* Scroll sous la pilule : le contenu passe derrière le verre dépoli */
+  padding-bottom: calc(
+    var(--wilder-tabbar-content-pad, 72px) + env(safe-area-inset-bottom, 0px)
+  );
 }
 
 .wilder-v2-main-layout .wilder-v2-tabbar {
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 0;
+  bottom: calc(var(--wilder-tabbar-margin-bottom, 10px) + env(safe-area-inset-bottom, 0px));
   z-index: 100;
-  width: 100%;
-  max-width: 380px;
+  width: min(
+    calc(100% - 2 * var(--wilder-tabbar-margin-x, 14px)),
+    calc(var(--wilder-tabbar-max-width, 380px) - 2 * var(--wilder-tabbar-margin-x, 14px))
+  );
+  max-width: calc(var(--wilder-tabbar-max-width, 380px) - 2 * var(--wilder-tabbar-margin-x, 14px));
   box-sizing: border-box;
+  border-radius: var(--wilder-tabbar-radius, 24px);
+  box-shadow: var(--wilder-tabbar-shadow, 0 4px 20px rgba(0, 0, 0, 0.12));
+  overflow: visible;
+  /* Repli si backdrop-filter non supporté */
+  background: var(--wilder-tabbar-bg-fallback, rgba(255, 255, 255, 0.96));
+}
+
+@supports (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .wilder-v2-main-layout .wilder-v2-tabbar {
+    background: var(--wilder-tabbar-bg-glass, rgba(255, 255, 255, 0.72));
+    backdrop-filter: blur(var(--wilder-tabbar-blur, 20px));
+    -webkit-backdrop-filter: blur(var(--wilder-tabbar-blur, 20px));
+  }
 }
 
 /* Wilder v2 — typographie (Nunito Sans corps, Quicksand titres) */

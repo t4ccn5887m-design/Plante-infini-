@@ -88,8 +88,6 @@ export default function WilderTabBar({
       style={{
         display: "flex",
         alignItems: "flex-end",
-        borderTop: `0.5px solid ${COLORS.border}`,
-        background: COLORS.screen,
         padding: "7px 3px 9px",
       }}
     >

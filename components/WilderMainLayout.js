@@ -1,5 +1,17 @@
 import WilderTabBar from "@/components/WilderTabBar";
-import { WILDER_COLORS } from "@/lib/themes";
+import { WILDER_COLORS, WILDER_TAB_BAR } from "@/lib/themes";
+
+const tabBarCssVars = {
+  "--wilder-tabbar-margin-x": `${WILDER_TAB_BAR.marginX}px`,
+  "--wilder-tabbar-margin-bottom": `${WILDER_TAB_BAR.marginBottom}px`,
+  "--wilder-tabbar-radius": `${WILDER_TAB_BAR.borderRadius}px`,
+  "--wilder-tabbar-shadow": WILDER_TAB_BAR.shadow,
+  "--wilder-tabbar-bg-glass": WILDER_TAB_BAR.bgGlass,
+  "--wilder-tabbar-bg-fallback": WILDER_TAB_BAR.bgFallback,
+  "--wilder-tabbar-blur": WILDER_TAB_BAR.blur,
+  "--wilder-tabbar-content-pad": `${WILDER_TAB_BAR.contentPaddingBottom}px`,
+  "--wilder-tabbar-max-width": `${WILDER_TAB_BAR.maxWidth}px`,
+};
 
 const screenWrap = {
   minHeight: "100vh",
@@ -33,7 +45,10 @@ export default function WilderMainLayout({
   className = "",
 }) {
   return (
-    <div className={`wilder-v2-shell wilder-v2-main-layout ${className}`.trim()} style={screenWrap}>
+    <div
+      className={`wilder-v2-shell wilder-v2-main-layout ${className}`.trim()}
+      style={{ ...screenWrap, ...tabBarCssVars }}
+    >
       <div className="wilder-v2-card wilder-v2-main-layout-card" style={cardWrap}>
         <div className="wilder-v2-main-layout-content">{children}</div>
         <WilderTabBar
