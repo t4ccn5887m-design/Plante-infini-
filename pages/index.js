@@ -792,10 +792,6 @@ export default function Wilder() {
           await refreshGuestAccount();
         }}
         onAccountCreated={handleSignupAccountCreated}
-        onNavigatePalette={openMaPalette}
-        onNavigateMesScans={openMesScans}
-        onNavigateCatalogue={openCatalogue}
-        onNavigateIdeesJardins={openIdeesJardins}
       />
     ),
     [
@@ -806,10 +802,6 @@ export default function Wilder() {
       accountOnHero,
       refreshGuestAccount,
       handleSignupAccountCreated,
-      openMaPalette,
-      openMesScans,
-      openCatalogue,
-      openIdeesJardins,
     ]
   );
 

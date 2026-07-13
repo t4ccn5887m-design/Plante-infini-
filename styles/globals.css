@@ -1112,6 +1112,361 @@ video {
   margin: 0 0.05rem;
 }
 
+/* ── Compte Wilder v2 (menu + auth + profil) ── */
+
+.wilder-account-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  right: 0;
+  left: auto;
+  z-index: 9999;
+  min-width: 220px;
+  padding: 0.35rem 0;
+  border: 0.5px solid #e6e2d8;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 8px 28px rgba(30, 43, 35, 0.12);
+  animation: fadeIn 0.15s ease-out;
+}
+
+.wilder-v2-main-layout-account .wilder-account-menu-dropdown {
+  right: 0;
+  left: auto;
+}
+
+.wilder-account-menu-item {
+  display: block;
+  width: 100%;
+  padding: 0.72rem 1rem;
+  border: none;
+  background: transparent;
+  color: #1e2b23;
+  font-family: var(--font-body, "Nunito Sans", system-ui, sans-serif);
+  font-size: 0.88rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.wilder-account-menu-item:hover {
+  background: #f2f5ef;
+}
+
+.wilder-account-menu-item--primary {
+  font-weight: 700;
+  color: #2f5a3c;
+}
+
+.wilder-account-menu-item--muted {
+  color: #8b9084;
+  font-size: 0.84rem;
+}
+
+.wilder-account-menu-separator {
+  height: 1px;
+  margin: 0.25rem 0.75rem;
+  background: #e6e2d8;
+}
+
+.wilder-account-menu-user-label {
+  margin: 0;
+  padding: 0.65rem 1rem 0.45rem;
+  color: #1e2b23;
+  font-family: var(--font-title, "Quicksand", system-ui, sans-serif);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.3;
+  pointer-events: none;
+}
+
+.wilder-account-menu-legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem 0.25rem;
+  padding: 0.35rem 0.75rem 0.55rem;
+  font-size: 0.62rem;
+  line-height: 1.35;
+}
+
+.wilder-account-menu-legal-link {
+  color: #8b9084;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.wilder-account-menu-legal-link:hover {
+  color: #4c554a;
+}
+
+.wilder-account-menu-legal-sep {
+  color: #cbc6b8;
+  margin: 0 0.05rem;
+}
+
+.wilder-auth-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(30, 43, 35, 0.45);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.wilder-auth-modal {
+  width: calc(100% - 2rem);
+  max-width: 22rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 1.35rem 1.25rem 1.5rem;
+  border: 0.5px solid #e6e2d8;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 12px 40px rgba(30, 43, 35, 0.14);
+  animation: slideUp 0.25s ease-out;
+}
+
+.wilder-auth-modal .premium-auth-title {
+  margin: 0 0 0.45rem;
+  font-family: var(--font-title, "Quicksand", system-ui, sans-serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #1e2b23;
+  text-align: center;
+}
+
+.wilder-auth-modal .premium-auth-subtitle {
+  margin: 0 0 1.15rem;
+  font-family: var(--font-body, "Nunito Sans", system-ui, sans-serif);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: #4c554a;
+  text-align: center;
+}
+
+.wilder-auth-modal .premium-auth-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.wilder-auth-modal .premium-auth-tab {
+  flex: 1;
+  padding: 0.55rem;
+  border-radius: 10px;
+  border: 0.5px solid #cbc6b8;
+  background: #ffffff;
+  color: #4c554a;
+  font-family: var(--font-body, "Nunito Sans", system-ui, sans-serif);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.wilder-auth-modal .premium-auth-tab.active {
+  background: #e7efe6;
+  border-color: #3c6b47;
+  color: #2f5a3c;
+}
+
+.wilder-auth-modal .premium-auth-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 0.5px solid #cbc6b8;
+  background: #ffffff;
+  color: #1e2b23;
+  font-family: var(--font-body, "Nunito Sans", system-ui, sans-serif);
+  font-size: 1rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.wilder-auth-modal .premium-auth-input::placeholder {
+  color: #8b9084;
+}
+
+.wilder-auth-modal .premium-auth-input:focus {
+  outline: none;
+  border-color: #3c6b47;
+  box-shadow: 0 0 0 3px rgba(47, 90, 60, 0.12);
+}
+
+.wilder-auth-modal .premium-auth-forgot-link {
+  align-self: flex-end;
+  margin: -0.15rem 0 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #4c554a;
+  font-family: var(--font-body, "Nunito Sans", system-ui, sans-serif);
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.3;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.wilder-auth-modal .premium-auth-forgot-link:hover {
+  color: #2f5a3c;
+}
+
+.wilder-auth-modal .premium-auth-remember {
+  color: #4c554a;
+  font-size: 0.85rem;
+}
+
+.wilder-auth-modal .premium-auth-submit {
+  min-height: 3rem;
+  border: none;
+  border-radius: 13px;
+  padding: 13px 24px;
+  background: #2f5a3c;
+  color: #ffffff;
+  box-shadow: none;
+  font-family: var(--font-body, "Nunito Sans", system-ui, sans-serif);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.wilder-auth-modal .premium-auth-submit:hover:not(:disabled) {
+  background: #3c6b47;
+}
+
+.wilder-auth-modal .premium-auth-submit:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.wilder-auth-modal .premium-auth-submit:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.wilder-auth-modal .premium-auth-error {
+  margin: 0.75rem 0 0;
+  color: #9b3b3b;
+  font-size: 0.88rem;
+}
+
+.wilder-auth-modal .premium-auth-success {
+  margin: 0.75rem 0 0;
+  color: #3c6b47;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.wilder-account-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 130;
+  background: rgba(30, 43, 35, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.wilder-account-sheet {
+  width: 100%;
+  max-width: 480px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 1.25rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom));
+  border-radius: 20px 20px 0 0;
+  background: #ffffff;
+  border-top: 0.5px solid #e6e2d8;
+  animation: slideUp 0.25s ease-out;
+}
+
+.wilder-account-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.wilder-account-sheet-head h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: #1e2b23;
+}
+
+.wilder-account-sheet-close {
+  width: 32px;
+  height: 32px;
+  border: 0.5px solid #e6e2d8;
+  border-radius: 50%;
+  background: #f2f5ef;
+  color: #4c554a;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.wilder-account-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.wilder-account-field span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8b9084;
+}
+
+.wilder-account-field input,
+.wilder-account-field textarea {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 0.5px solid #cbc6b8;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1e2b23;
+  font-family: var(--font-body, "Nunito Sans", system-ui, sans-serif);
+  font-size: 0.92rem;
+}
+
+.wilder-account-input-readonly {
+  opacity: 0.75;
+  background: #f2f5ef;
+}
+
+.wilder-account-btn-primary {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+  min-height: 3rem;
+  border: none;
+  border-radius: 13px;
+  padding: 13px 24px;
+  background: #2f5a3c;
+  color: #ffffff;
+  font-family: var(--font-body, "Nunito Sans", system-ui, sans-serif);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.wilder-account-btn-primary:hover {
+  background: #3c6b47;
+}
+
+.wilder-account-btn-primary:active {
+  transform: scale(0.98);
+}
+
 .wilder-home-brand {
   display: flex;
   align-items: center;

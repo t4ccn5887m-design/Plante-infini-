@@ -8,25 +8,27 @@ import { shareWilderApp } from "@/lib/share";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const LEGAL_LINKS = [
-  { href: LEGAL_ROUTES.mentions, labelKey: "legal_mentions" },
-  { href: LEGAL_ROUTES.cgu, labelKey: "legal_cgu" },
-  { href: LEGAL_ROUTES.cgv, labelKey: "legal_cgv" },
-  { href: LEGAL_ROUTES.privacy, labelKey: "legal_privacy" },
+  { href: LEGAL_ROUTES.mentions, labelKey: "entry_choice.legal_mentions" },
+  { href: LEGAL_ROUTES.cgu, labelKey: "entry_choice.legal_cgu" },
+  { href: LEGAL_ROUTES.cgv, labelKey: "entry_choice.legal_cgv" },
+  { href: LEGAL_ROUTES.privacy, labelKey: "entry_choice.legal_privacy" },
 ];
 
 function ProfileSheet({ title, onClose, children }) {
   return (
-    <div className="premium-menu-sheet-overlay" onClick={onClose} role="presentation">
+    <div className="wilder-account-sheet-overlay" onClick={onClose} role="presentation">
       <div
-        className="premium-menu-sheet"
+        className="wilder-account-sheet"
         role="dialog"
         aria-modal="true"
         aria-labelledby="account-menu-profile-title"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="premium-menu-sheet-head">
-          <h3 id="account-menu-profile-title">{title}</h3>
-          <button type="button" className="premium-menu-sheet-close" onClick={onClose} aria-label="Fermer">
+        <div className="wilder-account-sheet-head">
+          <h3 id="account-menu-profile-title" className="wilder-v2-title-section">
+            {title}
+          </h3>
+          <button type="button" className="wilder-account-sheet-close" onClick={onClose} aria-label="Fermer">
             ×
           </button>
         </div>
@@ -44,10 +46,6 @@ export default function AccountMenu({
   onHero = false,
   onSignOut,
   onAccountCreated,
-  onNavigatePalette,
-  onNavigateMesScans,
-  onNavigateCatalogue,
-  onNavigateIdeesJardins,
 }) {
   const [open, setOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
@@ -106,26 +104,6 @@ export default function AccountMenu({
     }
   };
 
-  const handleNavigatePalette = () => {
-    closeMenu();
-    onNavigatePalette?.();
-  };
-
-  const handleNavigateMesScans = () => {
-    closeMenu();
-    onNavigateMesScans?.();
-  };
-
-  const handleNavigateCatalogue = () => {
-    closeMenu();
-    onNavigateCatalogue?.();
-  };
-
-  const handleNavigateIdeesJardins = () => {
-    closeMenu();
-    onNavigateIdeesJardins?.();
-  };
-
   const authTitleKey =
     authMode === "signin" ? "account_menu.sign_in_title" : "signup_prompt.auth_title";
   const authSubtitleKey =
@@ -159,13 +137,13 @@ export default function AccountMenu({
         </button>
 
         {open && (
-          <div className="premium-menu-dropdown account-menu-dropdown" role="menu">
+          <div className="wilder-account-menu-dropdown" role="menu">
             {isLoggedIn ? (
               <>
-                <p className="account-menu-user-label">{userEmail}</p>
+                <p className="wilder-account-menu-user-label">{userEmail}</p>
                 <button
                   type="button"
-                  className="premium-menu-item"
+                  className="wilder-account-menu-item"
                   role="menuitem"
                   onClick={handleOpenProfile}
                 >
@@ -173,19 +151,19 @@ export default function AccountMenu({
                 </button>
                 <button
                   type="button"
-                  className="premium-menu-item premium-menu-item--muted"
+                  className="wilder-account-menu-item wilder-account-menu-item--muted"
                   role="menuitem"
                   onClick={handleSignOut}
                 >
                   {t("account_menu.sign_out")}
                 </button>
-                <div className="premium-menu-separator" aria-hidden="true" />
+                <div className="wilder-account-menu-separator" aria-hidden="true" />
               </>
             ) : (
               <>
                 <button
                   type="button"
-                  className="premium-menu-item account-menu-item--primary"
+                  className="wilder-account-menu-item wilder-account-menu-item--primary"
                   role="menuitem"
                   onClick={() => openAuth("signup")}
                 >
@@ -193,54 +171,24 @@ export default function AccountMenu({
                 </button>
                 <button
                   type="button"
-                  className="premium-menu-item"
+                  className="wilder-account-menu-item"
                   role="menuitem"
                   onClick={() => openAuth("signin")}
                 >
                   {t("account_menu.sign_in")}
                 </button>
-                <div className="premium-menu-separator" aria-hidden="true" />
+                <div className="wilder-account-menu-separator" aria-hidden="true" />
               </>
             )}
-            <button type="button" className="premium-menu-item" role="menuitem" onClick={handleShare}>
+            <button type="button" className="wilder-account-menu-item" role="menuitem" onClick={handleShare}>
               {t("home.share_pill")}
             </button>
-            {onNavigateMesScans && (
-              <button type="button" className="premium-menu-item" role="menuitem" onClick={handleNavigateMesScans}>
-                Mes scans
-              </button>
-            )}
-            {onNavigateCatalogue && (
-              <button
-                type="button"
-                className="premium-menu-item"
-                role="menuitem"
-                onClick={handleNavigateCatalogue}
-              >
-                {t("catalogue.menu_label")}
-              </button>
-            )}
-            {onNavigateIdeesJardins && (
-              <button
-                type="button"
-                className="premium-menu-item"
-                role="menuitem"
-                onClick={handleNavigateIdeesJardins}
-              >
-                {t("idees_jardins.menu_label")}
-              </button>
-            )}
-            {onNavigatePalette && (
-              <button type="button" className="premium-menu-item" role="menuitem" onClick={handleNavigatePalette}>
-                {t("account_menu.nav_palette")}
-              </button>
-            )}
-            <div className="premium-menu-separator" aria-hidden="true" />
-            <nav className="account-menu-legal" aria-label={t("legal_nav")}>
+            <div className="wilder-account-menu-separator" aria-hidden="true" />
+            <nav className="wilder-account-menu-legal" aria-label={t("entry_choice.legal_nav")}>
               {LEGAL_LINKS.map((link, i) => (
-                <span key={link.href} className="account-menu-legal-item">
-                  {i > 0 && <span className="account-menu-legal-sep" aria-hidden="true">·</span>}
-                  <Link href={link.href} className="account-menu-legal-link" onClick={closeMenu}>
+                <span key={link.href} className="wilder-account-menu-legal-item">
+                  {i > 0 && <span className="wilder-account-menu-legal-sep" aria-hidden="true">·</span>}
+                  <Link href={link.href} className="wilder-account-menu-legal-link" onClick={closeMenu}>
                     {t(link.labelKey)}
                   </Link>
                 </span>
@@ -252,9 +200,9 @@ export default function AccountMenu({
 
       {authOpen &&
         createPortal(
-          <div className="modal-overlay signup-prompt-modal-overlay" onClick={closeAuth}>
+          <div className="wilder-auth-modal-overlay" onClick={closeAuth}>
             <div
-              className="modal-sheet signup-prompt-modal"
+              className="wilder-auth-modal"
               onClick={(e) => e.stopPropagation()}
               role="dialog"
               aria-modal="true"
@@ -275,7 +223,7 @@ export default function AccountMenu({
       {profileOpen &&
         createPortal(
           <ProfileSheet title={t("premium_menu.profile")} onClose={() => setProfileOpen(false)}>
-            <label className="premium-menu-field">
+            <label className="wilder-account-field">
               <span>{t("premium_menu.display_name")}</span>
               <input
                 type="text"
@@ -284,11 +232,11 @@ export default function AccountMenu({
                 placeholder={t("premium_menu.display_name_placeholder")}
               />
             </label>
-            <label className="premium-menu-field">
+            <label className="wilder-account-field">
               <span>{t("cloud.email")}</span>
-              <input type="email" value={userEmail || ""} readOnly className="premium-menu-input-readonly" />
+              <input type="email" value={userEmail || ""} readOnly className="wilder-account-input-readonly" />
             </label>
-            <button type="button" className="btn-primary premium-menu-save" onClick={handleSaveProfile}>
+            <button type="button" className="wilder-account-btn-primary" onClick={handleSaveProfile}>
               {t("premium_menu.save")}
             </button>
           </ProfileSheet>,
