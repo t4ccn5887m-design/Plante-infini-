@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Head from "next/head";
-import Confetti from "@/components/Confetti";
 import {
   createT,
   detectLang,
@@ -8,19 +7,8 @@ import {
   getRarityLabel,
   getTypeLabel,
 } from "@/lib/i18n";
-import {
-  BADGE_DEFS,
-  computeUnlockedBadgeIds,
-  getBadgeProgress,
-  getNewBadgeIds,
-  isBadgeUnlocked,
-  loadSeenBadges,
-  saveSeenBadges,
-} from "@/lib/badges";
-import { playBadgeUnlockSound, playDiscoverySound, warmUpSounds } from "@/lib/sounds";
 import AnalyzeLoadingScreen from "@/components/AnalyzeLoadingScreen";
 import { shareDiscovery } from "@/lib/share";
-import { computeStats } from "@/lib/stats";
 import OnboardingScreen from "@/components/OnboardingScreen";
 import WelcomeSlidesScreen from "@/components/WelcomeSlidesScreen";
 import EntryChoiceScreen from "@/components/EntryChoiceScreen";
@@ -55,7 +43,6 @@ import CataloguePepiniereScreen from "@/components/CataloguePepiniereScreen";
 import IdeesJardinsScreen from "@/components/IdeesJardinsScreen";
 import ApercuBriefScreen from "@/components/ApercuBriefScreen";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
-import { recordNatureActivity } from "@/lib/natureStreak";
 import {
   scheduleInstallGuideAfterFirstScan,
   tryConsumeInstallGuideAutoShow,
@@ -104,10 +91,6 @@ function loadTheme() {
   return localStorage.getItem(THEME_KEY) || "dark";
 }
 
-function saveTheme(theme) {
-  localStorage.setItem(THEME_KEY, theme);
-}
-
 function applyTheme(theme) {
   if (typeof document !== "undefined") {
     document.documentElement.setAttribute("data-theme", theme);
@@ -143,60 +126,11 @@ function IconAlbums({ size = 20, color = "currentColor" }) {
   );
 }
 
-function IconSun({ size = 20, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-    </svg>
-  );
-}
-
-function IconMoon({ size = 20, color = "currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-    </svg>
-  );
-}
-
-function ThemeToggle({ theme, onToggle, t, className = "" }) {
-  const isDark = theme === "dark";
-  return (
-    <button
-      type="button"
-      className={`theme-toggle${className ? ` ${className}` : ""}`}
-      onClick={onToggle}
-      aria-label={isDark ? t("home.theme_light") : t("home.theme_dark")}
-    >
-      {isDark ? <IconSun size={20} /> : <IconMoon size={20} />}
-    </button>
-  );
-}
-
 function Viewfinder({ viewfinderRef, label }) {
   return (
     <div className="viewfinder-stack">
       <p className="viewfinder-label">{label}</p>
       <div ref={viewfinderRef} className="viewfinder-wilder" aria-hidden="true" />
-    </div>
-  );
-}
-
-function BadgeUnlockToast({ badge, t, onClose, onViewTrophies }) {
-  return (
-    <div className="badge-unlock-toast" role="alert">
-      <span className="badge-unlock-icon">{badge.icon}</span>
-      <div>
-        <p className="badge-unlock-label">{t("trophies.new_badge")}</p>
-        <p className="badge-unlock-name">{t(`badges.${badge.id}.name`)}</p>
-        {onViewTrophies && (
-          <button type="button" className="badge-unlock-view" onClick={onViewTrophies}>
-            {t("home.trophies")} →
-          </button>
-        )}
-      </div>
-      <button type="button" className="badge-unlock-close" onClick={onClose} aria-label="OK">✓</button>
     </div>
   );
 }
@@ -220,10 +154,6 @@ export default function Wilder() {
   const [returnScreen, setReturnScreen] = useState("home");
   const [activePaletteId, setActivePaletteId] = useState(null);
   const [lang] = useState(() => detectLang());
-  const [theme, setTheme] = useState("light");
-  const [showConfetti, setShowConfetti] = useState(false);
-  const [showFirstDiscoveryBadge, setShowFirstDiscoveryBadge] = useState(false);
-  const [newBadge, setNewBadge] = useState(null);
   const [rescanDiscoveryId, setRescanDiscoveryId] = useState(null);
   const [homeScanCategory, setHomeScanCategory] = useState(null);
   const [premiumUserEmail, setPremiumUserEmail] = useState(null);
@@ -335,29 +265,7 @@ export default function Wilder() {
   }, [screen]);
 
   useEffect(() => {
-    const savedTheme = loadTheme();
-    setTheme(savedTheme);
-    applyTheme(savedTheme);
-  }, []);
-
-  const toggleTheme = () => {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    saveTheme(next);
-    applyTheme(next);
-  };
-
-  const checkNewBadges = useCallback((items) => {
-    const seen = loadSeenBadges();
-    const fresh = getNewBadgeIds(items, seen);
-    if (fresh.length > 0) {
-      const badge = BADGE_DEFS.find((b) => b.id === fresh[0]);
-      saveSeenBadges([...seen, ...fresh]);
-      setNewBadge(badge);
-      setShowConfetti(true);
-      return true;
-    }
-    return false;
+    applyTheme(loadTheme());
   }, []);
 
   useEffect(() => {
@@ -380,7 +288,6 @@ export default function Wilder() {
   const finishDiscoveryFlow = useCallback(
     (updated, wasRescan) => {
       setDiscoveries(updated);
-      recordNatureActivity();
       setRescanDiscoveryId(null);
 
       const guestFirstScan = isGuest && !wasRescan && !guestFirstScanRef.current;
@@ -389,26 +296,11 @@ export default function Wilder() {
       const isFirstEver = guestFirstScan || (!isGuest && !wasRescan && updated.length === 1);
       if (isFirstEver) {
         scheduleInstallGuideAfterFirstScan();
-        if (!isGuest) {
-          const seen = loadSeenBadges();
-          const fresh = getNewBadgeIds(updated, seen);
-          if (fresh.length > 0) saveSeenBadges([...seen, ...fresh]);
-        }
-        setShowFirstDiscoveryBadge(true);
-        setScreen("result");
-        setShowConfetti(true);
-        playBadgeUnlockSound();
-        return;
       }
 
       setScreen("result");
-      if (!isGuest && checkNewBadges(updated)) {
-        playBadgeUnlockSound();
-      } else {
-        playDiscoverySound();
-      }
     },
-    [checkNewBadges, isGuest]
+    [isGuest]
   );
 
   const attachStreamToVideo = useCallback(async () => {
@@ -573,10 +465,6 @@ export default function Wilder() {
 
       setDiscoveries(items);
       setAlbums(loadAlbums());
-      const seen = loadSeenBadges();
-      if (seen.length === 0 && items.length > 0) {
-        saveSeenBadges(computeUnlockedBadgeIds(items));
-      }
 
       bootstrapCloudSync().then(async (result) => {
         if (cancelled) return;
@@ -589,11 +477,8 @@ export default function Wilder() {
       });
     })();
 
-    const onFirstTouch = () => warmUpSounds();
-    window.addEventListener("pointerdown", onFirstTouch, { once: true });
     return () => {
       cancelled = true;
-      window.removeEventListener("pointerdown", onFirstTouch);
     };
   }, [authBootState, needsWelcomeSlides, needsEntryChoice]);
 
@@ -622,7 +507,6 @@ export default function Wilder() {
     setCaptured(null);
     setCurrentDiscovery(null);
     setRescanDiscoveryId(null);
-    setShowFirstDiscoveryBadge(false);
   }, []);
 
   const startScan = useCallback((origin) => {
@@ -637,12 +521,6 @@ export default function Wilder() {
     setErrorMsg("");
     setScreen(back);
   }, [returnScreen, clearScanSession]);
-
-  const goHome = () => {
-    clearScanSession();
-    setErrorMsg("");
-    setScreen("home");
-  };
 
   const leaveResult = useCallback(() => {
     const back = resolveScanBackScreen(returnScreen);
@@ -848,7 +726,6 @@ export default function Wilder() {
   );
 
   const scanAgainFromResult = useCallback(() => {
-    setShowFirstDiscoveryBadge(false);
     setResult(null);
     setCaptured(null);
     setScreen("camera");
@@ -891,29 +768,14 @@ export default function Wilder() {
   const slogan = t("slogan");
   const pageTitle = `Wilder — ${slogan}`;
 
-  const confettiOverlay = (
-    <>
-      <Confetti active={showConfetti} onDone={() => setShowConfetti(false)} />
-      {newBadge && showConfetti && (
-        <BadgeUnlockToast
-          badge={newBadge}
-          t={t}
-          onClose={() => setNewBadge(null)}
-          onViewTrophies={() => {
-            setNewBadge(null);
-            setShowConfetti(false);
-            setScreen("trophies");
-          }}
-        />
-      )}
-      <FeatureGateModal
-        open={featureGateOpen}
-        t={t}
-        messageKey={featureGateMessageKey}
-        onClose={closeFeatureGateModal}
-        onAccountCreated={handleSignupAccountCreated}
-      />
-    </>
+  const featureGateOverlay = (
+    <FeatureGateModal
+      open={featureGateOpen}
+      t={t}
+      messageKey={featureGateMessageKey}
+      onClose={closeFeatureGateModal}
+      onAccountCreated={handleSignupAccountCreated}
+    />
   );
 
   if (authBootState === "loading") {
@@ -1005,7 +867,7 @@ export default function Wilder() {
           onOpenBrief={openBrief}
           gardenRefreshTick={homeGardenRefreshTick}
         />
-        {confettiOverlay}
+        {featureGateOverlay}
       </>
     );
   }
@@ -1283,217 +1145,7 @@ export default function Wilder() {
           onDiscoveryUpdate={handleUpdateCurrentDiscovery}
           onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
         />
-        {confettiOverlay}
-      </>
-    );
-  }
-
-  /* ── STATS ── */
-  if (screen === "stats") {
-    const stats = computeStats(discoveries);
-    const typeEntries = Object.entries(stats.byType).sort((a, b) => b[1] - a[1]);
-    const maxTypeCount = typeEntries[0]?.[1] || 1;
-    const monthLabels = stats.monthKeys.map((key) => {
-      const [y, m] = key.split("-");
-      return new Date(Number(y), Number(m) - 1).toLocaleDateString(locale, { month: "short" });
-    });
-
-    return (
-      <>
-        <Head>
-          <title>{t("stats.title")} — Wilder</title>
-        </Head>
-        <div className="stats-screen screen-enter with-bottom-nav">
-          <div className="albums-header">
-            <button
-              type="button"
-              className="btn-secondary"
-              style={{ padding: "0.5rem 0.75rem" }}
-              onClick={goHome}
-              aria-label={t("discovery.back")}
-            >
-              <IconBack size={18} />
-            </button>
-            <h1 className="albums-title">{t("stats.title")}</h1>
-            <ThemeToggle theme={theme} onToggle={toggleTheme} t={t} />
-          </div>
-
-          <div className="stats-hero">
-            <p style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
-              {t("stats.subtitle")}
-            </p>
-            <div className="stats-hero-grid">
-              <div className="stat-card stat-card-highlight">
-                <span className="stat-card-num">{stats.total}</span>
-                <span className="stat-card-label">{t("stats.total")}</span>
-              </div>
-              <div className="stat-card">
-                <span className="stat-card-num">{stats.uniqueSpecies}</span>
-                <span className="stat-card-label">{t("stats.unique")}</span>
-              </div>
-              <div className="stat-card stat-card-highlight">
-                <span className="stat-card-num">{stats.rareCount}</span>
-                <span className="stat-card-label">{t("stats.rare")}</span>
-              </div>
-              <div className="stat-card">
-                <span className="stat-card-num">{stats.thisMonth}</span>
-                <span className="stat-card-label">{t("stats.this_month")}</span>
-              </div>
-              <div className="stat-card">
-                <span className="stat-card-num">{stats.countriesCount}</span>
-                <span className="stat-card-label">{t("stats.countries")}</span>
-              </div>
-              <div className="stat-card">
-                <span className="stat-card-num">{stats.citiesCount}</span>
-                <span className="stat-card-label">{t("stats.cities")}</span>
-              </div>
-              <div className="stat-card stat-card-highlight stat-card-heritage">
-                <span className="stat-card-num">{stats.patrimoineCount}</span>
-                <span className="stat-card-label">{t("stats.patrimoine")}</span>
-              </div>
-            </div>
-          </div>
-
-          {stats.favoriteType && (
-            <div className="stats-section">
-              <h2 className="stats-section-title">{t("stats.favorite")}</h2>
-              <div className="favorite-category-card">
-                <span className="favorite-category-label">{typeLabel(stats.favoriteType)}</span>
-                <strong>{stats.byType[stats.favoriteType]} {t("stats.total").toLowerCase()}</strong>
-              </div>
-            </div>
-          )}
-
-          {stats.monthKeys.some((k) => stats.monthly[k] > 0) && (
-            <div className="stats-section">
-              <h2 className="stats-section-title">{t("stats.monthly")}</h2>
-              <div className="monthly-chart">
-                {stats.monthKeys.map((key, i) => (
-                  <div key={key} className="monthly-bar-col">
-                    <div className="monthly-bar-track">
-                      <div
-                        className="monthly-bar-fill"
-                        style={{ height: `${Math.round((stats.monthly[key] / stats.maxMonthly) * 100)}%` }}
-                      />
-                    </div>
-                    <span className="monthly-bar-count">{stats.monthly[key] || ""}</span>
-                    <span className="monthly-bar-label">{monthLabels[i]}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {typeEntries.length > 0 && (
-            <div className="stats-section">
-              <h2 className="stats-section-title">{t("stats.by_category")}</h2>
-              {typeEntries.map(([type, count]) => (
-                <div key={type} className="stat-bar-row">
-                  <span className="stat-bar-label">{typeLabel(type)}</span>
-                  <div className="stat-bar-track">
-                    <div
-                      className="stat-bar-fill"
-                      style={{ width: `${Math.round((count / maxTypeCount) * 100)}%` }}
-                    />
-                  </div>
-                  <span className="stat-bar-count">{count}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className="stats-section">
-            <h2 className="stats-section-title">{t("stats.by_rarity")}</h2>
-            <div className="rarity-stats-grid">
-              {["commun", "peu_commun", "rare", "tres_rare"].map((key) => (
-                <div key={key} className={`rarity-stat-pill rarity-${key}`}>
-                  <span>{rarityLabel(key)}</span>
-                  <strong>{stats.byRarity[key] || 0}</strong>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {stats.total === 0 && (
-            <div className="albums-empty">
-              <p>{t("stats.empty")}</p>
-              <button
-                type="button"
-                className="btn-primary"
-                style={{ marginTop: "1.5rem" }}
-                onClick={() => startScan("home")}
-              >
-                {t("home.discover")}
-              </button>
-            </div>
-          )}
-          <div className="stats-actions">
-            <button type="button" className="btn-secondary" onClick={() => setScreen("trophies")}>
-              🏆 {t("home.trophies")}
-            </button>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  /* ── TROPHIES ── */
-  if (screen === "trophies") {
-    return (
-      <>
-        <Head>
-          <title>{t("trophies.title")} — Wilder</title>
-        </Head>
-        <div className="trophies-screen screen-enter with-bottom-nav">
-          <div className="albums-header">
-            <button
-              type="button"
-              className="btn-secondary"
-              style={{ padding: "0.5rem 0.75rem" }}
-              onClick={goHome}
-              aria-label={t("discovery.back")}
-            >
-              <IconBack size={18} />
-            </button>
-            <h1 className="albums-title">{t("trophies.title")}</h1>
-            <button
-              type="button"
-              className="btn-secondary"
-              style={{ padding: "0.5rem 0.75rem" }}
-              onClick={() => setScreen("stats")}
-              aria-label={t("home.stats")}
-            >
-              📊
-            </button>
-          </div>
-          <div className="trophies-grid">
-            {BADGE_DEFS.map((badge) => {
-              const unlocked = isBadgeUnlocked(discoveries, badge);
-              const { current, target } = getBadgeProgress(discoveries, badge);
-              return (
-                <div
-                  key={badge.id}
-                  className={`trophy-card${unlocked ? " unlocked" : ""}`}
-                >
-                  <span className="trophy-icon">{badge.icon}</span>
-                  <h3>{t(`badges.${badge.id}.name`)}</h3>
-                  <p>{t(`badges.${badge.id}.desc`)}</p>
-                  <div className="trophy-progress-wrap">
-                    <div
-                      className="trophy-progress-fill"
-                      style={{ width: `${Math.min(100, (current / target) * 100)}%` }}
-                    />
-                  </div>
-                  <span className="trophy-status">
-                    {unlocked
-                      ? t("trophies.unlocked")
-                      : t("trophies.progress", { current, target })}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        {featureGateOverlay}
       </>
     );
   }

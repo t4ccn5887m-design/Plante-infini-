@@ -3,8 +3,6 @@ import Head from "next/head";
 import { useEffect } from "react";
 import AppErrorBoundary from "@/components/AppErrorBoundary";
 import InstallGuideModalHost from "@/components/InstallGuideModalHost";
-import { detectLang } from "@/lib/i18n";
-import { checkNatureReminders } from "@/lib/natureNotifications";
 import { flushPendingSync } from "@/lib/cloudSync";
 
 export default function App({ Component, pageProps }) {
@@ -46,12 +44,10 @@ export default function App({ Component, pageProps }) {
   useEffect(() => {
     const onVisible = () => {
       if (document.visibilityState === "visible") {
-        checkNatureReminders(detectLang());
         flushPendingSync();
       }
     };
     document.addEventListener("visibilitychange", onVisible);
-    checkNatureReminders(detectLang());
     return () => document.removeEventListener("visibilitychange", onVisible);
   }, []);
 
