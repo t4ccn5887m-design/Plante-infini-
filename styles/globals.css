@@ -111,10 +111,6 @@ body {
     background: #ffffff;
   }
 
-  body:has(.wilder-v2-shell) .site-footer {
-    display: none;
-  }
-
   .wilder-v2-shell {
     min-height: 100dvh !important;
     padding: 0 !important;
@@ -935,6 +931,32 @@ video {
   font-weight: 600;
   line-height: 1.3;
   pointer-events: none;
+}
+
+.account-menu-legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem 0.25rem;
+  padding: 0.35rem 0.75rem 0.55rem;
+  font-size: 0.62rem;
+  line-height: 1.35;
+}
+
+.account-menu-legal-link {
+  color: rgba(245, 240, 232, 0.45);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.account-menu-legal-link:hover {
+  color: rgba(245, 240, 232, 0.72);
+}
+
+.account-menu-legal-sep {
+  color: rgba(245, 240, 232, 0.22);
+  margin: 0 0.05rem;
 }
 
 .wilder-home-brand {
@@ -4344,10 +4366,6 @@ video {
 }
 
 /* ── Entry choice (post-slides auth) ── */
-
-body:has(.entry-choice-screen) .site-footer {
-  display: none;
-}
 
 .entry-choice-screen {
   min-height: 100vh;
@@ -15102,46 +15120,6 @@ button.theme-grid-card:active {
 .signup-prompt-modal-later:hover {
   color: var(--text-primary);
 }
-/* ── Site footer ── */
-.site-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 40;
-  padding: 0.35rem 0.75rem calc(0.35rem + env(safe-area-inset-bottom, 0px));
-  text-align: center;
-  background: rgba(15, 36, 25, 0.82);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(127, 224, 160, 0.12);
-}
-
-.site-footer-nav {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 0.15rem 0.35rem;
-  font-size: 0.62rem;
-  line-height: 1.35;
-}
-
-.site-footer-link {
-  color: rgba(127, 224, 160, 0.72);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-.site-footer-link:hover {
-  color: #7fe0a0;
-}
-
-.site-footer-sep {
-  color: rgba(245, 242, 235, 0.28);
-  margin: 0 0.1rem;
-}
-
 /* ── Legal pages ── */
 .legal-page {
   position: relative;

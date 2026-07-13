@@ -3,7 +3,6 @@ import Head from "next/head";
 import { useEffect } from "react";
 import AppErrorBoundary from "@/components/AppErrorBoundary";
 import InstallGuideModalHost from "@/components/InstallGuideModalHost";
-import Footer from "@/components/Footer";
 import { detectLang } from "@/lib/i18n";
 import { checkNatureReminders } from "@/lib/natureNotifications";
 import { flushPendingSync } from "@/lib/cloudSync";
@@ -66,7 +65,6 @@ export default function App({ Component, pageProps }) {
         />
       </Head>
       <Component {...pageProps} />
-      <Footer />
       <InstallGuideModalHost />
     </AppErrorBoundary>
   );

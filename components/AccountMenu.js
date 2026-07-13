@@ -1,8 +1,17 @@
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import PremiumAuthStep from "@/components/PremiumAuthStep";
+import { LEGAL_ROUTES } from "@/lib/legal";
 import { loadPremiumProfile, savePremiumProfile } from "@/lib/premiumProfile";
 import { shareWilderApp } from "@/lib/share";
+
+const LEGAL_LINKS = [
+  { href: LEGAL_ROUTES.mentions, labelKey: "legal_mentions" },
+  { href: LEGAL_ROUTES.cgu, labelKey: "legal_cgu" },
+  { href: LEGAL_ROUTES.cgv, labelKey: "legal_cgv" },
+  { href: LEGAL_ROUTES.privacy, labelKey: "legal_privacy" },
+];
 
 function IconMenu() {
   return (
@@ -236,6 +245,17 @@ export default function AccountMenu({
                 </button>
               </>
             )}
+            <div className="premium-menu-separator" aria-hidden="true" />
+            <nav className="account-menu-legal" aria-label={t("legal_nav")}>
+              {LEGAL_LINKS.map((link, i) => (
+                <span key={link.href} className="account-menu-legal-item">
+                  {i > 0 && <span className="account-menu-legal-sep" aria-hidden="true">·</span>}
+                  <Link href={link.href} className="account-menu-legal-link" onClick={closeMenu}>
+                    {t(link.labelKey)}
+                  </Link>
+                </span>
+              ))}
+            </nav>
           </div>
         )}
       </div>
