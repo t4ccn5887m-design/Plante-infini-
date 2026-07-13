@@ -166,7 +166,7 @@ function DoorCard({ hallKey, icon, title, desc, onClick }) {
         border: `0.5px solid ${COLORS.border}`,
         borderRadius: 14,
         padding: 12,
-        background: "#fff",
+        background: bg,
         cursor: "pointer",
         textAlign: "left",
         fontFamily: "inherit",
