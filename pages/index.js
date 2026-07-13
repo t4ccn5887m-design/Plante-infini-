@@ -68,8 +68,7 @@ import ResultatScanScreen from "@/components/ResultatScanScreen";
 import CataloguePepiniereScreen from "@/components/CataloguePepiniereScreen";
 import IdeesJardinsScreen from "@/components/IdeesJardinsScreen";
 import ApercuBriefScreen from "@/components/ApercuBriefScreen";
-import { buildDailySpeciesViewModel, buildDailySpeciesAnalysisData } from "@/lib/dailySpecies";
-import { DailySpeciesHero, DiscoveryHeroPhoto } from "@/components/DiscoveryPhotoThumb";
+import { DiscoveryHeroPhoto } from "@/components/DiscoveryPhotoThumb";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
 import Logo from "@/components/Logo";
 import { getWrappedYear } from "@/lib/wrapped";
@@ -352,7 +351,6 @@ export default function Wilder() {
   const [authBootState, setAuthBootState] = useState("loading");
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [viewingDiscovery, setViewingDiscovery] = useState(null);
-  const [dailyPickView, setDailyPickView] = useState(null);
   const [returnScreen, setReturnScreen] = useState("home");
   const [activePaletteId, setActivePaletteId] = useState(null);
   const [lang, setLangState] = useState(() => detectLang());
@@ -1048,19 +1046,6 @@ export default function Wilder() {
     setScreen("discovery-detail");
   }, [discoveries]);
 
-  const openDailyPickDetail = useCallback((species) => {
-    const view = buildDailySpeciesViewModel(species);
-    if (!view) return;
-    setDailyPickView(view);
-    setReturnScreen("home");
-    setScreen("daily-pick-detail");
-  }, []);
-
-  const closeDailyPickDetail = useCallback(() => {
-    setDailyPickView(null);
-    setScreen("home");
-  }, []);
-
   const swipeDeleteLabels = useMemo(
     () => ({
       deleteLabel: t("discovery.delete_btn"),
@@ -1317,61 +1302,6 @@ export default function Wilder() {
           backLabel={t("discovery.back")}
           onBack={() => setScreen("ma-palette")}
         />
-      </>
-    );
-  }
-
-  /* ── DAILY PICK (read-only, no persistence) ── */
-  if (screen === "daily-pick-detail" && dailyPickView) {
-    const d = dailyPickView;
-    const data =
-      buildDailySpeciesAnalysisData(d) || {
-        nom: d.nom,
-        nom_latin: d.nom_latin,
-        type: d.type,
-        rarete: d.rarete,
-        ...discoveryToAnalysisData(d),
-      };
-
-    return (
-      <>
-        <Head>
-          <title>{d.nom} — Wilder</title>
-        </Head>
-        <div className="discovery-screen discovery-screen--detail screen-enter-fast">
-          <div className="discovery-hero">
-            <DailySpeciesHero
-              species={{ emoji: d.emoji }}
-              illustration={d.illustration || d.photo}
-              nom={d.nom}
-              emoji={d.emoji}
-            />
-            <button type="button" className="discovery-hero-back" onClick={closeDailyPickDetail}>
-              <IconBack size={16} /> {t("discovery.back")}
-            </button>
-          </div>
-
-          <div className="discovery-body discovery-body--detail">
-            <DiscoveryBody
-              data={data}
-              discovery={d}
-              showNewBadge={false}
-              showInlineShare={false}
-              t={t}
-              lang={lang}
-            />
-
-            <DiscoveryResultActions
-              discovery={d}
-              t={t}
-              lang={lang}
-              onScanAgain={() => {
-                closeDailyPickDetail();
-                startScan("home");
-              }}
-            />
-          </div>
-        </div>
       </>
     );
   }
