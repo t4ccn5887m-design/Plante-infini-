@@ -1,24 +1,19 @@
 import WilderTabBar from "@/components/WilderTabBar";
-
-const COLORS = {
-  ink: "#1e2b23",
-  screen: "#ffffff",
-};
+import { WILDER_COLORS } from "@/lib/themes";
 
 const screenWrap = {
   minHeight: "100vh",
-  background: "radial-gradient(120% 120% at 50% 0%, #e2ddcf 0%, #cfc9ba 100%)",
+  background: WILDER_COLORS.shellBg,
   display: "flex",
   justifyContent: "center",
   padding: "16px",
-  color: COLORS.ink,
-  fontFamily: 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif',
+  color: WILDER_COLORS.ink,
 };
 
 const cardWrap = {
   width: "100%",
   maxWidth: 380,
-  background: COLORS.screen,
+  background: WILDER_COLORS.screen,
   borderRadius: 24,
   overflow: "hidden",
   alignSelf: "flex-start",

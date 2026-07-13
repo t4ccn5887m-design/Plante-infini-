@@ -10,22 +10,7 @@ import {
   loadScanGardenState,
   promoteScanToGarden,
 } from "@/lib/promoteScanToGarden";
-
-const COLORS = {
-  ink: "#1e2b23",
-  muted: "#8b9084",
-  border: "#e6e2d8",
-  borderStrong: "#cbc6b8",
-  greenTint: "#e7efe6",
-  greenInk: "#3c6b47",
-  purpleTint: "#efedfb",
-  purpleInk: "#6a58a2",
-  heart: "#c6504c",
-  heartOff: "#b8bdb0",
-  primary: "#2f5a3c",
-  screen: "#ffffff",
-  saved: "#f2f5ef",
-};
+import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const icStroke = {
   stroke: "currentColor",
@@ -37,12 +22,11 @@ const icStroke = {
 
 const screenWrap = {
   minHeight: "100vh",
-  background: "radial-gradient(120% 120% at 50% 0%, #e2ddcf 0%, #cfc9ba 100%)",
+  background: COLORS.shellBg,
   display: "flex",
   justifyContent: "center",
   padding: "16px",
   color: COLORS.ink,
-  fontFamily: 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif',
 };
 
 const cardWrap = {
@@ -288,10 +272,10 @@ export default function ResultatScanScreen({
 
         <div style={{ padding: "16px 16px 20px" }}>
           <h1
+            className="wilder-v2-title-page"
             style={{
               margin: 0,
               fontSize: 22,
-              fontWeight: 600,
               letterSpacing: "-0.02em",
               lineHeight: 1.2,
               color: COLORS.ink,
@@ -329,10 +313,10 @@ export default function ResultatScanScreen({
 
           <div style={{ marginTop: 20 }}>
             <h2
+              className="wilder-v2-title-section"
               style={{
                 margin: "0 0 10px",
                 fontSize: 14,
-                fontWeight: 600,
                 color: COLORS.ink,
               }}
             >

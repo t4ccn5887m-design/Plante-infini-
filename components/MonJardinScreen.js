@@ -8,24 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import AccountMenu from "@/components/AccountMenu";
 import { loadGardenIntention, saveGardenIntention } from "@/lib/gardenIntention";
 import { fetchPalettes, fetchPaletteItems, fetchZones } from "@/lib/paletteStorage";
-
-const COLORS = {
-  ink: "#1e2b23",
-  secondary: "#4c554a",
-  muted: "#8b9084",
-  border: "#e6e2d8",
-  borderStrong: "#cbc6b8",
-  greenTint: "#e7efe6",
-  greenInk: "#3c6b47",
-  purpleTint: "#efedfb",
-  purpleInk: "#6a58a2",
-  heart: "#c6504c",
-  note: "#f4f2ea",
-  active: "#2f5a3c",
-  screen: "#ffffff",
-  stoneTint: "#eae6de",
-  stoneInk: "#6b6455",
-};
+import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const icStroke = {
   stroke: "currentColor",
@@ -169,19 +152,8 @@ function HeroAvatar({ initials, menu }) {
   );
 }
 
-function DoorCard({ iconWrapClass, icon, title, desc, onClick }) {
-  const bg =
-    iconWrapClass === "g1"
-      ? COLORS.greenTint
-      : iconWrapClass === "g2"
-        ? COLORS.stoneTint
-        : COLORS.purpleTint;
-  const fg =
-    iconWrapClass === "g1"
-      ? COLORS.greenInk
-      : iconWrapClass === "g2"
-        ? COLORS.stoneInk
-        : COLORS.purpleInk;
+function DoorCard({ hallKey, icon, title, desc, onClick }) {
+  const { tint: bg, ink: fg } = COLORS.hall[hallKey];
 
   return (
     <button
@@ -217,7 +189,9 @@ function DoorCard({ iconWrapClass, icon, title, desc, onClick }) {
         {icon}
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 13.5, fontWeight: 600, color: COLORS.ink }}>{title}</div>
+        <div className="wilder-v2-title-feature" style={{ fontSize: 13.5, color: COLORS.ink }}>
+          {title}
+        </div>
         <div style={{ fontSize: 10.5, color: COLORS.muted, marginTop: 2 }}>{desc}</div>
       </div>
       <span style={{ marginLeft: "auto", color: COLORS.muted, fontSize: 18, lineHeight: 1 }}>›</span>
@@ -513,7 +487,7 @@ export default function MonJardinScreen({
                     style={{
                       height: 190,
                       position: "relative",
-                      background: "linear-gradient(160deg,#7fa07f,#3d6b47 55%,#2c5236)",
+                      background: COLORS.heroGradient,
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "flex-end",
@@ -533,9 +507,9 @@ export default function MonJardinScreen({
                     <HeroAvatar initials={initials} menu={accountMenu} />
                     <div style={{ position: "relative", zIndex: 1 }}>
                       <div
+                        className="wilder-v2-title-hero"
                         style={{
                           fontSize: 21,
-                          fontWeight: 700,
                           color: "#fff",
                           lineHeight: 1.2,
                         }}
@@ -558,10 +532,10 @@ export default function MonJardinScreen({
                   </div>
 
                   <div
+                    className="wilder-v2-title-section"
                     style={{
                       padding: "15px 15px 7px",
                       fontSize: 11.5,
-                      fontWeight: 600,
                       color: COLORS.secondary,
                       textTransform: "uppercase",
                       letterSpacing: "0.03em",
@@ -579,21 +553,21 @@ export default function MonJardinScreen({
                     }}
                   >
                     <DoorCard
-                      iconWrapClass="g1"
+                      hallKey="scanner"
                       icon={<IconCamera size={21} />}
                       title="Scanner une plante"
                       desc="J'ai vu un truc joli dehors"
                       onClick={onScan}
                     />
                     <DoorCard
-                      iconWrapClass="g2"
+                      hallKey="catalogue"
                       icon={<IconLeaf size={21} />}
                       title="Parcourir le catalogue"
                       desc="Plantes, minéral & idées"
                       onClick={onNavigateCatalogue}
                     />
                     <DoorCard
-                      iconWrapClass="g3"
+                      hallKey="ambiance"
                       icon={<IconAmbiance />}
                       title="Piocher une ambiance"
                       desc="Méditerranéen, japonais…"
@@ -616,7 +590,7 @@ export default function MonJardinScreen({
                     style={{
                       height: 140,
                       position: "relative",
-                      background: "linear-gradient(160deg,#7fa07f,#3d6b47)",
+                      background: COLORS.heroGradientShort,
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "flex-end",
@@ -635,7 +609,7 @@ export default function MonJardinScreen({
                     />
                     <HeroAvatar initials={initials} menu={accountMenu} />
                     <div style={{ position: "relative", zIndex: 1 }}>
-                      <div style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>
+                      <div className="wilder-v2-title-hero" style={{ fontSize: 18, color: "#fff" }}>
                         Votre jardin prend forme 🌿
                       </div>
                       <div style={{ fontSize: 11.5, color: "#ffffffdd", marginTop: 4 }}>
@@ -686,10 +660,10 @@ export default function MonJardinScreen({
                   </div>
 
                   <div
+                    className="wilder-v2-title-section"
                     style={{
                       padding: "2px 15px 7px",
                       fontSize: 11,
-                      fontWeight: 600,
                       color: COLORS.secondary,
                       textTransform: "uppercase",
                       letterSpacing: "0.03em",
@@ -718,7 +692,7 @@ export default function MonJardinScreen({
           {homeTab === "jardin" && (
             <div style={{ padding: "16px 0 8px" }}>
               <div style={{ padding: "0 16px 14px" }}>
-                <div style={{ fontSize: 20, fontWeight: 600, letterSpacing: "-0.01em" }}>
+                <div className="wilder-v2-title-page" style={{ fontSize: 20, letterSpacing: "-0.01em" }}>
                   Mon jardin
                 </div>
                 <div style={{ fontSize: 12, color: COLORS.muted, marginTop: 2 }}>
@@ -753,7 +727,7 @@ export default function MonJardinScreen({
                   >
                     <IconLeaf size={28} />
                   </div>
-                  <div style={{ fontSize: 15, fontWeight: 600, color: COLORS.ink }}>
+                  <div className="wilder-v2-title-section" style={{ fontSize: 15, color: COLORS.ink }}>
                     Ton projet est encore vide
                   </div>
                   <div style={{ fontSize: 12.5, color: COLORS.muted, lineHeight: 1.55, marginTop: 6 }}>
@@ -774,7 +748,9 @@ export default function MonJardinScreen({
                         justifyContent: "space-between",
                       }}
                     >
-                      <span style={{ fontSize: 14, fontWeight: 600, color: COLORS.ink }}>{zone.nom}</span>
+                      <span className="wilder-v2-title-feature" style={{ fontSize: 14, color: COLORS.ink }}>
+                        {zone.nom}
+                      </span>
                       <span style={{ fontSize: 11, color: COLORS.muted }}>
                         {zone.plants.length <= 1
                           ? `${zone.plants.length} élément`

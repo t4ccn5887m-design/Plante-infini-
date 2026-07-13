@@ -16,16 +16,7 @@ import {
   loadCatalogueMineralGardenState,
   promoteAmbianceToGarden,
 } from "@/lib/promoteCatalogueToGarden";
-
-const COLORS = {
-  ink: "#1e2b23",
-  secondary: "#4c554a",
-  muted: "#8b9084",
-  border: "#e6e2d8",
-  greenTint: "#e7efe6",
-  greenInk: "#3c6b47",
-  screen: "#ffffff",
-};
+import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const icStroke = {
   stroke: "currentColor",
@@ -33,25 +24,6 @@ const icStroke = {
   fill: "none",
   strokeLinecap: "round",
   strokeLinejoin: "round",
-};
-
-const screenWrap = {
-  minHeight: "100vh",
-  background: "radial-gradient(120% 120% at 50% 0%, #e2ddcf 0%, #cfc9ba 100%)",
-  display: "flex",
-  justifyContent: "center",
-  padding: "16px",
-  color: COLORS.ink,
-  fontFamily: 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif',
-};
-
-const cardWrap = {
-  width: "100%",
-  maxWidth: 380,
-  background: COLORS.screen,
-  borderRadius: 24,
-  overflow: "hidden",
-  alignSelf: "flex-start",
 };
 
 function IconLeaf({ size = 13 }) {
@@ -150,9 +122,9 @@ function IdeaCard({
           {idea.badge_conditions}
         </span>
         <span
+          className="wilder-v2-title-feature"
           style={{
             fontSize: 16,
-            fontWeight: 600,
             color: "#fff",
             textShadow: "0 1px 4px rgba(0,0,0,.35)",
             position: "relative",
@@ -305,7 +277,10 @@ export default function IdeesJardinsScreen({
         </div>
 
         <div style={{ padding: "2px 16px 14px" }}>
-          <h1 style={{ margin: 0, fontSize: 21, fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.15 }}>
+          <h1
+            className="wilder-v2-title-page"
+            style={{ margin: 0, fontSize: 21, letterSpacing: "-0.01em", lineHeight: 1.15 }}
+          >
             {t("idees_jardins.title")}
           </h1>
           <p style={{ margin: "4px 0 0", fontSize: 12, color: COLORS.muted, lineHeight: 1.5 }}>
@@ -316,7 +291,7 @@ export default function IdeesJardinsScreen({
         {(error || feedback) && (
           <div style={{ padding: "0 16px 12px" }}>
             {error && (
-              <p style={{ margin: 0, fontSize: 12, color: "#9b3b3b", lineHeight: 1.45 }}>{error}</p>
+              <p style={{ margin: 0, fontSize: 12, color: COLORS.error, lineHeight: 1.45 }}>{error}</p>
             )}
             {!error && feedback && (
               <p style={{ margin: 0, fontSize: 12, color: COLORS.greenInk, lineHeight: 1.45 }}>{feedback}</p>

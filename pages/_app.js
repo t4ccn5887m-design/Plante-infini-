@@ -1,9 +1,24 @@
 import "@/styles/globals.css";
 import Head from "next/head";
+import { Quicksand, Nunito_Sans } from "next/font/google";
 import { useEffect } from "react";
 import AppErrorBoundary from "@/components/AppErrorBoundary";
 import InstallGuideModalHost from "@/components/InstallGuideModalHost";
 import { flushPendingSync } from "@/lib/cloudSync";
+
+const quicksand = Quicksand({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-title",
+  display: "swap",
+});
+
+const nunitoSans = Nunito_Sans({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-body",
+  display: "swap",
+});
 
 export default function App({ Component, pageProps }) {
   useEffect(() => {
@@ -53,15 +68,17 @@ export default function App({ Component, pageProps }) {
 
   return (
     <AppErrorBoundary>
-      <Head>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"
-          key="viewport"
-        />
-      </Head>
-      <Component {...pageProps} />
-      <InstallGuideModalHost />
+      <div className={`${quicksand.variable} ${nunitoSans.variable} ${nunitoSans.className}`}>
+        <Head>
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"
+            key="viewport"
+          />
+        </Head>
+        <Component {...pageProps} />
+        <InstallGuideModalHost />
+      </div>
     </AppErrorBoundary>
   );
 }

@@ -15,24 +15,7 @@ import {
 } from "@/lib/briefPdf";
 import { loadGardenIntention } from "@/lib/gardenIntention";
 import { loadGardenBriefData } from "@/lib/loadGardenBriefData";
-
-const COLORS = {
-  ink: "#1e2b23",
-  secondary: "#4c554a",
-  muted: "#8b9084",
-  border: "#e6e2d8",
-  borderStrong: "#d2cdc1",
-  greenTint: "#e7efe6",
-  greenInk: "#3c6b47",
-  purpleTint: "#efedfb",
-  purpleInk: "#6a58a2",
-  heart: "#c6504c",
-  note: "#f4f2ea",
-  primary: "#2f5a3c",
-  screen: "#ffffff",
-  stoneTint: "#eae6de",
-  stoneInk: "#6b6455",
-};
+import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const icStroke = {
   stroke: "currentColor",
@@ -40,25 +23,6 @@ const icStroke = {
   fill: "none",
   strokeLinecap: "round",
   strokeLinejoin: "round",
-};
-
-const screenWrap = {
-  minHeight: "100vh",
-  background: "radial-gradient(120% 120% at 50% 0%, #e2ddcf 0%, #cfc9ba 100%)",
-  display: "flex",
-  justifyContent: "center",
-  padding: "16px",
-  color: COLORS.ink,
-  fontFamily: 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif',
-};
-
-const cardWrap = {
-  width: "100%",
-  maxWidth: 380,
-  background: COLORS.screen,
-  borderRadius: 24,
-  overflow: "hidden",
-  alignSelf: "flex-start",
 };
 
 function IconBulb() {
@@ -324,7 +288,10 @@ export default function ApercuBriefScreen({ t }) {
         </div>
 
         <div style={{ padding: "2px 16px 14px" }}>
-          <h1 style={{ margin: 0, fontSize: 21, fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.15 }}>
+          <h1
+            className="wilder-v2-title-page"
+            style={{ margin: 0, fontSize: 21, letterSpacing: "-0.01em", lineHeight: 1.15 }}
+          >
             {t("brief.title")}
           </h1>
           <p style={{ margin: "4px 0 0", fontSize: 12, color: COLORS.muted, lineHeight: 1.5 }}>
@@ -351,9 +318,9 @@ export default function ApercuBriefScreen({ t }) {
               }}
             >
               <div
+                className="wilder-v2-title-section"
                 style={{
                   fontSize: 12,
-                  fontWeight: 600,
                   color: COLORS.purpleInk,
                   display: "flex",
                   alignItems: "center",
@@ -422,7 +389,7 @@ export default function ApercuBriefScreen({ t }) {
         {(error || feedback) && (
           <div style={{ padding: "8px 16px 0" }}>
             {error && (
-              <p style={{ margin: 0, fontSize: 12, color: "#9b3b3b", lineHeight: 1.45 }}>
+              <p style={{ margin: 0, fontSize: 12, color: COLORS.error, lineHeight: 1.45 }}>
                 {error === "load_failed" ? t("brief.load_error") : error}
               </p>
             )}

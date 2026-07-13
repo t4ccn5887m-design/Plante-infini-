@@ -12,19 +12,7 @@ import {
 } from "@/lib/promoteScanToGarden";
 import { getDiscoveryPhotoUrl } from "@/lib/discoveryPhoto";
 import { loadDiscoveries } from "@/lib/discoveriesStorage";
-
-const COLORS = {
-  ink: "#1e2b23",
-  secondary: "#4c554a",
-  muted: "#8b9084",
-  border: "#e6e2d8",
-  borderStrong: "#cbc6b8",
-  greenTint: "#e7efe6",
-  greenInk: "#3c6b47",
-  hint: "#f2f5ef",
-  primary: "#2f5a3c",
-  screen: "#ffffff",
-};
+import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const icStroke = {
   stroke: "currentColor",
@@ -293,7 +281,7 @@ export default function MesScansScreen({
   return (
     <>
         <div style={{ padding: "15px 16px 14px" }}>
-          <div style={{ fontSize: 21, fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.15 }}>
+          <div className="wilder-v2-title-page" style={{ fontSize: 21, letterSpacing: "-0.01em", lineHeight: 1.15 }}>
             Mes scans
           </div>
           <div style={{ fontSize: 12, color: COLORS.muted, marginTop: 4 }}>
@@ -326,7 +314,7 @@ export default function MesScansScreen({
         </div>
 
         {error && (
-          <p style={{ margin: "0 16px 12px", fontSize: 12, color: "#a33" }}>{error}</p>
+          <p style={{ margin: "0 16px 12px", fontSize: 12, color: COLORS.error }}>{error}</p>
         )}
 
         {loading && (

@@ -24,22 +24,7 @@ import {
   promoteCatalogueMineralToGarden,
   promoteCataloguePlantToGarden,
 } from "@/lib/promoteCatalogueToGarden";
-
-const COLORS = {
-  ink: "#1e2b23",
-  secondary: "#4c554a",
-  muted: "#8b9084",
-  border: "#e6e2d8",
-  borderStrong: "#cbc6b8",
-  greenTint: "#e7efe6",
-  greenInk: "#3c6b47",
-  purpleTint: "#efedfb",
-  purpleInk: "#6a58a2",
-  primary: "#2f5a3c",
-  screen: "#ffffff",
-  stoneTint: "#eae6de",
-  stoneInk: "#6b6455",
-};
+import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const icStroke = {
   stroke: "currentColor",
@@ -47,25 +32,6 @@ const icStroke = {
   fill: "none",
   strokeLinecap: "round",
   strokeLinejoin: "round",
-};
-
-const screenWrap = {
-  minHeight: "100vh",
-  background: "radial-gradient(120% 120% at 50% 0%, #e2ddcf 0%, #cfc9ba 100%)",
-  display: "flex",
-  justifyContent: "center",
-  padding: "16px",
-  color: COLORS.ink,
-  fontFamily: 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif',
-};
-
-const cardWrap = {
-  width: "100%",
-  maxWidth: 380,
-  background: COLORS.screen,
-  borderRadius: 24,
-  overflow: "hidden",
-  alignSelf: "flex-start",
 };
 
 function IconStone({ size = 20 }) {
@@ -557,7 +523,10 @@ export default function CataloguePepiniereScreen({
         </div>
 
         <div style={{ padding: "2px 16px 14px" }}>
-          <h1 style={{ margin: 0, fontSize: 21, fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.15 }}>
+          <h1
+            className="wilder-v2-title-page"
+            style={{ margin: 0, fontSize: 21, letterSpacing: "-0.01em", lineHeight: 1.15 }}
+          >
             {t("catalogue.title")}
           </h1>
           <p style={{ margin: "4px 0 0", fontSize: 12, color: COLORS.muted, lineHeight: 1.5 }}>
@@ -901,7 +870,7 @@ export default function CataloguePepiniereScreen({
         )}
 
         {error && (
-          <p style={{ margin: "12px 16px 0", fontSize: 12, color: "#c6504c", lineHeight: 1.4 }}>{error}</p>
+          <p style={{ margin: "12px 16px 0", fontSize: 12, color: COLORS.heart, lineHeight: 1.4 }}>{error}</p>
         )}
 
         <div style={{ padding: "14px 16px 20px" }} />

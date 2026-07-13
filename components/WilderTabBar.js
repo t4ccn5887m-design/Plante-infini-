@@ -1,9 +1,4 @@
-const COLORS = {
-  muted: "#8b9084",
-  border: "#e6e2d8",
-  active: "#2f5a3c",
-  screen: "#ffffff",
-};
+import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const icStroke = {
   stroke: "currentColor",
