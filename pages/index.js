@@ -27,7 +27,10 @@ import PaletteDetailScreen from "@/components/PaletteDetailScreen";
 import MonJardinScreen from "@/components/MonJardinScreen";
 import MesScansScreen from "@/components/MesScansScreen";
 import ResultatScanScreen from "@/components/ResultatScanScreen";
-import CataloguePepiniereScreen from "@/components/CataloguePepiniereScreen";
+import CatalogueHallScreen from "@/components/CatalogueHallScreen";
+import CatalogueVegetalScreen from "@/components/CatalogueVegetalScreen";
+import CatalogueMineralScreen from "@/components/CatalogueMineralScreen";
+import CatalogueDecoScreen from "@/components/CatalogueDecoScreen";
 import IdeesJardinsScreen from "@/components/IdeesJardinsScreen";
 import ApercuBriefScreen from "@/components/ApercuBriefScreen";
 import WilderMainLayout from "@/components/WilderMainLayout";
@@ -56,13 +59,13 @@ import { getDiscoveryPhotoUrl } from "@/lib/discoveryPhoto";
 import { resolveScanBackScreen } from "@/lib/themes";
 
 const THEME_KEY = "wilder-theme";
-const MAIN_SCREENS = new Set(["home", "mes-scans", "catalogue", "brief", "idees-jardins"]);
+const MAIN_SCREENS = new Set(["home", "mes-scans", "catalogue", "brief"]);
 
 function resolveMainNav(screen, homeTab) {
   if (screen === "home") return homeTab;
   if (screen === "brief") return "brief";
   if (screen === "mes-scans") return "mes-scans";
-  if (screen === "catalogue" || screen === "idees-jardins") return "catalogue";
+  if (screen === "catalogue") return "catalogue";
   return "accueil";
 }
 
@@ -164,6 +167,7 @@ export default function Wilder() {
   const [premiumUserEmail, setPremiumUserEmail] = useState(null);
   const [homeGardenRefreshTick, setHomeGardenRefreshTick] = useState(0);
   const [homeTab, setHomeTab] = useState("accueil");
+  const [catalogueView, setCatalogueView] = useState(null);
   const [featureGateOpen, setFeatureGateOpen] = useState(false);
   const [featureGateMessageKey, setFeatureGateMessageKey] = useState("feature_gate.message");
   const [featureGateInitialStep, setFeatureGateInitialStep] = useState("prompt");
@@ -250,12 +254,18 @@ export default function Wilder() {
 
   const openCatalogue = useCallback(() => {
     setReturnScreen("home");
+    setCatalogueView(null);
     setScreen("catalogue");
   }, []);
 
   const openIdeesJardins = useCallback(() => {
     setReturnScreen("home");
-    setScreen("idees-jardins");
+    setCatalogueView("idees");
+    setScreen("catalogue");
+  }, []);
+
+  const backToCatalogueHall = useCallback(() => {
+    setCatalogueView(null);
   }, []);
 
   const openBrief = useCallback(() => {
@@ -850,25 +860,37 @@ export default function Wilder() {
         />
       );
     } else if (screen === "catalogue") {
-      pageTitleContent = `${t("catalogue.title")} — Wilder`;
-      mainContent = (
-        <CataloguePepiniereScreen
-          t={t}
-          canAddToGarden={!isGuest}
-          onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
-          onRequireAccount={openRequireAccount}
-        />
-      );
-    } else if (screen === "idees-jardins") {
-      pageTitleContent = `${t("idees_jardins.title")} — Wilder`;
-      mainContent = (
-        <IdeesJardinsScreen
-          t={t}
-          canAddToGarden={!isGuest}
-          onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
-          onRequireAccount={openRequireAccount}
-        />
-      );
+      const catalogueProps = {
+        t,
+        canAddToGarden: !isGuest,
+        onGardenChange: () => setHomeGardenRefreshTick((tick) => tick + 1),
+        onRequireAccount: openRequireAccount,
+      };
+
+      if (catalogueView === "vegetal") {
+        pageTitleContent = `${t("catalogue.vegetal_title")} — Wilder`;
+        mainContent = <CatalogueVegetalScreen {...catalogueProps} onBack={backToCatalogueHall} />;
+      } else if (catalogueView === "mineral") {
+        pageTitleContent = `${t("catalogue.mineral_title")} — Wilder`;
+        mainContent = <CatalogueMineralScreen {...catalogueProps} onBack={backToCatalogueHall} />;
+      } else if (catalogueView === "deco") {
+        pageTitleContent = `${t("catalogue.deco_title")} — Wilder`;
+        mainContent = <CatalogueDecoScreen {...catalogueProps} onBack={backToCatalogueHall} />;
+      } else if (catalogueView === "idees") {
+        pageTitleContent = `${t("idees_jardins.title")} — Wilder`;
+        mainContent = <IdeesJardinsScreen {...catalogueProps} onBack={backToCatalogueHall} />;
+      } else {
+        pageTitleContent = `${t("catalogue.title")} — Wilder`;
+        mainContent = (
+          <CatalogueHallScreen
+            t={t}
+            onNavigateVegetal={() => setCatalogueView("vegetal")}
+            onNavigateMineral={() => setCatalogueView("mineral")}
+            onNavigateDeco={() => setCatalogueView("deco")}
+            onNavigateIdees={() => setCatalogueView("idees")}
+          />
+        );
+      }
     } else if (screen === "brief") {
       pageTitleContent = `${t("brief.title")} — Wilder`;
       mainContent = <ApercuBriefScreen t={t} />;

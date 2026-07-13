@@ -88,10 +88,28 @@ function IconCopy() {
   );
 }
 
+function IconDeco({ size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+      <path d="M12 3c2 3 2 5 0 7s-2 4 0 6" />
+      <path d="M8 21h8" />
+      <path d="M10 21c0-3 4-3 4 0" />
+    </svg>
+  );
+}
+
+function briefItemStyle(item) {
+  if (item.kind === "deco") {
+    return { tint: COLORS.decoTint, ink: COLORS.decoInk, isDeco: true, isMineral: false };
+  }
+  if (item.kind === "mineral") {
+    return { tint: COLORS.stoneTint, ink: COLORS.stoneInk, isDeco: false, isMineral: true };
+  }
+  return { tint: COLORS.greenTint, ink: COLORS.greenInk, isDeco: false, isMineral: false };
+}
+
 function BriefVignette({ item }) {
-  const isMineral = item.kind === "mineral";
-  const tint = isMineral ? COLORS.stoneTint : COLORS.greenTint;
-  const ink = isMineral ? COLORS.stoneInk : COLORS.greenInk;
+  const { tint, ink, isDeco, isMineral } = briefItemStyle(item);
 
   return (
     <div
@@ -119,6 +137,8 @@ function BriefVignette({ item }) {
             alt=""
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
+        ) : isDeco ? (
+          <IconDeco size={24} />
         ) : isMineral ? (
           <IconStone size={24} />
         ) : (

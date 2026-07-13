@@ -92,6 +92,34 @@ function IconStone({ size = 19 }) {
   );
 }
 
+function IconDeco({ size = 19 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+      <path d="M12 3c2 3 2 5 0 7s-2 4 0 6" />
+      <path d="M8 21h8" />
+      <path d="M10 21c0-3 4-3 4 0" />
+    </svg>
+  );
+}
+
+function itemKindStyle(item) {
+  const isDeco =
+    item.kind === "deco" || item.type === "deco" || Boolean(item.catalogue_deco_id);
+  const isMineral =
+    !isDeco &&
+    (item.kind === "mineral" ||
+      item.type === "mineral" ||
+      Boolean(item.catalogue_mineral_id));
+
+  if (isDeco) {
+    return { tint: COLORS.decoTint, ink: COLORS.decoInk, isDeco: true, isMineral: false };
+  }
+  if (isMineral) {
+    return { tint: COLORS.stoneTint, ink: COLORS.stoneInk, isDeco: false, isMineral: true };
+  }
+  return { tint: COLORS.greenTint, ink: COLORS.greenInk, isDeco: false, isMineral: false };
+}
+
 function IconAmbiance({ size = 21 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
@@ -152,10 +180,7 @@ function DoorCard({ hallKey, icon, title, desc, onClick }) {
 }
 
 function PreviewCard({ item }) {
-  const isMineral =
-    item.kind === "mineral" || item.type === "mineral" || Boolean(item.catalogue_mineral_id);
-  const tint = isMineral ? COLORS.stoneTint : COLORS.greenTint;
-  const ink = isMineral ? COLORS.stoneInk : COLORS.greenInk;
+  const { tint, ink, isDeco, isMineral } = itemKindStyle(item);
 
   return (
     <div
@@ -179,6 +204,8 @@ function PreviewCard({ item }) {
       >
         {item.photo ? (
           <img src={item.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        ) : isDeco ? (
+          <IconDeco size={19} />
         ) : isMineral ? (
           <IconStone />
         ) : (
@@ -223,15 +250,11 @@ function PreviewCard({ item }) {
 }
 
 function PlantCard({ plante, t }) {
-  const isMineral =
-    plante.kind === "mineral" ||
-    plante.type === "mineral" ||
-    Boolean(plante.catalogue_mineral_id);
-  const tint = isMineral ? COLORS.stoneTint : COLORS.greenTint;
-  const ink = isMineral ? COLORS.stoneInk : COLORS.greenInk;
-  const expo = !isMineral ? expositionLabel(t, plante.exposition) : null;
-  const mineralLine =
-    isMineral && (plante.resume || [plante.materiau, plante.finition].filter(Boolean).join(" · "));
+  const { tint, ink, isDeco, isMineral } = itemKindStyle(plante);
+  const expo = !isMineral && !isDeco ? expositionLabel(t, plante.exposition) : null;
+  const materialLine =
+    (isMineral || isDeco) &&
+    (plante.resume || [plante.materiau, plante.finition].filter(Boolean).join(" · "));
 
   return (
     <div style={{ border: `0.5px solid ${COLORS.border}`, borderRadius: 12, overflow: "hidden" }}>
@@ -252,6 +275,8 @@ function PlantCard({ plante, t }) {
             alt=""
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
+        ) : isDeco ? (
+          <IconDeco size={26} />
         ) : isMineral ? (
           <IconStone size={26} />
         ) : (
@@ -295,9 +320,9 @@ function PlantCard({ plante, t }) {
             <IconSun /> {expo}
           </div>
         )}
-        {mineralLine && (
+        {materialLine && (
           <div style={{ fontSize: 11, color: COLORS.muted, marginTop: 2, lineHeight: 1.35 }}>
-            {mineralLine}
+            {materialLine}
           </div>
         )}
       </div>
@@ -353,6 +378,7 @@ export default function MonJardinScreen({
             kind: item.discovery?.kind,
             type: item.discovery?.type,
             catalogue_mineral_id: item.discovery?.catalogue_mineral_id,
+            catalogue_deco_id: item.discovery?.catalogue_deco_id,
             materiau: item.discovery?.materiau,
             finition: item.discovery?.finition,
             resume: item.discovery?.resume,

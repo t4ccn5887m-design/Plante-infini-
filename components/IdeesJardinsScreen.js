@@ -14,9 +14,11 @@ import {
 import {
   loadCatalogueGardenState,
   loadCatalogueMineralGardenState,
+  loadCatalogueDecoGardenState,
   promoteAmbianceToGarden,
 } from "@/lib/promoteCatalogueToGarden";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
+import CatalogueScreenHeader from "@/components/catalogue/CatalogueScreenHeader";
 
 const icStroke = {
   stroke: "currentColor",
@@ -199,6 +201,7 @@ function IdeaCard({
 
 export default function IdeesJardinsScreen({
   t,
+  onBack,
   canAddToGarden = true,
   onGardenChange,
   onRequireAccount,
@@ -206,6 +209,7 @@ export default function IdeesJardinsScreen({
   const ideas = useMemo(() => getActiveGardenIdeas(), []);
   const [inGardenPlants, setInGardenPlants] = useState(() => new Set());
   const [inGardenMinerals, setInGardenMinerals] = useState(() => new Set());
+  const [inGardenDeco, setInGardenDeco] = useState(() => new Set());
   const [gardenLoading, setGardenLoading] = useState(true);
   const [addingId, setAddingId] = useState(null);
   const [error, setError] = useState(null);
@@ -214,15 +218,18 @@ export default function IdeesJardinsScreen({
   const refreshGarden = useCallback(async () => {
     setGardenLoading(true);
     try {
-      const [plantState, mineralState] = await Promise.all([
+      const [plantState, mineralState, decoState] = await Promise.all([
         loadCatalogueGardenState(),
         loadCatalogueMineralGardenState(),
+        loadCatalogueDecoGardenState(),
       ]);
       setInGardenPlants(plantState.inGarden);
       setInGardenMinerals(mineralState.inGarden);
+      setInGardenDeco(decoState.inGarden);
     } catch {
       setInGardenPlants(new Set());
       setInGardenMinerals(new Set());
+      setInGardenDeco(new Set());
     }
     setGardenLoading(false);
   }, []);
@@ -236,7 +243,7 @@ export default function IdeesJardinsScreen({
     setError(null);
     setFeedback(null);
 
-    if (isAmbianceComplete(idea, inGardenPlants, inGardenMinerals)) return;
+    if (isAmbianceComplete(idea, inGardenPlants, inGardenMinerals, inGardenDeco)) return;
 
     if (!canAddToGarden) {
       onRequireAccount?.(() => promoteAmbianceToGarden(idea, resolveAmbianceItems, t));
@@ -273,21 +280,32 @@ export default function IdeesJardinsScreen({
 
   return (
     <>
-        <div style={{ padding: "15px 16px 10px" }}>
-          <span style={{ fontSize: 14, color: COLORS.muted }}>{t("idees_jardins.menu_crumb")}</span>
-        </div>
+        {onBack ? (
+          <CatalogueScreenHeader
+            crumb={t("catalogue.crumb_catalogue")}
+            title={t("idees_jardins.title")}
+            subtitle={t("idees_jardins.subtitle")}
+            onBack={onBack}
+          />
+        ) : (
+          <>
+            <div style={{ padding: "15px 16px 10px" }}>
+              <span style={{ fontSize: 14, color: COLORS.muted }}>{t("idees_jardins.menu_crumb")}</span>
+            </div>
 
-        <div style={{ padding: "2px 16px 14px" }}>
-          <h1
-            className="wilder-v2-title-page"
-            style={{ margin: 0, fontSize: 21, letterSpacing: "-0.01em", lineHeight: 1.15 }}
-          >
-            {t("idees_jardins.title")}
-          </h1>
-          <p style={{ margin: "4px 0 0", fontSize: 12, color: COLORS.muted, lineHeight: 1.5 }}>
-            {t("idees_jardins.subtitle")}
-          </p>
-        </div>
+            <div style={{ padding: "2px 16px 14px" }}>
+              <h1
+                className="wilder-v2-title-page"
+                style={{ margin: 0, fontSize: 21, letterSpacing: "-0.01em", lineHeight: 1.15 }}
+              >
+                {t("idees_jardins.title")}
+              </h1>
+              <p style={{ margin: "4px 0 0", fontSize: 12, color: COLORS.muted, lineHeight: 1.5 }}>
+                {t("idees_jardins.subtitle")}
+              </p>
+            </div>
+          </>
+        )}
 
         {(error || feedback) && (
           <div style={{ padding: "0 16px 12px" }}>
@@ -325,7 +343,7 @@ export default function IdeesJardinsScreen({
             <IdeaCard
               key={idea.id}
               idea={idea}
-              complete={isAmbianceComplete(idea, inGardenPlants, inGardenMinerals)}
+              complete={isAmbianceComplete(idea, inGardenPlants, inGardenMinerals, inGardenDeco)}
               adding={addingId === idea.id || gardenLoading}
               onAdd={handleAddPalette}
               t={t}
