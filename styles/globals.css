@@ -1230,7 +1230,8 @@ video {
   animation: slideUp 0.25s ease-out;
 }
 
-.wilder-auth-modal .premium-auth-title {
+.wilder-auth-modal .premium-auth-title,
+.wilder-auth-step .premium-auth-title {
   margin: 0 0 0.45rem;
   font-family: var(--font-title, "Quicksand", system-ui, sans-serif);
   font-size: 1.35rem;
@@ -1239,7 +1240,8 @@ video {
   text-align: center;
 }
 
-.wilder-auth-modal .premium-auth-subtitle {
+.wilder-auth-modal .premium-auth-subtitle,
+.wilder-auth-step .premium-auth-subtitle {
   margin: 0 0 1.15rem;
   font-family: var(--font-body, "Nunito Sans", system-ui, sans-serif);
   font-size: 0.92rem;
@@ -1248,13 +1250,15 @@ video {
   text-align: center;
 }
 
-.wilder-auth-modal .premium-auth-tabs {
+.wilder-auth-modal .premium-auth-tabs,
+.wilder-auth-step .premium-auth-tabs {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 0.75rem;
 }
 
-.wilder-auth-modal .premium-auth-tab {
+.wilder-auth-modal .premium-auth-tab,
+.wilder-auth-step .premium-auth-tab {
   flex: 1;
   padding: 0.55rem;
   border-radius: 10px;
@@ -1267,13 +1271,15 @@ video {
   cursor: pointer;
 }
 
-.wilder-auth-modal .premium-auth-tab.active {
+.wilder-auth-modal .premium-auth-tab.active,
+.wilder-auth-step .premium-auth-tab.active {
   background: #e7efe6;
   border-color: #3c6b47;
   color: #2f5a3c;
 }
 
-.wilder-auth-modal .premium-auth-input {
+.wilder-auth-modal .premium-auth-input,
+.wilder-auth-step .premium-auth-input {
   width: 100%;
   padding: 0.85rem 1rem;
   border-radius: 12px;
@@ -1285,17 +1291,20 @@ video {
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.wilder-auth-modal .premium-auth-input::placeholder {
+.wilder-auth-modal .premium-auth-input::placeholder,
+.wilder-auth-step .premium-auth-input::placeholder {
   color: #8b9084;
 }
 
-.wilder-auth-modal .premium-auth-input:focus {
+.wilder-auth-modal .premium-auth-input:focus,
+.wilder-auth-step .premium-auth-input:focus {
   outline: none;
   border-color: #3c6b47;
   box-shadow: 0 0 0 3px rgba(47, 90, 60, 0.12);
 }
 
-.wilder-auth-modal .premium-auth-forgot-link {
+.wilder-auth-modal .premium-auth-forgot-link,
+.wilder-auth-step .premium-auth-forgot-link {
   align-self: flex-end;
   margin: -0.15rem 0 0;
   padding: 0;
@@ -1311,50 +1320,30 @@ video {
   cursor: pointer;
 }
 
-.wilder-auth-modal .premium-auth-forgot-link:hover {
+.wilder-auth-modal .premium-auth-forgot-link:hover,
+.wilder-auth-step .premium-auth-forgot-link:hover {
   color: #2f5a3c;
 }
 
-.wilder-auth-modal .premium-auth-remember {
+.wilder-auth-modal .premium-auth-remember,
+.wilder-auth-step .premium-auth-remember {
   color: #4c554a;
   font-size: 0.85rem;
 }
 
-.wilder-auth-modal .premium-auth-submit {
-  min-height: 3rem;
-  border: none;
-  border-radius: 13px;
-  padding: 13px 24px;
-  background: #2f5a3c;
-  color: #ffffff;
-  box-shadow: none;
-  font-family: var(--font-body, "Nunito Sans", system-ui, sans-serif);
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
+.wilder-auth-step .wilder-account-btn-primary {
+  margin-top: 0.15rem;
 }
 
-.wilder-auth-modal .premium-auth-submit:hover:not(:disabled) {
-  background: #3c6b47;
-}
-
-.wilder-auth-modal .premium-auth-submit:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-.wilder-auth-modal .premium-auth-submit:disabled {
-  opacity: 0.55;
-  cursor: wait;
-}
-
-.wilder-auth-modal .premium-auth-error {
+.wilder-auth-modal .premium-auth-error,
+.wilder-auth-step .premium-auth-error {
   margin: 0.75rem 0 0;
   color: #9b3b3b;
   font-size: 0.88rem;
 }
 
-.wilder-auth-modal .premium-auth-success {
+.wilder-auth-modal .premium-auth-success,
+.wilder-auth-step .premium-auth-success {
   margin: 0.75rem 0 0;
   color: #3c6b47;
   font-size: 0.88rem;

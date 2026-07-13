@@ -210,6 +210,7 @@ export default function AccountMenu({
               <PremiumAuthStep
                 key={authMode}
                 t={t}
+                variant="wilder"
                 initialMode={authMode}
                 titleKey={authTitleKey}
                 subtitleKey={authSubtitleKey}

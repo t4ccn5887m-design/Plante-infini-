@@ -12,7 +12,9 @@ export default function PremiumAuthStep({
   titleKey = "signup_prompt.auth_title",
   subtitleKey = "signup_prompt.auth_subtitle",
   initialMode = "signup",
+  variant = "default",
 }) {
+  const isWilder = variant === "wilder";
   const [mode, setMode] = useState(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -87,7 +89,7 @@ export default function PremiumAuthStep({
   const submitLabel = mode === "signup" ? t("cloud.sign_up") : t("cloud.sign_in");
 
   return (
-    <div className="premium-auth-step">
+    <div className={`premium-auth-step${isWilder ? " wilder-auth-step" : ""}`}>
       <h2 className="premium-auth-title">{t(displayTitleKey)}</h2>
       <p className="premium-auth-subtitle">{t(displaySubtitleKey)}</p>
 
@@ -153,7 +155,11 @@ export default function PremiumAuthStep({
             {t("auth.remember_me")}
           </label>
         )}
-        <button type="submit" className="premium-auth-submit" disabled={loading}>
+        <button
+          type="submit"
+          className={isWilder ? "wilder-account-btn-primary" : "premium-auth-submit"}
+          disabled={loading}
+        >
           {loading ? t("auth.loading") : submitLabel}
         </button>
       </form>
