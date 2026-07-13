@@ -93,7 +93,7 @@ export function formatScanCharacteristics(discovery) {
   return "Plante scannée";
 }
 
-function ScanRow({ discovery, inGarden, toggling, onToggle }) {
+function ScanRow({ discovery, inGarden, toggling, onOpen, onToggle }) {
   const photo = getDiscoveryPhotoUrl(discovery);
   const subtitle = formatScanCharacteristics(discovery);
 
@@ -109,54 +109,61 @@ function ScanRow({ discovery, inGarden, toggling, onToggle }) {
         background: "#fff",
       }}
     >
-      <div
-        style={{
-          width: 44,
-          height: 44,
-          borderRadius: 10,
-          background: COLORS.greenTint,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flex: "none",
-          color: COLORS.greenInk,
-          overflow: "hidden",
-        }}
+      <button
+        type="button"
+        className="wilder-scan-row-open"
+        onClick={() => onOpen?.(discovery)}
+        aria-label={`Voir la fiche de ${discovery.nom}`}
       >
-        {photo ? (
-          <img src={photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-        ) : (
-          <IconLeaf />
-        )}
-      </div>
+        <div
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: 10,
+            background: COLORS.greenTint,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: "none",
+            color: COLORS.greenInk,
+            overflow: "hidden",
+          }}
+        >
+          {photo ? (
+            <img src={photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          ) : (
+            <IconLeaf />
+          )}
+        </div>
 
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div
-          style={{
-            fontSize: 13.5,
-            fontWeight: 600,
-            color: COLORS.ink,
-            lineHeight: 1.25,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {discovery.nom}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div
+            style={{
+              fontSize: 13.5,
+              fontWeight: 600,
+              color: COLORS.ink,
+              lineHeight: 1.25,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {discovery.nom}
+          </div>
+          <div
+            style={{
+              fontSize: 11,
+              color: COLORS.muted,
+              marginTop: 2,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {subtitle}
+          </div>
         </div>
-        <div
-          style={{
-            fontSize: 11,
-            color: COLORS.muted,
-            marginTop: 2,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {subtitle}
-        </div>
-      </div>
+      </button>
 
       <button
         type="button"
@@ -199,6 +206,8 @@ export default function MesScansScreen({
   discoveries: discoveriesProp = [],
   canAddToGarden = true,
   onScan,
+  onOpenScan,
+  onRequireAccount,
 }) {
   const [scans, setScans] = useState(discoveriesProp);
   const [inGarden, setInGarden] = useState(() => new Set());
@@ -263,7 +272,7 @@ export default function MesScansScreen({
         }
       } else {
         if (!canAddToGarden) {
-          setError(t("mes_scans.garden_gate"));
+          onRequireAccount?.(() => promoteScanToGarden(discovery, t));
           return;
         }
         const result = await promoteScanToGarden(discovery, t);
@@ -314,7 +323,20 @@ export default function MesScansScreen({
         </div>
 
         {error && (
-          <p style={{ margin: "0 16px 12px", fontSize: 12, color: COLORS.error }}>{error}</p>
+          <p style={{ margin: "0 16px 12px", fontSize: 12, color: COLORS.error }}>
+            {error === t("mes_scans.garden_gate") ? (
+              <button
+                type="button"
+                className="wilder-garden-gate-btn"
+                style={{ color: COLORS.error }}
+                onClick={() => onRequireAccount?.()}
+              >
+                {error}
+              </button>
+            ) : (
+              error
+            )}
+          </p>
         )}
 
         {loading && (
@@ -337,6 +359,7 @@ export default function MesScansScreen({
                 discovery={discovery}
                 inGarden={inGarden.has(discovery.id)}
                 toggling={togglingId === discovery.id}
+                onOpen={onOpenScan}
                 onToggle={handleToggle}
               />
             ))}

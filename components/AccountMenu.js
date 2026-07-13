@@ -5,6 +5,7 @@ import PremiumAuthStep from "@/components/PremiumAuthStep";
 import { LEGAL_ROUTES } from "@/lib/legal";
 import { loadPremiumProfile, savePremiumProfile } from "@/lib/premiumProfile";
 import { shareWilderApp } from "@/lib/share";
+import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const LEGAL_LINKS = [
   { href: LEGAL_ROUTES.mentions, labelKey: "legal_mentions" },
@@ -12,16 +13,6 @@ const LEGAL_LINKS = [
   { href: LEGAL_ROUTES.cgv, labelKey: "legal_cgv" },
   { href: LEGAL_ROUTES.privacy, labelKey: "legal_privacy" },
 ];
-
-function IconMenu() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path d="M3 5.5h14" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" />
-      <path d="M3 10h14" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" />
-      <path d="M3 14.5h14" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 function ProfileSheet({ title, onClose, children }) {
   return (
@@ -49,13 +40,14 @@ export default function AccountMenu({
   t,
   isLoggedIn = false,
   userEmail = "",
+  initials = "W",
+  onHero = false,
   onSignOut,
   onAccountCreated,
   onNavigatePalette,
   onNavigateMesScans,
   onNavigateCatalogue,
   onNavigateIdeesJardins,
-  triggerColor,
 }) {
   const [open, setOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
@@ -139,38 +131,82 @@ export default function AccountMenu({
   const authSubtitleKey =
     authMode === "signin" ? "account_menu.sign_in_subtitle" : "signup_prompt.auth_subtitle";
 
+  const avatarStyle = onHero
+    ? {
+        background: "#ffffff33",
+        color: "#fff",
+        border: "0.5px solid #ffffff55",
+      }
+    : {
+        background: COLORS.greenTint,
+        color: COLORS.greenInk,
+        border: `0.5px solid ${COLORS.borderStrong}`,
+      };
+
   return (
     <>
       <div className="premium-menu-wrap account-menu-wrap" ref={wrapRef}>
         <button
           type="button"
-          className="premium-menu-trigger"
-          style={triggerColor ? { color: triggerColor } : undefined}
+          className="account-menu-avatar-trigger"
+          style={avatarStyle}
           aria-label={t("account_menu.open")}
           aria-expanded={open}
           aria-haspopup="true"
           onClick={() => setOpen((v) => !v)}
         >
-          <IconMenu />
+          {initials}
         </button>
 
         {open && (
           <div className="premium-menu-dropdown account-menu-dropdown" role="menu">
-            <button
-              type="button"
-              className="premium-menu-item"
-              role="menuitem"
-              onClick={handleShare}
-            >
+            {isLoggedIn ? (
+              <>
+                <p className="account-menu-user-label">{userEmail}</p>
+                <button
+                  type="button"
+                  className="premium-menu-item"
+                  role="menuitem"
+                  onClick={handleOpenProfile}
+                >
+                  {t("premium_menu.profile")}
+                </button>
+                <button
+                  type="button"
+                  className="premium-menu-item premium-menu-item--muted"
+                  role="menuitem"
+                  onClick={handleSignOut}
+                >
+                  {t("account_menu.sign_out")}
+                </button>
+                <div className="premium-menu-separator" aria-hidden="true" />
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="premium-menu-item account-menu-item--primary"
+                  role="menuitem"
+                  onClick={() => openAuth("signup")}
+                >
+                  {t("account_menu.create_free")}
+                </button>
+                <button
+                  type="button"
+                  className="premium-menu-item"
+                  role="menuitem"
+                  onClick={() => openAuth("signin")}
+                >
+                  {t("account_menu.sign_in")}
+                </button>
+                <div className="premium-menu-separator" aria-hidden="true" />
+              </>
+            )}
+            <button type="button" className="premium-menu-item" role="menuitem" onClick={handleShare}>
               {t("home.share_pill")}
             </button>
             {onNavigateMesScans && (
-              <button
-                type="button"
-                className="premium-menu-item"
-                role="menuitem"
-                onClick={handleNavigateMesScans}
-              >
+              <button type="button" className="premium-menu-item" role="menuitem" onClick={handleNavigateMesScans}>
                 Mes scans
               </button>
             )}
@@ -195,55 +231,9 @@ export default function AccountMenu({
               </button>
             )}
             {onNavigatePalette && (
-              <button
-                type="button"
-                className="premium-menu-item"
-                role="menuitem"
-                onClick={handleNavigatePalette}
-              >
+              <button type="button" className="premium-menu-item" role="menuitem" onClick={handleNavigatePalette}>
                 {t("account_menu.nav_palette")}
               </button>
-            )}
-            <div className="premium-menu-separator" aria-hidden="true" />
-            {isLoggedIn ? (
-              <>
-                <button
-                  type="button"
-                  className="premium-menu-item"
-                  role="menuitem"
-                  onClick={handleOpenProfile}
-                >
-                  {t("premium_menu.profile")}
-                </button>
-                <div className="premium-menu-separator" aria-hidden="true" />
-                <button
-                  type="button"
-                  className="premium-menu-item premium-menu-item--muted"
-                  role="menuitem"
-                  onClick={handleSignOut}
-                >
-                  {t("account_menu.sign_out")}
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  className="premium-menu-item"
-                  role="menuitem"
-                  onClick={() => openAuth("signup")}
-                >
-                  {t("account_menu.create_free")}
-                </button>
-                <button
-                  type="button"
-                  className="premium-menu-item"
-                  role="menuitem"
-                  onClick={() => openAuth("signin")}
-                >
-                  {t("account_menu.sign_in")}
-                </button>
-              </>
             )}
             <div className="premium-menu-separator" aria-hidden="true" />
             <nav className="account-menu-legal" aria-label={t("legal_nav")}>

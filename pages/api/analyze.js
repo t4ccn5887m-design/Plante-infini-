@@ -22,7 +22,9 @@ const EXPERT_ROLE =
 
 const SYSTEM = `${EXPERT_ROLE}
 
-Réponds en français.
+Réponds en français, avec un langage simple et parlant (cible : nouveau propriétaire qui aménage son jardin, pas un botaniste).
+Évite le jargon technique inutile : pas de « Zone USDA 9-11 », pas de termes latinisés obscurs dans les champs paysagiste.
+Préfère des formulations concrètes du quotidien (ex. « Résiste jusqu'à -5 °C, à protéger l'hiver dans les régions froides » plutôt que « Zone 8b »).
 
 RÈGLES STRICTES :
 • Ne JAMAIS inventer. En cas de doute : propose la meilleure identification possible et explique l'incertitude dans identification_note.
@@ -105,11 +107,11 @@ FORMAT DE RÉPONSE (OBLIGATOIRE) :
 <<<END_WILDER_PAYSAGISTE>>>
 
 CARACTÉRISTIQUES PAYSAGISTE (bloc balisé — plantes, arbres, arbustes, fleurs, fruits, légumes) :
-• exposition : "Plein soleil" | "Mi-ombre" | "Ombre" | "à vérifier"
-• taille_adulte : hauteur/port adulte concis (ex. "~2 m", "30–50 cm") | "à vérifier"
-• floraison : période et/ou couleur (ex. "Mai–juin, bleu") | "à vérifier"
-• rusticite : zone USDA ou seuil °C (ex. "Zone 7", "Jusqu'à -15 °C") | "à vérifier"
-• sol : type de sol préféré (ex. "Drainant, légèrement acide") | "à vérifier"
+• exposition : "Plein soleil" | "Mi-ombre" | "Ombre" | "à vérifier" — langage simple
+• taille_adulte : hauteur/port adulte en mots courants (ex. "Environ 2 m de haut", "Petit buisson 50 cm") | "à vérifier"
+• floraison : période et/ou couleur en français clair (ex. "Fleurit en mai-juin, fleurs bleues") | "à vérifier"
+• rusticite : résistance au froid en langage accessible (ex. "Résiste jusqu'à -10 °C", "À rentrer ou protéger en hiver au nord") — JAMAIS « Zone USDA » | "à vérifier"
+• sol : type de sol en mots simples (ex. "Sol drainant, pas trop calcaire") | "à vérifier"
 Remplis au mieux selon ta connaissance botanique/horticole de l'espèce identifiée. Si vraiment incertain sur un champ : "à vérifier" (ne pas inventer).
 Pour animaux, insectes, champignons non pertinents : mets null pour chaque champ du bloc JSON.`;
 
@@ -121,7 +123,7 @@ const USER_PROMPT =
   "état de santé avec causes et solutions, un fait surprenant. " +
   "Mauvaise herbe en potager : type mauvaise_herbe, nom, pourquoi nuisible, solution naturelle, astuces grand-mère, prévention. " +
   "Animal : nom, habitat, comportement, espèce protégée ou non, meilleure saison pour l'observer. " +
-  "Remplis le JSON (null si non applicable), puis le bloc <<<WILDER_PAYSAGISTE>>> en toute fin de réponse.";
+  "Langage simple, sans jargon. Remplis le JSON (null si non applicable), puis le bloc <<<WILDER_PAYSAGISTE>>> en toute fin de réponse.";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();

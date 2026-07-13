@@ -201,6 +201,7 @@ export default function IdeesJardinsScreen({
   t,
   canAddToGarden = true,
   onGardenChange,
+  onRequireAccount,
 }) {
   const ideas = useMemo(() => getActiveGardenIdeas(), []);
   const [inGardenPlants, setInGardenPlants] = useState(() => new Set());
@@ -238,7 +239,7 @@ export default function IdeesJardinsScreen({
     if (isAmbianceComplete(idea, inGardenPlants, inGardenMinerals)) return;
 
     if (!canAddToGarden) {
-      setError(t("mes_scans.garden_gate"));
+      onRequireAccount?.(() => promoteAmbianceToGarden(idea, resolveAmbianceItems, t));
       return;
     }
 
@@ -291,7 +292,20 @@ export default function IdeesJardinsScreen({
         {(error || feedback) && (
           <div style={{ padding: "0 16px 12px" }}>
             {error && (
-              <p style={{ margin: 0, fontSize: 12, color: COLORS.error, lineHeight: 1.45 }}>{error}</p>
+              <p style={{ margin: 0, fontSize: 12, color: COLORS.error, lineHeight: 1.45 }}>
+                {error === t("mes_scans.garden_gate") ? (
+                  <button
+                    type="button"
+                    className="wilder-garden-gate-btn"
+                    style={{ color: COLORS.error }}
+                    onClick={() => onRequireAccount?.()}
+                  >
+                    {error}
+                  </button>
+                ) : (
+                  error
+                )}
+              </p>
             )}
             {!error && feedback && (
               <p style={{ margin: 0, fontSize: 12, color: COLORS.greenInk, lineHeight: 1.45 }}>{feedback}</p>

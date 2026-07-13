@@ -5,7 +5,6 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import AccountMenu from "@/components/AccountMenu";
 import { loadGardenIntention, saveGardenIntention } from "@/lib/gardenIntention";
 import { fetchPalettes, fetchPaletteItems, fetchZones } from "@/lib/paletteStorage";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
@@ -31,17 +30,6 @@ function favorisCountLabel(n) {
   if (n <= 0) return null;
   if (n <= 1) return `${n} coup de cœur`;
   return `${n} coups de cœur`;
-}
-
-function getInitials(email = "") {
-  const trimmed = email.trim();
-  if (!trimmed) return "W";
-  const local = trimmed.split("@")[0] || "";
-  const parts = local.split(/[._-]+/).filter(Boolean);
-  if (parts.length >= 2) {
-    return `${parts[0][0] || ""}${parts[1][0] || ""}`.toUpperCase();
-  }
-  return local.slice(0, 2).toUpperCase() || "W";
 }
 
 function IconLeaf({ size = 26 }) {
@@ -113,42 +101,6 @@ function IconAmbiance({ size = 21 }) {
       <circle cx="5" cy="12" r="2" />
       <circle cx="19" cy="12" r="2" />
     </svg>
-  );
-}
-
-function HeroAvatar({ initials, menu }) {
-  return (
-    <div style={{ position: "absolute", top: 14, right: 15, zIndex: 2 }} className="wilder-v2-hero-avatar">
-      <div
-        style={{
-          width: 32,
-          height: 32,
-          borderRadius: "50%",
-          background: "#ffffff33",
-          color: "#fff",
-          border: "0.5px solid #ffffff55",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 12,
-          fontWeight: 700,
-          position: "relative",
-        }}
-      >
-        {initials}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            opacity: 0,
-            overflow: "hidden",
-            borderRadius: "50%",
-          }}
-        >
-          {menu}
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -355,14 +307,7 @@ function PlantCard({ plante, t }) {
 
 export default function MonJardinScreen({
   t,
-  isLoggedIn = false,
-  accountUserEmail = "",
-  onSignOut,
-  onAccountCreated,
-  onNavigatePalette,
-  onNavigateMesScans,
   onNavigateCatalogue,
-  onNavigateIdeesJardins,
   onScan,
   onOpenBrief,
   gardenRefreshTick = 0,
@@ -451,7 +396,6 @@ export default function MonJardinScreen({
 
   const isEmpty = !loading && totalPlants === 0;
   const previewItems = useMemo(() => allItems.slice(0, 3), [allItems]);
-  const initials = useMemo(() => getInitials(accountUserEmail), [accountUserEmail]);
 
   const filledSubtitle = useMemo(() => {
     const parts = [elementsCountLabel(totalPlants)];
@@ -460,21 +404,6 @@ export default function MonJardinScreen({
     parts.push("brief prêt");
     return parts.join(" · ");
   }, [totalPlants, totalFavoris]);
-
-  const accountMenu = (
-    <AccountMenu
-      t={t}
-      isLoggedIn={isLoggedIn}
-      userEmail={accountUserEmail}
-      onSignOut={onSignOut}
-      onAccountCreated={onAccountCreated}
-      onNavigatePalette={onNavigatePalette}
-      onNavigateMesScans={onNavigateMesScans}
-      onNavigateCatalogue={onNavigateCatalogue}
-      onNavigateIdeesJardins={onNavigateIdeesJardins}
-      triggerColor="#fff"
-    />
-  );
 
   return (
     <>
@@ -504,7 +433,6 @@ export default function MonJardinScreen({
                       }}
                       aria-hidden="true"
                     />
-                    <HeroAvatar initials={initials} menu={accountMenu} />
                     <div style={{ position: "relative", zIndex: 1 }}>
                       <div
                         className="wilder-v2-title-hero"
@@ -607,7 +535,6 @@ export default function MonJardinScreen({
                       }}
                       aria-hidden="true"
                     />
-                    <HeroAvatar initials={initials} menu={accountMenu} />
                     <div style={{ position: "relative", zIndex: 1 }}>
                       <div className="wilder-v2-title-hero" style={{ fontSize: 18, color: "#fff" }}>
                         Votre jardin prend forme 🌿

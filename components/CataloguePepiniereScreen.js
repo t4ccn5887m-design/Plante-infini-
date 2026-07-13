@@ -372,6 +372,7 @@ export default function CataloguePepiniereScreen({
   t,
   canAddToGarden = true,
   onGardenChange,
+  onRequireAccount,
 }) {
   const [activeTab, setActiveTab] = useState("vegetal");
   const [envieTag, setEnvieTag] = useState(null);
@@ -457,7 +458,7 @@ export default function CataloguePepiniereScreen({
     const alreadyIn = inGarden.has(plant.id);
 
     if (!alreadyIn && !canAddToGarden) {
-      setError(t("mes_scans.garden_gate"));
+      onRequireAccount?.(() => promoteCataloguePlantToGarden(plant, t));
       return;
     }
 
@@ -490,7 +491,7 @@ export default function CataloguePepiniereScreen({
     const alreadyIn = inGardenMinerals.has(article.id);
 
     if (!alreadyIn && !canAddToGarden) {
-      setError(t("mes_scans.garden_gate"));
+      onRequireAccount?.(() => promoteCatalogueMineralToGarden(article, t));
       return;
     }
 
@@ -870,7 +871,20 @@ export default function CataloguePepiniereScreen({
         )}
 
         {error && (
-          <p style={{ margin: "12px 16px 0", fontSize: 12, color: COLORS.heart, lineHeight: 1.4 }}>{error}</p>
+          <p style={{ margin: "12px 16px 0", fontSize: 12, color: COLORS.heart, lineHeight: 1.4 }}>
+            {error === t("mes_scans.garden_gate") ? (
+              <button
+                type="button"
+                className="wilder-garden-gate-btn"
+                style={{ color: COLORS.heart }}
+                onClick={() => onRequireAccount?.()}
+              >
+                {error}
+              </button>
+            ) : (
+              error
+            )}
+          </p>
         )}
 
         <div style={{ padding: "14px 16px 20px" }} />

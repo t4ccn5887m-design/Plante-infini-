@@ -41,6 +41,7 @@ export default function WilderMainLayout({
   onNavBrief,
   onNavScans,
   onNavCatalogue,
+  accountMenu = null,
   children,
   className = "",
 }) {
@@ -50,6 +51,11 @@ export default function WilderMainLayout({
       style={{ ...screenWrap, ...tabBarCssVars }}
     >
       <div className="wilder-v2-card wilder-v2-main-layout-card" style={cardWrap}>
+        {accountMenu ? (
+          <div className="wilder-v2-main-layout-account" aria-label="Compte utilisateur">
+            {accountMenu}
+          </div>
+        ) : null}
         <div className="wilder-v2-main-layout-content">{children}</div>
         <WilderTabBar
           activeNav={activeNav}

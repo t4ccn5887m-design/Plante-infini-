@@ -20,6 +20,7 @@ import {
 } from "@/lib/cloudSync";
 import { logPersistenceBootState } from "@/lib/persistenceBootLog";
 import FeatureGateModal from "@/components/FeatureGateModal";
+import AccountMenu from "@/components/AccountMenu";
 import { useGuestAccount } from "@/hooks/useGuestAccount";
 import PaletteListScreen from "@/components/PaletteListScreen";
 import PaletteDetailScreen from "@/components/PaletteDetailScreen";
@@ -131,6 +132,17 @@ function Viewfinder({ viewfinderRef, label }) {
   );
 }
 
+function getAccountInitials(email) {
+  const trimmed = String(email || "").trim();
+  if (!trimmed) return "W";
+  const local = trimmed.split("@")[0] || "";
+  const parts = local.split(/[._-]+/).filter(Boolean);
+  if (parts.length >= 2) {
+    return `${parts[0][0] || ""}${parts[1][0] || ""}`.toUpperCase();
+  }
+  return local.slice(0, 2).toUpperCase() || "W";
+}
+
 export default function Wilder() {
   const [screen, setScreen] = useState("home");
   const [captured, setCaptured] = useState(null);
@@ -154,6 +166,7 @@ export default function Wilder() {
   const [homeTab, setHomeTab] = useState("accueil");
   const [featureGateOpen, setFeatureGateOpen] = useState(false);
   const [featureGateMessageKey, setFeatureGateMessageKey] = useState("feature_gate.message");
+  const [featureGateInitialStep, setFeatureGateInitialStep] = useState("prompt");
 
   const { isGuest, refreshGuestAccount } = useGuestAccount();
 
@@ -169,12 +182,21 @@ export default function Wilder() {
   const openFeatureGateModal = useCallback((pendingAction, messageKey = "feature_gate.message") => {
     pendingGuestActionRef.current = pendingAction ?? null;
     setFeatureGateMessageKey(messageKey);
+    setFeatureGateInitialStep("prompt");
+    setFeatureGateOpen(true);
+  }, []);
+
+  const openRequireAccount = useCallback((pendingAction, messageKey = "mes_scans.garden_gate") => {
+    pendingGuestActionRef.current = pendingAction ?? null;
+    setFeatureGateMessageKey(messageKey);
+    setFeatureGateInitialStep("auth");
     setFeatureGateOpen(true);
   }, []);
 
   const closeFeatureGateModal = useCallback(() => {
     setFeatureGateOpen(false);
     setFeatureGateMessageKey("feature_gate.message");
+    setFeatureGateInitialStep("prompt");
     pendingGuestActionRef.current = null;
   }, []);
 
@@ -196,6 +218,22 @@ export default function Wilder() {
   const openMesScans = useCallback(() => {
     setReturnScreen("home");
     setScreen("mes-scans");
+  }, []);
+
+  const openScanResult = useCallback((discovery) => {
+    if (!discovery?.id) return;
+    const latest = loadDiscoveries().find((d) => d.id === discovery.id) || discovery;
+    setCurrentDiscovery(latest);
+    setResult({
+      nom: latest.nom,
+      nom_latin: latest.nom_latin,
+      description: latest.description || "",
+      type: latest.type || "plante",
+      rarete: latest.rarete || "commun",
+    });
+    setCaptured(null);
+    setReturnScreen("mes-scans");
+    setScreen("result");
   }, []);
 
   const goHomeAccueil = useCallback(() => {
@@ -244,6 +282,7 @@ export default function Wilder() {
     }
     await refreshGuestAccount();
     setFeatureGateOpen(false);
+    setFeatureGateInitialStep("prompt");
     const fn = pendingGuestActionRef.current;
     pendingGuestActionRef.current = null;
     if (fn) fn();
@@ -728,9 +767,50 @@ export default function Wilder() {
       open={featureGateOpen}
       t={t}
       messageKey={featureGateMessageKey}
+      initialStep={featureGateInitialStep}
       onClose={closeFeatureGateModal}
       onAccountCreated={handleSignupAccountCreated}
     />
+  );
+
+  const accountInitials = useMemo(() => getAccountInitials(premiumUserEmail), [premiumUserEmail]);
+  const accountOnHero = screen === "home" && homeTab === "accueil";
+
+  const accountMenu = useMemo(
+    () => (
+      <AccountMenu
+        t={t}
+        isLoggedIn={!isGuest}
+        userEmail={premiumUserEmail || ""}
+        initials={accountInitials}
+        onHero={accountOnHero}
+        onSignOut={async () => {
+          await signOutCloud();
+          setPremiumUserEmail(null);
+          setDiscoveries([]);
+          setAlbums([]);
+          await refreshGuestAccount();
+        }}
+        onAccountCreated={handleSignupAccountCreated}
+        onNavigatePalette={openMaPalette}
+        onNavigateMesScans={openMesScans}
+        onNavigateCatalogue={openCatalogue}
+        onNavigateIdeesJardins={openIdeesJardins}
+      />
+    ),
+    [
+      t,
+      isGuest,
+      premiumUserEmail,
+      accountInitials,
+      accountOnHero,
+      refreshGuestAccount,
+      handleSignupAccountCreated,
+      openMaPalette,
+      openMesScans,
+      openCatalogue,
+      openIdeesJardins,
+    ]
   );
 
   if (authBootState === "loading") {
@@ -757,20 +837,7 @@ export default function Wilder() {
       mainContent = (
         <MonJardinScreen
           t={t}
-          isLoggedIn={!isGuest}
-          accountUserEmail={premiumUserEmail || ""}
-          onSignOut={async () => {
-            await signOutCloud();
-            setPremiumUserEmail(null);
-            setDiscoveries([]);
-            setAlbums([]);
-            await refreshGuestAccount();
-          }}
-          onAccountCreated={handleSignupAccountCreated}
-          onNavigatePalette={openMaPalette}
-          onNavigateMesScans={openMesScans}
           onNavigateCatalogue={openCatalogue}
-          onNavigateIdeesJardins={openIdeesJardins}
           onScan={() => startScan("home")}
           onOpenBrief={openBrief}
           gardenRefreshTick={homeGardenRefreshTick}
@@ -785,6 +852,8 @@ export default function Wilder() {
           discoveries={discoveries}
           canAddToGarden={!isGuest}
           onScan={() => startScan("mes-scans")}
+          onOpenScan={openScanResult}
+          onRequireAccount={openRequireAccount}
         />
       );
     } else if (screen === "catalogue") {
@@ -794,6 +863,7 @@ export default function Wilder() {
           t={t}
           canAddToGarden={!isGuest}
           onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
+          onRequireAccount={openRequireAccount}
         />
       );
     } else if (screen === "idees-jardins") {
@@ -803,6 +873,7 @@ export default function Wilder() {
           t={t}
           canAddToGarden={!isGuest}
           onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
+          onRequireAccount={openRequireAccount}
         />
       );
     } else if (screen === "brief") {
@@ -824,10 +895,11 @@ export default function Wilder() {
           onNavBrief={openBrief}
           onNavScans={openMesScans}
           onNavCatalogue={openCatalogue}
+          accountMenu={accountMenu}
         >
           {mainContent}
         </WilderMainLayout>
-        {screen === "home" && featureGateOverlay}
+        {featureGateOverlay}
       </>
     );
   }
@@ -1040,6 +1112,7 @@ export default function Wilder() {
           onShare={handleShareFromResult}
           onDiscoveryUpdate={handleUpdateCurrentDiscovery}
           onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
+          onRequireAccount={openRequireAccount}
         />
         {featureGateOverlay}
       </>

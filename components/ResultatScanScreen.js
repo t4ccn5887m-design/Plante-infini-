@@ -130,6 +130,7 @@ export default function ResultatScanScreen({
   onShare,
   onDiscoveryUpdate,
   onGardenChange,
+  onRequireAccount,
 }) {
   const [inGarden, setInGarden] = useState(false);
   const [itemIdsByDiscovery, setItemIdsByDiscovery] = useState(() => new Map());
@@ -172,7 +173,7 @@ export default function ResultatScanScreen({
     setError(null);
 
     if (!inGarden && !canAddToGarden) {
-      setError(t("mes_scans.garden_gate"));
+      onRequireAccount?.(() => promoteScanToGarden(discovery, t));
       return;
     }
 
@@ -341,9 +342,20 @@ export default function ResultatScanScreen({
           </div>
 
           {error && (
-            <p style={{ margin: "14px 0 0", fontSize: 12, color: COLORS.heart, lineHeight: 1.4 }}>
-              {error}
-            </p>
+            error === t("mes_scans.garden_gate") ? (
+              <button
+                type="button"
+                className="wilder-garden-gate-btn"
+                style={{ margin: "14px 0 0", fontSize: 12, color: COLORS.heart, lineHeight: 1.4 }}
+                onClick={() => onRequireAccount?.(() => promoteScanToGarden(discovery, t))}
+              >
+                {error}
+              </button>
+            ) : (
+              <p style={{ margin: "14px 0 0", fontSize: 12, color: COLORS.heart, lineHeight: 1.4 }}>
+                {error}
+              </p>
+            )
           )}
 
           <div

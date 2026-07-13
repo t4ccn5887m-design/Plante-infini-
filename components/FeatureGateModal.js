@@ -2,12 +2,19 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import PremiumAuthStep from "@/components/PremiumAuthStep";
 
-export default function FeatureGateModal({ open, t, messageKey = "feature_gate.message", onClose, onAccountCreated }) {
-  const [step, setStep] = useState("prompt");
+export default function FeatureGateModal({
+  open,
+  t,
+  messageKey = "feature_gate.message",
+  initialStep = "prompt",
+  onClose,
+  onAccountCreated,
+}) {
+  const [step, setStep] = useState(initialStep);
 
   useEffect(() => {
-    if (!open) setStep("prompt");
-  }, [open]);
+    if (open) setStep(initialStep);
+  }, [open, initialStep]);
 
   if (!open) return null;
 
@@ -51,12 +58,19 @@ export default function FeatureGateModal({ open, t, messageKey = "feature_gate.m
             </button>
           </>
         ) : (
-          <PremiumAuthStep
-            t={t}
-            titleKey="signup_prompt.auth_title"
-            subtitleKey="signup_prompt.auth_subtitle"
-            onComplete={handleAuthComplete}
-          />
+          <>
+            {messageKey && initialStep === "auth" && (
+              <p className="feature-gate-modal-message feature-gate-modal-message--auth">
+                {t(messageKey)}
+              </p>
+            )}
+            <PremiumAuthStep
+              t={t}
+              titleKey="signup_prompt.auth_title"
+              subtitleKey="signup_prompt.auth_subtitle"
+              onComplete={handleAuthComplete}
+            />
+          </>
         )}
       </div>
     </div>,
