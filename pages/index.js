@@ -9,23 +9,10 @@ import {
 } from "@/lib/i18n";
 import AnalyzeLoadingScreen from "@/components/AnalyzeLoadingScreen";
 import { shareDiscovery } from "@/lib/share";
-import OnboardingScreen from "@/components/OnboardingScreen";
-import WelcomeSlidesScreen from "@/components/WelcomeSlidesScreen";
-import EntryChoiceScreen from "@/components/EntryChoiceScreen";
 import { buildScanQuotaHeaders } from "@/lib/scanQuotaClient";
-import {
-  logOnboardingBootState,
-  markOnboardingVu,
-  shouldShowWelcomeSlides,
-} from "@/lib/welcomeSlides";
-import {
-  markEntryChoiceDone,
-  shouldShowEntryChoice,
-} from "@/lib/entryChoice";
 import { isPermanentAuthUser } from "@/lib/authUser";
 import {
   bootstrapCloudSync,
-  ensureCloudAuth,
   flushPendingSync,
   getCloudSession,
   signOutCloud,
@@ -51,9 +38,7 @@ import { CARE_SCAN, applyCareToDiscovery } from "@/lib/discoveryCare";
 import { inferHealthFromEtatSante } from "@/lib/discoveryHealth";
 import {
   acquireCameraStream,
-  completeOnboarding,
   isCameraGranted,
-  isOnboardingComplete,
 } from "@/lib/permissions";
 import { compressDataUrl } from "@/lib/compressImage";
 import { captureViewfinderFrame } from "@/lib/cameraCapture";
@@ -147,10 +132,7 @@ export default function Wilder() {
   const [camError, setCamError] = useState("");
   const [camLoading, setCamLoading] = useState(false);
   const [camZoom, setCamZoom] = useState(1);
-  const [needsWelcomeSlides, setNeedsWelcomeSlides] = useState(false);
-  const [needsEntryChoice, setNeedsEntryChoice] = useState(false);
   const [authBootState, setAuthBootState] = useState("loading");
-  const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [returnScreen, setReturnScreen] = useState("home");
   const [activePaletteId, setActivePaletteId] = useState(null);
   const [lang] = useState(() => detectLang());
@@ -226,8 +208,6 @@ export default function Wilder() {
   }, []);
 
   const handleSignupAccountCreated = useCallback(async () => {
-    markOnboardingVu();
-    setNeedsWelcomeSlides(false);
     const session = await getCloudSession();
     const user = session?.user;
     if (user && isPermanentAuthUser(user)) {
@@ -356,46 +336,9 @@ export default function Wilder() {
     setCamReady(false);
   }, []);
 
-  const finishEntryFlow = useCallback(async () => {
-    markOnboardingVu();
-    markEntryChoiceDone();
-    setNeedsEntryChoice(false);
-    const session = await getCloudSession();
-    const user = session?.user;
-    if (user && isPermanentAuthUser(user)) {
-      setPremiumUserEmail(user.email || "");
-    }
-    await refreshGuestAccount();
-    const items = loadDiscoveries();
-    if (!isOnboardingComplete() && items.length === 0) {
-      setNeedsOnboarding(true);
-    } else {
-      setNeedsOnboarding(false);
-      setReturnScreen("home");
-      setScreen("home");
-    }
-  }, [refreshGuestAccount]);
-
-  const handleWelcomeComplete = useCallback(() => {
-    markOnboardingVu();
-    setNeedsWelcomeSlides(false);
-    setNeedsEntryChoice(true);
-  }, []);
-
-  const applyWelcomeSlidesFromSession = useCallback((session) => {
-    logOnboardingBootState(session);
-    setNeedsWelcomeSlides(shouldShowWelcomeSlides(session));
-  }, []);
-
-  const applyEntryChoiceFromSession = useCallback((session) => {
-    setNeedsEntryChoice(shouldShowEntryChoice(session));
-  }, []);
-
   useEffect(() => {
     const unsubscribe = subscribeToAuthSession(
       (session) => {
-        applyWelcomeSlidesFromSession(session);
-        applyEntryChoiceFromSession(session);
         const user = session?.user;
         if (user && isPermanentAuthUser(user)) {
           setPremiumUserEmail(user.email || "");
@@ -408,28 +351,14 @@ export default function Wilder() {
       }
     );
     return unsubscribe;
-  }, [applyWelcomeSlidesFromSession, applyEntryChoiceFromSession]);
+  }, []);
 
   useEffect(() => {
-    if (authBootState !== "ready" || needsWelcomeSlides || needsEntryChoice) return;
-
-    const items = loadDiscoveries();
-    if (isOnboardingComplete()) {
-      setNeedsOnboarding(false);
-    } else if (items.length > 0) {
-      completeOnboarding();
-      setNeedsOnboarding(false);
-    } else {
-      setNeedsOnboarding(true);
-    }
-  }, [authBootState, needsWelcomeSlides, needsEntryChoice]);
-
-  useEffect(() => {
-    if (authBootState !== "ready" || needsWelcomeSlides || needsEntryChoice) return;
+    if (authBootState !== "ready") return;
     if (tryConsumeInstallGuideAutoShow()) {
       openInstallGuideModal();
     }
-  }, [screen, authBootState, needsWelcomeSlides, needsEntryChoice]);
+  }, [screen, authBootState]);
 
   useEffect(() => {
     const hw = hardwareZoomRef.current;
@@ -444,7 +373,7 @@ export default function Wilder() {
   }, [camZoom, camReady]);
 
   useEffect(() => {
-    if (authBootState !== "ready" || needsWelcomeSlides || needsEntryChoice) return;
+    if (authBootState !== "ready") return;
 
     let cancelled = false;
 
@@ -480,7 +409,7 @@ export default function Wilder() {
     return () => {
       cancelled = true;
     };
-  }, [authBootState, needsWelcomeSlides, needsEntryChoice]);
+  }, [authBootState]);
 
   useEffect(() => {
     const onVisible = () => {
@@ -788,53 +717,6 @@ export default function Wilder() {
         <div className="app-boot-loading" role="status" aria-live="polite" aria-label={t("auth.loading")}>
           <img src="/logowilder.png" alt="" className="app-boot-loading-logo" />
         </div>
-      </>
-    );
-  }
-
-  if (needsWelcomeSlides) {
-    return (
-      <>
-        <Head>
-          <title>Wilder</title>
-          <meta name="description" content={slogan} />
-        </Head>
-        <WelcomeSlidesScreen onComplete={handleWelcomeComplete} />
-      </>
-    );
-  }
-
-  if (needsEntryChoice) {
-    return (
-      <>
-        <Head>
-          <title>Wilder</title>
-          <meta name="description" content={slogan} />
-        </Head>
-        <EntryChoiceScreen
-          t={t}
-          onComplete={finishEntryFlow}
-          onDiscoverGuest={finishEntryFlow}
-        />
-      </>
-    );
-  }
-
-  if (needsOnboarding) {
-    return (
-      <>
-        <Head>
-          <title>Wilder</title>
-          <meta name="description" content={slogan} />
-        </Head>
-        <OnboardingScreen
-          t={t}
-          onComplete={() => {
-            setNeedsOnboarding(false);
-            setReturnScreen("home");
-            setScreen("home");
-          }}
-        />
       </>
     );
   }
