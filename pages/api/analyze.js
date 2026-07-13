@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { parseClaudeJson } from "@/lib/parseAnalysis";
+import { parseAnalysisResponse } from "@/lib/parseAnalysis";
 import { getScanCategoryHint, isValidScanCategory } from "@/lib/scanCategories";
 import {
   enforceScanQuotaForAnalyze,
@@ -94,7 +94,24 @@ JSON uniquement, sans markdown ni texte autour :
   "mauvaise_herbe_solution":"Meilleure solution naturelle ; null si pas une mauvaise herbe",
   "mauvaise_herbe_astuces":"Astuces de grand-mère (vinaigre, sel, eau bouillante, purin…) ; null si pas une mauvaise herbe",
   "mauvaise_herbe_prevention":"Comment éviter qu'elle revienne ; null si pas une mauvaise herbe"
-}`;
+}
+
+FORMAT DE RÉPONSE (OBLIGATOIRE) :
+1. D'abord le JSON d'identification ci-dessus, seul, sans markdown ni texte avant.
+2. Immédiatement après la fermeture }, à la toute fin de ta réponse, ajoute le bloc paysagiste balisé suivant (sur des lignes séparées) :
+
+<<<WILDER_PAYSAGISTE>>>
+{"exposition":"…","taille_adulte":"…","floraison":"…","rusticite":"…","sol":"…"}
+<<<END_WILDER_PAYSAGISTE>>>
+
+CARACTÉRISTIQUES PAYSAGISTE (bloc balisé — plantes, arbres, arbustes, fleurs, fruits, légumes) :
+• exposition : "Plein soleil" | "Mi-ombre" | "Ombre" | "à vérifier"
+• taille_adulte : hauteur/port adulte concis (ex. "~2 m", "30–50 cm") | "à vérifier"
+• floraison : période et/ou couleur (ex. "Mai–juin, bleu") | "à vérifier"
+• rusticite : zone USDA ou seuil °C (ex. "Zone 7", "Jusqu'à -15 °C") | "à vérifier"
+• sol : type de sol préféré (ex. "Drainant, légèrement acide") | "à vérifier"
+Remplis au mieux selon ta connaissance botanique/horticole de l'espèce identifiée. Si vraiment incertain sur un champ : "à vérifier" (ne pas inventer).
+Pour animaux, insectes, champignons non pertinents : mets null pour chaque champ du bloc JSON.`;
 
 const USER_PROMPT =
   "Analyse cette photo. Tu es botaniste et naturaliste expert de niveau mondial — identifie ce que tu vois. " +
@@ -104,7 +121,7 @@ const USER_PROMPT =
   "état de santé avec causes et solutions, un fait surprenant. " +
   "Mauvaise herbe en potager : type mauvaise_herbe, nom, pourquoi nuisible, solution naturelle, astuces grand-mère, prévention. " +
   "Animal : nom, habitat, comportement, espèce protégée ou non, meilleure saison pour l'observer. " +
-  "Remplis le JSON (null si non applicable). JSON seul, sans markdown.";
+  "Remplis le JSON (null si non applicable), puis le bloc <<<WILDER_PAYSAGISTE>>> en toute fin de réponse.";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
@@ -153,7 +170,7 @@ export default async function handler(req, res) {
     }
 
     const text = response.content.map((i) => i.text || "").join("");
-    const parsed = parseClaudeJson(text);
+    const parsed = parseAnalysisResponse(text);
 
     if (!parsed) {
       console.error("[Wilder] Texte brut non parsable:", text.slice(0, 500));

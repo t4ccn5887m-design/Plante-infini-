@@ -50,6 +50,7 @@ import {
   saveDiscoveries,
 } from "@/lib/discoveriesStorage";
 import { persistDiscoveries } from "@/lib/persistDiscovery";
+import { pickPaysagisteFields } from "@/lib/paysagisteSpecs";
 import { getDiscoveryPhotoUrl } from "@/lib/discoveryPhoto";
 import { resolveScanBackScreen } from "@/lib/themes";
 
@@ -559,6 +560,7 @@ export default function Wilder() {
             espece_protegee: data.espece_protegee ?? prev.espece_protegee ?? null,
             region_saison: data.region_saison || prev.region_saison || "",
             favori: prev.favori ?? false,
+            ...pickPaysagisteFields(data, prev),
             },
             CARE_SCAN,
             now
@@ -601,6 +603,7 @@ export default function Wilder() {
           alimentation: data.alimentation || "",
           espece_protegee: data.espece_protegee ?? null,
           region_saison: data.region_saison || "",
+          ...pickPaysagisteFields(data),
           discoveredAt: now,
           plantedAt: now,
           lastScannedAt: now,
