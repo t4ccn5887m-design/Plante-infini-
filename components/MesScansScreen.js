@@ -12,6 +12,7 @@ import {
 } from "@/lib/promoteScanToGarden";
 import { getDiscoveryPhotoUrl } from "@/lib/discoveryPhoto";
 import { loadDiscoveries } from "@/lib/discoveriesStorage";
+import { getPaysagisteSpecs, PAYSAGISTE_PLACEHOLDER } from "@/lib/paysagisteSpecs";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const icStroke = {
@@ -68,25 +69,12 @@ function IconCamera() {
   );
 }
 
-/** Sous-titre ligne : déduit exposition / trait depuis les champs existants du scan. */
+/** Sous-titre ligne — dérivé des specs paysagiste (champs API ou heuristiques). */
 export function formatScanCharacteristics(discovery) {
-  const corpus = [discovery?.habitat, discovery?.guide_entretien, discovery?.description]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-
-  const parts = [];
-
-  if (/plein soleil|ensoleill/.test(corpus)) parts.push("Plein soleil");
-  else if (/mi-ombre/.test(corpus)) parts.push("Mi-ombre");
-  else if (/\bombre\b/.test(corpus)) parts.push("Ombre");
-  else if (/soleil/.test(corpus)) parts.push("Soleil");
-
-  if (/floraison violette|fleur violette|violette/.test(corpus)) parts.push("floraison violette");
-  else if (/floraison|fleurit|fleurs/.test(corpus)) parts.push("floraison");
-  else if (/persistant|feuillage persistant/.test(corpus)) parts.push("persistant");
-  else if (/grimpant/.test(corpus)) parts.push("grimpant");
-  else if (discovery?.famille) parts.push(discovery.famille);
+  const specs = getPaysagisteSpecs(discovery);
+  const parts = [specs.exposition, specs.floraison, specs.taille_adulte].filter(
+    (value) => value && value !== PAYSAGISTE_PLACEHOLDER
+  );
 
   if (parts.length > 0) return parts.slice(0, 2).join(" · ");
   if (discovery?.nom_latin) return discovery.nom_latin;

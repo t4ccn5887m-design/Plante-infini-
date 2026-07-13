@@ -838,6 +838,7 @@ export default function Wilder() {
         <MonJardinScreen
           t={t}
           onNavigateCatalogue={openCatalogue}
+          onNavigateIdeesJardins={openIdeesJardins}
           onScan={() => startScan("home")}
           onOpenBrief={openBrief}
           gardenRefreshTick={homeGardenRefreshTick}

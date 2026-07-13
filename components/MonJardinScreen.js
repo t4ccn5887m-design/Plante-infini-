@@ -308,6 +308,7 @@ function PlantCard({ plante, t }) {
 export default function MonJardinScreen({
   t,
   onNavigateCatalogue,
+  onNavigateIdeesJardins,
   onScan,
   onOpenBrief,
   gardenRefreshTick = 0,
