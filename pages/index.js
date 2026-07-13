@@ -29,6 +29,7 @@ import ResultatScanScreen from "@/components/ResultatScanScreen";
 import CataloguePepiniereScreen from "@/components/CataloguePepiniereScreen";
 import IdeesJardinsScreen from "@/components/IdeesJardinsScreen";
 import ApercuBriefScreen from "@/components/ApercuBriefScreen";
+import WilderMainLayout from "@/components/WilderMainLayout";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
 import {
   scheduleInstallGuideAfterFirstScan,
@@ -53,6 +54,15 @@ import { getDiscoveryPhotoUrl } from "@/lib/discoveryPhoto";
 import { resolveScanBackScreen } from "@/lib/themes";
 
 const THEME_KEY = "wilder-theme";
+const MAIN_SCREENS = new Set(["home", "mes-scans", "catalogue", "brief", "idees-jardins"]);
+
+function resolveMainNav(screen, homeTab) {
+  if (screen === "home") return homeTab;
+  if (screen === "brief") return "brief";
+  if (screen === "mes-scans") return "mes-scans";
+  if (screen === "catalogue" || screen === "idees-jardins") return "catalogue";
+  return "accueil";
+}
 
 async function parseApiResponse(res) {
   const text = await res.text();
@@ -140,6 +150,7 @@ export default function Wilder() {
   const [homeScanCategory, setHomeScanCategory] = useState(null);
   const [premiumUserEmail, setPremiumUserEmail] = useState(null);
   const [homeGardenRefreshTick, setHomeGardenRefreshTick] = useState(0);
+  const [homeTab, setHomeTab] = useState("accueil");
   const [featureGateOpen, setFeatureGateOpen] = useState(false);
   const [featureGateMessageKey, setFeatureGateMessageKey] = useState("feature_gate.message");
 
@@ -184,6 +195,18 @@ export default function Wilder() {
   const openMesScans = useCallback(() => {
     setReturnScreen("home");
     setScreen("mes-scans");
+  }, []);
+
+  const goHomeAccueil = useCallback(() => {
+    setReturnScreen("home");
+    setHomeTab("accueil");
+    setScreen("home");
+  }, []);
+
+  const goHomeJardin = useCallback(() => {
+    setReturnScreen("home");
+    setHomeTab("jardin");
+    setScreen("home");
   }, []);
 
   const openCatalogue = useCallback(() => {
@@ -721,14 +744,14 @@ export default function Wilder() {
     );
   }
 
-  /* ── HOME ── */
-  if (screen === "home") {
-    return (
-      <>
-        <Head>
-          <title>{pageTitle}</title>
-          <meta name="description" content={slogan} />
-        </Head>
+  /* ── ÉCRANS PRINCIPAUX (barre fixe) ── */
+  if (MAIN_SCREENS.has(screen)) {
+    let pageTitleContent = pageTitle;
+    let mainContent = null;
+
+    if (screen === "home") {
+      pageTitleContent = pageTitle;
+      mainContent = (
         <MonJardinScreen
           t={t}
           isLoggedIn={!isGuest}
@@ -748,72 +771,60 @@ export default function Wilder() {
           onScan={() => startScan("home")}
           onOpenBrief={openBrief}
           gardenRefreshTick={homeGardenRefreshTick}
+          homeTab={homeTab}
         />
-        {featureGateOverlay}
-      </>
-    );
-  }
-
-  /* ── MES SCANS ── */
-  if (screen === "mes-scans") {
-    return (
-      <>
-        <Head>
-          <title>Mes scans — Wilder</title>
-        </Head>
+      );
+    } else if (screen === "mes-scans") {
+      pageTitleContent = "Mes scans — Wilder";
+      mainContent = (
         <MesScansScreen
           t={t}
           discoveries={discoveries}
           canAddToGarden={!isGuest}
-          onBack={() => setScreen(returnScreen || "home")}
           onScan={() => startScan("mes-scans")}
         />
-      </>
-    );
-  }
-
-  /* ── CATALOGUE PÉPINIÈRE ── */
-  if (screen === "catalogue") {
-    return (
-      <>
-        <Head>
-          <title>{t("catalogue.title")} — Wilder</title>
-        </Head>
+      );
+    } else if (screen === "catalogue") {
+      pageTitleContent = `${t("catalogue.title")} — Wilder`;
+      mainContent = (
         <CataloguePepiniereScreen
           t={t}
           canAddToGarden={!isGuest}
-          onBack={() => setScreen(returnScreen || "home")}
           onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
         />
-      </>
-    );
-  }
-
-  /* ── IDÉES DE JARDINS ── */
-  if (screen === "idees-jardins") {
-    return (
-      <>
-        <Head>
-          <title>{t("idees_jardins.title")} — Wilder</title>
-        </Head>
+      );
+    } else if (screen === "idees-jardins") {
+      pageTitleContent = `${t("idees_jardins.title")} — Wilder`;
+      mainContent = (
         <IdeesJardinsScreen
           t={t}
           canAddToGarden={!isGuest}
-          onBack={() => setScreen(returnScreen || "home")}
           onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
         />
-      </>
-    );
-  }
+      );
+    } else if (screen === "brief") {
+      pageTitleContent = `${t("brief.title")} — Wilder`;
+      mainContent = <ApercuBriefScreen t={t} />;
+    }
 
-  /* ── APERÇU DU BRIEF ── */
-  if (screen === "brief") {
     return (
       <>
         <Head>
-          <title>{t("brief.title")} — Wilder</title>
+          <title>{pageTitleContent}</title>
+          {screen === "home" && <meta name="description" content={slogan} />}
         </Head>
-        <ApercuBriefScreen t={t} onBack={() => setScreen(returnScreen || "home")} />
+        <WilderMainLayout
+          className="screen-enter-fast"
+          activeNav={resolveMainNav(screen, homeTab)}
+          onNavAccueil={goHomeAccueil}
+          onNavJardin={goHomeJardin}
+          onNavBrief={openBrief}
+          onNavScans={openMesScans}
+          onNavCatalogue={openCatalogue}
+        >
+          {mainContent}
+        </WilderMainLayout>
+        {screen === "home" && featureGateOverlay}
       </>
     );
   }

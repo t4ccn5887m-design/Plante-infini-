@@ -104,17 +104,6 @@ function IconMessage() {
   );
 }
 
-function IconBrief({ size = 19 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-      <polyline points="14 2 14 8 20 8" />
-      <line x1="8" y1="13" x2="16" y2="13" />
-      <line x1="8" y1="17" x2="13" y2="17" />
-    </svg>
-  );
-}
-
 function IconCamera({ size = 18 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
@@ -128,37 +117,6 @@ function IconStone({ size = 19 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
       <path d="M5 15l3-7 5 2 3-4 3 6-2 6H4z" />
-    </svg>
-  );
-}
-
-function IconHome({ size = 20 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
-      <path d="M3 11l9-8 9 8" />
-      <path d="M5 10v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10" />
-    </svg>
-  );
-}
-
-function IconScans({ size = 20 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
-      <rect x="3" y="4" width="7" height="7" rx="1" />
-      <rect x="14" y="4" width="7" height="7" rx="1" />
-      <rect x="3" y="14" width="7" height="7" rx="1" />
-      <rect x="14" y="14" width="7" height="7" rx="1" />
-    </svg>
-  );
-}
-
-function IconCatalogue({ size = 20 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
-      <rect x="4" y="4" width="7" height="7" rx="1" />
-      <rect x="13" y="4" width="7" height="7" rx="1" />
-      <rect x="4" y="13" width="7" height="7" rx="1" />
-      <rect x="13" y="13" width="7" height="7" rx="1" />
     </svg>
   );
 }
@@ -421,118 +379,6 @@ function PlantCard({ plante, t }) {
   );
 }
 
-function TabBar({
-  activeTab,
-  onAccueil,
-  onJardin,
-  onBrief,
-  onScans,
-  onCatalogue,
-}) {
-  const tabStyle = (on) => ({
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 3,
-    color: on ? COLORS.active : COLORS.muted,
-    border: "none",
-    background: "transparent",
-    cursor: "pointer",
-    fontFamily: "inherit",
-    padding: 0,
-  });
-
-  return (
-    <div
-      className="wilder-v2-tabbar"
-      style={{
-        display: "flex",
-        alignItems: "flex-end",
-        borderTop: `0.5px solid ${COLORS.border}`,
-        background: COLORS.screen,
-        padding: "7px 3px 9px",
-        flex: "none",
-      }}
-    >
-      <button type="button" style={tabStyle(activeTab === "accueil")} onClick={onAccueil}>
-        <IconHome />
-        <span style={{ fontSize: 9, fontWeight: 500 }}>Accueil</span>
-      </button>
-      <button type="button" style={tabStyle(activeTab === "jardin")} onClick={onJardin}>
-        <IconLeaf size={20} />
-        <span style={{ fontSize: 9, fontWeight: 500 }}>Mon jardin</span>
-      </button>
-      <button
-        type="button"
-        onClick={onBrief}
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 3,
-          color: COLORS.muted,
-          border: "none",
-          background: "transparent",
-          cursor: "pointer",
-          fontFamily: "inherit",
-          padding: 0,
-        }}
-      >
-        <div
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: "50%",
-            background: COLORS.active,
-            color: "#fff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: -16,
-            boxShadow: "0 4px 10px rgba(47,90,60,.35)",
-            border: "3px solid #fff",
-          }}
-        >
-          <IconBrief size={22} />
-        </div>
-        <span style={{ fontSize: 9, fontWeight: 500 }}>Brief</span>
-      </button>
-      <button type="button" style={tabStyle(false)} onClick={onScans}>
-        <IconScans />
-        <span style={{ fontSize: 9, fontWeight: 500 }}>Mes scans</span>
-      </button>
-      <button type="button" style={tabStyle(false)} onClick={onCatalogue}>
-        <IconCatalogue />
-        <span style={{ fontSize: 9, fontWeight: 500 }}>Catalogue</span>
-      </button>
-    </div>
-  );
-}
-
-const screenWrap = {
-  minHeight: "100vh",
-  background: "radial-gradient(120% 120% at 50% 0%, #e2ddcf 0%, #cfc9ba 100%)",
-  display: "flex",
-  justifyContent: "center",
-  padding: "16px",
-  color: COLORS.ink,
-  fontFamily: 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif',
-};
-
-const cardWrap = {
-  width: "100%",
-  maxWidth: 380,
-  background: COLORS.screen,
-  borderRadius: 24,
-  overflow: "hidden",
-  alignSelf: "flex-start",
-  display: "flex",
-  flexDirection: "column",
-  minHeight: "min(92vh, 680px)",
-};
-
 export default function MonJardinScreen({
   t,
   isLoggedIn = false,
@@ -546,6 +392,7 @@ export default function MonJardinScreen({
   onScan,
   onOpenBrief,
   gardenRefreshTick = 0,
+  homeTab = "accueil",
 }) {
   const [loading, setLoading] = useState(true);
   const [zones, setZones] = useState([]);
@@ -553,7 +400,6 @@ export default function MonJardinScreen({
   const [totalPlants, setTotalPlants] = useState(0);
   const [totalFavoris, setTotalFavoris] = useState(0);
   const [gardenIntention, setGardenIntention] = useState("");
-  const [navTab, setNavTab] = useState("accueil");
 
   const loadGarden = useCallback(async () => {
     setLoading(true);
@@ -657,10 +503,8 @@ export default function MonJardinScreen({
   );
 
   return (
-    <div className="wilder-v2-shell" style={screenWrap}>
-      <div className="wilder-v2-card" style={cardWrap}>
-        <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
-          {navTab === "accueil" && (
+    <>
+          {homeTab === "accueil" && (
             <>
               {isEmpty && !loading && (
                 <>
@@ -871,7 +715,7 @@ export default function MonJardinScreen({
             </>
           )}
 
-          {navTab === "jardin" && (
+          {homeTab === "jardin" && (
             <div style={{ padding: "16px 0 8px" }}>
               <div style={{ padding: "0 16px 14px" }}>
                 <div style={{ fontSize: 20, fontWeight: 600, letterSpacing: "-0.01em" }}>
@@ -996,17 +840,6 @@ export default function MonJardinScreen({
               </div>
             </div>
           )}
-        </div>
-
-        <TabBar
-          activeTab={navTab}
-          onAccueil={() => setNavTab("accueil")}
-          onJardin={() => setNavTab("jardin")}
-          onBrief={onOpenBrief}
-          onScans={onNavigateMesScans}
-          onCatalogue={onNavigateCatalogue}
-        />
-      </div>
-    </div>
+    </>
   );
 }

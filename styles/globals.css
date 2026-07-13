@@ -151,6 +151,34 @@ body {
   .wilder-v2-tabbar {
     padding-bottom: calc(9px + env(safe-area-inset-bottom, 0px)) !important;
   }
+
+  .wilder-v2-main-layout .wilder-v2-tabbar {
+    max-width: none !important;
+  }
+}
+
+/* Layout principal — barre fixe en bas */
+.wilder-v2-main-layout-card {
+  position: relative;
+}
+
+.wilder-v2-main-layout-content {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+}
+
+.wilder-v2-main-layout .wilder-v2-tabbar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  z-index: 100;
+  width: 100%;
+  max-width: 380px;
+  box-sizing: border-box;
 }
 
 * {

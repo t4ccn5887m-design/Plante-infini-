@@ -34,15 +34,6 @@ const icStroke = {
   strokeLinejoin: "round",
 };
 
-function IconBack() {
-  return (
-    <svg width="19" height="19" viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
-      <line x1="19" y1="12" x2="5" y2="12" />
-      <polyline points="12 19 5 12 12 5" />
-    </svg>
-  );
-}
-
 function IconGrid() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
@@ -113,25 +104,6 @@ export function formatScanCharacteristics(discovery) {
   if (discovery?.nom_latin) return discovery.nom_latin;
   return "Plante scannée";
 }
-
-const screenWrap = {
-  minHeight: "100vh",
-  background: "radial-gradient(120% 120% at 50% 0%, #e2ddcf 0%, #cfc9ba 100%)",
-  display: "flex",
-  justifyContent: "center",
-  padding: "16px",
-  color: COLORS.ink,
-  fontFamily: 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif',
-};
-
-const cardWrap = {
-  width: "100%",
-  maxWidth: 380,
-  background: COLORS.screen,
-  borderRadius: 24,
-  overflow: "hidden",
-  alignSelf: "flex-start",
-};
 
 function ScanRow({ discovery, inGarden, toggling, onToggle }) {
   const photo = getDiscoveryPhotoUrl(discovery);
@@ -238,7 +210,6 @@ export default function MesScansScreen({
   t,
   discoveries: discoveriesProp = [],
   canAddToGarden = true,
-  onBack,
   onScan,
 }) {
   const [scans, setScans] = useState(discoveriesProp);
@@ -320,40 +291,8 @@ export default function MesScansScreen({
   };
 
   return (
-    <div className="wilder-v2-shell" style={screenWrap}>
-      <div className="wilder-v2-card" style={cardWrap}>
-        <div
-          style={{
-            padding: "15px 16px 10px",
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-          }}
-        >
-          <button
-            type="button"
-            onClick={onBack}
-            aria-label={t("discovery.back")}
-            style={{
-              width: 32,
-              height: 32,
-              border: "none",
-              background: "transparent",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              color: COLORS.ink,
-              fontFamily: "inherit",
-            }}
-          >
-            <IconBack />
-          </button>
-          <span style={{ fontSize: 14, color: COLORS.muted }}>Menu</span>
-        </div>
-
-        <div style={{ padding: "2px 16px 14px" }}>
+    <>
+        <div style={{ padding: "15px 16px 14px" }}>
           <div style={{ fontSize: 21, fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.15 }}>
             Mes scans
           </div>
@@ -440,7 +379,6 @@ export default function MesScansScreen({
             <IconCamera /> Scanner une plante
           </button>
         </div>
-      </div>
-    </div>
+    </>
   );
 }

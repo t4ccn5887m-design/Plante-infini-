@@ -61,15 +61,6 @@ const cardWrap = {
   alignSelf: "flex-start",
 };
 
-function IconBack() {
-  return (
-    <svg width="19" height="19" viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
-      <line x1="19" y1="12" x2="5" y2="12" />
-      <polyline points="12 19 5 12 12 5" />
-    </svg>
-  );
-}
-
 function IconBulb() {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
@@ -224,7 +215,7 @@ function BriefVignette({ item }) {
   );
 }
 
-export default function ApercuBriefScreen({ t, onBack }) {
+export default function ApercuBriefScreen({ t }) {
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -327,35 +318,8 @@ export default function ApercuBriefScreen({ t, onBack }) {
   const isEmpty = !loading && totalCount === 0;
 
   return (
-    <div style={screenWrap} className="wilder-v2-shell screen-enter-fast">
-      <div className="wilder-v2-card" style={cardWrap}>
-        <div
-          style={{
-            padding: "15px 16px 10px",
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-          }}
-        >
-          <button
-            type="button"
-            onClick={onBack}
-            aria-label={t("discovery.back")}
-            style={{
-              width: 32,
-              height: 32,
-              border: "none",
-              background: "transparent",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              color: COLORS.ink,
-            }}
-          >
-            <IconBack />
-          </button>
+    <>
+        <div style={{ padding: "15px 16px 10px" }}>
           <span style={{ fontSize: 14, color: COLORS.muted }}>{t("brief.crumb")}</span>
         </div>
 
@@ -547,7 +511,6 @@ export default function ApercuBriefScreen({ t, onBack }) {
             </>
           )}
         </div>
-      </div>
-    </div>
+    </>
   );
 }
