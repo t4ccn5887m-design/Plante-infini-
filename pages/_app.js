@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+import "@/styles/pro/wilder-pro.css";
 import Head from "next/head";
 import { Quicksand, Nunito_Sans } from "next/font/google";
 import { useEffect } from "react";
@@ -8,7 +9,7 @@ import { flushPendingSync } from "@/lib/cloudSync";
 
 const quicksand = Quicksand({
   subsets: ["latin"],
-  weight: ["600", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-title",
   display: "swap",
 });
