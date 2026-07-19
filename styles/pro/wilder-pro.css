@@ -196,6 +196,22 @@
   color:var(--muted);
   font-weight:600;
 }
+.wp .bf-gate {
+  justify-content:center;
+  text-align:center;
+  padding-top:48px;
+  padding-bottom:48px;
+}
+.wp .bf-submit-error {
+  margin:14px 0 0;
+  padding:12px 14px;
+  border-radius:14px;
+  background:#F8E8E4;
+  color:#8B3A2F;
+  font-size:14px;
+  font-weight:600;
+  line-height:1.4;
+}
 .wp .bf-screen {
   padding:12px 0 calc(28px + env(safe-area-inset-bottom));
   min-height:100vh;

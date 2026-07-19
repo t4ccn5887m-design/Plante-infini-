@@ -9,6 +9,10 @@ import {
   X,
 } from "lucide-react";
 import { BRIEF_AMBIANCE_IMAGES, BRIEF_CHOICE_IMAGES } from "@/lib/pro/briefAmbianceImages";
+import {
+  clientBriefErrorMessage,
+  submitClientBrief,
+} from "@/lib/pro/clientBriefApi";
 
 const TOTAL_STEPS = 9; // 0..8
 
@@ -604,7 +608,15 @@ function PhotosStep({ answers, setAnswers, ...shell }) {
   );
 }
 
-function BudgetStep({ answers, setAnswers, studio, onSubmit, ...shell }) {
+function BudgetStep({
+  answers,
+  setAnswers,
+  studio,
+  onSubmit,
+  submitting = false,
+  submitError = null,
+  ...shell
+}) {
   const message = typeof answers.message === "string" ? answers.message : "";
   return (
     <StepShell
@@ -613,10 +625,11 @@ function BudgetStep({ answers, setAnswers, studio, onSubmit, ...shell }) {
       title="Budget & un mot"
       subtitle="Toujours facultatif — ça aide juste à cadrer la conversation."
       badge="FACULTATIF"
-      skipLabel="Passer et envoyer"
-      onSkip={onSubmit}
-      nextLabel="Envoyer mon brief"
+      skipLabel={submitting ? undefined : "Passer et envoyer"}
+      onSkip={submitting ? undefined : onSubmit}
+      nextLabel={submitting ? "Envoi…" : "Envoyer mon brief"}
       onNext={onSubmit}
+      nextDisabled={submitting}
       hideNext={false}
     >
       <div className="bf-section-label">Fourchette budgétaire</div>
@@ -628,6 +641,7 @@ function BudgetStep({ answers, setAnswers, studio, onSubmit, ...shell }) {
               key={b.id}
               type="button"
               className={`bf-chip ${on ? "on" : ""}`}
+              disabled={submitting}
               onClick={() =>
                 setAnswers((a) => ({
                   ...a,
@@ -648,10 +662,12 @@ function BudgetStep({ answers, setAnswers, studio, onSubmit, ...shell }) {
         rows={4}
         placeholder="Ce que vous voulez qu'il retienne… (optionnel)"
         value={message}
+        disabled={submitting}
         onChange={(e) =>
           setAnswers((a) => ({ ...a, message: e.target.value }))
         }
       />
+      {submitError ? <p className="bf-submit-error">{submitError}</p> : null}
     </StepShell>
   );
 }
@@ -704,21 +720,25 @@ export default function ClientBriefFlow({ token, studio }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState(EMPTY_ANSWERS);
   const [hydrated, setHydrated] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+  const submittingRef = useRef(false);
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(storageKey(token));
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (parsed?.answers) {
+        if (parsed?.answers && !parsed?.submitted) {
           // Photos (data URLs) are session-only — never restore from storage.
           const restored = normalizeAnswers({ ...parsed.answers, photos: [] });
           setAnswers(restored);
         }
         if (
+          !parsed?.submitted &&
           typeof parsed?.step === "number" &&
           parsed.step >= 0 &&
-          parsed.step <= 8
+          parsed.step <= 7
         ) {
           setStep(parsed.step);
         }
@@ -758,50 +778,47 @@ export default function ClientBriefFlow({ token, studio }) {
   const back = useCallback(() => setStep((s) => Math.max(0, s - 1)), []);
   const next = useCallback(() => setStep((s) => Math.min(8, s + 1)), []);
 
-  const submit = useCallback(() => {
+  const submit = useCallback(async () => {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+    setSubmitting(true);
+    setSubmitError(null);
+
     const safe = normalizeAnswers(answers);
     try {
-      const payload = {
-        token,
-        studio,
-        answers: {
-          ...safe,
-          // Keep photo count only in the mock submit log (data URLs stay in memory).
-          photoCount: safe.photos.length,
-          photos: safe.photos.slice(0, 4),
-        },
-        submittedAt: new Date().toISOString(),
-        status: "mock-submitted",
-      };
-      // Prefer a light submit record without huge data URLs when possible.
+      const result = await submitClientBrief(token, safe);
+      if (!result.ok) {
+        setSubmitError(clientBriefErrorMessage(result.error));
+        return;
+      }
+
       try {
         localStorage.setItem(
-          `wp-client-brief-submitted-${token}`,
+          storageKey(token),
           JSON.stringify({
-            ...payload,
-            answers: { ...payload.answers, photos: [] },
+            token,
+            studioName: studio.name,
+            step: 8,
+            answers: { ...safe, photos: [] },
+            submitted: true,
+            briefId: result.briefId,
+            updatedAt: new Date().toISOString(),
           })
         );
       } catch {
         /* ignore quota */
       }
-      localStorage.setItem(
-        storageKey(token),
-        JSON.stringify({
-          token,
-          studioName: studio.name,
-          step: 8,
-          answers: { ...safe, photos: [] },
-          submitted: true,
-          updatedAt: payload.submittedAt,
-        })
-      );
-    } catch {
-      /* ignore */
+
+      setAnswers(safe);
+      setStep(8);
+    } catch (e) {
+      console.error("[Wilder Pro] submit:", e);
+      setSubmitError(clientBriefErrorMessage("submit_failed"));
+    } finally {
+      submittingRef.current = false;
+      setSubmitting(false);
     }
-    setAnswers(safe);
-    setStep(8);
-  }, [answers, studio, token]);
+  }, [answers, studio.name, token]);
 
   const shellBase = useMemo(
     () => ({
@@ -887,6 +904,8 @@ export default function ClientBriefFlow({ token, studio }) {
               setAnswers={setAnswers}
               studio={studio}
               onSubmit={submit}
+              submitting={submitting}
+              submitError={submitError}
             />
           )}
           {step === 8 && <Thanks studio={studio} />}
