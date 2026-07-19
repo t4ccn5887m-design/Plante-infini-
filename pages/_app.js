@@ -3,6 +3,7 @@ import "@/styles/pro/wilder-pro.css";
 import Head from "next/head";
 import { Quicksand, Nunito_Sans } from "next/font/google";
 import { useEffect } from "react";
+import { useRouter } from "next/router";
 import AppErrorBoundary from "@/components/AppErrorBoundary";
 import InstallGuideModalHost from "@/components/InstallGuideModalHost";
 import { flushPendingSync } from "@/lib/cloudSync";
@@ -21,8 +22,16 @@ const nunitoSans = Nunito_Sans({
   display: "swap",
 });
 
+function isClientBriefPath(pathname) {
+  return typeof pathname === "string" && pathname.startsWith("/b/");
+}
+
 export default function App({ Component, pageProps }) {
+  const router = useRouter();
+  const isClientBrief = isClientBriefPath(router.pathname);
+
   useEffect(() => {
+    if (isClientBrief) return;
     if (!("serviceWorker" in navigator)) return;
 
     let reloaded = false;
@@ -55,9 +64,10 @@ export default function App({ Component, pageProps }) {
     return () => {
       navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
     };
-  }, []);
+  }, [isClientBrief]);
 
   useEffect(() => {
+    if (isClientBrief) return;
     const onVisible = () => {
       if (document.visibilityState === "visible") {
         flushPendingSync();
@@ -65,7 +75,7 @@ export default function App({ Component, pageProps }) {
     };
     document.addEventListener("visibilitychange", onVisible);
     return () => document.removeEventListener("visibilitychange", onVisible);
-  }, []);
+  }, [isClientBrief]);
 
   return (
     <AppErrorBoundary>
@@ -78,7 +88,7 @@ export default function App({ Component, pageProps }) {
           />
         </Head>
         <Component {...pageProps} />
-        <InstallGuideModalHost />
+        {!isClientBrief && <InstallGuideModalHost />}
       </div>
     </AppErrorBoundary>
   );

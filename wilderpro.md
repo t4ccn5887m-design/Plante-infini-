@@ -78,6 +78,7 @@ Bénéfice pro : arrive préparé → convertit plus, chiffre plus vite et plus 
 
 - Particulier : `/` (inchangé, priorité absolue de ne pas le casser).
 - Pro : `/pro` — styles isolés sous le préfixe `.wp` (`styles/pro/wilder-pro.css`), composants dans `components/pro/`.
+- **Parcours client du lien :** `/b/[token]` — questionnaire invité 9 écrans, plein écran, isolé du shell app (pas de menu compte / install guide). Mock studio « Atelier Vert » ; stockage `localStorage` (pas de Supabase à cette étape). Test : `/b/test`.
 - Branche de travail : `wilder-pro` (jamais merger à l'aveugle dans `main` sans validation).
 
 Un monorepo (deux apps déployées séparément, ex. `app.wilder.fr` / `mon.wilder.fr`) reste une option **plus tard** si l'isolation ou le déploiement le justifient. Même base de données / backend commun restera indispensable pour le lien pro → client.
@@ -168,5 +169,5 @@ C'est ça qui remplit le brief, donc c'est ça qui fait vivre tout le reste.
 
 ---
 
-*Dernière mise à jour : 2026-07-18 — décision route `/pro` (pas monorepo) ; proto WilderProV2 intégré en mock.*
+*Dernière mise à jour : 2026-07-19 — parcours client `/b/[token]` (9 écrans mock) livré.*
 

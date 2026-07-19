@@ -656,7 +656,7 @@ function SendSheet({ onClose }) {
           <input id="wp-client-addr" placeholder="Ville, code postal…" />
         </div>
         <div className="linkbox">
-          <span className="u">wilder.pro/b/atelier-vert/8f3a2c</span>
+          <span className="u">/b/test</span>
           <button type="button" onClick={() => setCopied(true)}>
             {copied ? "Copié ✓" : "Copier"}
           </button>
