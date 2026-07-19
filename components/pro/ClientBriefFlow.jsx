@@ -5,44 +5,53 @@ import {
   Camera,
   Check,
   ImagePlus,
-  Leaf,
   Sparkles,
   X,
 } from "lucide-react";
+import { BRIEF_AMBIANCE_IMAGES } from "@/lib/pro/briefAmbianceImages";
 
 const TOTAL_STEPS = 9; // 0..8
 
 const TASTES = [
-  { id: "medit", label: "Méditerranéen", tone: "t-medit" },
-  { id: "contemporain", label: "Contemporain", tone: "t-contemp" },
-  { id: "naturel", label: "Naturel / champêtre", tone: "t-naturel" },
-  { id: "japonais", label: "Japonais zen", tone: "t-japon" },
-  { id: "luxuriant", label: "Luxuriant", tone: "t-lux" },
-  { id: "sec", label: "Jardin sec", tone: "t-sec" },
+  { id: "medit", label: "Méditerranéen", image: BRIEF_AMBIANCE_IMAGES.medit },
+  {
+    id: "contemporain",
+    label: "Contemporain",
+    image: BRIEF_AMBIANCE_IMAGES.contemporain,
+  },
+  {
+    id: "naturel",
+    label: "Naturel / champêtre",
+    image: BRIEF_AMBIANCE_IMAGES.naturel,
+  },
+  {
+    id: "japonais",
+    label: "Japonais zen",
+    image: BRIEF_AMBIANCE_IMAGES.japonais,
+  },
+  {
+    id: "luxuriant",
+    label: "Luxuriant",
+    image: BRIEF_AMBIANCE_IMAGES.luxuriant,
+  },
+  { id: "sec", label: "Jardin sec", image: BRIEF_AMBIANCE_IMAGES.sec },
 ];
 
+/** Choix simplifiés — parlants pour un particulier, pas un catalogue pro. */
 const PLANTS = [
-  "Graminées",
-  "Olivier",
-  "Arbres",
-  "Fleuri",
-  "Sec / résistant",
-  "Lavande",
-  "Arbustes",
-  "Vivaces",
-  "Aromatiques",
-  "Haie / intimité",
+  { id: "fleuri", label: "Fleuri", emoji: "🌸" },
+  { id: "arbres", label: "Arbres", emoji: "🌳" },
+  { id: "graminees", label: "Graminées", emoji: "🌾" },
+  { id: "mediterraneen", label: "Méditerranéen", emoji: "🫒" },
+  { id: "sec", label: "Sec / peu d'eau", emoji: "🌵" },
+  { id: "haie", label: "Haie / intimité", emoji: "🌲" },
 ];
 
 const MATERIALS = [
-  "Pierre",
-  "Bois",
-  "Gravier clair",
-  "Terre cuite",
-  "Corten",
-  "Béton clair",
-  "Paillage",
-  "Métal",
+  { id: "pierre", label: "Pierre", emoji: "🪨" },
+  { id: "bois", label: "Bois", emoji: "🪵" },
+  { id: "gravier", label: "Gravier clair", emoji: "⬜" },
+  { id: "terre-cuite", label: "Terre cuite", emoji: "🧱" },
 ];
 
 const PRIORITIES = [
@@ -101,12 +110,27 @@ const EMPTY_ANSWERS = {
   message: "",
 };
 
+const LIST_KEYS = ["tastes", "plants", "materials", "priorities", "users", "photos"];
+
 function storageKey(token) {
   return `wp-client-brief-${token || "test"}`;
 }
 
+function normalizeAnswers(raw) {
+  const merged = { ...EMPTY_ANSWERS, ...(raw || {}) };
+  for (const key of LIST_KEYS) {
+    merged[key] = Array.isArray(merged[key]) ? merged[key] : [];
+  }
+  if (merged.maintenance != null && typeof merged.maintenance !== "string") {
+    merged.maintenance = null;
+  }
+  if (typeof merged.message !== "string") merged.message = "";
+  return merged;
+}
+
 function toggleInList(list, id) {
-  return list.includes(id) ? list.filter((x) => x !== id) : [...list, id];
+  const safe = Array.isArray(list) ? list : [];
+  return safe.includes(id) ? safe.filter((x) => x !== id) : [...safe, id];
 }
 
 function readImageAsDataUrl(file) {
@@ -231,7 +255,8 @@ function Welcome({ studio, onStart }) {
 }
 
 function TasteStep({ answers, setAnswers, ...shell }) {
-  const count = answers.tastes.length;
+  const tastes = Array.isArray(answers.tastes) ? answers.tastes : [];
+  const count = tastes.length;
   return (
     <StepShell
       {...shell}
@@ -247,12 +272,12 @@ function TasteStep({ answers, setAnswers, ...shell }) {
     >
       <div className="bf-taste-grid">
         {TASTES.map((t) => {
-          const on = answers.tastes.includes(t.id);
+          const on = tastes.includes(t.id);
           return (
             <button
               key={t.id}
               type="button"
-              className={`bf-taste ${t.tone} ${on ? "on" : ""}`}
+              className={`bf-taste ${on ? "on" : ""}`}
               onClick={() =>
                 setAnswers((a) => ({
                   ...a,
@@ -260,7 +285,12 @@ function TasteStep({ answers, setAnswers, ...shell }) {
                 }))
               }
             >
-              <span className="bf-taste-check">{on ? <Check size={16} /> : null}</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="bf-taste-img" src={t.image} alt="" />
+              <span className="bf-taste-shade" />
+              <span className="bf-taste-check">
+                {on ? <Check size={16} /> : null}
+              </span>
               <span className="bf-taste-label">{t.label}</span>
             </button>
           );
@@ -271,12 +301,14 @@ function TasteStep({ answers, setAnswers, ...shell }) {
 }
 
 function PlantsMaterialsStep({ answers, setAnswers, ...shell }) {
-  const count = answers.plants.length + answers.materials.length;
+  const plants = Array.isArray(answers.plants) ? answers.plants : [];
+  const materials = Array.isArray(answers.materials) ? answers.materials : [];
+  const count = plants.length + materials.length;
   return (
     <StepShell
       {...shell}
       title="Végétaux & matières"
-      subtitle="Ce que vous aimeriez voir — le placement, c'est le métier du paysagiste."
+      subtitle="Ce qui vous parle d'un coup d'œil — le placement, c'est le métier du paysagiste."
       badge={
         <>
           Plusieurs choix possibles
@@ -285,46 +317,46 @@ function PlantsMaterialsStep({ answers, setAnswers, ...shell }) {
       }
       nextDisabled={count === 0}
     >
-      <div className="bf-section-label">
-        <Leaf size={14} /> Végétaux
-      </div>
-      <div className="bf-chips">
+      <div className="bf-section-label">Végétaux</div>
+      <div className="bf-choice-grid">
         {PLANTS.map((p) => {
-          const on = answers.plants.includes(p);
+          const on = plants.includes(p.id);
           return (
             <button
-              key={p}
+              key={p.id}
               type="button"
-              className={`bf-chip ${on ? "on" : ""}`}
+              className={`bf-choice ${on ? "on" : ""}`}
               onClick={() =>
                 setAnswers((a) => ({
                   ...a,
-                  plants: toggleInList(a.plants, p),
+                  plants: toggleInList(a.plants, p.id),
                 }))
               }
             >
-              {p}
+              <span className="bf-choice-emoji">{p.emoji}</span>
+              <span className="bf-choice-label">{p.label}</span>
             </button>
           );
         })}
       </div>
-      <div className="bf-section-label">Matières & couleurs</div>
-      <div className="bf-chips">
+      <div className="bf-section-label">Matières</div>
+      <div className="bf-choice-grid">
         {MATERIALS.map((m) => {
-          const on = answers.materials.includes(m);
+          const on = materials.includes(m.id);
           return (
             <button
-              key={m}
+              key={m.id}
               type="button"
-              className={`bf-chip mat ${on ? "on" : ""}`}
+              className={`bf-choice mat ${on ? "on" : ""}`}
               onClick={() =>
                 setAnswers((a) => ({
                   ...a,
-                  materials: toggleInList(a.materials, m),
+                  materials: toggleInList(a.materials, m.id),
                 }))
               }
             >
-              {m}
+              <span className="bf-choice-emoji">{m.emoji}</span>
+              <span className="bf-choice-label">{m.label}</span>
             </button>
           );
         })}
@@ -452,16 +484,15 @@ function PhotosStep({ answers, setAnswers, ...shell }) {
   const cameraRef = useRef(null);
   const galleryRef = useRef(null);
   const maxPhotos = 4;
+  const photos = Array.isArray(answers.photos) ? answers.photos : [];
 
   const addFiles = async (fileList) => {
-    const files = Array.from(fileList || []).slice(
-      0,
-      maxPhotos - answers.photos.length
-    );
+    const room = Math.max(0, maxPhotos - photos.length);
+    const files = Array.from(fileList || []).slice(0, room);
     if (!files.length) return;
     const urls = [];
     for (const file of files) {
-      if (!file.type.startsWith("image/")) continue;
+      if (!file.type || !file.type.startsWith("image/")) continue;
       try {
         urls.push(await readImageAsDataUrl(file));
       } catch {
@@ -469,17 +500,17 @@ function PhotosStep({ answers, setAnswers, ...shell }) {
       }
     }
     if (!urls.length) return;
-    setAnswers((a) => ({
-      ...a,
-      photos: [...a.photos, ...urls].slice(0, maxPhotos),
-    }));
+    setAnswers((a) => {
+      const prev = Array.isArray(a.photos) ? a.photos : [];
+      return { ...a, photos: [...prev, ...urls].slice(0, maxPhotos) };
+    });
   };
 
   const removePhoto = (idx) => {
-    setAnswers((a) => ({
-      ...a,
-      photos: a.photos.filter((_, i) => i !== idx),
-    }));
+    setAnswers((a) => {
+      const prev = Array.isArray(a.photos) ? a.photos : [];
+      return { ...a, photos: prev.filter((_, i) => i !== idx) };
+    });
   };
 
   return (
@@ -488,8 +519,8 @@ function PhotosStep({ answers, setAnswers, ...shell }) {
       title="Photos de votre terrain"
       subtitle="Facultatif — même une photo floue aide beaucoup."
       badge="FACULTATIF"
-      skipLabel={answers.photos.length ? "Passer" : undefined}
-      nextLabel={answers.photos.length ? "Continuer" : "Passer"}
+      skipLabel={photos.length ? "Passer" : undefined}
+      nextLabel={photos.length ? "Continuer" : "Passer"}
     >
       <p className="bf-hint calm">
         Aucune obligation. Vous pourrez aussi les montrer le jour du RDV.
@@ -499,7 +530,7 @@ function PhotosStep({ answers, setAnswers, ...shell }) {
           type="button"
           className="bf-btn secondary"
           onClick={() => cameraRef.current?.click()}
-          disabled={answers.photos.length >= maxPhotos}
+          disabled={photos.length >= maxPhotos}
         >
           <Camera size={18} /> Caméra
         </button>
@@ -507,7 +538,7 @@ function PhotosStep({ answers, setAnswers, ...shell }) {
           type="button"
           className="bf-btn secondary"
           onClick={() => galleryRef.current?.click()}
-          disabled={answers.photos.length >= maxPhotos}
+          disabled={photos.length >= maxPhotos}
         >
           <ImagePlus size={18} /> Galerie
         </button>
@@ -517,7 +548,7 @@ function PhotosStep({ answers, setAnswers, ...shell }) {
         type="file"
         accept="image/*"
         capture="environment"
-        hidden
+        className="bf-file-input"
         onChange={(e) => {
           addFiles(e.target.files);
           e.target.value = "";
@@ -528,15 +559,15 @@ function PhotosStep({ answers, setAnswers, ...shell }) {
         type="file"
         accept="image/*"
         multiple
-        hidden
+        className="bf-file-input"
         onChange={(e) => {
           addFiles(e.target.files);
           e.target.value = "";
         }}
       />
-      {answers.photos.length > 0 ? (
+      {photos.length > 0 ? (
         <div className="bf-photo-grid">
-          {answers.photos.map((src, i) => (
+          {photos.map((src, i) => (
             <div className="bf-photo" key={i}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={src} alt={`Photo terrain ${i + 1}`} />
@@ -655,13 +686,21 @@ export default function ClientBriefFlow({ token, studio }) {
       const raw = localStorage.getItem(storageKey(token));
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (parsed?.answers) setAnswers({ ...EMPTY_ANSWERS, ...parsed.answers });
-        if (typeof parsed?.step === "number" && parsed.step >= 0 && parsed.step <= 8) {
+        if (parsed?.answers) {
+          // Photos (data URLs) are session-only — never restore from storage.
+          const restored = normalizeAnswers({ ...parsed.answers, photos: [] });
+          setAnswers(restored);
+        }
+        if (
+          typeof parsed?.step === "number" &&
+          parsed.step >= 0 &&
+          parsed.step <= 8
+        ) {
           setStep(parsed.step);
         }
       }
     } catch {
-      /* ignore */
+      /* ignore corrupt storage */
     }
     setHydrated(true);
   }, [token]);
@@ -669,6 +708,7 @@ export default function ClientBriefFlow({ token, studio }) {
   useEffect(() => {
     if (!hydrated) return;
     try {
+      const safe = normalizeAnswers(answers);
       localStorage.setItem(
         storageKey(token),
         JSON.stringify({
@@ -676,10 +716,12 @@ export default function ClientBriefFlow({ token, studio }) {
           studioName: studio.name,
           step,
           answers: {
-            ...answers,
-            // keep photos in storage for demo; may be large
-            photos: answers.photos,
+            ...safe,
+            // Do not persist data URLs — they blow mobile localStorage quota
+            // and can leave corrupt state (e.g. photos: null) after failed writes.
+            photos: [],
           },
+          photoCount: Array.isArray(safe.photos) ? safe.photos.length : 0,
           updatedAt: new Date().toISOString(),
         })
       );
@@ -693,25 +735,39 @@ export default function ClientBriefFlow({ token, studio }) {
   const next = useCallback(() => setStep((s) => Math.min(8, s + 1)), []);
 
   const submit = useCallback(() => {
+    const safe = normalizeAnswers(answers);
     try {
       const payload = {
         token,
         studio,
-        answers,
+        answers: {
+          ...safe,
+          // Keep photo count only in the mock submit log (data URLs stay in memory).
+          photoCount: safe.photos.length,
+          photos: safe.photos.slice(0, 4),
+        },
         submittedAt: new Date().toISOString(),
         status: "mock-submitted",
       };
-      localStorage.setItem(
-        `wp-client-brief-submitted-${token}`,
-        JSON.stringify(payload)
-      );
+      // Prefer a light submit record without huge data URLs when possible.
+      try {
+        localStorage.setItem(
+          `wp-client-brief-submitted-${token}`,
+          JSON.stringify({
+            ...payload,
+            answers: { ...payload.answers, photos: [] },
+          })
+        );
+      } catch {
+        /* ignore quota */
+      }
       localStorage.setItem(
         storageKey(token),
         JSON.stringify({
           token,
           studioName: studio.name,
           step: 8,
-          answers,
+          answers: { ...safe, photos: [] },
           submitted: true,
           updatedAt: payload.submittedAt,
         })
@@ -719,6 +775,7 @@ export default function ClientBriefFlow({ token, studio }) {
     } catch {
       /* ignore */
     }
+    setAnswers(safe);
     setStep(8);
   }, [answers, studio, token]);
 
