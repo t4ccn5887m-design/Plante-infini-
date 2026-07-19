@@ -670,23 +670,32 @@ function Thanks({ studio }) {
         {studio.contactFirstName} reçoit votre brief. Vous pourrez en parler
         sereinement au premier rendez-vous.
       </p>
-      <ul className="bf-benefits">
-        <li>
-          <Check size={18} /> Gardez une trace de vos envies
-        </li>
-        <li>
-          <Check size={18} /> Enrichissez votre brief quand vous voulez
-        </li>
-        <li>
-          <Check size={18} /> Scannez des plantes et constituez votre carnet
-        </li>
-      </ul>
-      <Link href="/" className="bf-btn primary full">
-        Créer mon carnet gratuit →
-      </Link>
-      <p className="bf-thanks-foot">
-        Gratuit · pour aller plus loin après ce premier brief
-      </p>
+
+      <div className="bf-amont">
+        <div className="bf-amont-kicker">Et maintenant</div>
+        <h2 className="bf-amont-title">Continuez sur Amont</h2>
+        <p className="bf-amont-lead">
+          Amont, c&apos;est votre carnet de jardin : scannez des plantes, gardez
+          vos envies, et enrichissez votre brief quand vous voulez.
+        </p>
+        <ul className="bf-benefits">
+          <li>
+            <Check size={18} /> Gardez une trace de vos envies
+          </li>
+          <li>
+            <Check size={18} /> Enrichissez votre brief quand vous voulez
+          </li>
+          <li>
+            <Check size={18} /> Scannez des plantes et constituez votre carnet
+          </li>
+        </ul>
+        <Link href="/" className="bf-btn primary full">
+          Créer mon carnet Amont →
+        </Link>
+        <p className="bf-thanks-foot">
+          Gratuit · pour aller plus loin après ce premier brief
+        </p>
+      </div>
     </div>
   );
 }

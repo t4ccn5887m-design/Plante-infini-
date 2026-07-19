@@ -707,10 +707,39 @@
   place-items:center;
   margin:12px auto 0;
 }
+.wp .bf-amont {
+  margin-top:22px;
+  padding:18px 16px 16px;
+  border-radius:22px;
+  background:var(--mint-bg);
+  border:1.5px solid #d5e5d4;
+  text-align:left;
+}
+.wp .bf-amont-kicker {
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--mint);
+}
+.wp .bf-amont-title {
+  margin-top:6px;
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:-.015em;
+  color:var(--ink);
+}
+.wp .bf-amont-lead {
+  margin-top:8px;
+  font-size:14.5px;
+  font-weight:500;
+  color:#4a5e4c;
+  line-height:1.45;
+}
 .wp .bf-benefits {
   list-style:none;
   text-align:left;
-  margin:22px 0 8px;
+  margin:16px 0 8px;
   display:flex;
   flex-direction:column;
   gap:12px;
@@ -729,6 +758,7 @@
   font-size:13px;
   font-weight:500;
   color:var(--muted);
+  text-align:center;
 }
 
 @keyframes wp-fade { from{opacity:0} to{opacity:1} }
