@@ -37,6 +37,10 @@ import {
   deriveRdvTodos,
   deriveVigilance,
 } from "@/lib/pro/briefDerive";
+import {
+  downloadBriefRdvIcs,
+  printBriefPdf,
+} from "@/lib/pro/briefDetailActions";
 
 /* ============================================================
    WILDER PRO — branché Supabase (étape C)
@@ -242,7 +246,7 @@ function Briefs({ items, studio, onOpen }) {
   );
 }
 
-function Detail({ b, onBack, onPdf }) {
+function Detail({ b, onBack }) {
   const view = buildBriefDetailView(b);
   const [photoUrls, setPhotoUrls] = useState([]);
 
@@ -265,7 +269,7 @@ function Detail({ b, onBack, onPdf }) {
   if (view?.waiting) {
     return (
       <div className="card-panel">
-        <button className="back" onClick={onBack} type="button">
+        <button className="back no-print" onClick={onBack} type="button">
           <ArrowLeft size={18} /> Mes briefs
         </button>
         <div className="dcard">
@@ -281,7 +285,7 @@ function Detail({ b, onBack, onPdf }) {
   if (view?.unavailable || !view?.detail) {
     return (
       <div className="card-panel">
-        <button className="back" onClick={onBack} type="button">
+        <button className="back no-print" onClick={onBack} type="button">
           <ArrowLeft size={18} /> Mes briefs
         </button>
         <div className="dcard">
@@ -296,10 +300,23 @@ function Detail({ b, onBack, onPdf }) {
   const vigilance = deriveVigilance(b.brief);
   const todos = deriveRdvTodos(b.brief);
   const ctx = d.users.length ? d.users.join(" · ") : null;
+  const addressLine = [b.address, b.city].filter(Boolean).join(", ");
+
+  const onPlanifier = () => {
+    downloadBriefRdvIcs({
+      clientName: b.name,
+      phone: b.phone,
+      address: addressLine,
+    });
+  };
+
+  const onExportPdf = () => {
+    printBriefPdf(b.name);
+  };
 
   return (
-    <div className="card-panel">
-      <button className="back" onClick={onBack} type="button">
+    <div className="card-panel wp-brief-print">
+      <button className="back no-print" onClick={onBack} type="button">
         <ArrowLeft size={18} /> Mes briefs
       </button>
 
@@ -327,8 +344,8 @@ function Detail({ b, onBack, onPdf }) {
           <Sparkles size={15} /> Brief prêt
           {b.date ? ` — reçu le ${b.date}` : ""}
         </div>
-        <div className="acts">
-          <button className="prim" type="button">
+        <div className="acts no-print">
+          <button className="prim" type="button" onClick={onPlanifier}>
             <CalendarDays size={17} /> Planifier
           </button>
           {b.phone ? (
@@ -343,7 +360,7 @@ function Detail({ b, onBack, onPdf }) {
         </div>
       </div>
 
-      <div className="dcard lav">
+      <div className="dcard lav print-block">
         <div className="dlbl">
           <Sparkles size={14} /> Profil jardin · goût déduit
         </div>
@@ -359,7 +376,7 @@ function Detail({ b, onBack, onPdf }) {
       </div>
 
       {d.prios.length > 0 && (
-        <div className="dcard">
+        <div className="dcard print-block">
           <div className="dlbl">Priorités du client</div>
           <div className="prio">
             {d.prios.map((p, i) => (
@@ -372,7 +389,7 @@ function Detail({ b, onBack, onPdf }) {
         </div>
       )}
 
-      <div className="dcard">
+      <div className="dcard print-block">
         <div className="dlbl">Végétaux souhaités</div>
         {d.vegetaux.length > 0 ? (
           <div className="chipwrap">
@@ -415,7 +432,7 @@ function Detail({ b, onBack, onPdf }) {
         )}
       </div>
 
-      <div className="dcard">
+      <div className="dcard no-print">
         <div className="dlbl">
           <Camera size={14} /> Photos du client
         </div>
@@ -431,7 +448,7 @@ function Detail({ b, onBack, onPdf }) {
         )}
       </div>
 
-      <div className="dcard">
+      <div className="dcard no-print">
         <div className="dlbl">
           <Leaf size={14} /> Budget & mot du client
         </div>
@@ -453,7 +470,7 @@ function Detail({ b, onBack, onPdf }) {
       </div>
 
       {vigilance.length > 0 && (
-        <div className="dcard amber">
+        <div className="dcard amber print-block">
           <div className="dlbl">
             <AlertTriangle size={14} /> Points de vigilance
           </div>
@@ -468,7 +485,7 @@ function Detail({ b, onBack, onPdf }) {
       )}
 
       {todos.length > 0 && (
-        <div className="dcard">
+        <div className="dcard print-block">
           <div className="dlbl">À aborder au premier RDV</div>
           <div className="todo">
             {todos.map((t) => (
@@ -481,11 +498,8 @@ function Detail({ b, onBack, onPdf }) {
         </div>
       )}
 
-      <button className="bigbtn" onClick={onPdf} type="button">
+      <button className="bigbtn no-print" onClick={onExportPdf} type="button">
         <Download size={19} /> Exporter le brief (PDF)
-      </button>
-      <button className="linebtn" type="button">
-        Transmettre au pépiniériste
       </button>
     </div>
   );
@@ -1011,11 +1025,7 @@ export default function WilderProV2() {
             <Briefs items={items} studio={studio} onOpen={open} />
           )}
           {tab === "detail" && active && (
-            <Detail
-              b={active}
-              onBack={() => setTab("briefs")}
-              onPdf={() => {}}
-            />
+            <Detail b={active} onBack={() => setTab("briefs")} />
           )}
           {tab === "agenda" && <Agenda studio={studio} />}
           {tab === "profil" && (
