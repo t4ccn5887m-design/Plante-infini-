@@ -473,15 +473,15 @@
 }
 .wp .bf-choice {
   border-radius:18px;
-  padding:18px 12px 14px;
+  padding:0 0 12px;
   background:#FAFAF7;
   border:1.5px solid var(--line);
   display:flex;
   flex-direction:column;
-  align-items:center;
-  gap:8px;
+  align-items:stretch;
   text-align:center;
-  min-height:96px;
+  overflow:hidden;
+  min-height:0;
 }
 .wp .bf-choice.on {
   background:var(--mint-bg);
@@ -493,8 +493,19 @@
   border-color:var(--peach);
   color:#8a5230;
 }
-.wp .bf-choice-emoji { font-size:28px; line-height:1; }
-.wp .bf-choice-label { font-size:14.5px; font-weight:700; }
+.wp .bf-choice-img {
+  width:100%;
+  aspect-ratio:4/3;
+  object-fit:cover;
+  display:block;
+  background:var(--line);
+}
+.wp .bf-choice-label {
+  font-size:14px;
+  font-weight:700;
+  padding:10px 8px 0;
+  line-height:1.25;
+}
 .wp .bf-chips {
   display:flex;
   flex-wrap:wrap;

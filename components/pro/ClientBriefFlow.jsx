@@ -8,7 +8,7 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { BRIEF_AMBIANCE_IMAGES } from "@/lib/pro/briefAmbianceImages";
+import { BRIEF_AMBIANCE_IMAGES, BRIEF_CHOICE_IMAGES } from "@/lib/pro/briefAmbianceImages";
 
 const TOTAL_STEPS = 9; // 0..8
 
@@ -39,19 +39,27 @@ const TASTES = [
 
 /** Choix simplifiés — parlants pour un particulier, pas un catalogue pro. */
 const PLANTS = [
-  { id: "fleuri", label: "Fleuri", emoji: "🌸" },
-  { id: "arbres", label: "Arbres", emoji: "🌳" },
-  { id: "graminees", label: "Graminées", emoji: "🌾" },
-  { id: "mediterraneen", label: "Méditerranéen", emoji: "🫒" },
-  { id: "sec", label: "Sec / peu d'eau", emoji: "🌵" },
-  { id: "haie", label: "Haie / intimité", emoji: "🌲" },
+  { id: "fleuri", label: "Fleuri", image: BRIEF_CHOICE_IMAGES.fleuri },
+  { id: "arbres", label: "Arbres", image: BRIEF_CHOICE_IMAGES.arbres },
+  { id: "graminees", label: "Graminées", image: BRIEF_CHOICE_IMAGES.graminees },
+  {
+    id: "mediterraneen",
+    label: "Méditerranéen",
+    image: BRIEF_CHOICE_IMAGES.mediterraneen,
+  },
+  { id: "sec", label: "Sec / peu d'eau", image: BRIEF_CHOICE_IMAGES.sec },
+  { id: "haie", label: "Haie / intimité", image: BRIEF_CHOICE_IMAGES.haie },
 ];
 
 const MATERIALS = [
-  { id: "pierre", label: "Pierre", emoji: "🪨" },
-  { id: "bois", label: "Bois", emoji: "🪵" },
-  { id: "gravier", label: "Gravier clair", emoji: "⬜" },
-  { id: "terre-cuite", label: "Terre cuite", emoji: "🧱" },
+  { id: "pierre", label: "Pierre", image: BRIEF_CHOICE_IMAGES.pierre },
+  { id: "bois", label: "Bois", image: BRIEF_CHOICE_IMAGES.bois },
+  { id: "gravier", label: "Gravier clair", image: BRIEF_CHOICE_IMAGES.gravier },
+  {
+    id: "terre-cuite",
+    label: "Terre cuite",
+    image: BRIEF_CHOICE_IMAGES["terre-cuite"],
+  },
 ];
 
 const PRIORITIES = [
@@ -174,14 +182,17 @@ function StepShell({
   onSkip,
   hideNext = false,
 }) {
+  const studioColor = studio?.color || "#2F5E3F";
+  const studioInitials = studio?.initials || "?";
+  const studioName = studio?.name || "Studio";
   return (
     <div className="bf-step">
       <ProgressBar step={step} />
       <div className="bf-studio-chip">
-        <span className="bf-studio-ava" style={{ background: studio.color }}>
-          {studio.initials}
+        <span className="bf-studio-ava" style={{ background: studioColor }}>
+          {studioInitials}
         </span>
-        <span>{studio.name}</span>
+        <span>{studioName}</span>
       </div>
       {badge ? <div className="bf-badge">{badge}</div> : null}
       <h1 className="bf-title">{title}</h1>
@@ -333,7 +344,8 @@ function PlantsMaterialsStep({ answers, setAnswers, ...shell }) {
                 }))
               }
             >
-              <span className="bf-choice-emoji">{p.emoji}</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="bf-choice-img" src={p.image} alt="" />
               <span className="bf-choice-label">{p.label}</span>
             </button>
           );
@@ -355,7 +367,8 @@ function PlantsMaterialsStep({ answers, setAnswers, ...shell }) {
                 }))
               }
             >
-              <span className="bf-choice-emoji">{m.emoji}</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="bf-choice-img" src={m.image} alt="" />
               <span className="bf-choice-label">{m.label}</span>
             </button>
           );
@@ -592,9 +605,11 @@ function PhotosStep({ answers, setAnswers, ...shell }) {
 }
 
 function BudgetStep({ answers, setAnswers, studio, onSubmit, ...shell }) {
+  const message = typeof answers.message === "string" ? answers.message : "";
   return (
     <StepShell
       {...shell}
+      studio={studio}
       title="Budget & un mot"
       subtitle="Toujours facultatif — ça aide juste à cadrer la conversation."
       badge="FACULTATIF"
@@ -632,7 +647,7 @@ function BudgetStep({ answers, setAnswers, studio, onSubmit, ...shell }) {
         className="bf-textarea"
         rows={4}
         placeholder="Ce que vous voulez qu'il retienne… (optionnel)"
-        value={answers.message}
+        value={message}
         onChange={(e) =>
           setAnswers((a) => ({ ...a, message: e.target.value }))
         }
