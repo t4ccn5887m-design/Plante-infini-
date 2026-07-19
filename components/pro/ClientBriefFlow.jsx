@@ -10,105 +10,38 @@ import {
 } from "lucide-react";
 import { BRIEF_AMBIANCE_IMAGES, BRIEF_CHOICE_IMAGES } from "@/lib/pro/briefAmbianceImages";
 import {
+  BUDGETS,
+  MAINTENANCE as MAINTENANCE_DEFS,
+  MATERIALS as MATERIAL_DEFS,
+  PLANTS as PLANT_DEFS,
+  PRIORITIES,
+  TASTES as TASTE_DEFS,
+  USERS,
+} from "@/lib/pro/briefLabels";
+import {
   clientBriefErrorMessage,
   submitClientBrief,
 } from "@/lib/pro/clientBriefApi";
 
 const TOTAL_STEPS = 9; // 0..8
 
-const TASTES = [
-  { id: "medit", label: "Méditerranéen", image: BRIEF_AMBIANCE_IMAGES.medit },
-  {
-    id: "contemporain",
-    label: "Contemporain",
-    image: BRIEF_AMBIANCE_IMAGES.contemporain,
-  },
-  {
-    id: "naturel",
-    label: "Naturel / champêtre",
-    image: BRIEF_AMBIANCE_IMAGES.naturel,
-  },
-  {
-    id: "japonais",
-    label: "Japonais zen",
-    image: BRIEF_AMBIANCE_IMAGES.japonais,
-  },
-  {
-    id: "luxuriant",
-    label: "Luxuriant",
-    image: BRIEF_AMBIANCE_IMAGES.luxuriant,
-  },
-  { id: "sec", label: "Jardin sec", image: BRIEF_AMBIANCE_IMAGES.sec },
-];
+const TASTES = TASTE_DEFS.map((t) => ({
+  ...t,
+  image: BRIEF_AMBIANCE_IMAGES[t.id],
+}));
 
 /** Choix simplifiés — parlants pour un particulier, pas un catalogue pro. */
-const PLANTS = [
-  { id: "fleuri", label: "Fleuri", image: BRIEF_CHOICE_IMAGES.fleuri },
-  { id: "arbres", label: "Arbres", image: BRIEF_CHOICE_IMAGES.arbres },
-  { id: "graminees", label: "Graminées", image: BRIEF_CHOICE_IMAGES.graminees },
-  {
-    id: "mediterraneen",
-    label: "Méditerranéen",
-    image: BRIEF_CHOICE_IMAGES.mediterraneen,
-  },
-  { id: "sec", label: "Sec / peu d'eau", image: BRIEF_CHOICE_IMAGES.sec },
-  { id: "haie", label: "Haie / intimité", image: BRIEF_CHOICE_IMAGES.haie },
-];
+const PLANTS = PLANT_DEFS.map((p) => ({
+  ...p,
+  image: BRIEF_CHOICE_IMAGES[p.id],
+}));
 
-const MATERIALS = [
-  { id: "pierre", label: "Pierre", image: BRIEF_CHOICE_IMAGES.pierre },
-  { id: "bois", label: "Bois", image: BRIEF_CHOICE_IMAGES.bois },
-  { id: "gravier", label: "Gravier clair", image: BRIEF_CHOICE_IMAGES.gravier },
-  {
-    id: "terre-cuite",
-    label: "Terre cuite",
-    image: BRIEF_CHOICE_IMAGES["terre-cuite"],
-  },
-];
+const MATERIALS = MATERIAL_DEFS.map((m) => ({
+  ...m,
+  image: BRIEF_CHOICE_IMAGES[m.id],
+}));
 
-const PRIORITIES = [
-  { id: "detente", emoji: "😌", label: "Se détendre" },
-  { id: "recevoir", emoji: "🥂", label: "Recevoir" },
-  { id: "isoler", emoji: "🌿", label: "S'isoler" },
-  { id: "nature", emoji: "🦋", label: "La nature" },
-  { id: "beaute", emoji: "✨", label: "Le beau au quotidien" },
-  { id: "enfants", emoji: "🧒", label: "Jouer / enfants" },
-];
-
-const USERS = [
-  { id: "nous", emoji: "🏠", label: "Juste nous" },
-  { id: "enfants", emoji: "👶", label: "Enfants" },
-  { id: "animaux", emoji: "🐕", label: "Animaux" },
-  { id: "ages", emoji: "🤍", label: "Personnes âgées" },
-  { id: "invites", emoji: "🎉", label: "On reçoit souvent" },
-];
-
-const MAINTENANCE = [
-  {
-    id: "min",
-    title: "Le moins possible",
-    sub: "Je veux profiter, pas jardiner",
-  },
-  {
-    id: "weekend",
-    title: "Un peu le week-end",
-    sub: "Quelques gestes, sans contrainte",
-  },
-  {
-    id: "love",
-    title: "J'adore ça",
-    sub: "Je suis prêt·e à m'en occuper",
-  },
-];
-
-const BUDGETS = [
-  { id: "lt3", label: "< 3 k€" },
-  { id: "3-5", label: "3–5 k€" },
-  { id: "5-10", label: "5–10 k€" },
-  { id: "10-20", label: "10–20 k€" },
-  { id: "20+", label: "20 k€ +" },
-  { id: "unknown", label: "Je ne sais pas" },
-];
+const MAINTENANCE = MAINTENANCE_DEFS;
 
 const EMPTY_ANSWERS = {
   tastes: [],
