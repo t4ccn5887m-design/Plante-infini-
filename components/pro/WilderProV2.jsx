@@ -18,6 +18,9 @@ import {
   Clock,
   Copy,
   Check,
+  Images,
+  Trash2,
+  Pencil,
 } from "lucide-react";
 import {
   signInWithEmail,
@@ -37,10 +40,52 @@ import {
   updateProStudio,
 } from "@/lib/pro/proStudioApi";
 import {
+  createProProject,
+  deleteProProject,
+  deleteProjectPhoto,
+  getProjectPhotoSignedUrls,
+  listProProjects,
+  proProjectsErrorMessage,
+  updateProProject,
+  uploadProjectPhotos,
+} from "@/lib/pro/proProjectsApi";
+import {
   deriveRdvTodos,
   deriveVigilance,
 } from "@/lib/pro/briefDerive";
 import { printBriefPdf } from "@/lib/pro/briefDetailActions";
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve) => {
+    if (!file || typeof FileReader === "undefined") {
+      resolve(null);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () =>
+      resolve(typeof reader.result === "string" ? reader.result : null);
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+}
+
+/** Image signed URL — vignette vide si URL absente ou illisible. */
+function SafePhoto({ src, alt = "", className = "" }) {
+  const [broken, setBroken] = useState(false);
+  if (!src || broken) {
+    return <div className={`wp-photo-fallback ${className}`} aria-hidden />;
+  }
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      loading="lazy"
+      onError={() => setBroken(true)}
+    />
+  );
+}
 
 /* ============================================================
    WILDER PRO — branché Supabase (étape C)
@@ -516,6 +561,510 @@ function Detail({ b, onBack, onPlanifier }) {
 
       <button className="bigbtn no-print" onClick={onExportPdf} type="button">
         <Download size={19} /> Exporter le brief (PDF)
+      </button>
+    </div>
+  );
+}
+
+function Realisations({ studio, refreshKey, onOpen, onCreate, onOpenSettings }) {
+  const [items, setItems] = useState([]);
+  const [coverUrls, setCoverUrls] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!studio?.id) {
+        setItems([]);
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      setError(null);
+      const result = await listProProjects(studio.id);
+      if (cancelled) return;
+      if (!result.ok) {
+        setLoading(false);
+        setError(proProjectsErrorMessage(result.error));
+        setItems([]);
+        return;
+      }
+      setItems(result.items || []);
+      setLoading(false);
+
+      const paths = (result.items || [])
+        .map((p) => p.coverPath)
+        .filter(Boolean);
+      if (!paths.length) {
+        setCoverUrls({});
+        return;
+      }
+      const urls = await getProjectPhotoSignedUrls(paths);
+      if (cancelled) return;
+      const map = {};
+      (result.items || []).forEach((p) => {
+        if (!p.coverPath) return;
+        const idx = paths.indexOf(p.coverPath);
+        if (idx >= 0 && urls[idx]) map[p.id] = urls[idx];
+      });
+      setCoverUrls(map);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [studio?.id, refreshKey]);
+
+  const empty = !loading && !error && items.length === 0;
+
+  return (
+    <div className="card-panel">
+      <div className="head-row">
+        <div>
+          <div className="h-title">Réalisations</div>
+          <div className="h-sub">
+            {loading
+              ? "Chargement…"
+              : empty
+                ? "Aucun dossier"
+                : `${items.length} réalisation${items.length > 1 ? "s" : ""}`}
+          </div>
+        </div>
+        <StudioAvatar studio={studio} onOpen={onOpenSettings} />
+      </div>
+
+      {loading && (
+        <p className="bc-taste" style={{ marginTop: 18 }}>
+          Chargement des réalisations…
+        </p>
+      )}
+
+      {error && (
+        <div className="wp-empty" style={{ marginTop: 18 }}>
+          <p className="wp-empty-title">Réalisations indisponibles</p>
+          <p className="wp-empty-sub">{error}</p>
+        </div>
+      )}
+
+      {empty && (
+        <div className="wp-empty" style={{ marginTop: 18 }}>
+          <Images size={28} color="#4E7B52" />
+          <p className="wp-empty-title">Créez votre première réalisation</p>
+          <p className="wp-empty-sub">
+            Constituez un dossier photo pour montrer un jardin déjà réalisé.
+          </p>
+          <button className="bigbtn" type="button" onClick={onCreate}>
+            <Plus size={18} /> Nouvelle réalisation
+          </button>
+        </div>
+      )}
+
+      {!loading && !error && items.length > 0 && (
+        <>
+          <button
+            className="bigbtn"
+            type="button"
+            onClick={onCreate}
+            style={{ marginTop: 14, marginBottom: 4 }}
+          >
+            <Plus size={18} /> Nouvelle réalisation
+          </button>
+          <div className="wp-proj-grid">
+            {items.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                className="wp-proj-card"
+                onClick={() => onOpen(p)}
+              >
+                <div className="wp-proj-thumb">
+                  <SafePhoto src={coverUrls[p.id]} alt="" />
+                </div>
+                <div className="wp-proj-meta">
+                  <div className="wp-proj-title">{p.title}</div>
+                  <div className="wp-proj-loc">
+                    {p.location ? (
+                      <>
+                        <MapPin size={13} /> {p.location}
+                      </>
+                    ) : (
+                      "Sans lieu"
+                    )}
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function RealisationDetail({
+  project,
+  studio,
+  onBack,
+  onEdit,
+  onDeleted,
+  onOpenSettings,
+  onProjectChange,
+}) {
+  const [photoUrls, setPhotoUrls] = useState([]);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+  const photos = project?.photos || [];
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const paths = photos.map((p) => p.path).filter(Boolean);
+      if (!paths.length) {
+        setPhotoUrls([]);
+        return;
+      }
+      const urls = await getProjectPhotoSignedUrls(paths);
+      if (!cancelled) setPhotoUrls(urls);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [project?.id, project?.photos]);
+
+  const removePhoto = async (photo) => {
+    if (!photo || busy) return;
+    if (!window.confirm("Supprimer cette photo ?")) return;
+    setBusy(true);
+    setError(null);
+    const result = await deleteProjectPhoto(photo);
+    setBusy(false);
+    if (!result.ok) {
+      setError(proProjectsErrorMessage(result.error));
+      return;
+    }
+    const next = {
+      ...project,
+      photos: photos.filter((p) => p.id !== photo.id),
+      coverPath:
+        photos.filter((p) => p.id !== photo.id)[0]?.path || null,
+    };
+    onProjectChange?.(next);
+  };
+
+  const removeProject = async () => {
+    if (busy) return;
+    if (
+      !window.confirm(
+        "Supprimer ce dossier et toutes ses photos ? Cette action est définitive."
+      )
+    ) {
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    const result = await deleteProProject(project);
+    setBusy(false);
+    if (!result.ok) {
+      setError(proProjectsErrorMessage(result.error));
+      return;
+    }
+    onDeleted?.();
+  };
+
+  return (
+    <div className="card-panel">
+      <div className="head-row">
+        <button className="back" onClick={onBack} type="button">
+          <ArrowLeft size={18} /> Réalisations
+        </button>
+        <StudioAvatar studio={studio} onOpen={onOpenSettings} />
+      </div>
+
+      <div className="dhero" style={{ marginTop: 4 }}>
+        <div className="who">{project?.title}</div>
+        {project?.location ? (
+          <div className="coord">
+            <span>
+              <MapPin size={15} /> {project.location}
+            </span>
+          </div>
+        ) : null}
+        <div className="acts no-print">
+          <button className="prim" type="button" onClick={onEdit} disabled={busy}>
+            <Pencil size={17} /> Modifier
+          </button>
+          <button
+            className="ghost"
+            type="button"
+            onClick={removeProject}
+            disabled={busy}
+            style={{ color: "#9B3B2E" }}
+          >
+            <Trash2 size={17} /> Supprimer
+          </button>
+        </div>
+      </div>
+
+      {project?.description ? (
+        <div className="dcard">
+          <div className="dlbl">Description</div>
+          <p className="bc-taste" style={{ margin: 0 }}>
+            {project.description}
+          </p>
+        </div>
+      ) : null}
+
+      <div className="dcard">
+        <div className="dlbl">
+          <Camera size={14} /> Photos
+          {photos.length ? ` · ${photos.length}` : ""}
+        </div>
+        {photos.length === 0 ? (
+          <p className="bc-taste">Aucune photo pour l’instant.</p>
+        ) : (
+          <div className="wp-proj-gallery">
+            {photos.map((photo, i) => (
+              <div className="wp-proj-gal-item" key={photo.id}>
+                <SafePhoto src={photoUrls[i]} alt="" />
+                <button
+                  type="button"
+                  className="wp-proj-gal-del"
+                  onClick={() => removePhoto(photo)}
+                  disabled={busy}
+                  aria-label="Supprimer la photo"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {error && (
+        <p className="wp-form-error" role="alert">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function RealisationForm({
+  studio,
+  project,
+  onClose,
+  onSaved,
+  onOpenSettings,
+}) {
+  const isEdit = Boolean(project?.id);
+  const [title, setTitle] = useState(project?.title || "");
+  const [location, setLocation] = useState(project?.location || "");
+  const [description, setDescription] = useState(project?.description || "");
+  const [pendingFiles, setPendingFiles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [uploadNote, setUploadNote] = useState(null);
+
+  const onPickFiles = (e) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = "";
+    if (!files.length) return;
+    setPendingFiles((prev) => [...prev, ...files].slice(0, 24));
+  };
+
+  const removePending = (idx) => {
+    setPendingFiles((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleSave = async () => {
+    setError(null);
+    setUploadNote(null);
+    const trimmed = title.trim();
+    if (!trimmed) {
+      setError(proProjectsErrorMessage("project_title_required"));
+      return;
+    }
+    if (!studio?.id) {
+      setError(proProjectsErrorMessage("studio_missing"));
+      return;
+    }
+
+    setLoading(true);
+
+    let saved = project;
+    if (isEdit) {
+      const upd = await updateProProject(project.id, {
+        title: trimmed,
+        location,
+        description,
+      });
+      if (!upd.ok) {
+        setLoading(false);
+        setError(proProjectsErrorMessage(upd.error));
+        return;
+      }
+      saved = { ...project, ...upd.project, photos: project.photos || [] };
+    } else {
+      const created = await createProProject(studio.id, {
+        title: trimmed,
+        location,
+        description,
+      });
+      if (!created.ok) {
+        setLoading(false);
+        setError(proProjectsErrorMessage(created.error));
+        return;
+      }
+      saved = created.project;
+    }
+
+    if (pendingFiles.length) {
+      const dataUrls = [];
+      for (let i = 0; i < pendingFiles.length; i += 1) {
+        const dataUrl = await readFileAsDataUrl(pendingFiles[i]);
+        if (dataUrl) dataUrls.push(dataUrl);
+      }
+
+      if (dataUrls.length) {
+        const up = await uploadProjectPhotos({
+          studioId: studio.id,
+          projectId: saved.id,
+          photoDataUrls: dataUrls,
+          startSort: (saved.photos || []).length,
+        });
+        if (!up.ok && !(up.photos || []).length) {
+          setLoading(false);
+          setError(proProjectsErrorMessage(up.error));
+          // Dossier créé : on laisse l’utilisateur revenir / réessayer
+          onSaved?.(saved);
+          return;
+        }
+        saved = {
+          ...saved,
+          photos: [...(saved.photos || []), ...(up.photos || [])],
+          coverPath:
+            saved.coverPath || up.photos?.[0]?.path || null,
+        };
+        if (up.failures > 0) {
+          setUploadNote(
+            `${up.failures} photo${up.failures > 1 ? "s" : ""} n’ont pas pu être ajoutées.`
+          );
+        }
+      } else if (pendingFiles.length) {
+        setUploadNote("Aucune photo n’a pu être lue. Essayez JPEG ou PNG.");
+      }
+    }
+
+    setLoading(false);
+    onSaved?.(saved);
+  };
+
+  return (
+    <div className="card-panel">
+      <div className="head-row">
+        <button className="back" onClick={onClose} type="button">
+          <ArrowLeft size={18} /> Annuler
+        </button>
+        <StudioAvatar studio={studio} onOpen={onOpenSettings} />
+      </div>
+
+      <div className="h-title" style={{ marginBottom: 14 }}>
+        {isEdit ? "Modifier la réalisation" : "Nouvelle réalisation"}
+      </div>
+
+      <div className="field">
+        <label htmlFor="proj-title">Titre</label>
+        <input
+          id="proj-title"
+          type="text"
+          placeholder="Ex. Jardin contemporain — Aix"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          disabled={loading}
+        />
+      </div>
+      <div className="field">
+        <label htmlFor="proj-loc">Lieu</label>
+        <input
+          id="proj-loc"
+          type="text"
+          placeholder="Ville, quartier…"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          disabled={loading}
+        />
+      </div>
+      <div className="field">
+        <label htmlFor="proj-desc">Description</label>
+        <textarea
+          id="proj-desc"
+          className="wp-textarea"
+          rows={4}
+          placeholder="Ambiance, contraintes, matériaux…"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          disabled={loading}
+        />
+      </div>
+
+      <div className="field">
+        <label htmlFor="proj-photos">Photos</label>
+        <input
+          id="proj-photos"
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={onPickFiles}
+          disabled={loading}
+        />
+        <p className="wp-field-hint">
+          Les photos iPhone sont compressées avant envoi. HEIC illisible →
+          message, pas de plantage.
+        </p>
+        {pendingFiles.length > 0 && (
+          <ul className="wp-pending-photos">
+            {pendingFiles.map((f, i) => (
+              <li key={`${f.name}-${i}`}>
+                <span>{f.name || `Photo ${i + 1}`}</span>
+                <button
+                  type="button"
+                  onClick={() => removePending(i)}
+                  disabled={loading}
+                >
+                  Retirer
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {error && (
+        <p className="wp-form-error" role="alert">
+          {error}
+        </p>
+      )}
+      {uploadNote && !error && (
+        <p className="wp-form-error" role="status">
+          {uploadNote}
+        </p>
+      )}
+
+      <button
+        className="bigbtn"
+        type="button"
+        onClick={handleSave}
+        disabled={loading}
+      >
+        {loading
+          ? "Enregistrement…"
+          : isEdit
+            ? "Enregistrer"
+            : "Créer la réalisation"}
+      </button>
+      <button className="linebtn" type="button" onClick={onClose} disabled={loading}>
+        Annuler
       </button>
     </div>
   );
@@ -1245,6 +1794,8 @@ export default function WilderProV2() {
   const [planSheet, setPlanSheet] = useState(false);
   const [settingsSheet, setSettingsSheet] = useState(false);
   const [agendaKey, setAgendaKey] = useState(0);
+  const [realisationsKey, setRealisationsKey] = useState(0);
+  const [activeProject, setActiveProject] = useState(null);
 
   const loadLinks = useCallback(async (studioId) => {
     if (!studioId) {
@@ -1299,6 +1850,7 @@ export default function WilderProV2() {
     setStudio(null);
     setItems([]);
     setActive(null);
+    setActiveProject(null);
     setTab("accueil");
     setPhase("auth");
   };
@@ -1367,6 +1919,59 @@ export default function WilderProV2() {
               onOpenSettings={() => setSettingsSheet(true)}
             />
           )}
+          {tab === "realisations" && (
+            <Realisations
+              studio={studio}
+              refreshKey={realisationsKey}
+              onOpen={(p) => {
+                setActiveProject(p);
+                setTab("realisation-detail");
+              }}
+              onCreate={() => {
+                setActiveProject(null);
+                setTab("realisation-form");
+              }}
+              onOpenSettings={() => setSettingsSheet(true)}
+            />
+          )}
+          {tab === "realisation-detail" && activeProject && (
+            <RealisationDetail
+              project={activeProject}
+              studio={studio}
+              onBack={() => {
+                setActiveProject(null);
+                setTab("realisations");
+                setRealisationsKey((k) => k + 1);
+              }}
+              onEdit={() => setTab("realisation-form")}
+              onDeleted={() => {
+                setActiveProject(null);
+                setTab("realisations");
+                setRealisationsKey((k) => k + 1);
+              }}
+              onOpenSettings={() => setSettingsSheet(true)}
+              onProjectChange={(next) => setActiveProject(next)}
+            />
+          )}
+          {tab === "realisation-form" && (
+            <RealisationForm
+              studio={studio}
+              project={activeProject}
+              onClose={() => {
+                if (activeProject?.id) setTab("realisation-detail");
+                else {
+                  setActiveProject(null);
+                  setTab("realisations");
+                }
+              }}
+              onSaved={(saved) => {
+                setActiveProject(saved);
+                setRealisationsKey((k) => k + 1);
+                setTab("realisation-detail");
+              }}
+              onOpenSettings={() => setSettingsSheet(true)}
+            />
+          )}
         </div>
 
         <nav className="tabbar">
@@ -1408,6 +2013,22 @@ export default function WilderProV2() {
             type="button"
           >
             <CalendarDays size={22} /> Agenda
+          </button>
+          <button
+            className={`tab ${
+              tab === "realisations" ||
+              tab === "realisation-detail" ||
+              tab === "realisation-form"
+                ? "on"
+                : ""
+            }`}
+            onClick={() => {
+              setActiveProject(null);
+              setTab("realisations");
+            }}
+            type="button"
+          >
+            <Images size={22} /> Réalisations
           </button>
         </nav>
 

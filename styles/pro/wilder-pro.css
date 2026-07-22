@@ -163,8 +163,8 @@
 .wp .rdv .who2 { font-size:17px; font-weight:700; }
 .wp .rdv .info { font-size:13.5px; font-weight:500; color:var(--muted); margin-top:2px; }
 
-.wp .tabbar { position:fixed; left:50%; transform:translateX(-50%); bottom:14px; width:min(432px,92vw); background:#fff; border-radius:28px; box-shadow:0 10px 34px -12px rgba(0,0,0,.28); display:flex; align-items:flex-end; justify-content:space-around; padding:11px 8px 12px; z-index:30; }
-.wp .tab { display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--muted); font-size:11px; font-weight:600; flex:1; }
+.wp .tabbar { position:fixed; left:50%; transform:translateX(-50%); bottom:14px; width:min(432px,92vw); background:#fff; border-radius:28px; box-shadow:0 10px 34px -12px rgba(0,0,0,.28); display:flex; align-items:flex-end; justify-content:space-around; padding:11px 4px 12px; z-index:30; }
+.wp .tab { display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--muted); font-size:10px; font-weight:600; flex:1; min-width:0; line-height:1.15; text-align:center; }
 .wp .tab.on { color:var(--green); }
 .wp .fab-wrap { flex:1; display:flex; justify-content:center; }
 .wp .fab { width:58px; height:58px; border-radius:50%; background:var(--green); color:#fff; display:grid; place-items:center; margin-top:-26px; box-shadow:0 8px 20px -6px rgba(47,94,63,.6); border:4px solid #fff; }
@@ -302,6 +302,151 @@
   border-radius:14px;
   background:#E8E4DC;
 }
+
+/* Réalisations */
+.wp .wp-proj-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:14px;
+}
+.wp .wp-proj-card {
+  text-align:left;
+  background:#fff;
+  border:1.5px solid var(--line);
+  border-radius:18px;
+  overflow:hidden;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+}
+.wp .wp-proj-card:active { transform:scale(.985); }
+.wp .wp-proj-thumb {
+  aspect-ratio:4/3;
+  background:#E8E4DC;
+  overflow:hidden;
+}
+.wp .wp-proj-thumb img,
+.wp .wp-photo-fallback {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.wp .wp-photo-fallback {
+  background:linear-gradient(145deg, #E8E4DC, #D5D0C6);
+}
+.wp .wp-proj-meta { padding:10px 12px 12px; }
+.wp .wp-proj-title {
+  font-size:14.5px;
+  font-weight:700;
+  line-height:1.25;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.wp .wp-proj-loc {
+  margin-top:4px;
+  font-size:12.5px;
+  font-weight:500;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+.wp .wp-proj-gallery {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
+.wp .wp-proj-gal-item {
+  position:relative;
+  aspect-ratio:1;
+  border-radius:14px;
+  overflow:hidden;
+  background:#E8E4DC;
+}
+.wp .wp-proj-gal-item img,
+.wp .wp-proj-gal-item .wp-photo-fallback {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.wp .wp-proj-gal-del {
+  position:absolute;
+  top:8px;
+  right:8px;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:rgba(255,255,255,.92);
+  color:#9B3B2E;
+  display:grid;
+  place-items:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+.wp .wp-textarea {
+  width:100%;
+  padding:14px 15px;
+  border:1.5px solid var(--line);
+  border-radius:15px;
+  font-size:15px;
+  font-weight:500;
+  background:#FAFAF7;
+  font-family:inherit;
+  color:inherit;
+  resize:vertical;
+  min-height:96px;
+}
+.wp .wp-textarea:focus {
+  outline:none;
+  border-color:var(--green);
+  background:#fff;
+}
+.wp .field input[type="file"] {
+  padding:12px;
+  background:#fff;
+  font-size:13.5px;
+}
+.wp .wp-field-hint {
+  margin:8px 0 0;
+  font-size:12.5px;
+  font-weight:500;
+  color:var(--muted);
+  line-height:1.4;
+}
+.wp .wp-pending-photos {
+  list-style:none;
+  margin:10px 0 0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.wp .wp-pending-photos li {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:12px;
+  background:#F0EDE6;
+  font-size:13px;
+  font-weight:600;
+}
+.wp .wp-pending-photos li span {
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.wp .wp-pending-photos button {
+  flex-shrink:0;
+  font-size:12.5px;
+  font-weight:700;
+  color:#9B3B2E;
+}
+
 .wp .wp-client-message {
   margin-top:12px;
   font-size:15px;
