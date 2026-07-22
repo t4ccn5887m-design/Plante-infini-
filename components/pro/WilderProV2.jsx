@@ -34,6 +34,7 @@ import {
   listProAppointments,
   listProLinksWithBriefs,
   proStudioErrorMessage,
+  updateProStudio,
 } from "@/lib/pro/proStudioApi";
 import {
   deriveRdvTodos,
@@ -51,6 +52,22 @@ const ST = {
   rdv: { c: "rdv", l: "RDV planifié" },
   wait: { c: "wait", l: "En attente" },
 };
+
+const STUDIO_COLORS = ["#2F5E3F", "#7A67A6", "#B47327", "#2F5A6E", "#7A2E3F"];
+
+function StudioAvatar({ studio, onOpen }) {
+  return (
+    <button
+      type="button"
+      className="ava ava-btn"
+      onClick={onOpen}
+      aria-label="Ouvrir les réglages"
+      title="Réglages"
+    >
+      {studio?.initials || "?"}
+    </button>
+  );
+}
 
 function BriefCard({ b, onOpen }) {
   const s = ST[b.status] || ST.wait;
@@ -101,7 +118,7 @@ function BriefCard({ b, onOpen }) {
   );
 }
 
-function Accueil({ studio, items, onSend, onBriefs, onOpen }) {
+function Accueil({ studio, items, onSend, onBriefs, onOpen, onOpenSettings }) {
   const ready = items.filter((b) => b.status === "ready" || b.status === "rdv");
   const waiting = items.filter((b) => b.status === "wait");
   const empty = items.length === 0;
@@ -109,7 +126,7 @@ function Accueil({ studio, items, onSend, onBriefs, onOpen }) {
   return (
     <div className="card-panel">
       <div className="hero">
-        <div className="ava">{studio?.initials || "?"}</div>
+        <StudioAvatar studio={studio} onOpen={onOpenSettings} />
         <h1>Vos clients, compris d&apos;avance</h1>
         <p>
           Envoyez un lien, recevez un brief clair avant même le premier
@@ -189,7 +206,7 @@ function Accueil({ studio, items, onSend, onBriefs, onOpen }) {
   );
 }
 
-function Briefs({ items, studio, onOpen }) {
+function Briefs({ items, studio, onOpen, onOpenSettings }) {
   const [f, setF] = useState("all");
   const shown = items.filter((b) => f === "all" || b.status === f);
   return (
@@ -201,7 +218,7 @@ function Briefs({ items, studio, onOpen }) {
             {items.length} client{items.length !== 1 ? "s" : ""}
           </div>
         </div>
-        <div className="ava">{studio?.initials || "?"}</div>
+        <StudioAvatar studio={studio} onOpen={onOpenSettings} />
       </div>
       <div className="filters">
         <button
@@ -504,7 +521,7 @@ function Detail({ b, onBack, onPlanifier }) {
   );
 }
 
-function Agenda({ studio, refreshKey }) {
+function Agenda({ studio, refreshKey, onOpenSettings }) {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -550,7 +567,7 @@ function Agenda({ studio, refreshKey }) {
                 : `${total} planifié${total > 1 ? "s" : ""}`}
           </div>
         </div>
-        <div className="ava">{studio?.initials || "?"}</div>
+        <StudioAvatar studio={studio} onOpen={onOpenSettings} />
       </div>
 
       {loading && (
@@ -609,119 +626,207 @@ function Agenda({ studio, refreshKey }) {
   );
 }
 
-function Profil({ studio, email, onSignOut }) {
+function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
+  const [name, setName] = useState(studio?.name || "");
+  const [contactFirstName, setContactFirstName] = useState(
+    studio?.contactFirstName || ""
+  );
+  const [initials, setInitials] = useState(studio?.initials || "");
+  const [contactEmail, setContactEmail] = useState(
+    studio?.contactEmail || authEmail || ""
+  );
+  const [interventionZone, setInterventionZone] = useState(
+    studio?.interventionZone || ""
+  );
   const [color, setColor] = useState(studio?.color || "#2F5E3F");
   const [tog, setTog] = useState({ a: true, b: true, c: false });
-  const colors = ["#2F5E3F", "#7A67A6", "#B47327", "#2F5A6E", "#7A2E3F"];
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [savedOk, setSavedOk] = useState(false);
+
+  const handleSave = async () => {
+    setError(null);
+    setSavedOk(false);
+    setLoading(true);
+    const result = await updateProStudio(studio?.id, {
+      name,
+      contactFirstName,
+      initials,
+      contactEmail,
+      interventionZone,
+      color,
+    });
+    setLoading(false);
+    if (!result.ok) {
+      setError(proStudioErrorMessage(result.error));
+      return;
+    }
+    onSaved?.(result.studio);
+    setSavedOk(true);
+    window.setTimeout(() => setSavedOk(false), 2000);
+  };
+
   return (
-    <div className="card-panel">
-      <div className="head-row">
-        <div>
-          <div className="h-title">Réglages</div>
-          <div className="h-sub">{studio?.name || "Mon studio"}</div>
-        </div>
-        <div className="ava">{studio?.initials || "?"}</div>
-      </div>
+    <div className="overlay" onClick={onClose}>
+      <div className="sheet sheet-tall" onClick={(e) => e.stopPropagation()}>
+        <div className="grab" />
+        <h3>Réglages</h3>
+        <p className="lead">Studio visible sur le lien client</p>
 
-      <div className="dcard" style={{ marginTop: 18 }}>
-        <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
-          <div className="logo-big">{studio?.initials || "?"}</div>
-          <div>
-            <div style={{ fontSize: 18, fontWeight: 700 }}>
-              {studio?.name || "Mon studio"}
-            </div>
-            <div className="rv">
-              {studio?.contactFirstName || "Paysagiste"}
-              {studio?.interventionZone
-                ? ` · ${studio.interventionZone}`
-                : ""}
-            </div>
+        <div className="field">
+          <label htmlFor="set-name">Nom du studio</label>
+          <input
+            id="set-name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="set-contact">Prénom / contact</label>
+          <input
+            id="set-contact"
+            type="text"
+            value={contactFirstName}
+            onChange={(e) => setContactFirstName(e.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="set-initials">Initiales</label>
+          <input
+            id="set-initials"
+            type="text"
+            maxLength={4}
+            value={initials}
+            onChange={(e) => setInitials(e.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="set-email">E-mail</label>
+          <input
+            id="set-email"
+            type="email"
+            value={contactEmail}
+            onChange={(e) => setContactEmail(e.target.value)}
+            placeholder={authEmail || "contact@studio.fr"}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="set-zone">Zone d’intervention</label>
+          <input
+            id="set-zone"
+            type="text"
+            value={interventionZone}
+            onChange={(e) => setInterventionZone(e.target.value)}
+            placeholder="Ex. Aix + 30 km"
+          />
+        </div>
+
+        <div className="field">
+          <label>Couleur du lien client</label>
+          <div className="colorrow" style={{ marginTop: 6 }}>
+            {STUDIO_COLORS.map((c) => (
+              <span
+                key={c}
+                className={`csw ${color === c ? "sel" : ""}`}
+                style={{ background: c }}
+                onClick={() => setColor(c)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") setColor(c);
+                }}
+                role="button"
+                tabIndex={0}
+              />
+            ))}
+          </div>
+          <div className="mini-hero" style={{ background: color, marginTop: 12 }}>
+            <div className="k">Préparez votre rendez-vous avec</div>
+            <div className="t">{name.trim() || "votre studio"}</div>
           </div>
         </div>
-        {email && (
-          <div className="srow" style={{ marginTop: 6 }}>
-            <span className="rk">E-mail</span>
-            <span className="rv">{email}</span>
-          </div>
-        )}
-      </div>
 
-      <div className="dcard">
-        <div className="dlbl">Couleur du lien client</div>
-        <div className="colorrow">
-          {colors.map((c) => (
+        <div className="dcard" style={{ marginTop: 4 }}>
+          <div className="dlbl">Notifications</div>
+          <div className="srow">
+            <span className="rk">Brief rempli par un client</span>
             <span
-              key={c}
-              className={`csw ${color === c ? "sel" : ""}`}
-              style={{ background: c }}
-              onClick={() => setColor(c)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") setColor(c);
-              }}
-              role="button"
+              className={`toggle ${tog.a ? "on" : ""}`}
+              onClick={() => setTog((s) => ({ ...s, a: !s.a }))}
+              role="switch"
+              aria-checked={tog.a}
               tabIndex={0}
             />
-          ))}
-        </div>
-        <div className="mini-hero" style={{ background: color }}>
-          <div className="k">Préparez votre rendez-vous avec</div>
-          <div className="t">{studio?.name || "votre studio"}</div>
-        </div>
-        <p className="bc-taste" style={{ marginTop: 10 }}>
-          La sauvegarde de la couleur arrive bientôt.
-        </p>
-      </div>
-
-      <div className="dcard">
-        <div className="dlbl">Notifications</div>
-        <div className="srow">
-          <span className="rk">Brief rempli par un client</span>
-          <span
-            className={`toggle ${tog.a ? "on" : ""}`}
-            onClick={() => setTog((s) => ({ ...s, a: !s.a }))}
-            role="switch"
-            aria-checked={tog.a}
-            tabIndex={0}
-          />
-        </div>
-        <div className="srow">
-          <span className="rk">Lien ouvert par le client</span>
-          <span
-            className={`toggle ${tog.b ? "on" : ""}`}
-            onClick={() => setTog((s) => ({ ...s, b: !s.b }))}
-            role="switch"
-            aria-checked={tog.b}
-            tabIndex={0}
-          />
-        </div>
-        <div className="srow">
-          <span className="rk">Relance auto après 3 jours</span>
-          <span
-            className={`toggle ${tog.c ? "on" : ""}`}
-            onClick={() => setTog((s) => ({ ...s, c: !s.c }))}
-            role="switch"
-            aria-checked={tog.c}
-            tabIndex={0}
-          />
-        </div>
-      </div>
-
-      <div className="dcard">
-        <div className="dlbl">Abonnement</div>
-        <div className="plan">
-          <div>
-            <div className="pt">Wilder Pro</div>
-            <div className="pp">29 € / mois · briefs illimités</div>
           </div>
-          <button className="mng" type="button">
-            Gérer
-          </button>
+          <div className="srow">
+            <span className="rk">Lien ouvert par le client</span>
+            <span
+              className={`toggle ${tog.b ? "on" : ""}`}
+              onClick={() => setTog((s) => ({ ...s, b: !s.b }))}
+              role="switch"
+              aria-checked={tog.b}
+              tabIndex={0}
+            />
+          </div>
+          <div className="srow">
+            <span className="rk">Relance auto après 3 jours</span>
+            <span
+              className={`toggle ${tog.c ? "on" : ""}`}
+              onClick={() => setTog((s) => ({ ...s, c: !s.c }))}
+              role="switch"
+              aria-checked={tog.c}
+              tabIndex={0}
+            />
+          </div>
+          <p className="bc-taste" style={{ marginTop: 8 }}>
+            Bientôt disponible.
+          </p>
         </div>
-      </div>
 
-      <button className="linebtn" type="button" onClick={onSignOut}>
-        Se déconnecter
-      </button>
+        <div className="dcard">
+          <div className="dlbl">Abonnement</div>
+          <div className="plan">
+            <div>
+              <div className="pt">Amont Pro</div>
+              <div className="pp">29 € / mois · briefs illimités</div>
+            </div>
+            <button className="mng" type="button">
+              Gérer
+            </button>
+          </div>
+        </div>
+
+        {error && (
+          <p
+            className="wp-empty-sub"
+            style={{ color: "#B33A3A", marginBottom: 10 }}
+          >
+            {error}
+          </p>
+        )}
+        {savedOk && !error && (
+          <p
+            className="wp-empty-sub"
+            style={{ color: "#2F5E3F", marginBottom: 10 }}
+          >
+            Enregistré.
+          </p>
+        )}
+
+        <button
+          className="bigbtn"
+          type="button"
+          onClick={handleSave}
+          disabled={loading}
+        >
+          {loading ? "Enregistrement…" : "Enregistrer"}
+        </button>
+        <button className="linebtn" type="button" onClick={onSignOut}>
+          Se déconnecter
+        </button>
+        <button className="linebtn" type="button" onClick={onClose}>
+          Fermer
+        </button>
+      </div>
     </div>
   );
 }
@@ -1138,6 +1243,7 @@ export default function WilderProV2() {
   const [active, setActive] = useState(null);
   const [sheet, setSheet] = useState(false);
   const [planSheet, setPlanSheet] = useState(false);
+  const [settingsSheet, setSettingsSheet] = useState(false);
   const [agendaKey, setAgendaKey] = useState(0);
 
   const loadLinks = useCallback(async (studioId) => {
@@ -1236,10 +1342,16 @@ export default function WilderProV2() {
               onSend={() => setSheet(true)}
               onBriefs={() => setTab("briefs")}
               onOpen={open}
+              onOpenSettings={() => setSettingsSheet(true)}
             />
           )}
           {tab === "briefs" && (
-            <Briefs items={items} studio={studio} onOpen={open} />
+            <Briefs
+              items={items}
+              studio={studio}
+              onOpen={open}
+              onOpenSettings={() => setSettingsSheet(true)}
+            />
           )}
           {tab === "detail" && active && (
             <Detail
@@ -1249,13 +1361,10 @@ export default function WilderProV2() {
             />
           )}
           {tab === "agenda" && (
-            <Agenda studio={studio} refreshKey={agendaKey} />
-          )}
-          {tab === "profil" && (
-            <Profil
+            <Agenda
               studio={studio}
-              email={user?.email || ""}
-              onSignOut={onSignOut}
+              refreshKey={agendaKey}
+              onOpenSettings={() => setSettingsSheet(true)}
             />
           )}
         </div>
@@ -1300,13 +1409,6 @@ export default function WilderProV2() {
           >
             <CalendarDays size={22} /> Agenda
           </button>
-          <button
-            className={`tab ${tab === "profil" ? "on" : ""}`}
-            onClick={() => setTab("profil")}
-            type="button"
-          >
-            <User size={22} /> Profil
-          </button>
         </nav>
 
         {sheet && (
@@ -1332,6 +1434,18 @@ export default function WilderProV2() {
                 const next = refreshed.items.find((i) => i.id === active.id);
                 if (next) setActive(next);
               }
+            }}
+          />
+        )}
+        {settingsSheet && (
+          <SettingsSheet
+            studio={studio}
+            authEmail={user?.email || ""}
+            onClose={() => setSettingsSheet(false)}
+            onSaved={(next) => setStudio(next)}
+            onSignOut={async () => {
+              setSettingsSheet(false);
+              await onSignOut();
             }}
           />
         )}
