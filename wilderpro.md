@@ -2,7 +2,7 @@
 
 > Ce fichier est la mémoire du projet. Toute session Cursor / Claude Code / Claude
 > doit le lire en premier. À garder à jour à chaque décision importante.
-> Nom de code interne : **Wilder** (le nom définitif n'est pas tranché — voir §8).
+> **Nom produit : Amont** (ex-Wilder — voir §8).
 
 ---
 
@@ -38,8 +38,10 @@ Mission unique : **préparer un excellent premier rendez-vous.** Rien d'autre.
 Exclu du produit :
 - Plans 2D / 3D, réalité augmentée
 - Devis, facturation
-- Planning, gestion d'équipe, gestion de matériel
+- Planning complet, gestion d'équipe, gestion de matériel
 - CRM complet
+
+**Note :** un **agenda RDV léger** (planifier un créneau lié à un brief) est dans le MVP — ce n'est pas un planning d'équipe ni une gestion de chantier.
 
 **Ligne rouge design :** l'app aide le client à **choisir ses envies** (végétaux, ambiances, matériaux) — mais elle ne fait **jamais le plan / le placement dans l'espace**.
 Le placement (distances, associations, « qui va étouffer qui »), c'est l'expertise du paysagiste.
@@ -70,7 +72,7 @@ Bénéfice pro : arrive préparé → convertit plus, chiffre plus vite et plus 
 **Ne jamais repartir de zéro. Ne jamais casser la v2 particulier qui tourne (déployée sur Vercel).**
 
 - La **v2 particulier** existe déjà : carnet, scan, catalogue (Végétal / Minéral / Déco / Idées), « Mon jardin », « Mon mot pour le paysagiste », brief.
-- **Wilder Pro** réutilise ~80 % de la v2 : design system, IA d'analyse d'image, catalogue, logique de brief.
+- **Amont Pro** réutilise ~80 % de la v2 : design system, IA d'analyse d'image, catalogue, logique de brief.
 
 ### Décision actuelle (juillet 2026) : route `/pro` dans l'app Next.js existante
 
@@ -79,10 +81,25 @@ Bénéfice pro : arrive préparé → convertit plus, chiffre plus vite et plus 
 - Particulier : `/` (inchangé, priorité absolue de ne pas le casser).
 - Pro : `/pro` — styles isolés sous le préfixe `.wp` (`styles/pro/wilder-pro.css`), composants dans `components/pro/`.
 - **Parcours client du lien :** `/b/[token]` — questionnaire invité 9 écrans, plein écran, isolé du shell app (pas de menu compte / install guide). Lit `pro_links` + branding studio ; écrit `pro_briefs` + Storage ; statuts `sent` → `opened` → `filled` via RPC.
-- **App pro `/pro` :** même auth Supabase que le particulier ; `pro_studios` (1 / compte) ; création de liens réels ; liste + fiche brief depuis `pro_links` / `pro_briefs`.
-- Branche de travail : `wilder-pro` (jamais merger à l'aveugle dans `main` sans validation).
+- **App pro `/pro` :** même auth Supabase que le particulier ; `pro_studios` (1 / compte) ; création de liens réels ; liste + fiche brief depuis `pro_links` / `pro_briefs` ; RDV via `pro_appointments` ; export PDF (`window.print`).
+- Branche de travail : `wilder-pro` (**jamais** pousser / merger sur `main` sans validation explicite — `main` = v2 particulier en prod).
 
-Un monorepo (deux apps déployées séparément, ex. `app.wilder.fr` / `mon.wilder.fr`) reste une option **plus tard** si l'isolation ou le déploiement le justifient. Même base de données / backend commun restera indispensable pour le lien pro → client.
+### Données Pro (Supabase)
+
+| Table | Rôle |
+|-------|------|
+| `pro_studios` | 1 studio / compte pro (`pro_user_id`) |
+| `pro_links` | Lien client ; `status` ∈ `sent` \| `opened` \| `filled` |
+| `pro_briefs` | Réponses du questionnaire (1 / lien) |
+| `pro_appointments` | RDV planifiés dans l’app (`studio_id`, `link_id`, `starts_at`, `duration_min`, `notes`) |
+
+- **Statut UI « RDV planifié »** : **dérivé** (lien `filled` + au moins un `pro_appointments` pour ce `link_id`). **Pas** de `status = 'rdv'` sur `pro_links`.
+- **RPC `submit_pro_brief`** : `SECURITY DEFINER` — dans **la même transaction** : `INSERT` `pro_briefs` **puis** `UPDATE pro_links SET status = 'filled', filled_at = now()`. L’invité (anon) ne touche **pas** `pro_links` en direct.  
+  **Versionnée** dans `supabase/migrations/` (ex. `20260719160000_submit_pro_brief_set_filled.sql`) — **ne pas la reperdre** (ne plus compter uniquement sur un collage SQL Editor orphelin).
+- Ouverture lien : RPC `get_pro_link_by_token` (`sent` → `opened`).
+- Migrations utiles aussi : `20260719150000_pro_studios_unique_and_rls.sql`, `20260722210000_pro_appointments.sql`.
+
+Un monorepo (deux apps déployées séparément, ex. `app.amont.fr` / `mon.amont.fr`) reste une option **plus tard** si l'isolation ou le déploiement le justifient. Même base de données / backend commun restera indispensable pour le lien pro → client.
 
 ---
 
@@ -105,29 +122,36 @@ Un monorepo (deux apps déployées séparément, ex. `app.wilder.fr` / `mon.wild
 
 ---
 
-## 8. Nom (NON tranché)
+## 8. Nom
 
-- **« Wilder » déconseillé** : déjà pris dans le créneau (app **Wildr** plantes/jardin, **Wilder Plant Company**) ; sens à l'envers (« wild » = l'opposé de la clarté qu'on vend) ; mot anglais pour un marché FR.
-- **« Brief » tout court** : à éviter — générique, non déposable, déjà pris, invisible en SEO.
-- Candidats explorés : Amont, Sève, Osier, **Briva** (contient « brief », joli, mais proche de « Brivo » SaaS).
-- **Décision actuelle** : on garde **Wilder** comme nom de code interne, on tranchera plus tard.
-- **Avant de fixer un nom** : vérifier INPI + EUIPO + domaine + App Store.
+- **Décision : « Amont »** (ex-nom de code **Wilder**).
+- « Wilder » était déconseillé (déjà pris dans le créneau, sens à l’envers, anglais pour marché FR) — conservé seulement comme héritage technique (branche `wilder-pro`, préfixe CSS `.wp`, chemins historiques) jusqu’à un renommage propre.
+- **Avant dépôt / go-to-market public** : vérifier INPI + EUIPO + domaine + stores si besoin.
 
 ---
 
-## 9. MVP Pro (à construire en premier)
+## 9. MVP Pro
 
-- [ ] Onboarding / création de compte pro (studio, logo, zone d'intervention)
-- [ ] Personnalisation du lien (couleur + logo du pro sur la page vue par le client)
+### Fait (étape C — testé)
+
+- [x] Auth pro + studio (`pro_studios`, 1 / compte, même auth Supabase que le particulier)
+- [x] Empty state « Envoyez votre premier lien »
+- [x] Envoi du lien réel : nom / tél / adresse → token unique → copier / SMS / e-mail
+- [x] **Suivi d'état du lien** : `sent` → `opened` → `filled` (RPC)
+- [x] Tableau de bord / pipeline UI : `Brief prêt` · `En attente` · `RDV planifié` (ce dernier **dérivé** des appointments)
+- [x] **Fiche brief** réelle : identité · goût déduit · priorités · végétaux · matières · photos · budget · vigilance · à aborder au RDV
+- [x] Export PDF (impression navigateur de la fiche)
+- [x] **RDV in-app** : table `pro_appointments`, sheet Planifier, onglet Agenda (plus de `.ics`)
+- [x] Parcours client `/b/[token]` (questionnaire invité + photos Storage + soumission RPC)
+
+### Encore à faire
+
+- [ ] Onboarding riche (logo, zone d’intervention saisie / sauvegardée)
+- [ ] Personnalisation du lien (couleur + logo du pro sur la page vue par le client — persistée)
 - [ ] Abonnement / facturation (c'est le pro qui paie)
-- [ ] **Empty state** : premier pro sans brief → écran « Envoyez votre premier lien » (moment clé pour ne pas le perdre)
-- [ ] Tableau de bord / pipeline : `Brief prêt` · `En attente` · `RDV planifié`
-- [ ] Envoi du lien : nom / tél / adresse → lien unique → SMS / e-mail / QR / copier
-- [ ] **Suivi d'état du lien** : `Envoyé` → `Ouvert` → `Rempli` (savoir qui relancer)
-- [ ] Confirmation d'envoi (« on vous prévient dès qu'il répond »)
-- [ ] **Fiche brief** (le cœur) : identité client · goût déduit · priorités classées · végétaux · matériaux & couleurs · inspirations + analyse image · terrain (photos / orientation / surface / sol) · budget · points de vigilance · à aborder au RDV
-- [ ] Un **seul dossier vivant** qui s'enrichit (pas deux briefs séparés)
-- [ ] Export PDF (livrable à emporter sur le terrain)
+- [ ] Confirmation d'envoi plus explicite (« on vous prévient dès qu'il répond »)
+- [ ] Enrichissement fiche : terrain (orientation / surface / sol) côté brief
+- [ ] Un **seul dossier vivant** qui s'enrichit dans le temps (pas deux briefs séparés) — socle OK, enrichissement V2
 
 ---
 
@@ -153,12 +177,17 @@ Ordre imposé : MVP invité minimaliste **d'abord** → prouver que les pros env
 
 ---
 
-## 12. ⚠️ Prochaine grosse priorité (rappel)
+## 12. ⚠️ Prochaine priorité
 
-Le pro reçoit des **briefs vides** tant que **le parcours client du lien** n'existe pas.
-Donc après les manques MVP pro (surtout empty state + suivi du lien), **construire ce que voit le client quand il clique sur le lien** :
-**questionnaire rapide (adaptatif) + import de photos + scan.**
-C'est ça qui remplit le brief, donc c'est ça qui fait vivre tout le reste.
+Le **parcours client du lien** (`/b/[token]`) et le **cœur pro** (auth, liens, briefs, PDF, RDV) sont **faits**.
+
+**Prochaine priorité MVP :**
+
+1. **Branding du lien client** — couleur + logo studio **persistés** et visibles sur `/b/[token]`.
+2. **Abonnement / facturation** — le pro paie (~29 €/mois).
+3. Ensuite : onboarding studio (zone d’intervention, logo), confirmation d’envoi / notifications, enrichissement terrain sur la fiche.
+
+Ne pas rouvrir monorepo ni casser `/` tant que ces manques MVP ne sont pas traités.
 
 ---
 
@@ -167,8 +196,8 @@ C'est ça qui remplit le brief, donc c'est ça qui fait vivre tout le reste.
 - Fondateur seul, travaille avec : Claude (chat/projet), **Claude Code**, **Cursor**.
 - Ces espaces **ne partagent pas de mémoire** entre eux.
 - **Ce fichier `wilderpro.md` est la source de vérité.** Le garder à la racine du repo et le mettre à jour à chaque décision.
+- Branche de travail Pro : **`wilder-pro` uniquement** — jamais `main` sans accord explicite.
 
 ---
 
-*Dernière mise à jour : 2026-07-19 — étape C : `/pro` branché Supabase (auth + liens + briefs réels).*
-
+*Dernière mise à jour : 2026-07-22 — étape C terminée et testée (auth, liens, briefs, PDF, RDV in-app) ; nom produit Amont ; `submit_pro_brief` + `pro_appointments` versionnés en migrations.*
