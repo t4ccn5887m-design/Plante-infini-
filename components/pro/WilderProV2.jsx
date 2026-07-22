@@ -26,10 +26,12 @@ import {
 } from "@/lib/cloudSync";
 import {
   buildBriefDetailView,
+  createProAppointment,
   createProLink,
   ensureProStudio,
   getBriefPhotoSignedUrls,
   getProAuthUser,
+  listProAppointments,
   listProLinksWithBriefs,
   proStudioErrorMessage,
 } from "@/lib/pro/proStudioApi";
@@ -37,10 +39,7 @@ import {
   deriveRdvTodos,
   deriveVigilance,
 } from "@/lib/pro/briefDerive";
-import {
-  downloadBriefRdvIcs,
-  printBriefPdf,
-} from "@/lib/pro/briefDetailActions";
+import { printBriefPdf } from "@/lib/pro/briefDetailActions";
 
 /* ============================================================
    WILDER PRO — branché Supabase (étape C)
@@ -49,12 +48,13 @@ import {
 
 const ST = {
   ready: { c: "ready", l: "Brief prêt" },
+  rdv: { c: "rdv", l: "RDV planifié" },
   wait: { c: "wait", l: "En attente" },
 };
 
 function BriefCard({ b, onOpen }) {
   const s = ST[b.status] || ST.wait;
-  const tap = b.status === "ready";
+  const tap = b.status === "ready" || b.status === "rdv";
   return (
     <button
       className={`bcard ${tap ? "tap" : "wait"}`}
@@ -81,7 +81,7 @@ function BriefCard({ b, onOpen }) {
         </div>
       )}
       <div className="bc-foot">
-        {b.status === "ready" ? (
+        {tap ? (
           <>
             <span className="bud">
               {b.budget} <span>budget</span>
@@ -102,7 +102,7 @@ function BriefCard({ b, onOpen }) {
 }
 
 function Accueil({ studio, items, onSend, onBriefs, onOpen }) {
-  const ready = items.filter((b) => b.status === "ready");
+  const ready = items.filter((b) => b.status === "ready" || b.status === "rdv");
   const waiting = items.filter((b) => b.status === "wait");
   const empty = items.length === 0;
 
@@ -219,6 +219,13 @@ function Briefs({ items, studio, onOpen }) {
           Prêts
         </button>
         <button
+          className={`fp ${f === "rdv" ? "on" : ""}`}
+          onClick={() => setF("rdv")}
+          type="button"
+        >
+          RDV
+        </button>
+        <button
           className={`fp ${f === "wait" ? "on" : ""}`}
           onClick={() => setF("wait")}
           type="button"
@@ -246,7 +253,7 @@ function Briefs({ items, studio, onOpen }) {
   );
 }
 
-function Detail({ b, onBack }) {
+function Detail({ b, onBack, onPlanifier }) {
   const view = buildBriefDetailView(b);
   const [photoUrls, setPhotoUrls] = useState([]);
 
@@ -300,15 +307,6 @@ function Detail({ b, onBack }) {
   const vigilance = deriveVigilance(b.brief);
   const todos = deriveRdvTodos(b.brief);
   const ctx = d.users.length ? d.users.join(" · ") : null;
-  const addressLine = [b.address, b.city].filter(Boolean).join(", ");
-
-  const onPlanifier = () => {
-    downloadBriefRdvIcs({
-      clientName: b.name,
-      phone: b.phone,
-      address: addressLine,
-    });
-  };
 
   const onExportPdf = () => {
     printBriefPdf(b.name);
@@ -341,7 +339,8 @@ function Detail({ b, onBack }) {
           )}
         </div>
         <div className="badge">
-          <Sparkles size={15} /> Brief prêt
+          <Sparkles size={15} />{" "}
+          {b.status === "rdv" ? "RDV planifié" : "Brief prêt"}
           {b.date ? ` — reçu le ${b.date}` : ""}
         </div>
         <div className="acts no-print">
@@ -505,24 +504,107 @@ function Detail({ b, onBack }) {
   );
 }
 
-function Agenda({ studio }) {
+function Agenda({ studio, refreshKey }) {
+  const [groups, setGroups] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!studio?.id) {
+        setGroups([]);
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      setError(null);
+      const result = await listProAppointments(studio.id);
+      if (cancelled) return;
+      setLoading(false);
+      if (!result.ok) {
+        setError(proStudioErrorMessage(result.error));
+        setGroups([]);
+        return;
+      }
+      setGroups(result.groups || []);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [studio?.id, refreshKey]);
+
+  const total = groups.reduce((n, g) => n + g.items.length, 0);
+  const empty = !loading && !error && groups.length === 0;
+
   return (
     <div className="card-panel">
       <div className="head-row">
         <div>
           <div className="h-title">Rendez-vous</div>
-          <div className="h-sub">Bientôt disponible</div>
+          <div className="h-sub">
+            {loading
+              ? "Chargement…"
+              : empty
+                ? "Aucun rendez-vous"
+                : `${total} planifié${total > 1 ? "s" : ""}`}
+          </div>
         </div>
         <div className="ava">{studio?.initials || "?"}</div>
       </div>
-      <div className="wp-empty" style={{ marginTop: 18 }}>
-        <Clock size={28} color="#7A67A6" />
-        <p className="wp-empty-title">Agenda (bientôt)</p>
-        <p className="wp-empty-sub">
-          Pour l’instant, concentrez-vous sur l’envoi de liens et la lecture des
-          briefs.
+
+      {loading && (
+        <p className="bc-taste" style={{ marginTop: 18 }}>
+          Chargement de l’agenda…
         </p>
-      </div>
+      )}
+
+      {error && (
+        <div className="wp-empty" style={{ marginTop: 18 }}>
+          <p className="wp-empty-title">Agenda indisponible</p>
+          <p className="wp-empty-sub">{error}</p>
+        </div>
+      )}
+
+      {empty && (
+        <div className="wp-empty" style={{ marginTop: 18 }}>
+          <Clock size={28} color="#7A67A6" />
+          <p className="wp-empty-title">Aucun rendez-vous planifié</p>
+          <p className="wp-empty-sub">
+            Ouvrez un brief prêt et appuyez sur Planifier pour ajouter un RDV.
+          </p>
+        </div>
+      )}
+
+      {!loading && !error && groups.length > 0 && (
+        <div style={{ marginTop: 14 }}>
+          {groups.map((group) => (
+            <div key={group.key} style={{ marginBottom: 18 }}>
+              <div className="label">{group.label}</div>
+              {group.items.map((a) => (
+                <div className="rdv" key={a.id}>
+                  <div className="when">
+                    <div className="d">{a.dayNum}</div>
+                    <div className="m">{a.monthShort}</div>
+                  </div>
+                  <div>
+                    <div className="who2">{a.clientName}</div>
+                    <div className="info">
+                      {a.timeLabel}
+                      {a.durationMin ? ` · ${a.durationMin} min` : ""}
+                    </div>
+                    {a.notes ? (
+                      <div className="info" style={{ marginTop: 4 }}>
+                        {a.notes}
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -640,6 +722,130 @@ function Profil({ studio, email, onSignOut }) {
       <button className="linebtn" type="button" onClick={onSignOut}>
         Se déconnecter
       </button>
+    </div>
+  );
+}
+
+function defaultPlanDate() {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function PlanSheet({ studio, brief, onClose, onCreated }) {
+  const [date, setDate] = useState(defaultPlanDate);
+  const [time, setTime] = useState("10:00");
+  const [duration, setDuration] = useState("60");
+  const [notes, setNotes] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleSave = async () => {
+    setError(null);
+    if (!date || !time) {
+      setError(proStudioErrorMessage("starts_at_required"));
+      return;
+    }
+    const startsAt = new Date(`${date}T${time}:00`);
+    if (Number.isNaN(startsAt.getTime())) {
+      setError(proStudioErrorMessage("starts_at_required"));
+      return;
+    }
+
+    setLoading(true);
+    const result = await createProAppointment({
+      studioId: studio?.id,
+      linkId: brief?.id,
+      startsAt: startsAt.toISOString(),
+      durationMin: Number(duration) || 60,
+      notes,
+    });
+    setLoading(false);
+
+    if (!result.ok) {
+      setError(proStudioErrorMessage(result.error));
+      return;
+    }
+    onCreated?.(result.appointment);
+    onClose?.();
+  };
+
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div className="sheet" onClick={(e) => e.stopPropagation()}>
+        <div className="grab" />
+        <h3>Planifier un RDV</h3>
+        <p className="lead">
+          {brief?.name
+            ? `Rendez-vous avec ${brief.name}`
+            : "Choisissez date et heure"}
+        </p>
+
+        <div className="field">
+          <label htmlFor="plan-date">Date</label>
+          <input
+            id="plan-date"
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="plan-time">Heure</label>
+          <input
+            id="plan-time"
+            type="time"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="plan-duration">Durée (minutes)</label>
+          <input
+            id="plan-duration"
+            type="number"
+            min={15}
+            step={15}
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="plan-notes">Notes (optionnel)</label>
+          <input
+            id="plan-notes"
+            type="text"
+            placeholder="Ex. apporter plans, accès portail…"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </div>
+
+        {error && (
+          <p
+            className="wp-empty-sub"
+            style={{ color: "#B33A3A", marginBottom: 12 }}
+          >
+            {error}
+          </p>
+        )}
+
+        <button
+          className="bigbtn"
+          type="button"
+          onClick={handleSave}
+          disabled={loading}
+        >
+          <CalendarDays size={18} />
+          {loading ? "Enregistrement…" : "Enregistrer le RDV"}
+        </button>
+        <button className="linebtn" type="button" onClick={onClose}>
+          Annuler
+        </button>
+      </div>
     </div>
   );
 }
@@ -922,6 +1128,8 @@ export default function WilderProV2() {
   const [tab, setTab] = useState("accueil");
   const [active, setActive] = useState(null);
   const [sheet, setSheet] = useState(false);
+  const [planSheet, setPlanSheet] = useState(false);
+  const [agendaKey, setAgendaKey] = useState(0);
 
   const loadLinks = useCallback(async (studioId) => {
     if (!studioId) {
@@ -1025,9 +1233,15 @@ export default function WilderProV2() {
             <Briefs items={items} studio={studio} onOpen={open} />
           )}
           {tab === "detail" && active && (
-            <Detail b={active} onBack={() => setTab("briefs")} />
+            <Detail
+              b={active}
+              onBack={() => setTab("briefs")}
+              onPlanifier={() => setPlanSheet(true)}
+            />
           )}
-          {tab === "agenda" && <Agenda studio={studio} />}
+          {tab === "agenda" && (
+            <Agenda studio={studio} refreshKey={agendaKey} />
+          )}
           {tab === "profil" && (
             <Profil
               studio={studio}
@@ -1092,6 +1306,23 @@ export default function WilderProV2() {
             onClose={() => setSheet(false)}
             onCreated={async () => {
               await loadLinks(studio?.id);
+            }}
+          />
+        )}
+        {planSheet && active && (
+          <PlanSheet
+            studio={studio}
+            brief={active}
+            onClose={() => setPlanSheet(false)}
+            onCreated={async () => {
+              await loadLinks(studio?.id);
+              setAgendaKey((k) => k + 1);
+              // Rafraîchir la fiche active avec le nouveau statut
+              const refreshed = await listProLinksWithBriefs(studio?.id);
+              if (refreshed.ok) {
+                const next = refreshed.items.find((i) => i.id === active.id);
+                if (next) setActive(next);
+              }
             }}
           />
         )}
