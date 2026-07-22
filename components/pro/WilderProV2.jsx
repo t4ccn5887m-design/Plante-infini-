@@ -735,6 +735,19 @@ function defaultPlanDate() {
   return `${y}-${m}-${day}`;
 }
 
+/** date (YYYY-MM-DD) + time (HH:MM) → ISO UTC, interprétés en heure locale. */
+function localDateTimeToIso(dateStr, timeStr) {
+  const dateParts = String(dateStr || "").split("-").map(Number);
+  const timeParts = String(timeStr || "").split(":").map(Number);
+  if (dateParts.length < 3 || timeParts.length < 2) return null;
+  const [y, m, d] = dateParts;
+  const [hh, mm] = timeParts;
+  if (![y, m, d, hh, mm].every((n) => Number.isFinite(n))) return null;
+  const local = new Date(y, m - 1, d, hh, mm, 0, 0);
+  if (Number.isNaN(local.getTime())) return null;
+  return local.toISOString();
+}
+
 function PlanSheet({ studio, brief, onClose, onCreated }) {
   const [date, setDate] = useState(defaultPlanDate);
   const [time, setTime] = useState("10:00");
@@ -745,12 +758,8 @@ function PlanSheet({ studio, brief, onClose, onCreated }) {
 
   const handleSave = async () => {
     setError(null);
-    if (!date || !time) {
-      setError(proStudioErrorMessage("starts_at_required"));
-      return;
-    }
-    const startsAt = new Date(`${date}T${time}:00`);
-    if (Number.isNaN(startsAt.getTime())) {
+    const startsAt = localDateTimeToIso(date, time);
+    if (!startsAt) {
       setError(proStudioErrorMessage("starts_at_required"));
       return;
     }
@@ -759,7 +768,7 @@ function PlanSheet({ studio, brief, onClose, onCreated }) {
     const result = await createProAppointment({
       studioId: studio?.id,
       linkId: brief?.id,
-      startsAt: startsAt.toISOString(),
+      startsAt,
       durationMin: Number(duration) || 60,
       notes,
     });
