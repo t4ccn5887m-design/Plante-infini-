@@ -163,10 +163,20 @@ function BriefCard({ b, onOpen }) {
   );
 }
 
-function Accueil({ studio, items, onSend, onBriefs, onOpen, onOpenSettings }) {
+function Accueil({
+  studio,
+  items,
+  linksStatus,
+  linksError,
+  onRetryLinks,
+  onSend,
+  onBriefs,
+  onOpen,
+  onOpenSettings,
+}) {
   const ready = items.filter((b) => b.status === "ready" || b.status === "rdv");
   const waiting = items.filter((b) => b.status === "wait");
-  const empty = items.length === 0;
+  const empty = linksStatus === "ready" && items.length === 0;
 
   return (
     <div className="card-panel">
@@ -179,7 +189,26 @@ function Accueil({ studio, items, onSend, onBriefs, onOpen, onOpenSettings }) {
         </p>
       </div>
 
-      {empty ? (
+      {linksStatus === "loading" && (
+        <p className="bc-taste" style={{ marginTop: 18 }}>
+          Chargement de vos briefs…
+        </p>
+      )}
+
+      {linksStatus === "error" && (
+        <div className="wp-empty" style={{ marginTop: 8 }}>
+          <p className="wp-empty-title">Impossible de charger vos briefs</p>
+          <p className="wp-empty-sub">
+            {linksError ||
+              "Une erreur est survenue. Réessayez dans un instant."}
+          </p>
+          <button className="linebtn" type="button" onClick={onRetryLinks}>
+            Réessayer
+          </button>
+        </div>
+      )}
+
+      {empty && (
         <div className="wp-empty">
           <p className="wp-empty-title">Envoyez votre premier lien</p>
           <p className="wp-empty-sub">
@@ -189,7 +218,9 @@ function Accueil({ studio, items, onSend, onBriefs, onOpen, onOpenSettings }) {
             <Send size={18} /> Envoyer un lien
           </button>
         </div>
-      ) : (
+      )}
+
+      {linksStatus === "ready" && items.length > 0 && (
         <>
           <div className="label">À traiter</div>
           <button className="pcard peach" onClick={onSend} type="button">
@@ -251,65 +282,108 @@ function Accueil({ studio, items, onSend, onBriefs, onOpen, onOpenSettings }) {
   );
 }
 
-function Briefs({ items, studio, onOpen, onOpenSettings }) {
+function Briefs({
+  items,
+  studio,
+  linksStatus,
+  linksError,
+  onRetryLinks,
+  onOpen,
+  onOpenSettings,
+}) {
   const [f, setF] = useState("all");
   const shown = items.filter((b) => f === "all" || b.status === f);
+  const empty = linksStatus === "ready" && items.length === 0;
+
   return (
     <div className="card-panel">
       <div className="head-row">
         <div>
           <div className="h-title">Mes briefs</div>
           <div className="h-sub">
-            {items.length} client{items.length !== 1 ? "s" : ""}
+            {linksStatus === "loading"
+              ? "Chargement…"
+              : linksStatus === "error"
+                ? "Chargement interrompu"
+                : `${items.length} client${items.length !== 1 ? "s" : ""}`}
           </div>
         </div>
         <StudioAvatar studio={studio} onOpen={onOpenSettings} />
       </div>
-      <div className="filters">
-        <button
-          className={`fp ${f === "all" ? "on" : ""}`}
-          onClick={() => setF("all")}
-          type="button"
-        >
-          Tous
-        </button>
-        <button
-          className={`fp ${f === "ready" ? "on" : ""}`}
-          onClick={() => setF("ready")}
-          type="button"
-        >
-          Prêts
-        </button>
-        <button
-          className={`fp ${f === "rdv" ? "on" : ""}`}
-          onClick={() => setF("rdv")}
-          type="button"
-        >
-          RDV
-        </button>
-        <button
-          className={`fp ${f === "wait" ? "on" : ""}`}
-          onClick={() => setF("wait")}
-          type="button"
-        >
-          En attente
-        </button>
-      </div>
-      {shown.length === 0 ? (
+
+      {linksStatus === "loading" && (
+        <p className="bc-taste" style={{ marginTop: 18 }}>
+          Chargement de vos briefs…
+        </p>
+      )}
+
+      {linksStatus === "error" && (
         <div className="wp-empty" style={{ marginTop: 18 }}>
-          <p className="wp-empty-title">Aucun brief ici</p>
+          <p className="wp-empty-title">Impossible de charger vos briefs</p>
           <p className="wp-empty-sub">
-            {items.length === 0
-              ? "Envoyez un lien pour recevoir votre premier brief."
-              : "Changez de filtre pour voir d’autres clients."}
+            {linksError ||
+              "Une erreur est survenue. Réessayez dans un instant."}
           </p>
+          <button className="linebtn" type="button" onClick={onRetryLinks}>
+            Réessayer
+          </button>
         </div>
-      ) : (
-        <div className="blist" style={{ marginTop: 12 }}>
-          {shown.map((b) => (
-            <BriefCard key={b.id} b={b} onOpen={onOpen} />
-          ))}
-        </div>
+      )}
+
+      {linksStatus === "ready" && (
+        <>
+          <div className="filters">
+            <button
+              className={`fp ${f === "all" ? "on" : ""}`}
+              onClick={() => setF("all")}
+              type="button"
+            >
+              Tous
+            </button>
+            <button
+              className={`fp ${f === "ready" ? "on" : ""}`}
+              onClick={() => setF("ready")}
+              type="button"
+            >
+              Prêts
+            </button>
+            <button
+              className={`fp ${f === "rdv" ? "on" : ""}`}
+              onClick={() => setF("rdv")}
+              type="button"
+            >
+              RDV
+            </button>
+            <button
+              className={`fp ${f === "wait" ? "on" : ""}`}
+              onClick={() => setF("wait")}
+              type="button"
+            >
+              En attente
+            </button>
+          </div>
+          {empty ? (
+            <div className="wp-empty" style={{ marginTop: 18 }}>
+              <p className="wp-empty-title">Aucun brief ici</p>
+              <p className="wp-empty-sub">
+                Envoyez un lien pour recevoir votre premier brief.
+              </p>
+            </div>
+          ) : shown.length === 0 ? (
+            <div className="wp-empty" style={{ marginTop: 18 }}>
+              <p className="wp-empty-title">Aucun brief ici</p>
+              <p className="wp-empty-sub">
+                Changez de filtre pour voir d’autres clients.
+              </p>
+            </div>
+          ) : (
+            <div className="blist" style={{ marginTop: 12 }}>
+              {shown.map((b) => (
+                <BriefCard key={b.id} b={b} onOpen={onOpen} />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
@@ -571,6 +645,7 @@ function Realisations({ studio, refreshKey, onOpen, onCreate, onOpenSettings }) 
   const [coverUrls, setCoverUrls] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [retryTick, setRetryTick] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -586,8 +661,8 @@ function Realisations({ studio, refreshKey, onOpen, onCreate, onOpenSettings }) 
       if (cancelled) return;
       if (!result.ok) {
         setLoading(false);
-        setError(proProjectsErrorMessage(result.error));
-        setItems([]);
+        setError(proProjectsErrorMessage(result.error, result.detail));
+        // Keep previous items if any — avoid fake empty on refresh failure
         return;
       }
       setItems(result.items || []);
@@ -613,7 +688,7 @@ function Realisations({ studio, refreshKey, onOpen, onCreate, onOpenSettings }) 
     return () => {
       cancelled = true;
     };
-  }, [studio?.id, refreshKey]);
+  }, [studio?.id, refreshKey, retryTick]);
 
   const empty = !loading && !error && items.length === 0;
 
@@ -625,9 +700,11 @@ function Realisations({ studio, refreshKey, onOpen, onCreate, onOpenSettings }) 
           <div className="h-sub">
             {loading
               ? "Chargement…"
-              : empty
-                ? "Aucun dossier"
-                : `${items.length} réalisation${items.length > 1 ? "s" : ""}`}
+              : error
+                ? "Chargement interrompu"
+                : empty
+                  ? "Aucun dossier"
+                  : `${items.length} réalisation${items.length > 1 ? "s" : ""}`}
           </div>
         </div>
         <StudioAvatar studio={studio} onOpen={onOpenSettings} />
@@ -641,8 +718,15 @@ function Realisations({ studio, refreshKey, onOpen, onCreate, onOpenSettings }) 
 
       {error && (
         <div className="wp-empty" style={{ marginTop: 18 }}>
-          <p className="wp-empty-title">Réalisations indisponibles</p>
+          <p className="wp-empty-title">Impossible de charger vos réalisations</p>
           <p className="wp-empty-sub">{error}</p>
+          <button
+            className="linebtn"
+            type="button"
+            onClick={() => setRetryTick((t) => t + 1)}
+          >
+            Réessayer
+          </button>
         </div>
       )}
 
@@ -1074,6 +1158,7 @@ function Agenda({ studio, refreshKey, onOpenSettings }) {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [retryTick, setRetryTick] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -1089,7 +1174,7 @@ function Agenda({ studio, refreshKey, onOpenSettings }) {
       if (cancelled) return;
       setLoading(false);
       if (!result.ok) {
-        setError(proStudioErrorMessage(result.error));
+        setError(proStudioErrorMessage(result.error, result.detail));
         setGroups([]);
         return;
       }
@@ -1098,7 +1183,7 @@ function Agenda({ studio, refreshKey, onOpenSettings }) {
     return () => {
       cancelled = true;
     };
-  }, [studio?.id, refreshKey]);
+  }, [studio?.id, refreshKey, retryTick]);
 
   const total = groups.reduce((n, g) => n + g.items.length, 0);
   const empty = !loading && !error && groups.length === 0;
@@ -1111,9 +1196,11 @@ function Agenda({ studio, refreshKey, onOpenSettings }) {
           <div className="h-sub">
             {loading
               ? "Chargement…"
-              : empty
-                ? "Aucun rendez-vous"
-                : `${total} planifié${total > 1 ? "s" : ""}`}
+              : error
+                ? "Chargement interrompu"
+                : empty
+                  ? "Aucun rendez-vous"
+                  : `${total} planifié${total > 1 ? "s" : ""}`}
           </div>
         </div>
         <StudioAvatar studio={studio} onOpen={onOpenSettings} />
@@ -1127,8 +1214,15 @@ function Agenda({ studio, refreshKey, onOpenSettings }) {
 
       {error && (
         <div className="wp-empty" style={{ marginTop: 18 }}>
-          <p className="wp-empty-title">Agenda indisponible</p>
+          <p className="wp-empty-title">Impossible de charger l’agenda</p>
           <p className="wp-empty-sub">{error}</p>
+          <button
+            className="linebtn"
+            type="button"
+            onClick={() => setRetryTick((t) => t + 1)}
+          >
+            Réessayer
+          </button>
         </div>
       )}
 
@@ -1788,6 +1882,8 @@ export default function WilderProV2() {
   const [user, setUser] = useState(null);
   const [studio, setStudio] = useState(null);
   const [items, setItems] = useState([]);
+  const [linksStatus, setLinksStatus] = useState("idle"); // idle | loading | ready | error
+  const [linksError, setLinksError] = useState(null);
   const [tab, setTab] = useState("accueil");
   const [active, setActive] = useState(null);
   const [sheet, setSheet] = useState(false);
@@ -1800,11 +1896,23 @@ export default function WilderProV2() {
   const loadLinks = useCallback(async (studioId) => {
     if (!studioId) {
       setItems([]);
-      return;
+      setLinksError(null);
+      setLinksStatus("ready");
+      return { ok: true, items: [] };
     }
+    setLinksStatus("loading");
+    setLinksError(null);
     const result = await listProLinksWithBriefs(studioId);
-    if (result.ok) setItems(result.items);
-    else console.error("[Wilder Pro] list:", result.error);
+    if (result.ok) {
+      setItems(result.items);
+      setLinksStatus("ready");
+      return result;
+    }
+    const message = proStudioErrorMessage(result.error, result.detail);
+    console.error("[Wilder Pro] list:", result.error, result.detail || "");
+    setLinksError(message);
+    setLinksStatus("error");
+    return result;
   }, []);
 
   const boot = useCallback(async () => {
@@ -1849,6 +1957,8 @@ export default function WilderProV2() {
     setUser(null);
     setStudio(null);
     setItems([]);
+    setLinksStatus("idle");
+    setLinksError(null);
     setActive(null);
     setActiveProject(null);
     setTab("accueil");
@@ -1891,6 +2001,9 @@ export default function WilderProV2() {
             <Accueil
               studio={studio}
               items={items}
+              linksStatus={linksStatus}
+              linksError={linksError}
+              onRetryLinks={() => loadLinks(studio?.id)}
               onSend={() => setSheet(true)}
               onBriefs={() => setTab("briefs")}
               onOpen={open}
@@ -1901,6 +2014,9 @@ export default function WilderProV2() {
             <Briefs
               items={items}
               studio={studio}
+              linksStatus={linksStatus}
+              linksError={linksError}
+              onRetryLinks={() => loadLinks(studio?.id)}
               onOpen={open}
               onOpenSettings={() => setSettingsSheet(true)}
             />
