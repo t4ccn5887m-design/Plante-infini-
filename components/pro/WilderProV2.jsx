@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Camera,
   FileText,
@@ -8,6 +8,7 @@ import {
   Phone,
   Send,
   Plus,
+  ChevronLeft,
   ChevronRight,
   MapPin,
   ArrowLeft,
@@ -21,6 +22,7 @@ import {
   Images,
   Trash2,
   Pencil,
+  X,
 } from "lucide-react";
 import {
   signInWithEmail,
@@ -797,6 +799,7 @@ function RealisationDetail({
   const [photoUrls, setPhotoUrls] = useState([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
   const photos = project?.photos || [];
 
   useEffect(() => {
@@ -909,7 +912,14 @@ function RealisationDetail({
           <div className="wp-proj-gallery">
             {photos.map((photo, i) => (
               <div className="wp-proj-gal-item" key={photo.id}>
-                <SafePhoto src={photoUrls[i]} alt="" />
+                <button
+                  type="button"
+                  className="wp-proj-gal-view"
+                  onClick={() => setLightboxIndex(i)}
+                  aria-label={`Agrandir la photo ${i + 1}`}
+                >
+                  <SafePhoto src={photoUrls[i]} alt="" />
+                </button>
                 <button
                   type="button"
                   className="wp-proj-gal-del"
@@ -929,6 +939,110 @@ function RealisationDetail({
         <p className="wp-form-error" role="alert">
           {error}
         </p>
+      )}
+
+      {lightboxIndex !== null && (
+        <RealisationLightbox
+          photos={photoUrls}
+          startIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+/** Visionneuse plein écran — clic sur une vignette de réalisation. */
+function RealisationLightbox({ photos, startIndex, onClose }) {
+  const [index, setIndex] = useState(startIndex);
+  const touchStartX = useRef(null);
+  const count = photos.length;
+  const canPrev = index > 0;
+  const canNext = index < count - 1;
+
+  const goPrev = useCallback(() => {
+    setIndex((i) => (i > 0 ? i - 1 : i));
+  }, []);
+  const goNext = useCallback(() => {
+    setIndex((i) => (i < count - 1 ? i + 1 : i));
+  }, [count]);
+
+  useEffect(() => {
+    setIndex(startIndex);
+  }, [startIndex]);
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === "Escape") onClose();
+      else if (e.key === "ArrowRight") goNext();
+      else if (e.key === "ArrowLeft") goPrev();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose, goNext, goPrev]);
+
+  const onTouchStart = (e) => {
+    touchStartX.current = e.touches[0]?.clientX ?? null;
+  };
+  const onTouchEnd = (e) => {
+    if (touchStartX.current == null) return;
+    const dx = (e.changedTouches[0]?.clientX ?? touchStartX.current) - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(dx) < 40) return;
+    if (dx < 0) goNext();
+    else goPrev();
+  };
+
+  if (!count) return null;
+
+  return (
+    <div className="wp-lightbox" onClick={onClose}>
+      <button
+        type="button"
+        className="wp-lightbox-close"
+        onClick={onClose}
+        aria-label="Fermer"
+      >
+        <X size={22} />
+      </button>
+      <div
+        className="wp-lightbox-img-wrap"
+        onClick={(e) => e.stopPropagation()}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
+        <SafePhoto src={photos[index]} alt="" />
+      </div>
+      {canPrev && (
+        <button
+          type="button"
+          className="wp-lightbox-nav wp-lightbox-prev"
+          onClick={(e) => {
+            e.stopPropagation();
+            goPrev();
+          }}
+          aria-label="Photo précédente"
+        >
+          <ChevronLeft size={22} />
+        </button>
+      )}
+      {canNext && (
+        <button
+          type="button"
+          className="wp-lightbox-nav wp-lightbox-next"
+          onClick={(e) => {
+            e.stopPropagation();
+            goNext();
+          }}
+          aria-label="Photo suivante"
+        >
+          <ChevronRight size={22} />
+        </button>
+      )}
+      {count > 1 && (
+        <div className="wp-lightbox-count">
+          {index + 1} / {count}
+        </div>
       )}
     </div>
   );
