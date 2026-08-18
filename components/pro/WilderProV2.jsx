@@ -800,6 +800,8 @@ function RealisationDetail({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [lightboxIndex, setLightboxIndex] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const addPhotoInputRef = useRef(null);
   const photos = project?.photos || [];
 
   useEffect(() => {
@@ -836,6 +838,45 @@ function RealisationDetail({
         photos.filter((p) => p.id !== photo.id)[0]?.path || null,
     };
     onProjectChange?.(next);
+  };
+
+  const onAddPhotos = async (e) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = "";
+    if (!files.length || !project?.id || !studio?.id || uploading) return;
+    setError(null);
+    setUploading(true);
+    const dataUrls = [];
+    for (let i = 0; i < files.length; i += 1) {
+      const dataUrl = await readFileAsDataUrl(files[i]);
+      if (dataUrl) dataUrls.push(dataUrl);
+    }
+    if (!dataUrls.length) {
+      setUploading(false);
+      setError("Aucune photo n’a pu être lue. Essayez JPEG ou PNG.");
+      return;
+    }
+    const up = await uploadProjectPhotos({
+      studioId: studio.id,
+      projectId: project.id,
+      photoDataUrls: dataUrls,
+      startSort: photos.length,
+    });
+    setUploading(false);
+    if (!up.ok && !(up.photos || []).length) {
+      setError(proProjectsErrorMessage(up.error));
+      return;
+    }
+    if (up.failures > 0) {
+      setError(
+        `${up.failures} photo${up.failures > 1 ? "s" : ""} n’ont pas pu être ajoutées.`
+      );
+    }
+    onProjectChange?.({
+      ...project,
+      photos: [...photos, ...(up.photos || [])],
+      coverPath: project.coverPath || up.photos?.[0]?.path || null,
+    });
   };
 
   const removeProject = async () => {
@@ -906,33 +947,50 @@ function RealisationDetail({
           <Camera size={14} /> Photos
           {photos.length ? ` · ${photos.length}` : ""}
         </div>
-        {photos.length === 0 ? (
+        {photos.length === 0 && !uploading ? (
           <p className="bc-taste">Aucune photo pour l’instant.</p>
-        ) : (
-          <div className="wp-proj-gallery">
-            {photos.map((photo, i) => (
-              <div className="wp-proj-gal-item" key={photo.id}>
-                <button
-                  type="button"
-                  className="wp-proj-gal-view"
-                  onClick={() => setLightboxIndex(i)}
-                  aria-label={`Agrandir la photo ${i + 1}`}
-                >
-                  <SafePhoto src={photoUrls[i]} alt="" />
-                </button>
-                <button
-                  type="button"
-                  className="wp-proj-gal-del"
-                  onClick={() => removePhoto(photo)}
-                  disabled={busy}
-                  aria-label="Supprimer la photo"
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+        ) : null}
+        <div className="wp-proj-gallery">
+          {photos.map((photo, i) => (
+            <div className="wp-proj-gal-item" key={photo.id}>
+              <button
+                type="button"
+                className="wp-proj-gal-view"
+                onClick={() => setLightboxIndex(i)}
+                aria-label={`Agrandir la photo ${i + 1}`}
+              >
+                <SafePhoto src={photoUrls[i]} alt="" />
+              </button>
+              <button
+                type="button"
+                className="wp-proj-gal-del"
+                onClick={() => removePhoto(photo)}
+                disabled={busy}
+                aria-label="Supprimer la photo"
+              >
+                <Trash2 size={14} />
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            className="wp-proj-gal-add"
+            onClick={() => addPhotoInputRef.current?.click()}
+            disabled={uploading}
+            aria-label="Ajouter une photo"
+          >
+            {uploading ? <span className="wp-spinner" aria-hidden /> : <Plus size={22} />}
+          </button>
+        </div>
+        <input
+          ref={addPhotoInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="wp-visually-hidden"
+          onChange={onAddPhotos}
+          disabled={uploading}
+        />
       </div>
 
       {error && (
@@ -1216,10 +1274,6 @@ function RealisationForm({
           onChange={onPickFiles}
           disabled={loading}
         />
-        <p className="wp-field-hint">
-          Les photos iPhone sont compressées avant envoi. HEIC illisible →
-          message, pas de plantage.
-        </p>
         {pendingFiles.length > 0 && (
           <ul className="wp-pending-photos">
             {pendingFiles.map((f, i) => (

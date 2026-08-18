@@ -395,6 +395,36 @@
   place-items:center;
   box-shadow:0 2px 8px rgba(0,0,0,.12);
 }
+.wp .wp-proj-gal-add {
+  aspect-ratio:1;
+  border-radius:14px;
+  border:1.5px dashed var(--line);
+  background:#FAFAF7;
+  color:var(--green);
+  display:grid;
+  place-items:center;
+}
+.wp .wp-proj-gal-add:active { transform:scale(.97); }
+.wp .wp-proj-gal-add:disabled { opacity:.7; }
+.wp .wp-spinner {
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  border:2.5px solid var(--line);
+  border-top-color:var(--green);
+  animation:wp-spin .7s linear infinite;
+}
+.wp .wp-visually-hidden {
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
 
 /* Visionneuse plein écran (réalisations) */
 .wp .wp-lightbox {
@@ -1131,6 +1161,7 @@
 
 @keyframes wp-fade { from{opacity:0} to{opacity:1} }
 @keyframes wp-up { from{transform:translateY(100%)} to{transform:translateY(0)} }
+@keyframes wp-spin { to{transform:rotate(360deg)} }
 @media (prefers-reduced-motion:reduce){
   .wp *, .wp *::before, .wp *::after { animation:none!important; transition:none!important; }
 }
