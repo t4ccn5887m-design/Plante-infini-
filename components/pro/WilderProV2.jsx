@@ -54,6 +54,7 @@ import {
 import {
   deriveRdvTodos,
   deriveVigilance,
+  isUrgentBrief,
 } from "@/lib/pro/briefDerive";
 import { printBriefPdf } from "@/lib/pro/briefDetailActions";
 
@@ -294,7 +295,12 @@ function Briefs({
   onOpenSettings,
 }) {
   const [f, setF] = useState("all");
-  const shown = items.filter((b) => f === "all" || b.status === f);
+  const filtered = items.filter((b) => f === "all" || b.status === f);
+  const shown = [...filtered].sort((a, b) => {
+    const ua = isUrgentBrief(a.brief) ? 0 : 1;
+    const ub = isUrgentBrief(b.brief) ? 0 : 1;
+    return ua - ub;
+  });
   const empty = linksStatus === "ready" && items.length === 0;
 
   return (
@@ -587,9 +593,27 @@ function Detail({ b, onBack, onPlanifier }) {
 
       <div className="dcard no-print">
         <div className="dlbl">
-          <Leaf size={14} /> Budget & mot du client
+          <Leaf size={14} /> Terrain & budget
         </div>
         <div className="facts">
+          {d.areaRange && (
+            <div className="row">
+              <span className="k">Surface à aménager</span>
+              <span className="v">{d.areaRange}</span>
+            </div>
+          )}
+          {d.timeline && (
+            <div className="row">
+              <span className="k">Échéance</span>
+              <span className="v">{d.timeline}</span>
+            </div>
+          )}
+          {d.utilities && (
+            <div className="row">
+              <span className="k">Eau & électricité</span>
+              <span className="v">{d.utilities}</span>
+            </div>
+          )}
           <div className="row">
             <span className="k">Budget</span>
             <span className="v">{d.budget}</span>

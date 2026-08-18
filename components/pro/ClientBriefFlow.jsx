@@ -10,20 +10,23 @@ import {
 } from "lucide-react";
 import { BRIEF_AMBIANCE_IMAGES, BRIEF_CHOICE_IMAGES } from "@/lib/pro/briefAmbianceImages";
 import {
+  AREA_RANGES,
   BUDGETS,
   MAINTENANCE as MAINTENANCE_DEFS,
   MATERIALS as MATERIAL_DEFS,
   PLANTS as PLANT_DEFS,
   PRIORITIES,
   TASTES as TASTE_DEFS,
+  TIMELINES,
   USERS,
+  UTILITIES,
 } from "@/lib/pro/briefLabels";
 import {
   clientBriefErrorMessage,
   submitClientBrief,
 } from "@/lib/pro/clientBriefApi";
 
-const TOTAL_STEPS = 9; // 0..8
+const TOTAL_STEPS = 10; // 0..9
 
 const TASTES = TASTE_DEFS.map((t) => ({
   ...t,
@@ -51,6 +54,9 @@ const EMPTY_ANSWERS = {
   users: [],
   maintenance: null,
   photos: [],
+  areaRange: null,
+  timeline: null,
+  utilities: null,
   budget: null,
   message: "",
 };
@@ -68,6 +74,11 @@ function normalizeAnswers(raw) {
   }
   if (merged.maintenance != null && typeof merged.maintenance !== "string") {
     merged.maintenance = null;
+  }
+  for (const key of ["areaRange", "timeline", "utilities"]) {
+    if (merged[key] != null && typeof merged[key] !== "string") {
+      merged[key] = null;
+    }
   }
   if (typeof merged.message !== "string") merged.message = "";
   return merged;
@@ -541,6 +552,91 @@ function PhotosStep({ answers, setAnswers, ...shell }) {
   );
 }
 
+function TerrainStep({ answers, setAnswers, ...shell }) {
+  return (
+    <StepShell
+      {...shell}
+      title="Votre terrain en bref"
+      subtitle="Toujours facultatif — ça aide le pro à préparer le RDV et à cadrer un premier ordre de prix."
+      badge="FACULTATIF"
+      skipLabel="Passer"
+      onSkip={shell.onNext}
+    >
+      <div className="bf-section-label">Quelle surface souhaitez-vous aménager ?</div>
+      <p className="bf-hint calm">
+        Pas la taille du terrain — juste la partie à transformer.
+      </p>
+      <div className="bf-chips">
+        {AREA_RANGES.map((o) => {
+          const on = answers.areaRange === o.id;
+          return (
+            <button
+              key={o.id}
+              type="button"
+              className={`bf-chip ${on ? "on" : ""}`}
+              onClick={() =>
+                setAnswers((a) => ({
+                  ...a,
+                  areaRange: a.areaRange === o.id ? null : o.id,
+                }))
+              }
+            >
+              {o.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="bf-section-label">Pour quand ?</div>
+      <div className="bf-chips">
+        {TIMELINES.map((o) => {
+          const on = answers.timeline === o.id;
+          return (
+            <button
+              key={o.id}
+              type="button"
+              className={`bf-chip ${on ? "on" : ""}`}
+              onClick={() =>
+                setAnswers((a) => ({
+                  ...a,
+                  timeline: a.timeline === o.id ? null : o.id,
+                }))
+              }
+            >
+              {o.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="bf-section-label">
+        Avez-vous un point d&apos;eau et de l&apos;électricité au jardin ?
+      </div>
+      <p className="bf-hint calm">Utile pour l&apos;arrosage et l&apos;éclairage.</p>
+      <div className="bf-chips">
+        {UTILITIES.map((o) => {
+          const on = answers.utilities === o.id;
+          return (
+            <button
+              key={o.id}
+              type="button"
+              className={`bf-chip ${on ? "on" : ""}`}
+              onClick={() =>
+                setAnswers((a) => ({
+                  ...a,
+                  utilities: a.utilities === o.id ? null : o.id,
+                }))
+              }
+            >
+              {o.label}
+            </button>
+          );
+        })}
+      </div>
+    </StepShell>
+  );
+}
+
 function BudgetStep({
   answers,
   setAnswers,
@@ -608,7 +704,7 @@ function BudgetStep({
 function Thanks({ studio }) {
   return (
     <div className="bf-step bf-thanks">
-      <ProgressBar step={8} />
+      <ProgressBar step={9} />
       <div className="bf-thanks-icon">
         <Sparkles size={28} />
       </div>
@@ -671,7 +767,7 @@ export default function ClientBriefFlow({ token, studio }) {
           !parsed?.submitted &&
           typeof parsed?.step === "number" &&
           parsed.step >= 0 &&
-          parsed.step <= 7
+          parsed.step <= 8
         ) {
           setStep(parsed.step);
         }
@@ -709,7 +805,7 @@ export default function ClientBriefFlow({ token, studio }) {
 
   const go = useCallback((n) => setStep(n), []);
   const back = useCallback(() => setStep((s) => Math.max(0, s - 1)), []);
-  const next = useCallback(() => setStep((s) => Math.min(8, s + 1)), []);
+  const next = useCallback(() => setStep((s) => Math.min(9, s + 1)), []);
 
   const submit = useCallback(async () => {
     if (submittingRef.current) return;
@@ -731,7 +827,7 @@ export default function ClientBriefFlow({ token, studio }) {
           JSON.stringify({
             token,
             studioName: studio.name,
-            step: 8,
+            step: 9,
             answers: { ...safe, photos: [] },
             submitted: true,
             briefId: result.briefId,
@@ -743,7 +839,7 @@ export default function ClientBriefFlow({ token, studio }) {
       }
 
       setAnswers(safe);
-      setStep(8);
+      setStep(9);
     } catch (e) {
       console.error("[Wilder Pro] submit:", e);
       setSubmitError(clientBriefErrorMessage("submit_failed"));
@@ -830,9 +926,17 @@ export default function ClientBriefFlow({ token, studio }) {
             />
           )}
           {step === 7 && (
-            <BudgetStep
+            <TerrainStep
               {...shellBase}
               step={7}
+              answers={answers}
+              setAnswers={setAnswers}
+            />
+          )}
+          {step === 8 && (
+            <BudgetStep
+              {...shellBase}
+              step={8}
               answers={answers}
               setAnswers={setAnswers}
               studio={studio}
@@ -841,7 +945,7 @@ export default function ClientBriefFlow({ token, studio }) {
               submitError={submitError}
             />
           )}
-          {step === 8 && <Thanks studio={studio} />}
+          {step === 9 && <Thanks studio={studio} />}
         </div>
       </div>
     </div>
