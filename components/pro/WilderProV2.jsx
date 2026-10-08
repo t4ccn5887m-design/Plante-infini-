@@ -117,6 +117,92 @@ function StudioAvatar({ studio, onOpen }) {
   );
 }
 
+function ProDesktopSidebar({
+  tab,
+  studio,
+  onNavAccueil,
+  onNavBriefs,
+  onNavAgenda,
+  onNavRealisations,
+  onSendLink,
+  onOpenSettings,
+}) {
+  const realisationsOn =
+    tab === "realisations" ||
+    tab === "realisation-detail" ||
+    tab === "realisation-form";
+
+  return (
+    <aside className="wp-sidebar no-print" aria-label="Navigation principale">
+      <div className="wp-sidebar-brand">
+        <Leaf size={20} strokeWidth={2.2} aria-hidden />
+        <span className="wp-sidebar-logo">sevya</span>
+        <span className="wp-sidebar-pro">PRO</span>
+      </div>
+
+      <button
+        type="button"
+        className="wp-sidebar-send"
+        onClick={onSendLink}
+      >
+        <Send size={18} aria-hidden />
+        Envoyer un lien
+      </button>
+
+      <nav className="wp-sidebar-nav" aria-label="Sections">
+        <button
+          type="button"
+          className={`wp-sidebar-link${tab === "accueil" ? " on" : ""}`}
+          onClick={onNavAccueil}
+        >
+          <Home size={20} aria-hidden />
+          Accueil
+        </button>
+        <button
+          type="button"
+          className={`wp-sidebar-link${
+            tab === "briefs" || tab === "detail" ? " on" : ""
+          }`}
+          onClick={onNavBriefs}
+        >
+          <FileText size={20} aria-hidden />
+          Briefs
+        </button>
+        <button
+          type="button"
+          className={`wp-sidebar-link${tab === "agenda" ? " on" : ""}`}
+          onClick={onNavAgenda}
+        >
+          <CalendarDays size={20} aria-hidden />
+          Agenda
+        </button>
+        <button
+          type="button"
+          className={`wp-sidebar-link${realisationsOn ? " on" : ""}`}
+          onClick={onNavRealisations}
+        >
+          <Images size={20} aria-hidden />
+          Réalisations
+        </button>
+      </nav>
+
+      <button
+        type="button"
+        className="wp-sidebar-footer"
+        onClick={onOpenSettings}
+      >
+        <span className="wp-sidebar-footer-ava">{studio?.initials || "?"}</span>
+        <span className="wp-sidebar-footer-text">
+          <span className="wp-sidebar-footer-name">
+            {studio?.name || "Mon studio"}
+          </span>
+          <span className="wp-sidebar-footer-sub">Réglages du studio</span>
+        </span>
+      </button>
+    </aside>
+  );
+}
+
 function BriefCard({ b, onOpen }) {
   const s = ST[b.status] || ST.wait;
   const tap = b.status === "ready" || b.status === "rdv";
@@ -2187,6 +2273,19 @@ export default function WilderProV2() {
 
   return (
     <div className="wp">
+      <ProDesktopSidebar
+        tab={tab}
+        studio={studio}
+        onNavAccueil={() => setTab("accueil")}
+        onNavBriefs={() => setTab("briefs")}
+        onNavAgenda={() => setTab("agenda")}
+        onNavRealisations={() => {
+          setActiveProject(null);
+          setTab("realisations");
+        }}
+        onSendLink={() => setSheet(true)}
+        onOpenSettings={() => setSettingsSheet(true)}
+      />
       <div className="phone">
         <div className="screen">
           {tab === "accueil" && (
