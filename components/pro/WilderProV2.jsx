@@ -312,6 +312,7 @@ function Accueil({
       {linksStatus === "ready" && items.length > 0 && (
         <>
           <div className="label">À traiter</div>
+          <div className="wp-accueil-actions">
           <button className="pcard peach" onClick={onSend} type="button">
             <span className="ic">
               <Send size={22} color="#DB7E44" />
@@ -354,11 +355,12 @@ function Accueil({
               {waiting.length}
             </span>
           </button>
+          </div>
 
           {ready.length > 0 && (
             <>
               <div className="label">Derniers briefs</div>
-              <div className="blist">
+              <div className="blist wp-accueil-briefs">
                 {ready.slice(0, 3).map((b) => (
                   <BriefCard key={b.id} b={b} onOpen={onOpen} />
                 ))}
@@ -2287,7 +2289,11 @@ export default function WilderProV2() {
         onOpenSettings={() => setSettingsSheet(true)}
       />
       <div className="phone">
-        <div className="screen">
+        <div
+          className={`screen${
+            tab === "briefs" || tab === "detail" ? " wp-desktop-narrow" : ""
+          }${tab === "agenda" ? " wp-desktop-agenda" : ""}`}
+        >
           {tab === "accueil" && (
             <Accueil
               studio={studio}
