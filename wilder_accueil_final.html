@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Wilder accueil final</title>
+<style>
+:root{--ink:#1e2b23;--muted:#8b9084;--border:#e6e2d8;--border-strong:#cbc6b8;--green-tint:#e7efe6;--green-ink:#3c6b47;--stone-tint:#eae6de;--stone-ink:#6b6455;--purple-tint:#efedfb;--purple-ink:#6a58a2;--active:#2f5a3c;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:radial-gradient(120% 120% at 50% 0%,#e2ddcf,#cfc9ba);min-height:100vh;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;padding:26px 14px;gap:22px;color:var(--ink);}
+.col{display:flex;flex-direction:column;align-items:center;gap:9px;}
+.caption{font-size:12px;color:#3a352a;text-align:center;max-width:300px;font-weight:700;}
+.frame{width:300px;background:#e7e3d8;border:0.5px solid #cbc6b8;border-radius:32px;padding:10px;box-shadow:0 20px 46px -18px rgba(40,45,35,.45);}
+.screen{background:#fff;border-radius:23px;overflow:hidden;display:flex;flex-direction:column;height:592px;}
+.scroll{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--green-tint);display:flex;align-items:center;justify-content:center;color:var(--green-ink);font-size:12px;font-weight:700;border:0.5px solid var(--border-strong);}
+svg.ic{stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.door{display:flex;align-items:center;gap:12px;border:0.5px solid var(--border);border-radius:14px;padding:12px;background:#fff;}
+.door .iw{width:42px;height:42px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;}
+.door .t{font-size:13.5px;font-weight:600;}.door .d{font-size:10.5px;color:var(--muted);margin-top:2px;}
+.door .arr{margin-left:auto;color:var(--muted);}
+.g1{background:var(--green-tint);color:var(--green-ink);}.g2{background:var(--stone-tint);color:var(--stone-ink);}.g3{background:var(--purple-tint);color:var(--purple-ink);}
+/* barre : accueil, mon jardin, BRIEF centre, mes scans, catalogue */
+.tabbar{display:flex;align-items:flex-end;border-top:0.5px solid var(--border);background:#fff;padding:7px 3px 9px;}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--muted);}
+.tab.on{color:var(--active);}.tab .lbl{font-size:9px;font-weight:500;}
+.tab.mid .circle{width:44px;height:44px;border-radius:50%;background:var(--active);color:#fff;display:flex;align-items:center;justify-content:center;margin-top:-16px;box-shadow:0 4px 10px rgba(47,90,60,.35);border:3px solid #fff;}
+.card{border:0.5px solid var(--border);border-radius:11px;overflow:hidden;}
+.card .pic{height:58px;background:var(--green-tint);display:flex;align-items:center;justify-content:center;color:var(--green-ink);position:relative;}
+.card .pic.stone{background:var(--stone-tint);color:var(--stone-ink);}
+.card .hb{position:absolute;top:5px;right:5px;width:18px;height:18px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;color:#c6504c;}
+.card .body{padding:6px 8px 8px;}.card .n{font-size:11.5px;font-weight:600;}.card .s{font-size:9.5px;color:var(--muted);margin-top:1px;}
+</style></head><body>
+
+<!-- ETAT 1 : jardin vide -->
+<div class="col"><div class="frame"><div class="screen">
+<div class="scroll">
+<div style="height:190px;position:relative;background:linear-gradient(160deg,#7fa07f,#3d6b47 55%,#2c5236);display:flex;flex-direction:column;justify-content:flex-end;padding:16px;">
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.35));"></div>
+<div style="position:absolute;top:14px;right:15px;z-index:2;"><div class="avatar" style="background:#ffffff33;color:#fff;border-color:#ffffff55;">EG</div></div>
+<div style="position:relative;z-index:1;"><div style="font-size:21px;font-weight:700;color:#fff;line-height:1.2;">Composez le jardin<br>qui vous ressemble</div><div style="font-size:11.5px;color:#ffffffdd;margin-top:6px;">Rassemblez ce que vous aimez, on en fait un brief pour votre paysagiste.</div></div>
+</div>
+<div style="padding:15px 15px 7px;font-size:11.5px;font-weight:600;color:#4c554a;text-transform:uppercase;letter-spacing:.03em;">Par où commencer&nbsp;?</div>
+<div style="padding:0 15px;display:flex;flex-direction:column;gap:9px;">
+<div class="door"><div class="iw g1"><svg class="ic" width="21" height="21" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div><div><div class="t">Scanner une plante</div><div class="d">J'ai vu un truc joli dehors</div></div><span class="arr">›</span></div>
+<div class="door"><div class="iw g2"><svg class="ic" width="21" height="21" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div><div><div class="t">Parcourir le catalogue</div><div class="d">Plantes, minéral & idées</div></div><span class="arr">›</span></div>
+<div class="door"><div class="iw g3"><svg class="ic" width="21" height="21" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="5" r="2"/><circle cx="12" cy="19" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></div><div><div class="t">Piocher une ambiance</div><div class="d">Méditerranéen, japonais…</div></div><span class="arr">›</span></div>
+</div>
+</div>
+<div class="tabbar">
+<div class="tab on"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10"/></svg><span class="lbl">Accueil</span></div>
+<div class="tab"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg><span class="lbl">Mon jardin</span></div>
+<div class="tab mid"><div class="circle"><svg class="ic" width="22" height="22" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><span class="lbl">Brief</span></div>
+<div class="tab"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="1"/><rect x="14" y="4" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="lbl">Mes scans</span></div>
+<div class="tab"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg><span class="lbl">Catalogue</span></div>
+</div>
+</div></div><div class="caption">ÉTAT 1 — jardin vide : le hall qui accueille</div></div>
+
+<!-- ETAT 2 : jardin rempli (l'ecran evolue) -->
+<div class="col"><div class="frame"><div class="screen">
+<div class="scroll">
+<div style="height:140px;position:relative;background:linear-gradient(160deg,#7fa07f,#3d6b47);display:flex;flex-direction:column;justify-content:flex-end;padding:15px;">
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.35));"></div>
+<div style="position:absolute;top:13px;right:14px;z-index:2;"><div class="avatar" style="background:#ffffff33;color:#fff;border-color:#ffffff55;">EG</div></div>
+<div style="position:relative;z-index:1;"><div style="font-size:18px;font-weight:700;color:#fff;">Votre jardin prend forme 🌿</div><div style="font-size:11.5px;color:#ffffffdd;margin-top:4px;">8 éléments · 3 coups de cœur · brief prêt</div></div>
+</div>
+<div style="padding:13px 15px 9px;display:flex;gap:9px;">
+<div style="flex:1;background:var(--active);color:#fff;border-radius:12px;padding:11px;font-size:12px;font-weight:600;text-align:center;">Voir mon brief</div>
+<div style="flex:1;border:0.5px solid var(--border-strong);border-radius:12px;padding:11px;font-size:12px;font-weight:600;text-align:center;">+ Ajouter</div>
+</div>
+<div style="padding:2px 15px 7px;font-size:11px;font-weight:600;color:#4c554a;text-transform:uppercase;letter-spacing:.03em;">Aperçu de mon jardin</div>
+<div style="padding:0 15px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+<div class="card"><div class="pic"><svg class="ic" width="19" height="19" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg><span class="hb"><svg class="ic" width="10" height="10" viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg></span></div><div class="body"><div class="n">Cornouiller</div></div></div>
+<div class="card"><div class="pic"><svg class="ic" width="19" height="19" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div><div class="body"><div class="n">Lavande</div></div></div>
+<div class="card"><div class="pic stone"><svg class="ic" width="19" height="19" viewBox="0 0 24 24"><path d="M5 15l3-7 5 2 3-4 3 6-2 6H4z"/></svg></div><div class="body"><div class="n">Ardoise</div></div></div>
+</div>
+</div>
+<div class="tabbar">
+<div class="tab on"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10"/></svg><span class="lbl">Accueil</span></div>
+<div class="tab"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg><span class="lbl">Mon jardin</span></div>
+<div class="tab mid"><div class="circle"><svg class="ic" width="22" height="22" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><span class="lbl">Brief</span></div>
+<div class="tab"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="1"/><rect x="14" y="4" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="lbl">Mes scans</span></div>
+<div class="tab"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg><span class="lbl">Catalogue</span></div>
+</div>
+</div></div><div class="caption">ÉTAT 2 — jardin rempli : l'accueil évolue (résumé + accès brief)</div></div>
+
+</body></html>

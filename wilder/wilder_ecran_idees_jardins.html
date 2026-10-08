@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wilder — Idées de jardins</title>
+<style>
+  :root{
+    --frame:#e7e3d8; --screen:#ffffff;
+    --ink:#1e2b23; --secondary:#4c554a; --muted:#8b9084;
+    --border:#e6e2d8; --border-strong:#cbc6b8;
+    --green-tint:#e7efe6; --green-ink:#3c6b47;
+    --purple-tint:#efedfb; --purple-ink:#6a58a2;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(120% 120% at 50% 0%, #e2ddcf 0%, #cfc9ba 100%);
+    min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:28px 16px; gap:14px; color:var(--ink);}
+  .caption{font-size:12px; color:#6f6a5c; text-align:center; max-width:340px;}
+  .frame{width:340px; background:var(--frame); border:0.5px solid #cbc6b8; border-radius:34px; padding:11px;
+    box-shadow:0 22px 50px -18px rgba(40,45,35,.45), 0 4px 10px rgba(0,0,0,.05);}
+  .screen{background:var(--screen); border-radius:24px; overflow:hidden;}
+
+  .topbar{padding:15px 16px 10px; display:flex; align-items:center; gap:12px;}
+  .iconbtn{width:32px; height:32px; border:none; background:transparent; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink);}
+  .crumb{font-size:14px; color:var(--muted);}
+
+  .titleblock{padding:2px 16px 14px;}
+  .title{font-size:21px; font-weight:600; letter-spacing:-.01em; line-height:1.15;}
+  .sub{font-size:12px; color:var(--muted); margin-top:4px; line-height:1.5;}
+
+  .list{padding:0 16px 6px; display:flex; flex-direction:column; gap:14px;}
+  .idea{border:0.5px solid var(--border); border-radius:16px; overflow:hidden; background:#fff;}
+  .idea .hero{height:120px; position:relative; display:flex; align-items:flex-end; padding:10px 12px;}
+  .idea .hero .name{font-size:16px; font-weight:600; color:#fff; text-shadow:0 1px 4px rgba(0,0,0,.35); position:relative; z-index:1;}
+  .idea .hero .tag{position:absolute; top:10px; right:10px; z-index:1; background:#ffffffe0; font-size:10px; font-weight:600; color:var(--secondary); padding:3px 9px; border-radius:20px;}
+  .idea .body{padding:11px 13px 13px;}
+  .idea .desc{font-size:12px; color:var(--secondary); line-height:1.5;}
+  .idea .foot{margin-top:11px; display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .idea .count{font-size:11px; color:var(--muted); display:flex; align-items:center; gap:5px;}
+  .addpal{height:34px; padding:0 13px; border-radius:20px; font-size:11.5px; font-weight:600; cursor:pointer; font-family:inherit;
+    display:inline-flex; align-items:center; gap:6px; border:none; background:var(--green-tint); color:var(--green-ink);}
+
+  /* hero backgrounds — evocative gradients as photo placeholders */
+  .med{background:linear-gradient(160deg,#cfd8b8 0%,#b7995f 60%,#9c7b3f 100%);}
+  .jap{background:linear-gradient(160deg,#9fb6a3 0%,#5f7d68 60%,#3c5344 100%);}
+  .cot{background:linear-gradient(160deg,#e2b9cf 0%,#b98db0 55%,#8a9b62 100%);}
+  .sec{background:linear-gradient(160deg,#e4d3a6 0%,#c9a86a 55%,#a9823f 100%);}
+  .scrim{position:absolute; inset:0; background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.35) 100%);}
+
+  svg.ic{stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round;}
+</style>
+</head>
+<body>
+  <div class="caption">Wilder · écran « Idées de jardins » — pour ceux qui partent de zéro : pioche une ambiance entière, cohérente (accès via le menu)</div>
+
+  <div class="frame">
+    <div class="screen">
+
+      <div class="topbar">
+        <button class="iconbtn" aria-label="Retour"><svg class="ic" width="19" height="19" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+        <span class="crumb">Menu</span>
+      </div>
+
+      <div class="titleblock">
+        <div class="title">Idées de jardins</div>
+        <div class="sub">Aucune idée ? Pioche une ambiance toute faite. Ses plantes vont déjà ensemble — mêmes besoins, même style.</div>
+      </div>
+
+      <div class="list">
+
+        <div class="idea">
+          <div class="hero med"><div class="scrim"></div><span class="tag">Plein soleil · sec</span><span class="name">Jardin méditerranéen</span></div>
+          <div class="body">
+            <div class="desc">Lavande, oliviers, graminées et gravier clair. Peu d'eau, plein soleil, esprit vacances.</div>
+            <div class="foot"><span class="count"><svg class="ic" width="13" height="13" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/></svg> 9 plantes</span>
+            <button class="addpal"><svg class="ic" width="13" height="13" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ajouter la palette</button></div>
+          </div>
+        </div>
+
+        <div class="idea">
+          <div class="hero jap"><div class="scrim"></div><span class="tag">Mi-ombre · zen</span><span class="name">Jardin japonais</span></div>
+          <div class="body">
+            <div class="desc">Érables, mousses, fougères, pierres et pas japonais. Calme, structuré, feuillages fins.</div>
+            <div class="foot"><span class="count"><svg class="ic" width="13" height="13" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/></svg> 8 plantes · 3 minéraux</span>
+            <button class="addpal"><svg class="ic" width="13" height="13" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ajouter la palette</button></div>
+          </div>
+        </div>
+
+        <div class="idea">
+          <div class="hero cot"><div class="scrim"></div><span class="tag">Soleil · fleuri</span><span class="name">Cottage anglais</span></div>
+          <div class="body">
+            <div class="desc">Rosiers, vivaces généreuses, floraisons mêlées. Romantique, foisonnant, coloré.</div>
+            <div class="foot"><span class="count"><svg class="ic" width="13" height="13" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/></svg> 12 plantes</span>
+            <button class="addpal"><svg class="ic" width="13" height="13" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ajouter la palette</button></div>
+          </div>
+        </div>
+
+        <div class="idea">
+          <div class="hero sec"><div class="scrim"></div><span class="tag">Plein soleil · 0 arrosage</span><span class="name">Jardin sec</span></div>
+          <div class="body">
+            <div class="desc">Graminées, plantes grasses, minéral. Zéro entretien, résiste à la sécheresse.</div>
+            <div class="foot"><span class="count"><svg class="ic" width="13" height="13" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/></svg> 7 plantes · 2 minéraux</span>
+            <button class="addpal"><svg class="ic" width="13" height="13" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ajouter la palette</button></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="height:18px;"></div>
+
+    </div>
+  </div>
+
+  <div class="caption">Piocher une ambiance = récupérer des plantes déjà compatibles. Ça règle le « je mélange tout » sans effort.</div>
+</body>
+</html>

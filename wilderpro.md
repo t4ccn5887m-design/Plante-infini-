@@ -2,7 +2,7 @@
 
 > Ce fichier est la mémoire du projet. Toute session Cursor / Claude Code / Claude
 > doit le lire en premier. À garder à jour à chaque décision importante.
-> **Nom produit : Amont** (ex-Wilder — voir §8).
+> **Nom officiel : Sevya** (voir §8).
 
 ---
 
@@ -122,11 +122,13 @@ Un monorepo (deux apps déployées séparément, ex. `app.amont.fr` / `mon.amont
 
 ---
 
-## 8. Nom
-
-- **Décision : « Amont »** (ex-nom de code **Wilder**).
-- « Wilder » était déconseillé (déjà pris dans le créneau, sens à l’envers, anglais pour marché FR) — conservé seulement comme héritage technique (branche `wilder-pro`, préfixe CSS `.wp`, chemins historiques) jusqu’à un renommage propre.
-- **Avant dépôt / go-to-market public** : vérifier INPI + EUIPO + domaine + stores si besoin.
+## 8. Nom : SEVYA (décidé le 8 oct. 2026)
+- Sevya, de « sève » : ce qui fait vivre le jardin, comme le brief fait vivre le premier RDV. Nom inventé, court, le « y » le rend élégant et distinctif.
+- Domaine principal : sevya.app (acheté le 8 oct. 2026, chez OVH).
+- Optionnel : sevya-app.fr en redirection vers sevya.app.
+- Pris : sevya.fr, sevya.com, sevia.fr, sevia.com, sevia.app.
+- À faire : réserver @sevya sur Instagram / LinkedIn / Facebook ; brancher sevya.app sur Vercel ; plus tard, recherche INPI/EUIPO puis dépôt de marque ; renommer progressivement Kré / Wilder → Sevya dans l'UI.
+- Historique : Wilder, Amont, Kré abandonnés au profit de Sevya.
 
 ---
 

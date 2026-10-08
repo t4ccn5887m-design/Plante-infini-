@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wilder — Mon jardin</title>
+<style>
+  :root{
+    --frame:#e7e3d8; --screen:#ffffff;
+    --ink:#1e2b23; --secondary:#4c554a; --muted:#8b9084;
+    --border:#e6e2d8; --border-strong:#cbc6b8;
+    --green-tint:#e7efe6; --green-ink:#3c6b47;
+    --purple-tint:#efedfb; --purple-ink:#6a58a2;
+    --heart:#c6504c; --note:#f4f2ea;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(120% 120% at 50% 0%, #e2ddcf 0%, #cfc9ba 100%);
+    min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:28px 16px; gap:14px; color:var(--ink);}
+  .caption{font-size:12px; color:#6f6a5c; text-align:center; max-width:340px;}
+  .frame{width:340px; background:var(--frame); border:0.5px solid #cbc6b8; border-radius:34px; padding:11px;
+    box-shadow:0 22px 50px -18px rgba(40,45,35,.45), 0 4px 10px rgba(0,0,0,.05);}
+  .screen{background:var(--screen); border-radius:24px; overflow:hidden;}
+
+  .header{padding:18px 16px 12px; display:flex; align-items:flex-start; justify-content:space-between;}
+  .h-title{font-size:20px; font-weight:600; letter-spacing:-.01em;}
+  .h-sub{font-size:12px; color:var(--muted); margin-top:2px;}
+  .iconbtn{width:36px; height:36px; border:none; background:transparent; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink);}
+
+  .taste{margin:0 16px 18px; background:var(--purple-tint); border-radius:12px; padding:12px 14px; display:flex; gap:10px; align-items:flex-start;}
+  .taste svg{flex:none; margin-top:1px; color:var(--purple-ink);}
+  .taste .h{font-size:13px; font-weight:600; color:var(--purple-ink);}
+  .taste .t{font-size:12px; color:var(--purple-ink); line-height:1.5; margin-top:2px;}
+
+  .zonehead{padding:0 16px; margin-bottom:9px; display:flex; align-items:baseline; justify-content:space-between;}
+  .zonehead .z{font-size:14px; font-weight:600; color:var(--ink);}
+  .zonehead .c{font-size:11px; color:var(--muted);}
+  .zgrid{padding:0 16px; margin-bottom:18px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;}
+  .card{border:0.5px solid var(--border); border-radius:12px; overflow:hidden;}
+  .card .pic{height:78px; background:var(--green-tint); display:flex; align-items:center; justify-content:center; color:var(--green-ink); position:relative;}
+  .card .hb{position:absolute; top:6px; right:6px; width:22px; height:22px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; color:var(--heart);}
+  .card .body{padding:8px 10px 10px;}
+  .card .n{font-size:13px; font-weight:600; color:var(--ink); line-height:1.3;}
+  .card .s{font-size:11px; color:var(--muted); margin-top:2px; display:flex; align-items:center; gap:4px;}
+
+  .note{margin:2px 16px 18px; border:0.5px dashed var(--border-strong); border-radius:13px; background:var(--note); padding:13px 14px;}
+  .note .h{font-size:13px; font-weight:600; color:var(--ink); display:flex; align-items:center; gap:7px;}
+  .note .ph{font-size:12px; color:var(--muted); line-height:1.55; margin-top:8px; font-style:italic;}
+
+  .footer{border-top:0.5px solid var(--border); padding:14px 16px 18px;}
+  .btn-primary{width:100%; height:48px; background:#2f5a3c; color:#fff; border:none; border-radius:12px; font-size:15px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; font-family:inherit;}
+  .btn-ghost{width:100%; height:44px; margin-top:8px; background:transparent; border:0.5px solid var(--border-strong); border-radius:12px; font-size:14px; font-weight:500; color:var(--ink); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; font-family:inherit;}
+
+  svg.ic{stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round;}
+  .hb svg.ic{fill:currentColor; stroke:none;}
+</style>
+</head>
+<body>
+  <div class="caption">Wilder · écran d'accueil « Mon jardin » — version complète, avec le mot pour le paysagiste en bas</div>
+
+  <div class="frame">
+    <div class="screen">
+
+      <div class="header">
+        <div><div class="h-title">Mon jardin</div><div class="h-sub">6 plantes · 3 coups de cœur</div></div>
+        <button class="iconbtn" aria-label="Menu"><svg class="ic" width="18" height="18" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      </div>
+
+      <div class="taste">
+        <svg width="18" height="18" viewBox="0 0 24 24" class="ic"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 3z"/></svg>
+        <div><div class="h">Ton style se dessine</div><div class="t">Mi-ombre · floraisons violettes · feuillages persistants</div></div>
+      </div>
+
+      <div class="zonehead"><span class="z">Entrée</span><span class="c">2 plantes</span></div>
+      <div class="zgrid">
+        <div class="card"><div class="pic"><svg class="ic" width="26" height="26" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg><span class="hb"><svg class="ic" width="13" height="13" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg></span></div><div class="body"><div class="n">Cornouiller</div><div class="s"><svg class="ic" width="12" height="12" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4" y1="4" x2="6" y2="6"/><line x1="18" y1="18" x2="20" y2="20"/></svg> Mi-ombre</div></div></div>
+        <div class="card"><div class="pic"><svg class="ic" width="26" height="26" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div><div class="body"><div class="n">Fougère</div><div class="s"><svg class="ic" width="12" height="12" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg> Ombre</div></div></div>
+      </div>
+
+      <div class="zonehead"><span class="z">Terrasse au soleil</span><span class="c">2 plantes</span></div>
+      <div class="zgrid">
+        <div class="card"><div class="pic"><svg class="ic" width="26" height="26" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg><span class="hb"><svg class="ic" width="13" height="13" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg></span></div><div class="body"><div class="n">Lavande</div><div class="s"><svg class="ic" width="12" height="12" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg> Plein soleil</div></div></div>
+        <div class="card"><div class="pic"><svg class="ic" width="26" height="26" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div><div class="body"><div class="n">Graminée</div><div class="s"><svg class="ic" width="12" height="12" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg> Plein soleil</div></div></div>
+      </div>
+
+      <div class="note">
+        <div class="h"><svg width="16" height="16" viewBox="0 0 24 24" class="ic"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Mon mot pour le paysagiste</div>
+        <div class="ph">Ex : un jardin facile à vivre, un coin ombragé pour manger dehors, cacher le mur du fond côté voisin…</div>
+      </div>
+
+      <div class="footer">
+        <button class="btn-primary"><svg class="ic" width="19" height="19" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg> Voir mon brief</button>
+        <button class="btn-ghost"><svg class="ic" width="18" height="18" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Scanner une plante</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="caption">Le mot libre = l'intention que l'app ne peut pas deviner. Il complète le style déduit, et part dans le brief.</div>
+</body>
+</html>

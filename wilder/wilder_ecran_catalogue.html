@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wilder — Catalogue pépinière</title>
+<style>
+  :root{
+    --frame:#e7e3d8; --screen:#ffffff;
+    --ink:#1e2b23; --secondary:#4c554a; --muted:#8b9084;
+    --border:#e6e2d8; --border-strong:#cbc6b8;
+    --green-tint:#e7efe6; --green-ink:#3c6b47;
+    --purple-tint:#efedfb; --purple-ink:#6a58a2;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(120% 120% at 50% 0%, #e2ddcf 0%, #cfc9ba 100%);
+    min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:28px 16px; gap:14px; color:var(--ink);}
+  .caption{font-size:12px; color:#6f6a5c; text-align:center;}
+  .frame{width:340px; background:var(--frame); border:0.5px solid #cbc6b8; border-radius:34px; padding:11px;
+    box-shadow:0 22px 50px -18px rgba(40,45,35,.45), 0 4px 10px rgba(0,0,0,.05);}
+  .screen{background:var(--screen); border-radius:24px; overflow:hidden;}
+
+  .topbar{padding:15px 16px 10px; display:flex; align-items:center; gap:12px;}
+  .iconbtn{width:32px; height:32px; border:none; background:transparent; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink);}
+  .crumb{font-size:14px; color:var(--muted);}
+
+  .titleblock{padding:2px 16px 14px;}
+  .title{font-size:21px; font-weight:600; letter-spacing:-.01em; line-height:1.15;}
+  .sub{font-size:12px; color:var(--muted); margin-top:4px; line-height:1.5;}
+
+  .chiprow{display:flex; gap:7px; overflow-x:auto; padding:0 16px 16px; scrollbar-width:none;}
+  .chiprow::-webkit-scrollbar{display:none;}
+  .fchip{flex:none; height:32px; padding:0 13px; border-radius:20px; font-size:12px; font-weight:500;
+    display:inline-flex; align-items:center; border:0.5px solid var(--border-strong); background:#fff; color:var(--secondary);}
+  .fchip.on{background:var(--purple-tint); border-color:transparent; color:var(--purple-ink); font-weight:600;}
+
+  .seclabel{padding:0 16px; margin-bottom:9px; font-size:12px; font-weight:600; color:var(--secondary);
+    letter-spacing:.02em; text-transform:uppercase;}
+
+  .grid{padding:0 16px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-bottom:20px;}
+  .fam{border:0.5px solid var(--border); border-radius:13px; padding:13px 12px; display:flex; align-items:center; gap:11px; background:#fff;}
+  .fam .ic-wrap{width:40px; height:40px; border-radius:11px; background:var(--green-tint); flex:none;
+    display:flex; align-items:center; justify-content:center; color:var(--green-ink);}
+  .fam .fn{font-size:13.5px; font-weight:600; color:var(--ink); line-height:1.2;}
+  .fam .fc{font-size:11px; color:var(--muted); margin-top:2px;}
+
+  .rows{padding:0 16px 6px; display:flex; flex-direction:column; gap:9px;}
+  .row{display:flex; align-items:center; gap:11px; border:0.5px solid var(--border); border-radius:13px; padding:8px 10px 8px 8px; background:#fff;}
+  .thumb{width:44px; height:44px; border-radius:10px; background:var(--green-tint); display:flex; align-items:center; justify-content:center; flex:none; color:var(--green-ink);}
+  .meta{flex:1; min-width:0;}
+  .meta .n{font-size:13.5px; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .meta .s{font-size:11px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .pill{flex:none; height:33px; padding:0 12px; border-radius:20px; font-size:11px; font-weight:600;
+    display:inline-flex; align-items:center; gap:5px; cursor:pointer; font-family:inherit;
+    border:0.5px solid var(--border-strong); background:#fff; color:var(--ink);}
+
+  .foot{padding:14px 16px 20px;}
+
+  svg.ic{stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round;}
+</style>
+</head>
+<body>
+  <div class="caption">Wilder · écran « Catalogue pépinière » — la 2ᵉ porte d'entrée : parcourir au lieu de scanner (accès via le menu)</div>
+
+  <div class="frame">
+    <div class="screen">
+
+      <div class="topbar">
+        <button class="iconbtn" aria-label="Retour"><svg class="ic" width="19" height="19" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+        <span class="crumb">Menu</span>
+      </div>
+
+      <div class="titleblock">
+        <div class="title">Catalogue pépinière</div>
+        <div class="sub">Pas croisé la bonne plante ? Parcours et ajoute directement à ton jardin.</div>
+      </div>
+
+      <div class="chiprow">
+        <span class="fchip on">Pour l'ombre</span>
+        <span class="fchip">Floraison violette</span>
+        <span class="fchip">Persistant</span>
+        <span class="fchip">Sans entretien</span>
+        <span class="fchip">Brise-vue</span>
+      </div>
+
+      <div class="seclabel">Par famille</div>
+      <div class="grid">
+        <div class="fam"><div class="ic-wrap"><svg class="ic" width="21" height="21" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div><div><div class="fn">Arbustes</div><div class="fc">64 variétés</div></div></div>
+        <div class="fam"><div class="ic-wrap"><svg class="ic" width="21" height="21" viewBox="0 0 24 24"><circle cx="12" cy="6" r="2.1"/><circle cx="12" cy="18" r="2.1"/><circle cx="6" cy="12" r="2.1"/><circle cx="18" cy="12" r="2.1"/><circle cx="12" cy="12" r="2.5"/></svg></div><div><div class="fn">Vivaces</div><div class="fc">120 variétés</div></div></div>
+        <div class="fam"><div class="ic-wrap"><svg class="ic" width="21" height="21" viewBox="0 0 24 24"><polygon points="12 3 7 11 17 11"/><polygon points="12 8 6 18 18 18"/><line x1="12" y1="18" x2="12" y2="21"/></svg></div><div><div class="fn">Conifères</div><div class="fc">38 variétés</div></div></div>
+        <div class="fam"><div class="ic-wrap"><svg class="ic" width="21" height="21" viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><line x1="12" y1="15" x2="12" y2="21"/></svg></div><div><div class="fn">Arbres</div><div class="fc">52 variétés</div></div></div>
+        <div class="fam"><div class="ic-wrap"><svg class="ic" width="21" height="21" viewBox="0 0 24 24"><circle cx="12" cy="6" r="2.1"/><circle cx="12" cy="18" r="2.1"/><circle cx="6" cy="12" r="2.1"/><circle cx="18" cy="12" r="2.1"/><circle cx="12" cy="12" r="2.5"/></svg></div><div><div class="fn">Fleurs</div><div class="fc">95 variétés</div></div></div>
+        <div class="fam"><div class="ic-wrap"><svg class="ic" width="21" height="21" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 9c0-3 2-4 2-4s0 3-2 4z"/><path d="M12 15c0 3-2 4-2 4s0-3 2-4z"/><path d="M9 12c-3 0-4-2-4-2s3 0 4 2z"/><path d="M15 12c3 0 4 2 4 2s-3 0-4-2z"/></svg></div><div><div class="fn">Rosiers</div><div class="fc">47 variétés</div></div></div>
+      </div>
+
+      <div class="seclabel">Populaires en ce moment</div>
+      <div class="rows">
+        <div class="row">
+          <div class="thumb"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+          <div class="meta"><div class="n">Hortensia</div><div class="s">Mi-ombre · floraison longue</div></div>
+          <button class="pill"><svg class="ic" width="13" height="13" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Mon jardin</button>
+        </div>
+        <div class="row">
+          <div class="thumb"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+          <div class="meta"><div class="n">Photinia Red Robin</div><div class="s">Soleil · persistant · brise-vue</div></div>
+          <button class="pill"><svg class="ic" width="13" height="13" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Mon jardin</button>
+        </div>
+        <div class="row">
+          <div class="thumb"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+          <div class="meta"><div class="n">Gaura</div><div class="s">Soleil · léger · sans entretien</div></div>
+          <button class="pill"><svg class="ic" width="13" height="13" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Mon jardin</button>
+        </div>
+      </div>
+
+      <div class="foot"></div>
+
+    </div>
+  </div>
+
+  <div class="caption">Deux façons d'entrer : par famille, ou par envie (les filtres du haut) · même bouton « + Mon jardin » que partout</div>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wilder — Catalogue · Minéral & déco</title>
+<style>
+  :root{
+    --frame:#e7e3d8; --screen:#ffffff;
+    --ink:#1e2b23; --secondary:#4c554a; --muted:#8b9084;
+    --border:#e6e2d8; --border-strong:#cbc6b8;
+    --green-tint:#e7efe6; --green-ink:#3c6b47;
+    --stone-tint:#eae6de; --stone-ink:#6b6455;
+    --purple-tint:#efedfb; --purple-ink:#6a58a2;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(120% 120% at 50% 0%, #e2ddcf 0%, #cfc9ba 100%);
+    min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:28px 16px; gap:14px; color:var(--ink);}
+  .caption{font-size:12px; color:#6f6a5c; text-align:center; max-width:340px;}
+  .frame{width:340px; background:var(--frame); border:0.5px solid #cbc6b8; border-radius:34px; padding:11px;
+    box-shadow:0 22px 50px -18px rgba(40,45,35,.45), 0 4px 10px rgba(0,0,0,.05);}
+  .screen{background:var(--screen); border-radius:24px; overflow:hidden;}
+
+  .topbar{padding:15px 16px 10px; display:flex; align-items:center; gap:12px;}
+  .iconbtn{width:32px; height:32px; border:none; background:transparent; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink);}
+  .crumb{font-size:14px; color:var(--muted);}
+
+  .titleblock{padding:2px 16px 12px;}
+  .title{font-size:21px; font-weight:600; letter-spacing:-.01em; line-height:1.15;}
+  .sub{font-size:12px; color:var(--muted); margin-top:4px; line-height:1.5;}
+
+  .tabs{display:flex; gap:6px; padding:0 16px 16px;}
+  .tab{flex:1; height:38px; border-radius:11px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;
+    display:flex; align-items:center; justify-content:center; gap:7px; border:0.5px solid var(--border-strong); background:#fff; color:var(--secondary);}
+  .tab.on{background:var(--ink); border-color:transparent; color:#fff;}
+
+  .chiprow{display:flex; gap:7px; overflow-x:auto; padding:0 16px 16px; scrollbar-width:none;}
+  .chiprow::-webkit-scrollbar{display:none;}
+  .fchip{flex:none; height:32px; padding:0 13px; border-radius:20px; font-size:12px; font-weight:500;
+    display:inline-flex; align-items:center; border:0.5px solid var(--border-strong); background:#fff; color:var(--secondary);}
+  .fchip.on{background:var(--purple-tint); border-color:transparent; color:var(--purple-ink); font-weight:600;}
+
+  .seclabel{padding:0 16px; margin-bottom:9px; font-size:12px; font-weight:600; color:var(--secondary); text-transform:uppercase; letter-spacing:.02em;}
+
+  .grid{padding:0 16px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-bottom:20px;}
+  .fam{border:0.5px solid var(--border); border-radius:13px; padding:13px 12px; display:flex; align-items:center; gap:11px; background:#fff;}
+  .fam .ic-wrap{width:40px; height:40px; border-radius:11px; background:var(--stone-tint); flex:none;
+    display:flex; align-items:center; justify-content:center; color:var(--stone-ink);}
+  .fam .fn{font-size:13px; font-weight:600; color:var(--ink); line-height:1.2;}
+  .fam .fc{font-size:11px; color:var(--muted); margin-top:2px;}
+
+  .rows{padding:0 16px 6px; display:flex; flex-direction:column; gap:9px;}
+  .row{display:flex; align-items:center; gap:11px; border:0.5px solid var(--border); border-radius:13px; padding:8px 10px 8px 8px; background:#fff;}
+  .thumb{width:44px; height:44px; border-radius:10px; background:var(--stone-tint); display:flex; align-items:center; justify-content:center; flex:none; color:var(--stone-ink);}
+  .meta{flex:1; min-width:0;}
+  .meta .n{font-size:13.5px; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .meta .s{font-size:11px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .pill{flex:none; height:33px; padding:0 12px; border-radius:20px; font-size:11px; font-weight:600;
+    display:inline-flex; align-items:center; gap:5px; cursor:pointer; font-family:inherit;
+    border:0.5px solid var(--border-strong); background:#fff; color:var(--ink);}
+
+  .foot{padding:12px 16px 20px;}
+
+  svg.ic{stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round;}
+</style>
+</head>
+<body>
+  <div class="caption">Wilder · « Catalogue » — un seul écran, deux onglets. Ici l'onglet Minéral &amp; déco (accès via le menu)</div>
+
+  <div class="frame">
+    <div class="screen">
+
+      <div class="topbar">
+        <button class="iconbtn" aria-label="Retour"><svg class="ic" width="19" height="19" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+        <span class="crumb">Menu</span>
+      </div>
+
+      <div class="titleblock">
+        <div class="title">Catalogue</div>
+        <div class="sub">Tout ce qui compose un jardin — le vivant et le minéral. Ajoute à ton jardin, ça enrichit ton brief.</div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab"><svg class="ic" width="15" height="15" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg> Végétal</button>
+        <button class="tab on"><svg class="ic" width="15" height="15" viewBox="0 0 24 24"><polygon points="6 3 18 3 21 9 12 21 3 9"/><line x1="3" y1="9" x2="21" y2="9"/></svg> Minéral &amp; déco</button>
+      </div>
+
+      <div class="chiprow">
+        <span class="fchip on">Ambiance zen</span>
+        <span class="fchip">Contemporain</span>
+        <span class="fchip">Naturel</span>
+        <span class="fchip">Sans entretien</span>
+      </div>
+
+      <div class="seclabel">Par famille</div>
+      <div class="grid">
+        <div class="fam"><div class="ic-wrap"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><path d="M3 15c2-1 4-1 6 0s4 1 6 0 4-1 6 0"/><path d="M3 19c2-1 4-1 6 0s4 1 6 0 4-1 6 0"/><circle cx="7" cy="8" r="1"/><circle cx="13" cy="7" r="1"/><circle cx="17" cy="9" r="1"/></svg></div><div><div class="fn">Paillage & sols</div><div class="fc">écorces, graviers…</div></div></div>
+        <div class="fam"><div class="ic-wrap"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><path d="M5 15l3-7 5 2 3-4 3 6-2 6H4z"/></svg></div><div><div class="fn">Pierres & rochers</div><div class="fc">28 réf.</div></div></div>
+        <div class="fam"><div class="ic-wrap"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><rect x="3" y="10" width="18" height="4" rx="1"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="13" y1="10" x2="13" y2="14"/></svg></div><div><div class="fn">Bordures</div><div class="fc">34 réf.</div></div></div>
+        <div class="fam"><div class="ic-wrap"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="8" width="6" height="6" rx="1"/><rect x="7" y="15" width="6" height="6" rx="1"/></svg></div><div><div class="fn">Pas & allées</div><div class="fc">22 réf.</div></div></div>
+        <div class="fam"><div class="ic-wrap"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><path d="M12 3c2 3 2 5 0 7s-2 4 0 6"/><path d="M8 21h8"/><path d="M10 21c0-3 4-3 4 0"/></svg></div><div><div class="fn">Déco & mobilier</div><div class="fc">statues, poteries…</div></div></div>
+        <div class="fam"><div class="ic-wrap"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><line x1="4" y1="3" x2="4" y2="21"/><line x1="10" y1="3" x2="10" y2="21"/><line x1="16" y1="3" x2="16" y2="21"/><line x1="2" y1="9" x2="22" y2="9"/><line x1="2" y1="15" x2="22" y2="15"/></svg></div><div><div class="fn">Clôtures & bois</div><div class="fc">31 réf.</div></div></div>
+      </div>
+
+      <div class="seclabel">Populaires en ce moment</div>
+      <div class="rows">
+        <div class="row">
+          <div class="thumb"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><path d="M5 15l3-7 5 2 3-4 3 6-2 6H4z"/></svg></div>
+          <div class="meta"><div class="n">Ardoise concassée</div><div class="s">Paillage minéral · gris anthracite</div></div>
+          <button class="pill"><svg class="ic" width="13" height="13" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Mon jardin</button>
+        </div>
+        <div class="row">
+          <div class="thumb"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><rect x="3" y="10" width="18" height="4" rx="1"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="13" y1="10" x2="13" y2="14"/></svg></div>
+          <div class="meta"><div class="n">Bordure acier corten</div><div class="s">Contemporain · rouille</div></div>
+          <button class="pill"><svg class="ic" width="13" height="13" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Mon jardin</button>
+        </div>
+        <div class="row">
+          <div class="thumb"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="8" width="6" height="6" rx="1"/><rect x="7" y="15" width="6" height="6" rx="1"/></svg></div>
+          <div class="meta"><div class="n">Pas japonais grès</div><div class="s">Naturel · beige</div></div>
+          <button class="pill"><svg class="ic" width="13" height="13" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Mon jardin</button>
+        </div>
+      </div>
+
+      <div class="foot"></div>
+
+    </div>
+  </div>
+
+  <div class="caption">Le brief passe de « voici mes plantes » à « voici mon jardin complet — végétal ET minéral »</div>
+</body>
+</html>

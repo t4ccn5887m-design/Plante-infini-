@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wilder — Aperçu de ma zone</title>
+<style>
+  :root{
+    --frame:#e7e3d8; --screen:#ffffff;
+    --ink:#1e2b23; --secondary:#4c554a; --muted:#8b9084;
+    --border:#e6e2d8; --border-strong:#cbc6b8;
+    --green-tint:#e7efe6; --green-ink:#3c6b47;
+    --purple-tint:#efedfb; --purple-ink:#6a58a2;
+    --sky:#dfe7ec; --soil:#d8cdb9;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(120% 120% at 50% 0%, #e2ddcf 0%, #cfc9ba 100%);
+    min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:28px 16px; gap:14px; color:var(--ink);}
+  .caption{font-size:12px; color:#6f6a5c; text-align:center; max-width:340px;}
+  .frame{width:340px; background:var(--frame); border:0.5px solid #cbc6b8; border-radius:34px; padding:11px;
+    box-shadow:0 22px 50px -18px rgba(40,45,35,.45), 0 4px 10px rgba(0,0,0,.05);}
+  .screen{background:var(--screen); border-radius:24px; overflow:hidden;}
+
+  .topbar{padding:15px 16px 10px; display:flex; align-items:center; gap:12px;}
+  .iconbtn{width:32px; height:32px; border:none; background:transparent; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink);}
+  .crumb{font-size:14px; color:var(--muted);}
+  .beta{margin-left:auto; font-size:10px; font-weight:600; color:var(--purple-ink);
+    background:var(--purple-tint); padding:3px 9px; border-radius:20px; letter-spacing:.03em;}
+
+  .titleblock{padding:2px 16px 12px;}
+  .title{font-size:20px; font-weight:600; letter-spacing:-.01em; line-height:1.2;}
+  .sub{font-size:12px; color:var(--muted); margin-top:4px; line-height:1.5;}
+
+  /* photo zone with placed plants */
+  .photo{margin:0 16px 8px; height:186px; border-radius:16px; overflow:hidden; position:relative;
+    background:linear-gradient(180deg, var(--sky) 0%, #e8eee6 52%, var(--soil) 52%, #cdbfa4 100%);
+    border:0.5px solid var(--border);}
+  .photo .tag{position:absolute; top:10px; left:10px; background:#ffffffcc; backdrop-filter:blur(4px);
+    font-size:10.5px; color:var(--secondary); padding:4px 9px; border-radius:20px; display:flex; align-items:center; gap:5px;}
+  .chip-plant{position:absolute; display:flex; flex-direction:column; align-items:center; gap:3px;}
+  .chip-plant .dot{width:38px; height:38px; border-radius:50%; background:#fff; border:1.5px solid #fff;
+    box-shadow:0 3px 8px rgba(0,0,0,.18); display:flex; align-items:center; justify-content:center; color:var(--green-ink);}
+  .chip-plant .lbl{font-size:9.5px; font-weight:600; color:#22331f; background:#ffffffdd; padding:1px 6px; border-radius:10px; white-space:nowrap;}
+
+  .hint{margin:8px 16px 16px; background:var(--purple-tint); border-radius:12px; padding:11px 13px;
+    font-size:11.5px; color:var(--purple-ink); line-height:1.5; display:flex; gap:9px; align-items:flex-start;}
+  .hint svg{flex:none; margin-top:1px;}
+
+  .seclabel{padding:0 16px; margin-bottom:9px; font-size:12px; font-weight:600; color:var(--secondary); text-transform:uppercase; letter-spacing:.02em;
+    display:flex; justify-content:space-between; align-items:baseline;}
+  .seclabel .m{font-size:10px; font-weight:500; color:var(--muted); text-transform:none;}
+  .tray{display:flex; gap:10px; overflow-x:auto; padding:0 16px 16px; scrollbar-width:none;}
+  .tray::-webkit-scrollbar{display:none;}
+  .pin{flex:none; width:66px; display:flex; flex-direction:column; align-items:center; gap:5px;}
+  .pin .pv{width:60px; height:60px; border-radius:14px; background:var(--green-tint); display:flex; align-items:center; justify-content:center; color:var(--green-ink); border:0.5px solid var(--border);}
+  .pin .pn{font-size:10px; color:var(--secondary); text-align:center; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:66px;}
+  .pin.used .pv{opacity:.4;}
+
+  .footer{border-top:0.5px solid var(--border); padding:14px 16px 20px;}
+  .btn-primary{width:100%; height:48px; background:#2f5a3c; color:#fff; border:none; border-radius:13px;
+    font-size:15px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; font-family:inherit;}
+  .btn-ghost{width:100%; height:44px; margin-top:9px; background:transparent; border:0.5px solid var(--border-strong);
+    border-radius:13px; font-size:14px; font-weight:500; color:var(--ink); cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px; font-family:inherit;}
+
+  svg.ic{stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round;}
+</style>
+</head>
+<body>
+  <div class="caption">Wilder · écran « Aperçu de ma zone » — idée phase 2 : base de discussion avec le paysagiste (accès via le menu)</div>
+
+  <div class="frame">
+    <div class="screen">
+
+      <div class="topbar">
+        <button class="iconbtn" aria-label="Retour"><svg class="ic" width="19" height="19" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+        <span class="crumb">Menu</span>
+        <span class="beta">Aperçu · bêta</span>
+      </div>
+
+      <div class="titleblock">
+        <div class="title">Aperçu de ma zone</div>
+        <div class="sub">Photographie ton espace, pose tes plantes dessus. Un point de départ à affiner avec ton paysagiste — pas un rendu final.</div>
+      </div>
+
+      <div class="photo">
+        <span class="tag"><svg class="ic" width="12" height="12" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Terrasse — ta photo</span>
+
+        <div class="chip-plant" style="left:34px; top:98px;">
+          <div class="dot"><svg class="ic" width="18" height="18" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+          <span class="lbl">Lavande</span>
+        </div>
+        <div class="chip-plant" style="left:150px; top:78px;">
+          <div class="dot"><svg class="ic" width="18" height="18" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+          <span class="lbl">Photinia</span>
+        </div>
+        <div class="chip-plant" style="left:238px; top:104px;">
+          <div class="dot"><svg class="ic" width="18" height="18" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+          <span class="lbl">Gaura</span>
+        </div>
+      </div>
+
+      <div class="hint">
+        <svg width="15" height="15" viewBox="0 0 24 24" class="ic"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <span>Glisse tes plantes pour les placer. C'est volontairement grossier : le rendu précis, c'est le travail du pro.</span>
+      </div>
+
+      <div class="seclabel"><span>Mes plantes à poser</span><span class="m">depuis Mon jardin</span></div>
+      <div class="tray">
+        <div class="pin used"><div class="pv"><svg class="ic" width="24" height="24" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div><span class="pn">Lavande</span></div>
+        <div class="pin used"><div class="pv"><svg class="ic" width="24" height="24" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div><span class="pn">Photinia</span></div>
+        <div class="pin used"><div class="pv"><svg class="ic" width="24" height="24" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div><span class="pn">Gaura</span></div>
+        <div class="pin"><div class="pv"><svg class="ic" width="24" height="24" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div><span class="pn">Hortensia</span></div>
+        <div class="pin"><div class="pv"><svg class="ic" width="24" height="24" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div><span class="pn">Cornouiller</span></div>
+      </div>
+
+      <div class="footer">
+        <button class="btn-primary"><svg class="ic" width="19" height="19" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Joindre au brief du paysagiste</button>
+        <button class="btn-ghost"><svg class="ic" width="18" height="18" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Enregistrer l'image</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="caption">Différence avec iScape &amp; co : on ne génère pas un joli jardin au hasard — on pose LES plantes que le client a choisies, comme base de discussion avec le pro.</div>
+</body>
+</html>
