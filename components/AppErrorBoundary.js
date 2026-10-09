@@ -22,7 +22,18 @@ export default class AppErrorBoundary extends Component {
   handleHome = () => {
     this.setState({ error: null });
     if (typeof window !== "undefined") {
-      window.location.href = "/";
+      const path = window.location.pathname || "";
+      if (path.startsWith("/pro")) {
+        window.location.href = "/pro";
+      } else if (
+        path === "/" ||
+        path.startsWith("/connexion") ||
+        path.startsWith("/bienvenue")
+      ) {
+        window.location.href = "/";
+      } else {
+        window.location.href = "/jardin";
+      }
     }
   };
 

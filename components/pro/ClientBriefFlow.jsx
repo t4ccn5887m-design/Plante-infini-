@@ -734,7 +734,7 @@ function Thanks({ studio }) {
             <Check size={18} /> Scannez des plantes et constituez votre carnet
           </li>
         </ul>
-        <Link href="/" className="bf-btn primary full">
+        <Link href="/jardin" className="bf-btn primary full">
           Créer mon carnet Amont →
         </Link>
         <p className="bf-thanks-foot">

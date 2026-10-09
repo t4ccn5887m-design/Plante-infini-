@@ -22,7 +22,7 @@ export default function LegalPageLayout({ title, sections, description }) {
         <div className="legal-page-overlay" aria-hidden="true" />
         <div className="legal-page-inner">
           <header className="legal-page-header">
-            <Link href="/" className="legal-page-back">
+            <Link href="/jardin" className="legal-page-back">
               ← Retour à Wilder
             </Link>
             <p className="legal-page-disclaimer" role="note">

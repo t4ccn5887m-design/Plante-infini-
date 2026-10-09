@@ -21,7 +21,7 @@ import { supabase } from "@/lib/supabase";
 /** URL de retour e-mail auth — toujours basée sur l’origine courante (local / preview / prod). */
 function getAuthEmailRedirectUrl(isProProfile) {
   if (typeof window === "undefined") return undefined;
-  return `${window.location.origin}${isProProfile ? "/pro" : "/"}`;
+  return `${window.location.origin}${isProProfile ? "/pro" : "/jardin"}`;
 }
 
 const CARD = {
@@ -81,7 +81,7 @@ export default function ConnexionPage() {
     }
   }, [mode]);
 
-  const redirectTarget = isPro ? "/pro" : "/";
+  const redirectTarget = isPro ? "/pro" : "/jardin";
 
   /** Aligné sur PremiumAuthStep.finish() après signIn / signUp réussis. */
   const finishAuthSession = async () => {
@@ -230,7 +230,7 @@ export default function ConnexionPage() {
 
           <section className="sv-main" aria-labelledby="sv-connexion-heading">
             <div className="sv-main__inner">
-              <Link href="/bienvenue" className="sv-back">
+              <Link href="/" className="sv-back">
                 ← Retour
               </Link>
 

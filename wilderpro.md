@@ -78,9 +78,12 @@ Bénéfice pro : arrive préparé → convertit plus, chiffre plus vite et plus 
 
 **Pas de monorepo pour l'instant.** On ajoute simplement la route `/pro` dans le même projet Next.js (même dépôt, même Supabase, même design system). Zéro plomberie inutile.
 
-- Particulier : `/` (inchangé, priorité absolue de ne pas le casser).
-- Pro : `/pro` — styles isolés sous le préfixe `.wp` (`styles/pro/wilder-pro.css`), composants dans `components/pro/`.
-- **Parcours client du lien :** `/b/[token]` — questionnaire invité 9 écrans, plein écran, isolé du shell app (pas de menu compte / install guide). Lit `pro_links` + branding studio ; écrit `pro_briefs` + Storage ; statuts `sent` → `opened` → `filled` via RPC.
+- **`/`** — page d'accueil Sevya (choix particulier / pro).
+- **`/connexion`** — connexion ou création de compte particulier ou pro (`?profil=particulier` \| `?profil=pro`).
+- **`/jardin`** — app particulier (ex-v2 sur `/` ; priorité absolue de ne pas le casser).
+- **`/pro`** — espace pro — styles isolés sous `.wp` (`styles/pro/wilder-pro.css`), composants dans `components/pro/` ; **≥ 900 px** : menu latéral + contenu pleine largeur.
+- **`/b/[token]`** — brief client sans compte (questionnaire invité, plein écran, isolé du shell app). Lit `pro_links` + branding studio ; écrit `pro_briefs` + Storage ; statuts `sent` → `opened` → `filled` via RPC.
+- **`/bienvenue`** — redirection vers `/` (alias historique).
 - **App pro `/pro` :** même auth Supabase que le particulier ; `pro_studios` (1 / compte) ; création de liens réels ; liste + fiche brief depuis `pro_links` / `pro_briefs` ; RDV via `pro_appointments` ; export PDF (`window.print`).
 - Branche de travail : `wilder-pro` (**jamais** pousser / merger sur `main` sans validation explicite — `main` = v2 particulier en prod).
 
@@ -124,10 +127,10 @@ Un monorepo (deux apps déployées séparément, ex. `app.amont.fr` / `mon.amont
 
 ## 8. Nom : SEVYA (décidé le 8 oct. 2026)
 - Sevya, de « sève » : ce qui fait vivre le jardin, comme le brief fait vivre le premier RDV. Nom inventé, court, le « y » le rend élégant et distinctif.
-- Domaine principal : sevya.app (acheté le 8 oct. 2026, chez OVH).
+- Domaines : **sevya.app** et **www.sevya.app** (acheté le 8 oct. 2026 chez OVH ; branchés sur Vercel le 9 oct. 2026).
 - Optionnel : sevya-app.fr en redirection vers sevya.app.
 - Pris : sevya.fr, sevya.com, sevia.fr, sevia.com, sevia.app.
-- À faire : réserver @sevya sur Instagram / LinkedIn / Facebook ; brancher sevya.app sur Vercel ; plus tard, recherche INPI/EUIPO puis dépôt de marque ; renommer progressivement Kré / Wilder → Sevya dans l'UI.
+- À faire : réserver @sevya sur Instagram / LinkedIn / Facebook ; plus tard, recherche INPI/EUIPO puis dépôt de marque ; renommer progressivement Kré / Wilder → Sevya dans l'UI.
 - Historique : Wilder, Amont, Kré abandonnés au profit de Sevya.
 
 ---
@@ -189,7 +192,7 @@ Le **parcours client du lien** (`/b/[token]`) et le **cœur pro** (auth, liens, 
 2. **Abonnement / facturation** — le pro paie (~29 €/mois).
 3. Ensuite : onboarding studio (zone d’intervention, logo), confirmation d’envoi / notifications, enrichissement terrain sur la fiche.
 
-Ne pas rouvrir monorepo ni casser `/` tant que ces manques MVP ne sont pas traités.
+Ne pas rouvrir monorepo ni casser `/jardin` tant que ces manques MVP ne sont pas traités.
 
 ---
 
