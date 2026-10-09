@@ -61,12 +61,17 @@ import { resolveScanBackScreen } from "@/lib/themes";
 const THEME_KEY = "wilder-theme";
 const MAIN_SCREENS = new Set(["home", "mes-scans", "catalogue", "brief"]);
 
-function resolveMainNav(screen, homeTab) {
-  if (screen === "home") return homeTab;
-  if (screen === "brief") return "brief";
-  if (screen === "mes-scans") return "mes-scans";
-  if (screen === "catalogue") return "catalogue";
+function resolveMainNav(screen) {
+  if (screen === "home") return "accueil";
+  if (screen === "brief") return "dossier";
+  if (screen === "mes-scans") return "coups-de-coeur";
+  if (screen === "catalogue") return "idees";
   return "accueil";
+}
+
+function scanReturnOriginForScreen(screen) {
+  if (MAIN_SCREENS.has(screen)) return screen;
+  return "home";
 }
 
 async function parseApiResponse(res) {
@@ -220,7 +225,7 @@ export default function Wilder() {
   }, [isGuest, openFeatureGateModal]);
 
   const openMesScans = useCallback(() => {
-    setReturnScreen("home");
+    setReturnScreen("mes-scans");
     setScreen("mes-scans");
   }, []);
 
@@ -253,13 +258,13 @@ export default function Wilder() {
   }, []);
 
   const openCatalogue = useCallback(() => {
-    setReturnScreen("home");
+    setReturnScreen("catalogue");
     setCatalogueView(null);
     setScreen("catalogue");
   }, []);
 
   const openIdeesJardins = useCallback(() => {
-    setReturnScreen("home");
+    setReturnScreen("catalogue");
     setCatalogueView("idees");
     setScreen("catalogue");
   }, []);
@@ -269,7 +274,7 @@ export default function Wilder() {
   }, []);
 
   const openBrief = useCallback(() => {
-    setReturnScreen("home");
+    setReturnScreen("brief");
     setScreen("brief");
   }, []);
 
@@ -516,6 +521,10 @@ export default function Wilder() {
     setRescanDiscoveryId(null);
     setScreen("camera");
   }, []);
+
+  const startScanFromFab = useCallback(() => {
+    startScan(scanReturnOriginForScreen(screen));
+  }, [screen, startScan]);
 
   const leaveScanner = useCallback(() => {
     const back = resolveScanBackScreen(returnScreen);
@@ -904,12 +913,12 @@ export default function Wilder() {
         </Head>
         <WilderMainLayout
           className="screen-enter-fast"
-          activeNav={resolveMainNav(screen, homeTab)}
+          activeNav={resolveMainNav(screen)}
           onNavAccueil={goHomeAccueil}
-          onNavJardin={goHomeJardin}
-          onNavBrief={openBrief}
-          onNavScans={openMesScans}
-          onNavCatalogue={openCatalogue}
+          onNavIdees={openCatalogue}
+          onNavAdd={startScanFromFab}
+          onNavCoupsDeCoeur={openMesScans}
+          onNavDossier={openBrief}
           accountMenu={accountMenu}
         >
           {mainContent}

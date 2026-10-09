@@ -37,10 +37,10 @@ const cardWrap = {
 export default function WilderMainLayout({
   activeNav,
   onNavAccueil,
-  onNavJardin,
-  onNavBrief,
-  onNavScans,
-  onNavCatalogue,
+  onNavIdees,
+  onNavAdd,
+  onNavCoupsDeCoeur,
+  onNavDossier,
   accountMenu = null,
   children,
   className = "",
@@ -60,10 +60,10 @@ export default function WilderMainLayout({
         <WilderTabBar
           activeNav={activeNav}
           onAccueil={onNavAccueil}
-          onJardin={onNavJardin}
-          onBrief={onNavBrief}
-          onScans={onNavScans}
-          onCatalogue={onNavCatalogue}
+          onIdees={onNavIdees}
+          onAdd={onNavAdd}
+          onCoupsDeCoeur={onNavCoupsDeCoeur}
+          onDossier={onNavDossier}
         />
       </div>
     </div>
