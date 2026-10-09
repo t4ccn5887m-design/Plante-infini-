@@ -193,6 +193,7 @@ export default function MesScansScreen({
   t,
   discoveries: discoveriesProp = [],
   canAddToGarden = true,
+  onBack,
   onScan,
   onOpenScan,
   onRequireAccount,
@@ -278,6 +279,31 @@ export default function MesScansScreen({
   return (
     <>
         <div style={{ padding: "15px 16px 14px" }}>
+          {onBack ? (
+            <button
+              type="button"
+              onClick={onBack}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+                marginBottom: 10,
+                padding: 0,
+                border: "none",
+                background: "transparent",
+                color: COLORS.active,
+                fontSize: 14,
+                fontWeight: 600,
+                cursor: "pointer",
+                fontFamily: "inherit",
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" style={icStroke} aria-hidden="true">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+              Coups de cœur
+            </button>
+          ) : null}
           <div className="wilder-v2-title-page" style={{ fontSize: 21, letterSpacing: "-0.01em", lineHeight: 1.15 }}>
             Mes scans
           </div>

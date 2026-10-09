@@ -26,6 +26,7 @@ import PaletteListScreen from "@/components/PaletteListScreen";
 import PaletteDetailScreen from "@/components/PaletteDetailScreen";
 import MonJardinScreen from "@/components/MonJardinScreen";
 import MesScansScreen from "@/components/MesScansScreen";
+import CoupsDeCoeurScreen from "@/components/CoupsDeCoeurScreen";
 import ResultatScanScreen from "@/components/ResultatScanScreen";
 import CatalogueHallScreen from "@/components/CatalogueHallScreen";
 import CatalogueVegetalScreen from "@/components/CatalogueVegetalScreen";
@@ -60,12 +61,12 @@ import { getDiscoveryPhotoUrl } from "@/lib/discoveryPhoto";
 import { resolveScanBackScreen } from "@/lib/themes";
 
 const THEME_KEY = "wilder-theme";
-const MAIN_SCREENS = new Set(["home", "mes-scans", "catalogue", "brief"]);
+const MAIN_SCREENS = new Set(["home", "coups-de-coeur", "mes-scans", "catalogue", "brief"]);
 
 function resolveMainNav(screen) {
   if (screen === "home") return "accueil";
   if (screen === "brief") return "dossier";
-  if (screen === "mes-scans") return "coups-de-coeur";
+  if (screen === "coups-de-coeur" || screen === "mes-scans") return "coups-de-coeur";
   if (screen === "catalogue") return "idees";
   return "accueil";
 }
@@ -227,14 +228,22 @@ export default function Wilder() {
     setScreen("ma-palette");
   }, [isGuest, openFeatureGateModal]);
 
-  const openMesScans = useCallback(() => {
-    setReturnScreen("mes-scans");
+  const openCoupsDeCoeur = useCallback(() => {
+    setReturnScreen("coups-de-coeur");
+    setScreen("coups-de-coeur");
+  }, []);
+
+  const openMesScansHistory = useCallback(() => {
+    setReturnScreen("coups-de-coeur");
     setScreen("mes-scans");
   }, []);
 
-  const openScanResult = useCallback((discovery) => {
-    if (!discovery?.id) return;
-    const latest = loadDiscoveries().find((d) => d.id === discovery.id) || discovery;
+  const openGardenItemDetail = useCallback((discovery, returnTo = "coups-de-coeur") => {
+    if (!discovery) return;
+    const latest =
+      discovery.id != null
+        ? loadDiscoveries().find((d) => d.id === discovery.id) || discovery
+        : discovery;
     setCurrentDiscovery(latest);
     setResult({
       nom: latest.nom,
@@ -244,9 +253,16 @@ export default function Wilder() {
       rarete: latest.rarete || "commun",
     });
     setCaptured(null);
-    setReturnScreen("mes-scans");
+    setReturnScreen(returnTo);
     setScreen("result");
   }, []);
+
+  const openScanResult = useCallback(
+    (discovery) => {
+      openGardenItemDetail(discovery, "mes-scans");
+    },
+    [openGardenItemDetail]
+  );
 
   const goHomeAccueil = useCallback(() => {
     setReturnScreen("home");
@@ -882,12 +898,25 @@ export default function Wilder() {
           onScan={() => startScan("home")}
           onOpenBrief={openBrief}
           onOpenDossier={openBrief}
-          onOpenCoupsDeCoeur={openMesScans}
+          onOpenCoupsDeCoeur={openCoupsDeCoeur}
           onOpenAddSheet={openAddSheet}
           onOpenMot={goHomeJardin}
           accountMenu={accueilDossierHome ? accountMenu : null}
           gardenRefreshTick={homeGardenRefreshTick}
           homeTab={homeTab}
+        />
+      );
+    } else if (screen === "coups-de-coeur") {
+      pageTitleContent = "Coups de cœur — Wilder";
+      mainContent = (
+        <CoupsDeCoeurScreen
+          refreshTick={homeGardenRefreshTick}
+          scansCount={discoveries.length}
+          onOpenItem={(item) => openGardenItemDetail(item.discovery, "coups-de-coeur")}
+          onOpenMesScans={openMesScansHistory}
+          onScan={() => startScan("coups-de-coeur")}
+          onOpenIdees={openIdeesJardins}
+          onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
         />
       );
     } else if (screen === "mes-scans") {
@@ -897,6 +926,7 @@ export default function Wilder() {
           t={t}
           discoveries={discoveries}
           canAddToGarden={!isGuest}
+          onBack={openCoupsDeCoeur}
           onScan={() => startScan("mes-scans")}
           onOpenScan={openScanResult}
           onRequireAccount={openRequireAccount}
@@ -951,7 +981,7 @@ export default function Wilder() {
           onNavAccueil={goHomeAccueil}
           onNavIdees={openCatalogue}
           onNavAdd={openAddSheet}
-          onNavCoupsDeCoeur={openMesScans}
+          onNavCoupsDeCoeur={openCoupsDeCoeur}
           onNavDossier={openBrief}
           accountMenu={accueilDossierHome ? null : accountMenu}
         >
