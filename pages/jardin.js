@@ -34,6 +34,7 @@ import CatalogueDecoScreen from "@/components/CatalogueDecoScreen";
 import IdeesJardinsScreen from "@/components/IdeesJardinsScreen";
 import ApercuBriefScreen from "@/components/ApercuBriefScreen";
 import WilderMainLayout from "@/components/WilderMainLayout";
+import AjouterAuJardinSheet from "@/components/AjouterAuJardinSheet";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
 import {
   scheduleInstallGuideAfterFirstScan,
@@ -176,6 +177,8 @@ export default function Wilder() {
   const [featureGateOpen, setFeatureGateOpen] = useState(false);
   const [featureGateMessageKey, setFeatureGateMessageKey] = useState("feature_gate.message");
   const [featureGateInitialStep, setFeatureGateInitialStep] = useState("prompt");
+  const [addSheetOpen, setAddSheetOpen] = useState(false);
+  const [addSheetSoon, setAddSheetSoon] = useState(null);
 
   const { isGuest, refreshGuestAccount } = useGuestAccount();
 
@@ -522,9 +525,34 @@ export default function Wilder() {
     setScreen("camera");
   }, []);
 
-  const startScanFromFab = useCallback(() => {
+  const openAddSheet = useCallback(() => {
+    setAddSheetSoon(null);
+    setAddSheetOpen(true);
+  }, []);
+
+  const closeAddSheet = useCallback(() => {
+    setAddSheetOpen(false);
+    setAddSheetSoon(null);
+  }, []);
+
+  const handleAddSheetScan = useCallback(() => {
+    closeAddSheet();
     startScan(scanReturnOriginForScreen(screen));
-  }, [screen, startScan]);
+  }, [closeAddSheet, screen, startScan]);
+
+  const handleAddSheetIdees = useCallback(() => {
+    closeAddSheet();
+    openCatalogue();
+  }, [closeAddSheet, openCatalogue]);
+
+  const handleAddSheetSoon = useCallback(() => {
+    setAddSheetSoon("Bientôt disponible");
+  }, []);
+
+  const handleAddSheetMot = useCallback(() => {
+    closeAddSheet();
+    goHomeJardin();
+  }, [closeAddSheet, goHomeJardin]);
 
   const leaveScanner = useCallback(() => {
     const back = resolveScanBackScreen(returnScreen);
@@ -916,13 +944,23 @@ export default function Wilder() {
           activeNav={resolveMainNav(screen)}
           onNavAccueil={goHomeAccueil}
           onNavIdees={openCatalogue}
-          onNavAdd={startScanFromFab}
+          onNavAdd={openAddSheet}
           onNavCoupsDeCoeur={openMesScans}
           onNavDossier={openBrief}
           accountMenu={accountMenu}
         >
           {mainContent}
         </WilderMainLayout>
+        <AjouterAuJardinSheet
+          open={addSheetOpen}
+          onClose={closeAddSheet}
+          onScan={handleAddSheetScan}
+          onIdees={handleAddSheetIdees}
+          onTerrain={handleAddSheetSoon}
+          onInspiration={handleAddSheetSoon}
+          onMot={handleAddSheetMot}
+          soonMessage={addSheetSoon}
+        />
         {featureGateOverlay}
       </>
     );

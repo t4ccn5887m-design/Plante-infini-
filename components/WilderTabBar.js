@@ -1,16 +1,15 @@
 import { FileText, Heart, Home, Plus, Sparkles } from "lucide-react";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
-const labelStyle = {
-  fontSize: 8,
-  fontWeight: 600,
-  lineHeight: 1.05,
-  textAlign: "center",
-  maxWidth: "100%",
-  whiteSpace: "normal",
-  wordBreak: "break-word",
-  hyphens: "auto",
-};
+function tabLabelStyle(fontSize = 12) {
+  return {
+    fontSize,
+    fontWeight: 600,
+    lineHeight: 1,
+    textAlign: "center",
+    whiteSpace: "nowrap",
+  };
+}
 
 export default function WilderTabBar({
   activeNav = "accueil",
@@ -21,19 +20,19 @@ export default function WilderTabBar({
   onDossier,
 }) {
   const tabStyle = (on) => ({
-    flex: 1,
+    flex: "1 1 0",
     minWidth: 0,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-end",
-    gap: 2,
+    gap: 3,
     color: on ? COLORS.active : COLORS.muted,
     border: "none",
     background: "transparent",
     cursor: "pointer",
     fontFamily: "inherit",
-    padding: "0 1px",
+    padding: 0,
   });
 
   return (
@@ -43,30 +42,31 @@ export default function WilderTabBar({
       style={{
         display: "flex",
         alignItems: "flex-end",
-        padding: "7px 2px 9px",
+        padding: "6px 4px 8px",
+        boxSizing: "border-box",
       }}
     >
       <button type="button" style={tabStyle(activeNav === "accueil")} onClick={onAccueil}>
-        <Home size={20} strokeWidth={2} aria-hidden />
-        <span style={labelStyle}>Accueil</span>
+        <Home size={18} strokeWidth={2} aria-hidden />
+        <span style={tabLabelStyle(12)}>Accueil</span>
       </button>
 
       <button type="button" style={tabStyle(activeNav === "idees")} onClick={onIdees}>
-        <Sparkles size={20} strokeWidth={2} aria-hidden />
-        <span style={labelStyle}>Idées</span>
+        <Sparkles size={18} strokeWidth={2} aria-hidden />
+        <span style={tabLabelStyle(12)}>Idées</span>
       </button>
 
       <button
         type="button"
         onClick={onAdd}
-        aria-label="Scanner une plante"
+        aria-label="Ajouter à mon jardin"
         style={{
-          flex: 1,
+          flex: "0.82 1 0",
           minWidth: 0,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: 2,
+          gap: 3,
           color: COLORS.muted,
           border: "none",
           background: "transparent",
@@ -92,19 +92,24 @@ export default function WilderTabBar({
         >
           <Plus size={24} strokeWidth={2.4} aria-hidden />
         </div>
-        <span style={{ ...labelStyle, visibility: "hidden", height: 0, overflow: "hidden" }} aria-hidden>
+        <span style={{ ...tabLabelStyle(12), visibility: "hidden", height: 0, overflow: "hidden" }} aria-hidden>
           Ajouter
         </span>
       </button>
 
-      <button type="button" style={tabStyle(activeNav === "coups-de-coeur")} onClick={onCoupsDeCoeur}>
-        <Heart size={20} strokeWidth={2} aria-hidden />
-        <span style={labelStyle}>Coups de cœur</span>
+      <button
+        type="button"
+        style={{ ...tabStyle(activeNav === "coups-de-coeur"), flex: "1.14 1 0" }}
+        onClick={onCoupsDeCoeur}
+        aria-label="Coups de cœur"
+      >
+        <Heart size={18} strokeWidth={2} aria-hidden />
+        <span style={tabLabelStyle(11)}>Coups de cœur</span>
       </button>
 
       <button type="button" style={tabStyle(activeNav === "dossier")} onClick={onDossier}>
-        <FileText size={20} strokeWidth={2} aria-hidden />
-        <span style={labelStyle}>Dossier</span>
+        <FileText size={18} strokeWidth={2} aria-hidden />
+        <span style={tabLabelStyle(12)}>Dossier</span>
       </button>
     </nav>
   );
