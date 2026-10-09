@@ -87,6 +87,19 @@ Bénéfice pro : arrive préparé → convertit plus, chiffre plus vite et plus 
 - **App pro `/pro` :** même auth Supabase que le particulier ; `pro_studios` (1 / compte) ; création de liens réels ; liste + fiche brief depuis `pro_links` / `pro_briefs` ; RDV via `pro_appointments` ; export PDF (`window.print`).
 - Branche de travail : `wilder-pro` (**jamais** pousser / merger sur `main` sans validation explicite — `main` = v2 particulier en prod).
 
+### Espace particulier (`/jardin`)
+
+**Coups de cœur (règle produit, oct. 2026)**  
+- Un **coup de cœur** = un **élément présent dans le jardin** (palette Supabase), quelle que soit l’origine (scan ou catalogue / idées).  
+- **Cœur sur le catalogue** → ajout au jardin (pas de liste parallèle).  
+- **Cœur sur un résultat de scan** → ajout au jardin.  
+- Le champ `favori` sur les discoveries **n’est plus** la source de vérité pour les coups de cœur (legacy UI / PDF jusqu’à refonte).  
+- Les **scans non ajoutés** au jardin restent dans l’historique **« Tous mes scans »**, accessible depuis l’écran **Coups de cœur**.
+
+**Dossier jardin (progression)** — 5 étapes : coups de cœur (≥ 1 élément palette), mot pour le paysagiste, ambiance, photos du terrain, budget. Calcul purement côté client : `lib/gardenDossierProgress.js`.
+
+**Navigation cible (refonte)** — barre : Accueil · Idées · **+** · Coups de cœur · Dossier.
+
 ### Données Pro (Supabase)
 
 | Table | Rôle |
