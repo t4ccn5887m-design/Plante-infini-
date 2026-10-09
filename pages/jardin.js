@@ -33,7 +33,7 @@ import CatalogueVegetalScreen from "@/components/CatalogueVegetalScreen";
 import CatalogueMineralScreen from "@/components/CatalogueMineralScreen";
 import CatalogueDecoScreen from "@/components/CatalogueDecoScreen";
 import IdeesJardinsScreen from "@/components/IdeesJardinsScreen";
-import ApercuBriefScreen from "@/components/ApercuBriefScreen";
+import DossierScreen from "@/components/DossierScreen";
 import WilderMainLayout from "@/components/WilderMainLayout";
 import AjouterAuJardinSheet from "@/components/AjouterAuJardinSheet";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
@@ -966,8 +966,17 @@ export default function Wilder() {
         );
       }
     } else if (screen === "brief") {
-      pageTitleContent = `${t("brief.title")} — Wilder`;
-      mainContent = <ApercuBriefScreen t={t} />;
+      pageTitleContent = "Mon dossier jardin — Wilder";
+      mainContent = (
+        <DossierScreen
+          t={t}
+          refreshTick={homeGardenRefreshTick}
+          onOpenCoupsDeCoeur={openCoupsDeCoeur}
+          onOpenMot={goHomeJardin}
+          onOpenIdees={openCatalogue}
+          onOpenAddSheet={openAddSheet}
+        />
+      );
     }
 
     return (

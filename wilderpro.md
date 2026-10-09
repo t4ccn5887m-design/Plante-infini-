@@ -216,7 +216,7 @@ Ne pas rouvrir monorepo ni casser `/jardin` tant que ces manques MVP ne sont pas
 - **Ce fichier `wilderpro.md` est la source de vérité.** Le garder à la racine du repo et le mettre à jour à chaque décision.
 - Branche de travail Pro : **`wilder-pro` uniquement** — jamais `main` sans accord explicite.
 
-**Déploiement continu :** après chaque étape terminée et testée au build, déployer automatiquement en prod : `npm run build`, commit, `git checkout main`, `git merge wilder-pro`, `vercel --prod` (projet **plante-infini-yy6l**, vérifier `.vercel/project.json`), `git checkout wilder-pro`, puis donner le statut du déploiement. En cas de conflit de merge ou d'erreur de build, s'arrêter et montrer l'erreur sans rien déployer.
+**Déploiement continu :** après chaque étape terminée et testée au build, déployer automatiquement en prod : `npm run build`, commit, `git checkout main`, `git merge wilder-pro`, `vercel --prod` (projet **plante-infini-yy6l**, vérifier `.vercel/project.json`), `git push origin main`, `git push origin wilder-pro` (sauvegarde GitHub), `git checkout wilder-pro`, puis donner le statut du déploiement. En cas de conflit de merge ou d'erreur de build, s'arrêter et montrer l'erreur sans rien déployer.
 
 ---
 
