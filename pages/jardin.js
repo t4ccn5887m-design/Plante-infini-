@@ -28,7 +28,7 @@ import MonJardinScreen from "@/components/MonJardinScreen";
 import MesScansScreen from "@/components/MesScansScreen";
 import CoupsDeCoeurScreen from "@/components/CoupsDeCoeurScreen";
 import ResultatScanScreen from "@/components/ResultatScanScreen";
-import CatalogueHallScreen from "@/components/CatalogueHallScreen";
+import IdeesScreen from "@/components/IdeesScreen";
 import CatalogueVegetalScreen from "@/components/CatalogueVegetalScreen";
 import CatalogueMineralScreen from "@/components/CatalogueMineralScreen";
 import CatalogueDecoScreen from "@/components/CatalogueDecoScreen";
@@ -953,14 +953,15 @@ export default function Wilder() {
         pageTitleContent = `${t("idees_jardins.title")} — Wilder`;
         mainContent = <IdeesJardinsScreen {...catalogueProps} onBack={backToCatalogueHall} />;
       } else {
-        pageTitleContent = `${t("catalogue.title")} — Wilder`;
+        pageTitleContent = "Idées — Wilder";
         mainContent = (
-          <CatalogueHallScreen
+          <IdeesScreen
             t={t}
-            onNavigateVegetal={() => setCatalogueView("vegetal")}
-            onNavigateMineral={() => setCatalogueView("mineral")}
-            onNavigateDeco={() => setCatalogueView("deco")}
-            onNavigateIdees={() => setCatalogueView("idees")}
+            canAddToGarden={!isGuest}
+            onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
+            onRequireAccount={openRequireAccount}
+            onOpenAmbiances={() => setCatalogueView("idees")}
+            onOpenItemDetail={(discovery) => openGardenItemDetail(discovery, "catalogue")}
           />
         );
       }
