@@ -5,6 +5,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import AccueilDossierScreen from "@/components/AccueilDossierScreen";
 import { loadGardenIntention, saveGardenIntention } from "@/lib/gardenIntention";
 import { fetchPalettes, fetchPaletteItems, fetchZones } from "@/lib/paletteStorage";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
@@ -336,6 +337,11 @@ export default function MonJardinScreen({
   onNavigateIdeesJardins,
   onScan,
   onOpenBrief,
+  onOpenDossier,
+  onOpenCoupsDeCoeur,
+  onOpenAddSheet,
+  onOpenMot,
+  accountMenu = null,
   gardenRefreshTick = 0,
   homeTab = "accueil",
 }) {
@@ -390,12 +396,29 @@ export default function MonJardinScreen({
       })
       .filter((zone) => zone.plants.length > 0);
 
-    const flat = grouped
-      .flatMap((z) => z.plants)
-      .sort((a, b) => {
-        if (a.favori !== b.favori) return a.favori ? -1 : 1;
-        return a.nom.localeCompare(b.nom, "fr");
-      });
+    const flatFromItems = items
+      .map((item) => ({
+        id: item.id,
+        nom: item.discovery?.nom || "Plante",
+        kind: item.discovery?.kind,
+        type: item.discovery?.type,
+        catalogue_plant_id: item.discovery?.catalogue_plant_id,
+        catalogue_mineral_id: item.discovery?.catalogue_mineral_id,
+        catalogue_deco_id: item.discovery?.catalogue_deco_id,
+        materiau: item.discovery?.materiau,
+        finition: item.discovery?.finition,
+        resume: item.discovery?.resume,
+        exposition: zoneList.find((z) => z.id === item.zone_id)?.exposition,
+        photo: item.discovery?.photo || item.discovery?.cloudImageUrl || null,
+        favori: Boolean(item.discovery?.favori),
+        discovery: item.discovery,
+        createdAt: item.created_at,
+      }))
+      .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+    const flat = flatFromItems.length
+      ? flatFromItems
+      : grouped.flatMap((z) => z.plants).sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
 
     const plantCount = flat.length;
     const favCount = flat.filter((p) => p.favori).length;
@@ -409,7 +432,7 @@ export default function MonJardinScreen({
 
   useEffect(() => {
     setGardenIntention(loadGardenIntention());
-  }, []);
+  }, [gardenRefreshTick]);
 
   useEffect(() => {
     loadGarden();
@@ -422,225 +445,22 @@ export default function MonJardinScreen({
   };
 
   const isEmpty = !loading && totalPlants === 0;
-  const previewItems = useMemo(() => allItems.slice(0, 3), [allItems]);
-
-  const filledSubtitle = useMemo(() => {
-    const parts = [elementsCountLabel(totalPlants)];
-    const fav = favorisCountLabel(totalFavoris);
-    if (fav) parts.push(fav);
-    parts.push("brief prêt");
-    return parts.join(" · ");
-  }, [totalPlants, totalFavoris]);
 
   return (
     <>
           {homeTab === "accueil" && (
-            <>
-              {isEmpty && !loading && (
-                <>
-                  <div
-                    className="wilder-v2-hero wilder-v2-hero--tall"
-                    style={{
-                      height: 190,
-                      position: "relative",
-                      background: COLORS.heroGradient,
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "flex-end",
-                      padding: 16,
-                      flex: "none",
-                    }}
-                  >
-                    <div
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        background:
-                          "linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.35))",
-                      }}
-                      aria-hidden="true"
-                    />
-                    <div style={{ position: "relative", zIndex: 1 }}>
-                      <div
-                        className="wilder-v2-title-hero"
-                        style={{
-                          fontSize: 21,
-                          color: "#fff",
-                          lineHeight: 1.2,
-                        }}
-                      >
-                        Composez le jardin
-                        <br />
-                        qui vous ressemble
-                      </div>
-                      <div
-                        style={{
-                          fontSize: 11.5,
-                          color: "#ffffffdd",
-                          marginTop: 6,
-                          lineHeight: 1.45,
-                        }}
-                      >
-                        Rassemblez ce que vous aimez, on en fait un brief pour votre paysagiste.
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    className="wilder-v2-title-section"
-                    style={{
-                      padding: "15px 15px 7px",
-                      fontSize: 11.5,
-                      color: COLORS.secondary,
-                      textTransform: "uppercase",
-                      letterSpacing: "0.03em",
-                    }}
-                  >
-                    Par où commencer&nbsp;?
-                  </div>
-
-                  <div
-                    style={{
-                      padding: "0 15px 16px",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 9,
-                    }}
-                  >
-                    <DoorCard
-                      hallKey="scanner"
-                      icon={<IconCamera size={21} />}
-                      title="Scanner une plante"
-                      desc="J'ai vu un truc joli dehors"
-                      onClick={onScan}
-                    />
-                    <DoorCard
-                      hallKey="catalogue"
-                      icon={<IconLeaf size={21} />}
-                      title="Parcourir le catalogue"
-                      desc="Plantes, minéral & idées"
-                      onClick={onNavigateCatalogue}
-                    />
-                    <DoorCard
-                      hallKey="ambiance"
-                      icon={<IconAmbiance />}
-                      title="Piocher une ambiance"
-                      desc="Méditerranéen, japonais…"
-                      onClick={onNavigateIdeesJardins}
-                    />
-                  </div>
-                </>
-              )}
-
-              {loading && (
-                <div style={{ padding: 24, fontSize: 13, color: COLORS.muted, textAlign: "center" }}>
-                  Chargement…
-                </div>
-              )}
-
-              {!isEmpty && !loading && (
-                <>
-                  <div
-                    className="wilder-v2-hero wilder-v2-hero--short"
-                    style={{
-                      height: 140,
-                      position: "relative",
-                      background: COLORS.heroGradientShort,
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "flex-end",
-                      padding: 15,
-                      flex: "none",
-                    }}
-                  >
-                    <div
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        background:
-                          "linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.35))",
-                      }}
-                      aria-hidden="true"
-                    />
-                    <div style={{ position: "relative", zIndex: 1 }}>
-                      <div className="wilder-v2-title-hero" style={{ fontSize: 18, color: "#fff" }}>
-                        Votre jardin prend forme 🌿
-                      </div>
-                      <div style={{ fontSize: 11.5, color: "#ffffffdd", marginTop: 4 }}>
-                        {filledSubtitle}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={{ padding: "13px 15px 9px", display: "flex", gap: 9 }}>
-                    <button
-                      type="button"
-                      onClick={onOpenBrief}
-                      style={{
-                        flex: 1,
-                        background: COLORS.active,
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: 12,
-                        padding: 11,
-                        fontSize: 12,
-                        fontWeight: 600,
-                        textAlign: "center",
-                        cursor: "pointer",
-                        fontFamily: "inherit",
-                      }}
-                    >
-                      Voir mon brief
-                    </button>
-                    <button
-                      type="button"
-                      onClick={onNavigateCatalogue}
-                      style={{
-                        flex: 1,
-                        border: `0.5px solid ${COLORS.borderStrong}`,
-                        borderRadius: 12,
-                        padding: 11,
-                        fontSize: 12,
-                        fontWeight: 600,
-                        textAlign: "center",
-                        background: "#fff",
-                        color: COLORS.ink,
-                        cursor: "pointer",
-                        fontFamily: "inherit",
-                      }}
-                    >
-                      + Ajouter
-                    </button>
-                  </div>
-
-                  <div
-                    className="wilder-v2-title-section"
-                    style={{
-                      padding: "2px 15px 7px",
-                      fontSize: 11,
-                      color: COLORS.secondary,
-                      textTransform: "uppercase",
-                      letterSpacing: "0.03em",
-                    }}
-                  >
-                    Aperçu de mon jardin
-                  </div>
-
-                  <div
-                    style={{
-                      padding: "0 15px 16px",
-                      display: "grid",
-                      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                      gap: 8,
-                    }}
-                  >
-                    {previewItems.map((item) => (
-                      <PreviewCard key={item.id} item={item} />
-                    ))}
-                  </div>
-                </>
-              )}
-            </>
+            <AccueilDossierScreen
+              loading={loading}
+              gardenItems={allItems}
+              paysagisteMessage={gardenIntention}
+              accountMenu={accountMenu}
+              onOpenDossier={onOpenDossier || onOpenBrief}
+              onOpenCoupsDeCoeur={onOpenCoupsDeCoeur}
+              onOpenAddSheet={onOpenAddSheet}
+              onOpenIdees={onNavigateIdeesJardins}
+              onOpenMot={onOpenMot}
+              onScan={onScan}
+            />
           )}
 
           {homeTab === "jardin" && (

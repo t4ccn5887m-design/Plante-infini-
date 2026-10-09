@@ -821,7 +821,7 @@ export default function Wilder() {
   );
 
   const accountInitials = useMemo(() => getAccountInitials(premiumUserEmail), [premiumUserEmail]);
-  const accountOnHero = screen === "home" && homeTab === "accueil";
+  const accueilDossierHome = screen === "home" && homeTab === "accueil";
 
   const accountMenu = useMemo(
     () => (
@@ -830,7 +830,8 @@ export default function Wilder() {
         isLoggedIn={!isGuest}
         userEmail={premiumUserEmail || ""}
         initials={accountInitials}
-        onHero={accountOnHero}
+        avatarSize={accueilDossierHome ? "accueil" : "default"}
+        onHero={false}
         onSignOut={async () => {
           await signOutCloud();
           setPremiumUserEmail(null);
@@ -846,7 +847,7 @@ export default function Wilder() {
       isGuest,
       premiumUserEmail,
       accountInitials,
-      accountOnHero,
+      accueilDossierHome,
       refreshGuestAccount,
       handleSignupAccountCreated,
     ]
@@ -880,6 +881,11 @@ export default function Wilder() {
           onNavigateIdeesJardins={openIdeesJardins}
           onScan={() => startScan("home")}
           onOpenBrief={openBrief}
+          onOpenDossier={openBrief}
+          onOpenCoupsDeCoeur={openMesScans}
+          onOpenAddSheet={openAddSheet}
+          onOpenMot={goHomeJardin}
+          accountMenu={accueilDossierHome ? accountMenu : null}
           gardenRefreshTick={homeGardenRefreshTick}
           homeTab={homeTab}
         />
@@ -947,7 +953,7 @@ export default function Wilder() {
           onNavAdd={openAddSheet}
           onNavCoupsDeCoeur={openMesScans}
           onNavDossier={openBrief}
-          accountMenu={accountMenu}
+          accountMenu={accueilDossierHome ? null : accountMenu}
         >
           {mainContent}
         </WilderMainLayout>

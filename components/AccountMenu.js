@@ -44,6 +44,7 @@ export default function AccountMenu({
   userEmail = "",
   initials = "W",
   onHero = false,
+  avatarSize = "default",
   onSignOut,
   onAccountCreated,
 }) {
@@ -115,11 +116,22 @@ export default function AccountMenu({
         color: "#fff",
         border: "0.5px solid #ffffff55",
       }
-    : {
-        background: COLORS.greenTint,
-        color: COLORS.greenInk,
-        border: `0.5px solid ${COLORS.borderStrong}`,
-      };
+    : avatarSize === "accueil"
+      ? {
+          width: 44,
+          height: 44,
+          fontSize: 15,
+          borderRadius: 999,
+          background: "#E6F0E3",
+          color: "#2F5E3F",
+          border: "none",
+          boxShadow: "none",
+        }
+      : {
+          background: COLORS.greenTint,
+          color: COLORS.greenInk,
+          border: `0.5px solid ${COLORS.borderStrong}`,
+        };
 
   return (
     <>
