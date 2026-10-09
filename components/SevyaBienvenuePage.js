@@ -47,7 +47,7 @@ export default function SevyaBienvenuePage() {
   return (
     <>
       <Head>
-        <title>Bienvenue — Sevya</title>
+        <title>Sevya — Vos envies, traduites en jardin</title>
         <meta
           name="description"
           content="Sevya — le jardin de vos envies, compris d'avance."
@@ -60,11 +60,10 @@ export default function SevyaBienvenuePage() {
           <section className="sv-hero" aria-labelledby="sv-hero-title">
             <SevyaLogo />
             <h1 id="sv-hero-title" className="sv-hero__title">
-              Le jardin de vos envies, compris d&apos;avance.
+              Vos envies, traduites en jardin.
             </h1>
             <p className="sv-hero__sub">
-              Les particuliers rassemblent leurs idées, les paysagistes arrivent
-              préparés au premier rendez-vous.
+              Le premier rendez-vous commence ici.
             </p>
           </section>
 
