@@ -26,7 +26,11 @@ function SevyaLogo() {
 
 function ChoiceCard({ href, bg, ink, title, description, icon }) {
   return (
-    <Link href={href} className="sv-card" style={{ background: bg, color: ink }}>
+    <Link
+      href={href}
+      className="sv-card"
+      style={{ "--sv-card-bg": bg, "--sv-card-ink": ink }}
+    >
       <span className="sv-card__icon" aria-hidden>
         {icon}
       </span>
@@ -158,19 +162,19 @@ export default function SevyaBienvenuePage() {
           box-shadow: 0 12px 40px -16px rgba(30, 58, 40, 0.45);
         }
 
-        .sv-logo {
+        .sv-hero :global(.sv-logo) {
           display: inline-flex;
           align-items: center;
           gap: 8px;
           margin-bottom: 20px;
         }
 
-        .sv-logo :global(.sv-logo__leaf) {
+        .sv-hero :global(.sv-logo__leaf) {
           color: #c8e0c9;
           flex-shrink: 0;
         }
 
-        .sv-logo__text {
+        .sv-hero :global(.sv-logo__text) {
           font-size: 1.35rem;
           font-weight: 700;
           letter-spacing: -0.02em;
@@ -222,64 +226,75 @@ export default function SevyaBienvenuePage() {
           gap: 12px;
         }
 
-        .sv-card {
+        /* ChoiceCard is a sibling function — styled-jsx does not hash its classNames */
+        .sv-page :global(a.sv-card) {
           display: flex;
           align-items: center;
-          gap: 16px;
+          gap: 14px;
+          width: 100%;
+          box-sizing: border-box;
           min-height: 44px;
-          padding: 18px 16px;
+          padding: 18px;
           border-radius: 22px;
           text-decoration: none;
+          color: var(--sv-card-ink);
+          background: var(--sv-card-bg);
           transition: transform 0.12s ease, box-shadow 0.12s ease;
           box-shadow: 0 2px 12px -4px rgba(30, 43, 35, 0.12);
         }
 
-        .sv-card:hover {
+        .sv-page :global(a.sv-card:hover) {
           box-shadow: 0 8px 24px -8px rgba(30, 43, 35, 0.18);
         }
 
-        .sv-card:active {
+        .sv-page :global(a.sv-card:active) {
           transform: scale(0.985);
         }
 
-        .sv-card:focus-visible {
+        .sv-page :global(a.sv-card:focus-visible) {
           outline: 2px solid ${C.primary};
           outline-offset: 3px;
         }
 
-        .sv-card__icon {
-          width: 46px;
-          height: 46px;
+        .sv-page :global(a.sv-card .sv-card__icon) {
+          width: 48px;
+          height: 48px;
           border-radius: 14px;
           display: grid;
           place-items: center;
           flex-shrink: 0;
-          background: rgba(255, 255, 255, 0.55);
+          background: #ffffff;
         }
 
-        .sv-card__body {
+        .sv-page :global(a.sv-card .sv-card__body) {
           flex: 1;
           min-width: 0;
           display: flex;
           flex-direction: column;
-          gap: 3px;
+          align-items: flex-start;
+          gap: 4px;
         }
 
-        .sv-card__title {
-          font-size: 1.05rem;
+        .sv-page :global(a.sv-card .sv-card__title) {
+          display: block;
+          width: 100%;
+          font-size: 1.125rem;
           font-weight: 700;
-          line-height: 1.2;
+          line-height: 1.25;
         }
 
-        .sv-card__desc {
+        .sv-page :global(a.sv-card .sv-card__desc) {
+          display: block;
+          width: 100%;
           font-size: 0.875rem;
           font-weight: 500;
           opacity: 0.82;
           line-height: 1.35;
         }
 
-        .sv-card :global(.sv-card__chev) {
+        .sv-page :global(a.sv-card .sv-card__chev) {
           flex-shrink: 0;
+          align-self: center;
           opacity: 0.45;
         }
 
