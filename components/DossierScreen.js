@@ -3,8 +3,8 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { deriveTasteChipKeys, tasteChipsToLabels } from "@/lib/briefTaste";
 import {
+  buildGardenBriefPdfParams,
   createBriefPdfBlob,
   downloadBriefPdfBlob,
   shareBriefPdf,
@@ -12,7 +12,18 @@ import {
 import { computeGardenDossierProgress } from "@/lib/gardenDossierProgress";
 import { loadGardenIntention } from "@/lib/gardenIntention";
 import { loadGardenCoupsItems } from "@/lib/gardenCoupsItems";
-import { loadGardenBriefData } from "@/lib/loadGardenBriefData";
+import { readGardenDossierLocalFlags } from "@/lib/gardenDossierLocal";
+import { loadGardenAmbianceChoice } from "@/lib/gardenAmbianceChoice";
+import { loadGardenBudgetChoice } from "@/lib/gardenBudgetChoice";
+import { loadGardenTerrainFields } from "@/lib/gardenTerrainFields";
+import { loadGardenTerrainPhotoDataUrls } from "@/lib/gardenTerrainPhotos";
+import {
+  areaRangeLabel,
+  budgetLabel,
+  timelineLabel,
+  utilitiesLabel,
+} from "@/lib/pro/briefLabels";
+import { loadPremiumProfile } from "@/lib/premiumProfile";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const GREEN = "#2F5E3F";
@@ -96,7 +107,7 @@ function IconSend() {
   );
 }
 
-function RowLink({ labelColor, title, subtitle, bg, chevron, onClick }) {
+function RowLink({ labelColor, title, subtitle, bg, chevron, onClick, status }) {
   return (
     <button
       type="button"
@@ -117,16 +128,19 @@ function RowLink({ labelColor, title, subtitle, bg, chevron, onClick }) {
         width: "100%",
       }}
     >
-      <span style={{ display: "flex", flexDirection: "column", flexGrow: 1, minWidth: 0 }}>
-        <span
-          style={{
-            fontSize: 12,
-            fontWeight: 700,
-            letterSpacing: "1.1px",
-            color: labelColor,
-          }}
-        >
-          {title}
+      <span style={{ display: "flex", flexDirection: "column", flexGrow: 1, minWidth: 0, gap: 4 }}>
+        <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+          <span
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: "1.1px",
+              color: labelColor,
+            }}
+          >
+            {title}
+          </span>
+          {status}
         </span>
         <span style={{ fontSize: 15, fontWeight: 700 }}>{subtitle}</span>
       </span>
@@ -137,21 +151,47 @@ function RowLink({ labelColor, title, subtitle, bg, chevron, onClick }) {
 
 const MAX_PILLS = 8;
 
+function firstNameFromProfile() {
+  const name = loadPremiumProfile().displayName?.trim() || "";
+  if (!name) return "";
+  return name.split(/\s+/)[0] || name;
+}
+
+function budgetDisplayLabel(budgetId) {
+  if (!budgetId) return "";
+  if (budgetId === "unknown") return "Je ne sais pas encore";
+  return budgetLabel(budgetId);
+}
+
+function terrainSummaryLines(fields) {
+  const lines = [];
+  if (fields.areaRange) {
+    lines.push(`Surface à aménager : ${areaRangeLabel(fields.areaRange)}`);
+  }
+  if (fields.timeline) {
+    lines.push(`Calendrier : ${timelineLabel(fields.timeline)}`);
+  }
+  if (fields.utilities) {
+    lines.push(`Eau / électricité : ${utilitiesLabel(fields.utilities)}`);
+  }
+  return lines;
+}
+
 export default function DossierScreen({
   t,
   refreshTick = 0,
   onOpenCoupsDeCoeur,
   onOpenMot,
-  onOpenIdees,
-  onOpenAddSheet,
+  onOpenAmbiance,
+  onOpenTerrain,
+  onOpenBudget,
 }) {
   const [loading, setLoading] = useState(true);
-  const [budgetNotice, setBudgetNotice] = useState(null);
   const [coupsItems, setCoupsItems] = useState([]);
-  const [briefItems, setBriefItems] = useState([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [heartCount, setHeartCount] = useState(0);
   const [intention, setIntention] = useState("");
+  const [ambianceName, setAmbianceName] = useState("");
+  const [budgetId, setBudgetId] = useState("");
+  const [terrainPhotoCount, setTerrainPhotoCount] = useState(0);
   const [pdfBusy, setPdfBusy] = useState(false);
   const [shareBusy, setShareBusy] = useState(false);
   const [feedback, setFeedback] = useState(null);
@@ -161,17 +201,15 @@ export default function DossierScreen({
     setLoading(true);
     setError(null);
     try {
-      const [coups, brief] = await Promise.all([loadGardenCoupsItems(), loadGardenBriefData()]);
+      const coups = await loadGardenCoupsItems();
       setCoupsItems(coups.items || []);
-      setBriefItems(brief.items || []);
-      setTotalCount(brief.totalCount || 0);
-      setHeartCount(brief.heartCount || 0);
       setIntention(loadGardenIntention());
+      setAmbianceName(loadGardenAmbianceChoice());
+      setBudgetId(loadGardenBudgetChoice());
+      const photos = await loadGardenTerrainPhotoDataUrls();
+      setTerrainPhotoCount(photos.length);
     } catch {
       setCoupsItems([]);
-      setBriefItems([]);
-      setTotalCount(0);
-      setHeartCount(0);
       setError("load_failed");
     }
     setLoading(false);
@@ -181,13 +219,18 @@ export default function DossierScreen({
     loadData();
   }, [loadData, refreshTick]);
 
+  const localFlags = readGardenDossierLocalFlags();
+
   const progress = useMemo(
     () =>
       computeGardenDossierProgress({
         gardenItemCount: coupsItems.length,
         paysagisteMessage: intention,
+        ambianceComplete: localFlags.ambianceComplete,
+        terrainPhotosComplete: localFlags.terrainPhotosComplete,
+        budgetComplete: localFlags.budgetComplete,
       }),
-    [coupsItems.length, intention]
+    [coupsItems.length, intention, localFlags.ambianceComplete, localFlags.budgetComplete, localFlags.terrainPhotosComplete]
   );
 
   const stepComplete = useCallback(
@@ -199,23 +242,21 @@ export default function DossierScreen({
   const visiblePills = pillNames.slice(0, MAX_PILLS);
   const extraCount = Math.max(0, pillNames.length - MAX_PILLS);
 
-  const tasteChipKeys = useMemo(() => deriveTasteChipKeys(briefItems), [briefItems]);
-  const tasteLabels = useMemo(() => tasteChipsToLabels(tasteChipKeys, t), [tasteChipKeys, t]);
+  const buildPdfParams = useCallback(async () => {
+    const terrainPhotoDataUrls = await loadGardenTerrainPhotoDataUrls();
+    const fields = loadGardenTerrainFields();
+    return buildGardenBriefPdfParams({
+      displayFirstName: firstNameFromProfile(),
+      ambianceName: loadGardenAmbianceChoice(),
+      intention: loadGardenIntention(),
+      coupsItems: coupsItems,
+      terrainPhotoDataUrls,
+      terrainLines: terrainSummaryLines(fields),
+      budgetLabel: budgetDisplayLabel(loadGardenBudgetChoice()),
+    });
+  }, [coupsItems]);
 
-  const pdfParams = useMemo(
-    () => ({
-      tasteLabels,
-      intention,
-      items: briefItems,
-      totalCount,
-      heartCount,
-      t,
-    }),
-    [tasteLabels, intention, briefItems, totalCount, heartCount, t]
-  );
-
-  const hasCoups = coupsItems.length > 0;
-  const canExport = hasCoups && !loading;
+  const canExport = !loading && progress.completedCount >= 1;
 
   const handleExportPdf = async () => {
     if (!canExport || pdfBusy) return;
@@ -223,6 +264,7 @@ export default function DossierScreen({
     setError(null);
     setFeedback(null);
     try {
+      const pdfParams = await buildPdfParams();
       const created = await createBriefPdfBlob(pdfParams);
       if (!created.ok) {
         setError(t("brief.send_error"));
@@ -243,6 +285,7 @@ export default function DossierScreen({
     setError(null);
     setFeedback(null);
     try {
+      const pdfParams = await buildPdfParams();
       const result = await shareBriefPdf(pdfParams);
       if (!result.ok) {
         if (result.cancelled) return;
@@ -260,6 +303,13 @@ export default function DossierScreen({
   const motText = (intention || "").trim();
   const coupsComplete = stepComplete("coups-de-coeur");
   const motComplete = stepComplete("mot-paysagiste");
+  const ambianceComplete = stepComplete("ambiance");
+  const terrainComplete = stepComplete("terrain");
+  const budgetComplete = stepComplete("budget");
+
+  const terrainSubtitle = terrainComplete
+    ? `${terrainPhotoCount} photo${terrainPhotoCount > 1 ? "s" : ""}`
+    : "Ajouter des photos";
 
   return (
     <div
@@ -410,39 +460,38 @@ export default function DossierScreen({
       <RowLink
         title="MON AMBIANCE"
         labelColor="#5E4C8C"
-        subtitle="À choisir"
+        subtitle={ambianceName || "À choisir"}
         bg="#ECE6F5"
         chevron="#6A5896"
-        onClick={onOpenIdees}
+        onClick={onOpenAmbiance}
+        status={
+          <StepStatus complete={ambianceComplete} completeLabel="Fait" incompleteLabel="à choisir" />
+        }
       />
 
       <RowLink
         title="MON TERRAIN"
         labelColor="#8A4A22"
-        subtitle="Ajouter 3 photos"
+        subtitle={terrainSubtitle}
         bg="#F6E7D8"
         chevron="#C0652E"
-        onClick={onOpenAddSheet}
+        onClick={onOpenTerrain}
+        status={<StepStatus complete={terrainComplete} completeLabel="Fait" />}
       />
 
       <RowLink
         title="MON BUDGET"
         labelColor="#4D554B"
-        subtitle="À indiquer"
+        subtitle={budgetDisplayLabel(budgetId) || "À indiquer"}
         bg="#F2EEE7"
         chevron="#6B7268"
-        onClick={() => setBudgetNotice("Bientôt disponible")}
+        onClick={onOpenBudget}
+        status={<StepStatus complete={budgetComplete} completeLabel="Fait" />}
       />
 
-      {budgetNotice ? (
+      {!canExport && !loading ? (
         <p style={{ margin: 0, fontSize: 13, color: MUTED, lineHeight: 1.45, textAlign: "center" }}>
-          {budgetNotice}
-        </p>
-      ) : null}
-
-      {!hasCoups && !loading ? (
-        <p style={{ margin: 0, fontSize: 13, color: MUTED, lineHeight: 1.45, textAlign: "center" }}>
-          Ajoutez au moins un coup de cœur pour créer votre dossier.
+          Complétez au moins une étape du dossier pour exporter ou envoyer le PDF.
         </p>
       ) : null}
 

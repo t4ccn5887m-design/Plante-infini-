@@ -34,6 +34,10 @@ import CataloguePlantFicheScreen from "@/components/CataloguePlantFicheScreen";
 import CatalogueUniverseFicheScreen from "@/components/CatalogueUniverseFicheScreen";
 import IdeesJardinsScreen from "@/components/IdeesJardinsScreen";
 import DossierScreen from "@/components/DossierScreen";
+import GardenAmbianceListScreen from "@/components/garden/GardenAmbianceListScreen";
+import GardenAmbianceDetailScreen from "@/components/garden/GardenAmbianceDetailScreen";
+import GardenTerrainScreen from "@/components/garden/GardenTerrainScreen";
+import GardenBudgetScreen from "@/components/garden/GardenBudgetScreen";
 import WilderMainLayout from "@/components/WilderMainLayout";
 import AjouterAuJardinSheet from "@/components/AjouterAuJardinSheet";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
@@ -182,6 +186,8 @@ export default function Wilder() {
   const [featureGateInitialStep, setFeatureGateInitialStep] = useState("prompt");
   const [addSheetOpen, setAddSheetOpen] = useState(false);
   const [addSheetSoon, setAddSheetSoon] = useState(null);
+  const [gardenFlowReturn, setGardenFlowReturn] = useState("home");
+  const [gardenAmbianceName, setGardenAmbianceName] = useState("");
 
   const { isGuest, refreshGuestAccount } = useGuestAccount();
 
@@ -341,6 +347,40 @@ export default function Wilder() {
     setReturnScreen("brief");
     setScreen("brief");
   }, []);
+
+  const bumpGardenDossier = useCallback(() => {
+    setHomeGardenRefreshTick((tick) => tick + 1);
+  }, []);
+
+  const closeGardenFlow = useCallback(() => {
+    setScreen(gardenFlowReturn || "home");
+  }, [gardenFlowReturn]);
+
+  const openGardenAmbiances = useCallback(
+    (returnTo) => {
+      setGardenFlowReturn(returnTo ?? screen);
+      setScreen("garden-ambiances");
+    },
+    [screen]
+  );
+
+  const openGardenAmbianceDetail = useCallback((name) => {
+    setGardenAmbianceName(name);
+    setScreen("garden-ambiance-detail");
+  }, []);
+
+  const openGardenTerrain = useCallback(
+    (returnTo) => {
+      setGardenFlowReturn(returnTo ?? screen);
+      setScreen("garden-terrain");
+    },
+    [screen]
+  );
+
+  const openGardenBudget = useCallback(() => {
+    setGardenFlowReturn(screen);
+    setScreen("garden-budget");
+  }, [screen]);
 
   const openPaletteDetail = useCallback((palette) => {
     if (!palette?.id) return;
@@ -609,6 +649,11 @@ export default function Wilder() {
   const handleAddSheetSoon = useCallback(() => {
     setAddSheetSoon("Bientôt disponible");
   }, []);
+
+  const handleAddSheetTerrain = useCallback(() => {
+    closeAddSheet();
+    openGardenTerrain(screen);
+  }, [closeAddSheet, openGardenTerrain, screen]);
 
   const handleAddSheetMot = useCallback(() => {
     closeAddSheet();
@@ -945,6 +990,9 @@ export default function Wilder() {
           onOpenDossier={openBrief}
           onOpenCoupsDeCoeur={openCoupsDeCoeur}
           onOpenAddSheet={openAddSheet}
+          onOpenAmbiances={() => openGardenAmbiances("home")}
+          onOpenTerrain={() => openGardenTerrain("home")}
+          onOpenBudget={openGardenBudget}
           onOpenMot={goHomeJardin}
           accountMenu={accueilDossierHome ? accountMenu : null}
           gardenRefreshTick={homeGardenRefreshTick}
@@ -1010,7 +1058,7 @@ export default function Wilder() {
             onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
             onRequireAccount={openRequireAccount}
             onOpenCatalogueTab={openCatalogueTab}
-            onOpenAmbiances={() => setCatalogueView("idees")}
+            onOpenAmbiances={() => openGardenAmbiances("catalogue")}
             onOpenItemDetail={(discovery) => openGardenItemDetail(discovery, "catalogue")}
             onOpenCataloguePlant={openCataloguePlantFiche}
             onOpenCatalogueItem={openCatalogueItemFiche}
@@ -1025,8 +1073,9 @@ export default function Wilder() {
           refreshTick={homeGardenRefreshTick}
           onOpenCoupsDeCoeur={openCoupsDeCoeur}
           onOpenMot={goHomeJardin}
-          onOpenIdees={openCatalogue}
-          onOpenAddSheet={openAddSheet}
+          onOpenAmbiance={() => openGardenAmbiances("brief")}
+          onOpenTerrain={() => openGardenTerrain("brief")}
+          onOpenBudget={openGardenBudget}
         />
       );
     }
@@ -1054,7 +1103,7 @@ export default function Wilder() {
           onClose={closeAddSheet}
           onScan={handleAddSheetScan}
           onIdees={handleAddSheetIdees}
-          onTerrain={handleAddSheetSoon}
+          onTerrain={handleAddSheetTerrain}
           onInspiration={handleAddSheetSoon}
           onMot={handleAddSheetMot}
           soonMessage={addSheetSoon}
@@ -1062,6 +1111,72 @@ export default function Wilder() {
         {featureGateOverlay}
       </>
     );
+  }
+
+  /* ── DOSSIER PARTICULIER : ambiance / terrain / budget ── */
+  if (
+    screen === "garden-ambiances" ||
+    screen === "garden-ambiance-detail" ||
+    screen === "garden-terrain" ||
+    screen === "garden-budget"
+  ) {
+    let title = "Mon dossier — Wilder";
+    let body = null;
+    if (screen === "garden-ambiances") {
+      title = "Ambiances — Wilder";
+      body = (
+        <GardenAmbianceListScreen
+          onBack={closeGardenFlow}
+          onOpenAmbiance={openGardenAmbianceDetail}
+        />
+      );
+    } else if (screen === "garden-ambiance-detail" && gardenAmbianceName) {
+      title = `${gardenAmbianceName} — Wilder`;
+      body = (
+        <GardenAmbianceDetailScreen
+          ambianceName={gardenAmbianceName}
+          onBack={() => setScreen("garden-ambiances")}
+          onSaved={bumpGardenDossier}
+        />
+      );
+    } else if (screen === "garden-terrain") {
+      title = "Mon terrain — Wilder";
+      body = <GardenTerrainScreen onBack={closeGardenFlow} onChanged={bumpGardenDossier} />;
+    } else if (screen === "garden-budget") {
+      title = "Mon budget — Wilder";
+      body = <GardenBudgetScreen onBack={closeGardenFlow} onSaved={bumpGardenDossier} />;
+    } else if (screen === "garden-ambiance-detail") {
+      title = "Ambiances — Wilder";
+      body = (
+        <GardenAmbianceListScreen
+          onBack={closeGardenFlow}
+          onOpenAmbiance={openGardenAmbianceDetail}
+        />
+      );
+    }
+
+    if (body) {
+      return (
+        <>
+          <Head>
+            <title>{title}</title>
+          </Head>
+          <WilderMainLayout
+            className="screen-enter-fast"
+            activeNav={resolveMainNav(gardenFlowReturn)}
+            onNavAccueil={goHomeAccueil}
+            onNavIdees={openCatalogue}
+            onNavAdd={openAddSheet}
+            onNavCoupsDeCoeur={openCoupsDeCoeur}
+            onNavDossier={openBrief}
+            accountMenu={accountMenu}
+          >
+            {body}
+          </WilderMainLayout>
+          {featureGateOverlay}
+        </>
+      );
+    }
   }
 
   /* ── MA PALETTE ── */

@@ -209,6 +209,16 @@ Ne pas rouvrir monorepo ni casser `/jardin` tant que ces manques MVP ne sont pas
 
 ---
 
+## 12 bis. Dette — dossier particulier (`/jardin`)
+
+**Ambiance, budget et terrain (champs + photos)** sont stockés **uniquement sur l’appareil** :
+- `localStorage` : ambiance choisie, fourchette budget, champs terrain (surface, calendrier, eau/électricité).
+- **IndexedDB** : photos terrain (JPEG compressé via `lib/compressImage.js`).
+
+**À faire plus tard :** synchroniser ces données avec le compte / Supabase (comme le reste du jardin), sans toucher au parcours `/b/[token]` ni à `pro_briefs`.
+
+---
+
 ## 13. Workflow (solo)
 
 - Fondateur seul, travaille avec : Claude (chat/projet), **Claude Code**, **Cursor**.

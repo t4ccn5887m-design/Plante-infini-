@@ -340,6 +340,9 @@ export default function MonJardinScreen({
   onOpenDossier,
   onOpenCoupsDeCoeur,
   onOpenAddSheet,
+  onOpenAmbiances,
+  onOpenTerrain,
+  onOpenBudget,
   onOpenMot,
   accountMenu = null,
   gardenRefreshTick = 0,
@@ -458,8 +461,12 @@ export default function MonJardinScreen({
               onOpenCoupsDeCoeur={onOpenCoupsDeCoeur}
               onOpenAddSheet={onOpenAddSheet}
               onOpenIdees={onNavigateIdeesJardins}
+              onOpenAmbiances={onOpenAmbiances}
+              onOpenTerrain={onOpenTerrain}
+              onOpenBudget={onOpenBudget}
               onOpenMot={onOpenMot}
               onScan={onScan}
+              gardenRefreshTick={gardenRefreshTick}
             />
           )}
 

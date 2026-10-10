@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { computeGardenDossierProgress } from "@/lib/gardenDossierProgress";
+import { readGardenDossierLocalFlags } from "@/lib/gardenDossierLocal";
 import { DOSSIER_STEP_CARD, DOSSIER_STEP_ORDER } from "@/lib/gardenDossierStepCards";
 import { loadPremiumProfile } from "@/lib/premiumProfile";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
@@ -195,19 +196,28 @@ export default function AccueilDossierScreen({
   onOpenCoupsDeCoeur,
   onOpenAddSheet,
   onOpenIdees,
+  onOpenAmbiances,
+  onOpenTerrain,
+  onOpenBudget,
   onOpenMot,
   onScan,
+  gardenRefreshTick = 0,
 }) {
   const displayName = loadPremiumProfile().displayName?.trim();
   const greeting = displayName ? `Bonjour ${displayName}` : "Bonjour";
+
+  const localFlags = useMemo(() => readGardenDossierLocalFlags(), [gardenRefreshTick]);
 
   const progress = useMemo(
     () =>
       computeGardenDossierProgress({
         gardenItemCount: gardenItems.length,
         paysagisteMessage,
+        ambianceComplete: localFlags.ambianceComplete,
+        terrainPhotosComplete: localFlags.terrainPhotosComplete,
+        budgetComplete: localFlags.budgetComplete,
       }),
-    [gardenItems.length, paysagisteMessage]
+    [gardenItems.length, paysagisteMessage, localFlags]
   );
 
   const nextSteps = useMemo(() => {
@@ -223,9 +233,10 @@ export default function AccueilDossierScreen({
       : `Encore ${progress.remainingCount} étape${progress.remainingCount > 1 ? "s" : ""} pour que votre paysagiste comprenne vraiment votre projet.`;
 
   const handleStep = (stepId) => {
-    if (stepId === "terrain") onOpenAddSheet?.();
-    else if (stepId === "ambiance" || stepId === "coups-de-coeur") onOpenIdees?.();
-    else if (stepId === "budget") onOpenDossier?.();
+    if (stepId === "terrain") onOpenTerrain?.();
+    else if (stepId === "ambiance") onOpenAmbiances?.();
+    else if (stepId === "coups-de-coeur") onOpenIdees?.();
+    else if (stepId === "budget") onOpenBudget?.();
     else if (stepId === "mot-paysagiste") onOpenMot?.();
   };
 
