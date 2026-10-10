@@ -1,10 +1,12 @@
 import fs from "fs";
 import path from "path";
+import { getActiveCatalogueAmenagements } from "@/lib/catalogueAmenagements";
+import { getActiveCatalogueMinerals } from "@/lib/catalogueMinerals";
 import { getActiveCataloguePlants } from "@/lib/cataloguePlants";
 import { isLocalPhotoAdminEnabled } from "@/lib/localPhotoAdmin";
+import { getCandidateBucketSync, readCandidatesStoreSync } from "@/lib/photoCandidatesStore";
 
 const ROOT = process.cwd();
-const CANDIDATES_PATH = path.join(ROOT, "sevya/photo-candidates.json");
 const CHOICES_PATH = path.join(ROOT, "sevya/photo-choices.json");
 
 function readJson(filePath, fallback) {
@@ -19,24 +21,51 @@ function writeJson(filePath, data) {
   fs.writeFileSync(filePath, `${JSON.stringify(data, null, 2)}\n`, "utf8");
 }
 
+function plantsForUnivers(univers) {
+  if (univers === "mineral") {
+    return getActiveCatalogueMinerals().map((p) => ({
+      id: p.id,
+      nom: p.nom,
+      nom_latin: "",
+      categorie: p.categorie,
+    }));
+  }
+  if (univers === "amenagements") {
+    return getActiveCatalogueAmenagements().map((p) => ({
+      id: p.id,
+      nom: p.nom,
+      nom_latin: "",
+      categorie: p.categorie,
+    }));
+  }
+  return getActiveCataloguePlants().map((p) => ({
+    id: p.id,
+    nom: p.nom,
+    nom_latin: p.nom_latin,
+    categorie: p.categorie,
+  }));
+}
+
 export default function handler(req, res) {
   if (!isLocalPhotoAdminEnabled()) {
     return res.status(404).end();
   }
 
+  const univers = String(req.query.univers || "vegetal");
+  if (!["vegetal", "mineral", "amenagements"].includes(univers)) {
+    return res.status(400).json({ error: "invalid_univers" });
+  }
+
   if (req.method === "GET") {
-    const candidates = readJson(CANDIDATES_PATH, { plants: {} });
+    const store = readCandidatesStoreSync();
+    const candidates = getCandidateBucketSync(store, univers);
     const choices = readJson(CHOICES_PATH, {});
-    const plants = getActiveCataloguePlants().map((p) => ({
-      id: p.id,
-      nom: p.nom,
-      nom_latin: p.nom_latin,
-      categorie: p.categorie,
-    }));
+    const plants = plantsForUnivers(univers);
 
     return res.status(200).json({
+      univers,
       plants,
-      candidates: candidates.plants || {},
+      candidates,
       choices,
     });
   }
@@ -49,6 +78,7 @@ export default function handler(req, res) {
       candidate,
       displayVariant,
       rembgCacheFile,
+      univers: bodyUnivers,
     } = req.body || {};
 
     if (!catalogueId || !status) {
@@ -60,6 +90,7 @@ export default function handler(req, res) {
     if (status === "none") {
       choices[catalogueId] = {
         status: "none",
+        univers: bodyUnivers || univers,
         updatedAt: new Date().toISOString(),
       };
     } else if (status === "selected") {
@@ -70,6 +101,7 @@ export default function handler(req, res) {
         status: "selected",
         candidateIndex,
         candidate,
+        univers: bodyUnivers || univers,
         displayVariant: displayVariant === "white_bg" ? "white_bg" : "original",
         rembgCacheFile: rembgCacheFile || null,
         updatedAt: new Date().toISOString(),

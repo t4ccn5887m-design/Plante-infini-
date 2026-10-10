@@ -52,16 +52,48 @@ export async function resolveCatalogueIdForJsonRow(row, legacyPlants) {
   return legacy ? legacy.id : row.id;
 }
 
-export function loadCatalogueJson() {
-  const raw = fs.readFileSync(path.join(ROOT, "sevya/catalogue-vegetal.json"), "utf8");
+export function loadCatalogueJson(univers = "vegetal") {
+  const file =
+    univers === "mineral"
+      ? "sevya/catalogue-mineral.json"
+      : univers === "amenagements"
+        ? "sevya/catalogue-amenagements.json"
+        : "sevya/catalogue-vegetal.json";
+  const raw = fs.readFileSync(path.join(ROOT, file), "utf8");
   return JSON.parse(raw);
 }
 
+export function saveCatalogueJson(univers, rows) {
+  const file =
+    univers === "mineral"
+      ? "sevya/catalogue-mineral.json"
+      : univers === "amenagements"
+        ? "sevya/catalogue-amenagements.json"
+        : "sevya/catalogue-vegetal.json";
+  fs.writeFileSync(path.join(ROOT, file), `${JSON.stringify(rows, null, 2)}\n`, "utf8");
+}
+
+export function publicCatalogueDir(univers = "vegetal") {
+  if (univers === "mineral") return path.join(ROOT, "public/catalogue/mineral");
+  if (univers === "amenagements") return path.join(ROOT, "public/catalogue/amenagements");
+  return path.join(ROOT, "public/catalogue/vegetal");
+}
+
+async function resolveLegacyIdByNom(row, legacyItems) {
+  const byNom = new Map();
+  for (const item of legacyItems) {
+    byNom.set(normalizeKey(item.nom), item);
+  }
+  const legacy = byNom.get(normalizeKey(row.nom));
+  return legacy ? legacy.id : row.id;
+}
+
 export async function listCataloguePlantsForScripts() {
-  const rows = loadCatalogueJson();
+  const rows = loadCatalogueJson("vegetal");
   const legacy = await getLegacyPlants();
   return Promise.all(
     rows.map(async (row) => ({
+      univers: "vegetal",
       catalogueId: await resolveCatalogueIdForJsonRow(row, legacy),
       jsonId: row.id,
       nom: row.nom,
@@ -70,6 +102,73 @@ export async function listCataloguePlantsForScripts() {
       row,
     }))
   );
+}
+
+let legacyMineralCache = null;
+let legacyAmenCache = null;
+
+async function getLegacyMinerals() {
+  if (!legacyMineralCache) {
+    const mod = await import(pathToFileURL(path.join(ROOT, "lib/legacyCatalogueMinerals.js")).href);
+    legacyMineralCache = mod.LEGACY_CATALOGUE_MINERALS;
+  }
+  return legacyMineralCache;
+}
+
+async function getLegacyAmenagements() {
+  if (!legacyAmenCache) {
+    const mod = await import(pathToFileURL(path.join(ROOT, "lib/legacyCatalogueAmenagements.js")).href);
+    legacyAmenCache = mod.LEGACY_CATALOGUE_AMENAGEMENTS;
+  }
+  return legacyAmenCache;
+}
+
+export async function listCatalogueEntriesForUnivers(univers) {
+  if (univers === "vegetal") return listCataloguePlantsForScripts();
+
+  if (univers === "mineral") {
+    const rows = loadCatalogueJson("mineral");
+    const legacy = await getLegacyMinerals();
+    return Promise.all(
+      rows.map(async (row) => ({
+        univers: "mineral",
+        catalogueId: await resolveLegacyIdByNom(row, legacy),
+        jsonId: row.id,
+        nom: row.nom,
+        nom_latin: "",
+        categorie: row.categorie || "",
+        row,
+      }))
+    );
+  }
+
+  if (univers === "amenagements") {
+    const rows = loadCatalogueJson("amenagements");
+    const legacy = await getLegacyAmenagements();
+    return Promise.all(
+      rows.map(async (row) => ({
+        univers: "amenagements",
+        catalogueId: await resolveLegacyIdByNom(row, legacy),
+        jsonId: row.id,
+        nom: row.nom,
+        nom_latin: "",
+        categorie: row.categorie || "",
+        row,
+      }))
+    );
+  }
+
+  throw new Error(`Univers inconnu : ${univers}`);
+}
+
+export function parseUniversArg(argv = process.argv.slice(2)) {
+  const idx = argv.indexOf("--univers");
+  if (idx === -1) return "vegetal";
+  const value = argv[idx + 1];
+  if (!value || !["vegetal", "mineral", "amenagements"].includes(value)) {
+    throw new Error("Usage: --univers vegetal|mineral|amenagements");
+  }
+  return value;
 }
 
 export function loadEnvLocal() {

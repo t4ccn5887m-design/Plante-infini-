@@ -1,4 +1,5 @@
 import CataloguePlantVisual from "@/components/catalogue/CataloguePlantVisual";
+import CatalogueUniverseVisual from "@/components/catalogue/CatalogueUniverseVisual";
 
 export function HeartToggle({ filled, disabled, label, onClick }) {
   return (
@@ -55,6 +56,7 @@ export default function CatalogueIdeaCard({
   subtitle,
   photo_url,
   categorie,
+  catalogUniverse = "vegetal",
   inGarden,
   toggling,
   onOpen,
@@ -86,7 +88,16 @@ export default function CatalogueIdeaCard({
         }}
       >
         <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-          <CataloguePlantVisual photo_url={photo_url} categorie={categorie} height={imageHeight} />
+          {catalogUniverse === "vegetal" ? (
+            <CataloguePlantVisual photo_url={photo_url} categorie={categorie} height={imageHeight} />
+          ) : (
+            <CatalogueUniverseVisual
+              photo_url={photo_url}
+              universe={catalogUniverse === "mineral" ? "mineral" : "amenagements"}
+              height={imageHeight}
+              photoFit={catalogUniverse === "mineral" ? "cover" : "contain"}
+            />
+          )}
         </div>
         {showHeart ? (
           <HeartToggle

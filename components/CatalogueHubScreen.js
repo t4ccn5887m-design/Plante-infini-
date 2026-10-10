@@ -4,14 +4,16 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import CatalogueIdeaCard from "@/components/catalogue/CatalogueIdeaCard";
-import { DECO_FAMILLES, filterCatalogueDeco } from "@/lib/catalogueDeco";
-import { MINERAL_FAMILLES, filterCatalogueMinerals } from "@/lib/catalogueMinerals";
+import { AMENAGEMENT_CATEGORIES, filterCatalogueDeco } from "@/lib/catalogueDeco";
+import { MINERAL_CATEGORIES, filterCatalogueMinerals } from "@/lib/catalogueMinerals";
 import {
   CATALOGUE_CATEGORIES,
   filterCataloguePlants,
 } from "@/lib/cataloguePlants";
 import {
+  buildAmenagementCardLine,
   buildCatalogueSubtitle,
+  buildMineralCardLine,
   buildVegetalCardLine,
   discoveryFromCatalogueItem,
 } from "@/lib/catalogueIdeesHelpers";
@@ -28,10 +30,8 @@ const TABS = [
   { id: "deco", label: "Aménagements" },
 ];
 
-function familleLabel(tab, familleId, t) {
-  if (tab === "vegetal") return familleId;
-  if (tab === "mineral") return t(`catalogue.mineral_famille_${familleId}`);
-  return t(`catalogue.deco_famille_${familleId}`);
+function subcategoryLabel(sub) {
+  return sub;
 }
 
 export default function CatalogueHubScreen({
@@ -44,6 +44,7 @@ export default function CatalogueHubScreen({
   onRequireAccount,
   onOpenItemDetail,
   onOpenCataloguePlant,
+  onOpenCatalogueItem,
 }) {
   const [tab, setTab] = useState(initialTab);
   const [sub, setSub] = useState(initialFilters.categorie || initialFilters.famille || "Tous");
@@ -78,8 +79,8 @@ export default function CatalogueHubScreen({
 
   const subOptions = useMemo(() => {
     if (tab === "vegetal") return ["Tous", ...CATALOGUE_CATEGORIES];
-    if (tab === "mineral") return ["Tous", ...MINERAL_FAMILLES];
-    return ["Tous", ...DECO_FAMILLES];
+    if (tab === "mineral") return ["Tous", ...MINERAL_CATEGORIES];
+    return ["Tous", ...AMENAGEMENT_CATEGORIES];
   }, [tab]);
 
   const filteredItems = useMemo(() => {
@@ -97,31 +98,33 @@ export default function CatalogueHubScreen({
       }));
     }
     if (tab === "mineral") {
-      const famille = sub === "Tous" ? null : sub;
-      return filterCatalogueMinerals({ famille }).map((m) => ({
+      const categorie = sub === "Tous" ? null : sub;
+      return filterCatalogueMinerals({ categorie }).map((m) => ({
         key: `m-${m.id}`,
         universe: "mineral",
         id: m.id,
         nom: m.nom,
         photo_url: m.photo_url,
-        subtitle: buildCatalogueSubtitle({ kind: "mineral", raw: m }, t),
+        categorie: m.categorie,
+        subtitle: buildMineralCardLine(m),
         raw: m,
       }));
     }
-    const famille = sub === "Tous" ? null : sub;
-    return filterCatalogueDeco({ famille }).map((d) => ({
+    const categorie = sub === "Tous" ? null : sub;
+    return filterCatalogueDeco({ categorie }).map((d) => ({
       key: `d-${d.id}`,
       universe: "deco",
       id: d.id,
       nom: d.nom,
       photo_url: d.photo_url,
-      subtitle: buildCatalogueSubtitle({ kind: "deco", raw: d }, t),
+      categorie: d.categorie,
+      subtitle: buildAmenagementCardLine(d),
       raw: d,
     }));
   }, [tab, sub, envie, t]);
 
   const countLabel = `${filteredItems.length} idée${filteredItems.length > 1 ? "s" : ""}${
-    sub !== "Tous" ? ` · ${tab === "vegetal" ? sub : familleLabel(tab, sub, t)}` : ""
+    sub !== "Tous" ? ` · ${subcategoryLabel(sub)}` : ""
   }${envie && tab === "vegetal" ? ` · ${envie}` : ""}`;
 
   const handleTabChange = (nextTab) => {
@@ -133,6 +136,10 @@ export default function CatalogueHubScreen({
   const openItem = (item) => {
     if (item.universe === "vegetal" && onOpenCataloguePlant) {
       onOpenCataloguePlant(item.id, "catalogue");
+      return;
+    }
+    if ((item.universe === "mineral" || item.universe === "deco") && onOpenCatalogueItem) {
+      onOpenCatalogueItem(item.universe, item.id, "catalogue");
       return;
     }
     onOpenItemDetail?.(discoveryFromCatalogueItem(item));
@@ -294,7 +301,7 @@ export default function CatalogueHubScreen({
         >
           {subOptions.map((label) => {
             const value = label === "Tous" ? "Tous" : label;
-            const display = tab === "vegetal" || label === "Tous" ? label : familleLabel(tab, label, t);
+            const display = label;
             return (
               <button
                 key={`${tab}-${label}`}
@@ -338,6 +345,7 @@ export default function CatalogueHubScreen({
               subtitle={item.subtitle}
               photo_url={item.photo_url}
               categorie={item.categorie}
+              catalogUniverse={item.universe}
               inGarden={inGarden(item)}
               toggling={togglingKey === item.key}
               onOpen={() => openItem(item)}

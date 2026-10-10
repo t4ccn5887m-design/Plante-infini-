@@ -26,6 +26,7 @@ function previewUrlForCandidate(c, displayVariant, rembgByKey, cacheKey) {
 }
 
 export default function AdminPlantPhotosPage() {
+  const [univers, setUnivers] = useState("vegetal");
   const [loading, setLoading] = useState(true);
   const [plants, setPlants] = useState([]);
   const [candidatesById, setCandidatesById] = useState({});
@@ -42,7 +43,7 @@ export default function AdminPlantPhotosPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/local/plant-photos");
+      const res = await fetch(`/api/local/plant-photos?univers=${encodeURIComponent(univers)}`);
       if (!res.ok) throw new Error("load_failed");
       const data = await res.json();
       setPlants(data.plants || []);
@@ -52,7 +53,7 @@ export default function AdminPlantPhotosPage() {
       setError("Impossible de charger les données.");
     }
     setLoading(false);
-  }, []);
+  }, [univers]);
 
   useEffect(() => {
     load();
@@ -127,7 +128,7 @@ export default function AdminPlantPhotosPage() {
         const res = await fetch("/api/local/plant-photos", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ catalogueId: current.id, ...payload }),
+          body: JSON.stringify({ catalogueId: current.id, univers, ...payload }),
         });
         if (!res.ok) throw new Error("save_failed");
         const data = await res.json();
@@ -221,9 +222,34 @@ export default function AdminPlantPhotosPage() {
           <header>
             <h1 style={{ margin: "0 0 6px", fontSize: 22, fontWeight: 700 }}>Photos catalogue</h1>
             <p style={{ margin: 0, fontSize: 14, color: "#5B6359" }}>
-              Plante entière · Wikimedia + Pixabay · 1–8 choisir · 0 aucune · B original / fond blanc · ← →
-              naviguer
+              Wikimedia + Pixabay · 1–8 choisir · 0 aucune · B original / fond blanc · ← → naviguer
             </p>
+            <div style={{ marginTop: 12, display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {[
+                { id: "vegetal", label: "Végétal" },
+                { id: "mineral", label: "Minéral" },
+                { id: "amenagements", label: "Aménagements" },
+              ].map((u) => (
+                <button
+                  key={u.id}
+                  type="button"
+                  onClick={() => {
+                    setUnivers(u.id);
+                    setIndex(0);
+                  }}
+                  style={{
+                    padding: "8px 12px",
+                    borderRadius: 10,
+                    border: univers === u.id ? "2px solid #1F2A22" : "1px solid #E4DED3",
+                    background: univers === u.id ? "#FFFFFF" : "#FAF8F4",
+                    fontWeight: univers === u.id ? 700 : 500,
+                    cursor: "pointer",
+                  }}
+                >
+                  {u.label}
+                </button>
+              ))}
+            </div>
           </header>
 
           <div
@@ -284,7 +310,8 @@ export default function AdminPlantPhotosPage() {
 
               {list.length === 0 ? (
                 <p style={{ fontSize: 14, color: "#5B6359" }}>
-                  Aucune candidate — lancez <code>node scripts/find-plant-photos.mjs</code>.
+                  Aucune candidate — lancez{" "}
+                  <code>{`node scripts/find-plant-photos.mjs --univers ${univers}`}</code>.
                 </p>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>

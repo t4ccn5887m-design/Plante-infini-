@@ -1,0 +1,946 @@
+[
+  {
+    "id": "dallage-calcaire",
+    "univers": "Minéral",
+    "nom": "Dallage calcaire",
+    "categorie": "Dallages et pavés",
+    "aspect": "Beige clair, lumineux",
+    "entretien": "Faible",
+    "budget": "€€",
+    "usages": [
+      "Terrasse",
+      "allée"
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Contemporain",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Une pierre claire et chaleureuse qui reste fraîche sous les pieds.",
+    "a_savoir": "Pierre tendre : choisir une version traitée contre les taches.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "travertin",
+    "univers": "Minéral",
+    "nom": "Travertin",
+    "categorie": "Dallages et pavés",
+    "aspect": "Beige ivoire, aspect vieilli",
+    "entretien": "Faible",
+    "budget": "€€",
+    "usages": [
+      "Terrasse",
+      "plage de piscine"
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "L'élégance de la pierre naturelle, avec un aspect patiné.",
+    "a_savoir": "Poreux : un traitement hydrofuge est conseillé.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "pierre-bleue",
+    "univers": "Minéral",
+    "nom": "Pierre bleue",
+    "categorie": "Dallages et pavés",
+    "aspect": "Gris bleuté",
+    "entretien": "Très faible",
+    "budget": "€€€",
+    "usages": [
+      "Terrasse",
+      "allée",
+      "marches"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Une pierre dense, robuste et intemporelle.",
+    "a_savoir": "Peut chauffer au soleil en version foncée.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "dalles-d-ardoise",
+    "univers": "Minéral",
+    "nom": "Dalles d'ardoise",
+    "categorie": "Dallages et pavés",
+    "aspect": "Gris anthracite",
+    "entretien": "Faible",
+    "budget": "€€",
+    "usages": [
+      "Terrasse",
+      "allée"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Zen"
+    ],
+    "pourquoi_on_laime": "Un sol sombre et graphique qui met les plantes en valeur.",
+    "a_savoir": "Peut devenir glissante si elle est mal choisie (préférer une finition rugueuse).",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "gres-cerame-effet-pierre",
+    "univers": "Minéral",
+    "nom": "Grès cérame effet pierre",
+    "categorie": "Dallages et pavés",
+    "aspect": "Toutes teintes",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Terrasse",
+      "plage de piscine"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Méditerranéen"
+    ],
+    "pourquoi_on_laime": "L'aspect de la pierre, sans taches ni entretien.",
+    "a_savoir": "Bien vérifier qu'il est classé antidérapant pour l'extérieur.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "gres-cerame-effet-bois",
+    "univers": "Minéral",
+    "nom": "Grès cérame effet bois",
+    "categorie": "Dallages et pavés",
+    "aspect": "Teintes bois",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Terrasse"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "L'aspect chaleureux du bois, sans le grisaillement ni l'entretien.",
+    "a_savoir": "Moins doux sous le pied que le vrai bois.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "paves-de-granit",
+    "univers": "Minéral",
+    "nom": "Pavés de granit",
+    "categorie": "Dallages et pavés",
+    "aspect": "Gris, beige ou rosé",
+    "entretien": "Très faible",
+    "budget": "€€€",
+    "usages": [
+      "Allée",
+      "accès voiture",
+      "bordure"
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "Une solidité à toute épreuve, qui supporte même les voitures.",
+    "a_savoir": "Joints à prévoir avec soin pour éviter les herbes.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "paves-en-terre-cuite",
+    "univers": "Minéral",
+    "nom": "Pavés en terre cuite",
+    "categorie": "Dallages et pavés",
+    "aspect": "Rouge orangé",
+    "entretien": "Faible",
+    "budget": "€€",
+    "usages": [
+      "Allée",
+      "terrasse"
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Méditerranéen"
+    ],
+    "pourquoi_on_laime": "Le charme d'une cour de maison de campagne.",
+    "a_savoir": "Peut se couvrir de mousse à l'ombre.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "opus-incertum",
+    "univers": "Minéral",
+    "nom": "Opus incertum",
+    "categorie": "Dallages et pavés",
+    "aspect": "Pierres irrégulières",
+    "entretien": "Faible",
+    "budget": "€€",
+    "usages": [
+      "Terrasse",
+      "allée"
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Un dallage aux formes libres, très naturel.",
+    "a_savoir": "Pose plus longue, donc plus coûteuse.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "tomettes-et-dalles-en-terre-cuite",
+    "univers": "Minéral",
+    "nom": "Tomettes et dalles en terre cuite",
+    "categorie": "Dallages et pavés",
+    "aspect": "Rouge, ocre",
+    "entretien": "Moyen",
+    "budget": "€€",
+    "usages": [
+      "Terrasse couverte"
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Une ambiance provençale chaleureuse.",
+    "a_savoir": "Sensible au gel : choisir une terre cuite ingélive.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "gravier-de-marbre-blanc",
+    "univers": "Minéral",
+    "nom": "Gravier de marbre blanc",
+    "categorie": "Graviers et paillages minéraux",
+    "aspect": "Blanc éclatant",
+    "entretien": "Faible",
+    "budget": "€",
+    "usages": [
+      "Massif",
+      "allée piétonne"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Zen",
+      "Méditerranéen"
+    ],
+    "pourquoi_on_laime": "Il illumine le jardin et fait ressortir les plantes.",
+    "a_savoir": "Éblouissant en plein soleil ; marque les traces.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "gravier-calcaire-beige",
+    "univers": "Minéral",
+    "nom": "Gravier calcaire beige",
+    "categorie": "Graviers et paillages minéraux",
+    "aspect": "Beige doré",
+    "entretien": "Faible",
+    "budget": "€",
+    "usages": [
+      "Allée",
+      "cour",
+      "massif"
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Un gravier doux et naturel, très polyvalent.",
+    "a_savoir": "Prévoir une bordure pour qu'il ne s'éparpille pas.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "galets-roules",
+    "univers": "Minéral",
+    "nom": "Galets roulés",
+    "categorie": "Graviers et paillages minéraux",
+    "aspect": "Gris, beige, blanc",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Massif",
+      "bord de bassin",
+      "rigole"
+    ],
+    "ambiances": [
+      "Zen",
+      "Contemporain",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Des pierres douces et polies qui évoquent l'eau.",
+    "a_savoir": "Peu confortable pour marcher.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "gravillon-de-basalte",
+    "univers": "Minéral",
+    "nom": "Gravillon de basalte",
+    "categorie": "Graviers et paillages minéraux",
+    "aspect": "Gris anthracite",
+    "entretien": "Faible",
+    "budget": "€",
+    "usages": [
+      "Allée",
+      "massif"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Zen"
+    ],
+    "pourquoi_on_laime": "Un gravier sombre et contemporain.",
+    "a_savoir": "Chauffe au soleil.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "paillage-d-ardoise",
+    "univers": "Minéral",
+    "nom": "Paillage d'ardoise",
+    "categorie": "Graviers et paillages minéraux",
+    "aspect": "Gris bleu à noir",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Massif",
+      "pied d'arbre"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Zen"
+    ],
+    "pourquoi_on_laime": "Un paillage décoratif qui limite les mauvaises herbes.",
+    "a_savoir": "Arêtes coupantes : à éviter là où les enfants jouent pieds nus.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "pouzzolane",
+    "univers": "Minéral",
+    "nom": "Pouzzolane",
+    "categorie": "Graviers et paillages minéraux",
+    "aspect": "Rouge brique",
+    "entretien": "Très faible",
+    "budget": "€",
+    "usages": [
+      "Massif",
+      "pied d'arbre",
+      "rocaille"
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Exotique",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Une roche volcanique légère qui garde l'humidité du sol.",
+    "a_savoir": "Couleur marquée, à associer avec soin.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "gravier-de-granit-rose",
+    "univers": "Minéral",
+    "nom": "Gravier de granit rose",
+    "categorie": "Graviers et paillages minéraux",
+    "aspect": "Rose, gris",
+    "entretien": "Faible",
+    "budget": "€",
+    "usages": [
+      "Allée",
+      "massif"
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Une teinte douce et originale.",
+    "a_savoir": "Prévoir une bordure de retenue.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "galets-plats-noirs",
+    "univers": "Minéral",
+    "nom": "Galets plats noirs",
+    "categorie": "Graviers et paillages minéraux",
+    "aspect": "Noir mat",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Massif",
+      "jardin sec"
+    ],
+    "ambiances": [
+      "Zen",
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "Un contraste fort et élégant dans un jardin zen.",
+    "a_savoir": "Chauffent fortement au soleil.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "pas-japonais-en-pierre-naturelle",
+    "univers": "Minéral",
+    "nom": "Pas japonais en pierre naturelle",
+    "categorie": "Pas japonais",
+    "aspect": "Pierre grise ou beige",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Cheminement dans le gazon ou le gravier"
+    ],
+    "ambiances": [
+      "Zen",
+      "Naturel",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Un chemin discret qui invite à la promenade.",
+    "a_savoir": "Bien les caler au niveau du gazon pour ne pas gêner la tonte.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "pas-japonais-en-ardoise",
+    "univers": "Minéral",
+    "nom": "Pas japonais en ardoise",
+    "categorie": "Pas japonais",
+    "aspect": "Gris foncé",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Cheminement"
+    ],
+    "ambiances": [
+      "Zen",
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "Des dalles fines et graphiques.",
+    "a_savoir": "Préférer une épaisseur d'au moins 3 cm.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "pas-japonais-en-beton",
+    "univers": "Minéral",
+    "nom": "Pas japonais en béton",
+    "categorie": "Pas japonais",
+    "aspect": "Gris, formes géométriques",
+    "entretien": "Très faible",
+    "budget": "€",
+    "usages": [
+      "Cheminement"
+    ],
+    "ambiances": [
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "Des formes nettes et modernes, à petit prix.",
+    "a_savoir": "Aspect plus brut que la pierre.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "rondins-de-bois",
+    "univers": "Minéral",
+    "nom": "Rondins de bois",
+    "categorie": "Pas japonais",
+    "aspect": "Rondelles de bois",
+    "entretien": "Moyen",
+    "budget": "€",
+    "usages": [
+      "Cheminement en sous-bois"
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Un chemin forestier tout naturel.",
+    "a_savoir": "Glissants quand ils sont humides et se dégradent avec le temps.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "muret-en-pierres-seches",
+    "univers": "Minéral",
+    "nom": "Muret en pierres sèches",
+    "categorie": "Murets et bordures",
+    "aspect": "Pierres empilées",
+    "entretien": "Très faible",
+    "budget": "€€€",
+    "usages": [
+      "Soutènement",
+      "délimitation"
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Naturel",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Un savoir-faire ancestral qui abrite aussi la petite faune.",
+    "a_savoir": "Demande un artisan qualifié.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "gabion",
+    "univers": "Minéral",
+    "nom": "Gabion",
+    "categorie": "Murets et bordures",
+    "aspect": "Pierres dans une cage métallique",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Muret",
+      "soutènement",
+      "brise-vue"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Un muret contemporain, solide et rapide à poser.",
+    "a_savoir": "Aspect massif : à habiller de plantes grimpantes si besoin.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "muret-en-briques",
+    "univers": "Minéral",
+    "nom": "Muret en briques",
+    "categorie": "Murets et bordures",
+    "aspect": "Rouge, orangé",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Délimitation",
+      "banc maçonné"
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Un muret chaleureux au charme ancien.",
+    "a_savoir": "Fondation nécessaire.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bordure-en-acier-corten",
+    "univers": "Minéral",
+    "nom": "Bordure en acier corten",
+    "categorie": "Murets et bordures",
+    "aspect": "Rouille",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Massif",
+      "allée"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Une ligne nette et fine qui se patine avec le temps.",
+    "a_savoir": "La rouille peut tacher les dallages clairs au début.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bordure-en-acier-galvanise",
+    "univers": "Minéral",
+    "nom": "Bordure en acier galvanisé",
+    "categorie": "Murets et bordures",
+    "aspect": "Gris métal",
+    "entretien": "Très faible",
+    "budget": "€",
+    "usages": [
+      "Massif",
+      "allée"
+    ],
+    "ambiances": [
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "Une séparation invisible entre gazon et massifs.",
+    "a_savoir": "Moins décorative que le corten.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bordure-en-paves",
+    "univers": "Minéral",
+    "nom": "Bordure en pavés",
+    "categorie": "Murets et bordures",
+    "aspect": "Granit ou grès",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Massif",
+      "allée"
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "Une finition propre et durable.",
+    "a_savoir": "Pose sur béton conseillée.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "enrochement",
+    "univers": "Minéral",
+    "nom": "Enrochement",
+    "categorie": "Murets et bordures",
+    "aspect": "Gros blocs de pierre",
+    "entretien": "Très faible",
+    "budget": "€€€",
+    "usages": [
+      "Talus",
+      "soutènement"
+    ],
+    "ambiances": [
+      "Naturel",
+      "Méditerranéen"
+    ],
+    "pourquoi_on_laime": "Il retient la terre d'un talus avec un aspect naturel.",
+    "a_savoir": "Nécessite un engin et une étude du terrain.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "rochers-decoratifs",
+    "univers": "Minéral",
+    "nom": "Rochers décoratifs",
+    "categorie": "Pierres et rochers",
+    "aspect": "Blocs naturels",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Massif",
+      "rocaille",
+      "jardin zen"
+    ],
+    "ambiances": [
+      "Zen",
+      "Naturel",
+      "Méditerranéen"
+    ],
+    "pourquoi_on_laime": "Un point fort qui structure un massif.",
+    "a_savoir": "Lourds : à placer dès le début du chantier.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "pierre-volcanique",
+    "univers": "Minéral",
+    "nom": "Pierre volcanique",
+    "categorie": "Pierres et rochers",
+    "aspect": "Noire, alvéolée",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Rocaille",
+      "jardin sec"
+    ],
+    "ambiances": [
+      "Exotique",
+      "Zen"
+    ],
+    "pourquoi_on_laime": "Une matière poreuse et graphique.",
+    "a_savoir": "Peu courante, donc parfois difficile à trouver.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "blocs-de-gres",
+    "univers": "Minéral",
+    "nom": "Blocs de grès",
+    "categorie": "Pierres et rochers",
+    "aspect": "Beige, ocre",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Marches",
+      "assises",
+      "massif"
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Des blocs qui servent à la fois de décor et de siège.",
+    "a_savoir": "Lourds à manipuler.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "beton-desactive",
+    "univers": "Minéral",
+    "nom": "Béton désactivé",
+    "categorie": "Sols coulés et stabilisés",
+    "aspect": "Gravillons apparents",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Allée",
+      "accès voiture"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Un sol continu, solide et antidérapant.",
+    "a_savoir": "Sol imperméable : prévoir l'écoulement des eaux.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "sable-stabilise",
+    "univers": "Minéral",
+    "nom": "Sable stabilisé",
+    "categorie": "Sols coulés et stabilisés",
+    "aspect": "Beige, aspect allée de parc",
+    "entretien": "Faible",
+    "budget": "€",
+    "usages": [
+      "Allée",
+      "cour"
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "L'aspect d'une allée de parc, qui laisse l'eau s'infiltrer.",
+    "a_savoir": "Peut se creuser avec le temps sur les pentes.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "gravier-stabilise-en-dalles-alveolaires",
+    "univers": "Minéral",
+    "nom": "Gravier stabilisé en dalles alvéolaires",
+    "categorie": "Sols coulés et stabilisés",
+    "aspect": "Gravier au choix",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Accès voiture",
+      "parking"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Le gravier ne bouge plus, même sous les voitures.",
+    "a_savoir": "Le fond de forme doit être bien préparé.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "resine-drainante",
+    "univers": "Minéral",
+    "nom": "Résine drainante",
+    "categorie": "Sols coulés et stabilisés",
+    "aspect": "Granulats colorés liés",
+    "entretien": "Très faible",
+    "budget": "€€€",
+    "usages": [
+      "Allée",
+      "contour de piscine"
+    ],
+    "ambiances": [
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "Un sol lisse, perméable et sans joints.",
+    "a_savoir": "Pose par un spécialiste.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  }
+]

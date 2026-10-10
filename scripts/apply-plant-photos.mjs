@@ -1,23 +1,23 @@
 #!/usr/bin/env node
 /**
- * Applique les photos validées (originale ou fond blanc) au catalogue.
- * Usage : node scripts/apply-plant-photos.mjs
+ * Applique les photos validées au catalogue (végétal, minéral, aménagements).
+ * Usage : node scripts/apply-plant-photos.mjs --univers vegetal|mineral|amenagements
  */
 
 import fs from "fs/promises";
 import path from "path";
 import sharp from "sharp";
+import { loadChoices } from "./photoCatalogueStore.mjs";
 import {
-  ROOT,
+  listCatalogueEntriesForUnivers,
   loadCatalogueJson,
-  listCataloguePlantsForScripts,
+  parseUniversArg,
+  publicCatalogueDir,
+  saveCatalogueJson,
 } from "./plantCatalogueIds.mjs";
 import { runRembgWhiteBackground, isRembgAvailable } from "./rembgRunner.mjs";
 
-const CHOICES_PATH = path.join(ROOT, "sevya/photo-choices.json");
-const CATALOGUE_PATH = path.join(ROOT, "sevya/catalogue-vegetal.json");
-const REMBG_CACHE_DIR = path.join(ROOT, "sevya/photo-rembg-cache");
-const OUT_DIR = path.join(ROOT, "public/catalogue/vegetal");
+const REMBG_CACHE_DIR = path.join(process.cwd(), "sevya/photo-rembg-cache");
 const DELAY_MS = 1100;
 
 function sleep(ms) {
@@ -50,26 +50,27 @@ async function loadImageForChoice(choice) {
 }
 
 async function main() {
-  let choices;
-  try {
-    choices = JSON.parse(await fs.readFile(CHOICES_PATH, "utf8"));
-  } catch {
-    console.error("sevya/photo-choices.json introuvable ou invalide.");
-    process.exit(1);
-  }
+  const univers = parseUniversArg();
+  const choices = await loadChoices();
 
-  const plants = await listCataloguePlantsForScripts();
-  const byCatalogueId = new Map(plants.map((p) => [p.catalogueId, p]));
+  const entries = await listCatalogueEntriesForUnivers(univers);
+  const byCatalogueId = new Map(entries.map((p) => [p.catalogueId, p]));
 
-  const catalogue = loadCatalogueJson();
+  const catalogue = loadCatalogueJson(univers);
   const jsonById = new Map(catalogue.map((row) => [row.id, row]));
 
-  await fs.mkdir(OUT_DIR, { recursive: true });
+  const outDir = publicCatalogueDir(univers);
+  await fs.mkdir(outDir, { recursive: true });
 
   let applied = 0;
   let skipped = 0;
 
   for (const [catalogueId, choice] of Object.entries(choices)) {
+    const meta = byCatalogueId.get(catalogueId);
+    if (!meta) {
+      continue;
+    }
+
     if (!choice || choice.status === "none") {
       skipped += 1;
       continue;
@@ -79,16 +80,10 @@ async function main() {
       continue;
     }
 
-    const meta = byCatalogueId.get(catalogueId);
-    if (!meta) {
-      console.warn(`Id catalogue inconnu : ${catalogueId}`);
-      continue;
-    }
-
     const candidate = choice.candidate;
     const detouree = (choice.displayVariant || "original") === "white_bg";
 
-    console.log(`Traitement ${catalogueId} (${detouree ? "fond blanc" : "original"})…`);
+    console.log(`Traitement ${catalogueId} (${univers}, ${detouree ? "fond blanc" : "original"})…`);
     const buf = await loadImageForChoice(choice);
     await sleep(DELAY_MS);
 
@@ -104,11 +99,13 @@ async function main() {
       .toBuffer();
 
     const outFile = `${catalogueId}.webp`;
-    await fs.writeFile(path.join(OUT_DIR, outFile), webp);
+    await fs.writeFile(path.join(outDir, outFile), webp);
 
     const row = jsonById.get(meta.jsonId);
     if (row) {
-      row.photo_url = `/catalogue/vegetal/${outFile}`;
+      const publicSegment =
+        univers === "mineral" ? "mineral" : univers === "amenagements" ? "amenagements" : "vegetal";
+      row.photo_url = `/catalogue/${publicSegment}/${outFile}`;
       row.photo_source = candidate.source || "";
       row.photo_auteur = candidate.author || "";
       row.photo_licence = candidate.licenseName || "";
@@ -120,9 +117,9 @@ async function main() {
     applied += 1;
   }
 
-  await fs.writeFile(CATALOGUE_PATH, `${JSON.stringify(catalogue, null, 2)}\n`, "utf8");
+  saveCatalogueJson(univers, catalogue);
 
-  console.log(`\n${applied} photo(s) appliquée(s), ${skipped} entrée(s) ignorée(s).`);
+  console.log(`\n${applied} photo(s) appliquée(s) (${univers}), ${skipped} entrée(s) ignorée(s).`);
 }
 
 main().catch((err) => {

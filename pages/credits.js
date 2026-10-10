@@ -52,7 +52,15 @@ export default function CreditsPage({ items }) {
                     padding: 14,
                   }}
                 >
-                  <div style={{ fontWeight: 700, fontSize: 16 }}>{item.nom}</div>
+                  <div style={{ fontWeight: 700, fontSize: 16 }}>
+                    {item.nom}
+                    {item.univers ? (
+                      <span style={{ fontWeight: 500, color: "#6B7268", fontSize: 13 }}>
+                        {" "}
+                        · {item.univers}
+                      </span>
+                    ) : null}
+                  </div>
                   <div style={{ fontSize: 13, fontStyle: "italic", color: "#5B6359", marginBottom: 8 }}>
                     {item.nom_latin}
                   </div>

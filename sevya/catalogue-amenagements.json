@@ -1,0 +1,899 @@
+[
+  {
+    "id": "pergola-bois",
+    "univers": "Aménagements",
+    "nom": "Pergola bois",
+    "categorie": "Pergolas et ombrages",
+    "aspect": "Bois naturel",
+    "entretien": "Moyen",
+    "budget": "€€",
+    "usages": [
+      "Terrasse",
+      "coin repas"
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Méditerranéen",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Une structure chaleureuse à couvrir de grimpantes.",
+    "a_savoir": "Le bois demande une lasure tous les quelques ans.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "pergola-metal",
+    "univers": "Aménagements",
+    "nom": "Pergola métal",
+    "categorie": "Pergolas et ombrages",
+    "aspect": "Acier ou aluminium",
+    "entretien": "Faible",
+    "budget": "€€",
+    "usages": [
+      "Terrasse"
+    ],
+    "ambiances": [
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "Des lignes fines et contemporaines.",
+    "a_savoir": "Peut chauffer au soleil sans végétation ni toile.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "pergola-bioclimatique",
+    "univers": "Aménagements",
+    "nom": "Pergola bioclimatique",
+    "categorie": "Pergolas et ombrages",
+    "aspect": "Aluminium, lames orientables",
+    "entretien": "Faible",
+    "budget": "€€€",
+    "usages": [
+      "Terrasse"
+    ],
+    "ambiances": [
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "On règle la lumière et l'aération selon la météo.",
+    "a_savoir": "Investissement important ; demande parfois une déclaration en mairie.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "voile-d-ombrage",
+    "univers": "Aménagements",
+    "nom": "Voile d'ombrage",
+    "categorie": "Pergolas et ombrages",
+    "aspect": "Toile tendue",
+    "entretien": "Faible",
+    "budget": "€",
+    "usages": [
+      "Terrasse",
+      "aire de jeux"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Exotique"
+    ],
+    "pourquoi_on_laime": "De l'ombre facile et légère, à petit prix.",
+    "a_savoir": "À démonter en cas de grand vent.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "tonnelle",
+    "univers": "Aménagements",
+    "nom": "Tonnelle",
+    "categorie": "Pergolas et ombrages",
+    "aspect": "Métal fin, arceaux",
+    "entretien": "Faible",
+    "budget": "€",
+    "usages": [
+      "Allée",
+      "coin repos"
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Un passage romantique couvert de rosiers.",
+    "a_savoir": "Structure légère, à bien ancrer.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bassin-naturel",
+    "univers": "Aménagements",
+    "nom": "Bassin naturel",
+    "categorie": "Bassins et eau",
+    "aspect": "Plantes aquatiques, bords en pente douce",
+    "entretien": "Moyen",
+    "budget": "€€",
+    "usages": [
+      "Coin nature"
+    ],
+    "ambiances": [
+      "Naturel",
+      "Zen",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Un point d'eau vivant qui attire grenouilles et libellules.",
+    "a_savoir": "Clôture ou grille de sécurité si de jeunes enfants vivent là.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bassin-miroir",
+    "univers": "Aménagements",
+    "nom": "Bassin miroir",
+    "categorie": "Bassins et eau",
+    "aspect": "Formes géométriques, eau calme",
+    "entretien": "Moyen",
+    "budget": "€€€",
+    "usages": [
+      "Terrasse",
+      "entrée"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Zen"
+    ],
+    "pourquoi_on_laime": "Un plan d'eau qui reflète le ciel et agrandit l'espace.",
+    "a_savoir": "Filtration à prévoir pour garder l'eau claire.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "fontaine-murale",
+    "univers": "Aménagements",
+    "nom": "Fontaine murale",
+    "categorie": "Bassins et eau",
+    "aspect": "Pierre ou métal",
+    "entretien": "Faible",
+    "budget": "€€",
+    "usages": [
+      "Mur",
+      "cour"
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre",
+      "Zen"
+    ],
+    "pourquoi_on_laime": "Le bruit apaisant de l'eau dans un petit espace.",
+    "a_savoir": "Pompe et prise extérieure nécessaires.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "lame-d-eau",
+    "univers": "Aménagements",
+    "nom": "Lame d'eau",
+    "categorie": "Bassins et eau",
+    "aspect": "Inox ou corten",
+    "entretien": "Faible",
+    "budget": "€€",
+    "usages": [
+      "Mur",
+      "bassin"
+    ],
+    "ambiances": [
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "Une cascade fine et contemporaine.",
+    "a_savoir": "Le calcaire peut laisser des traces.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "jarre-fontaine",
+    "univers": "Aménagements",
+    "nom": "Jarre fontaine",
+    "categorie": "Bassins et eau",
+    "aspect": "Terre cuite émaillée",
+    "entretien": "Faible",
+    "budget": "€",
+    "usages": [
+      "Terrasse",
+      "massif"
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Zen"
+    ],
+    "pourquoi_on_laime": "Une petite fontaine autonome, facile à installer.",
+    "a_savoir": "À rentrer ou vider en hiver si elle n'est pas ingélive.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "spots-encastres-au-sol",
+    "univers": "Aménagements",
+    "nom": "Spots encastrés au sol",
+    "categorie": "Éclairage",
+    "aspect": "Lumière rasante",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Allée",
+      "pied d'arbre"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Zen"
+    ],
+    "pourquoi_on_laime": "Ils soulignent les volumes sans se voir le jour.",
+    "a_savoir": "Raccordement électrique à prévoir avant les sols.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bornes-lumineuses",
+    "univers": "Aménagements",
+    "nom": "Bornes lumineuses",
+    "categorie": "Éclairage",
+    "aspect": "Petits potelets lumineux",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Allée",
+      "entrée"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Un balisage clair et sécurisant.",
+    "a_savoir": "Choisir une lumière chaude, moins agressive.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "guirlande-guinguette",
+    "univers": "Aménagements",
+    "nom": "Guirlande guinguette",
+    "categorie": "Éclairage",
+    "aspect": "Ampoules suspendues",
+    "entretien": "Très faible",
+    "budget": "€",
+    "usages": [
+      "Terrasse",
+      "pergola"
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Une ambiance festive et chaleureuse pour les soirées.",
+    "a_savoir": "Préférer une version étanche pour l'extérieur.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "projecteur-d-arbre",
+    "univers": "Aménagements",
+    "nom": "Projecteur d'arbre",
+    "categorie": "Éclairage",
+    "aspect": "Éclairage par en dessous",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Arbre remarquable"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Exotique",
+      "Zen"
+    ],
+    "pourquoi_on_laime": "Un arbre mis en valeur devient un tableau la nuit.",
+    "a_savoir": "Éviter d'éblouir les voisins.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "balisage-solaire",
+    "univers": "Aménagements",
+    "nom": "Balisage solaire",
+    "categorie": "Éclairage",
+    "aspect": "Petites lampes autonomes",
+    "entretien": "Très faible",
+    "budget": "€",
+    "usages": [
+      "Allée",
+      "massif"
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Aucun câble à tirer.",
+    "a_savoir": "Lumière plus faible en hiver.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "banc-en-pierre",
+    "univers": "Aménagements",
+    "nom": "Banc en pierre",
+    "categorie": "Mobilier",
+    "aspect": "Pierre massive",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Coin repos",
+      "allée"
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre",
+      "Zen"
+    ],
+    "pourquoi_on_laime": "Un banc intemporel qui traverse les années.",
+    "a_savoir": "Lourd : bien choisir son emplacement.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "salon-de-jardin-en-teck",
+    "univers": "Aménagements",
+    "nom": "Salon de jardin en teck",
+    "categorie": "Mobilier",
+    "aspect": "Bois de teck",
+    "entretien": "Moyen",
+    "budget": "€€€",
+    "usages": [
+      "Terrasse"
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "Un bois noble qui se patine joliment en gris argenté.",
+    "a_savoir": "Huiler chaque année pour garder sa couleur d'origine.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bain-de-soleil",
+    "univers": "Aménagements",
+    "nom": "Bain de soleil",
+    "categorie": "Mobilier",
+    "aspect": "Bois, métal ou résine",
+    "entretien": "Faible",
+    "budget": "€€",
+    "usages": [
+      "Plage de piscine",
+      "pelouse"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Méditerranéen",
+      "Exotique"
+    ],
+    "pourquoi_on_laime": "Pour profiter du jardin allongé.",
+    "a_savoir": "À ranger l'hiver pour qu'il dure.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "hamac",
+    "univers": "Aménagements",
+    "nom": "Hamac",
+    "categorie": "Mobilier",
+    "aspect": "Toile tendue",
+    "entretien": "Faible",
+    "budget": "€",
+    "usages": [
+      "Entre deux arbres",
+      "pergola"
+    ],
+    "ambiances": [
+      "Naturel",
+      "Exotique"
+    ],
+    "pourquoi_on_laime": "Le meilleur endroit pour une sieste à l'ombre.",
+    "a_savoir": "Vérifier la solidité des points d'accroche.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "brasero",
+    "univers": "Aménagements",
+    "nom": "Brasero",
+    "categorie": "Mobilier",
+    "aspect": "Acier ou corten",
+    "entretien": "Faible",
+    "budget": "€€",
+    "usages": [
+      "Terrasse",
+      "coin feu"
+    ],
+    "ambiances": [
+      "Naturel",
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "Prolonger les soirées autour du feu.",
+    "a_savoir": "Bien vérifier les règles locales sur les feux.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bac-en-acier-corten",
+    "univers": "Aménagements",
+    "nom": "Bac en acier corten",
+    "categorie": "Bacs et jardinières",
+    "aspect": "Rouille",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Terrasse",
+      "entrée"
+    ],
+    "ambiances": [
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "Un bac graphique qui se patine avec le temps.",
+    "a_savoir": "Peut tacher les sols clairs au début.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "jardiniere-en-bois",
+    "univers": "Aménagements",
+    "nom": "Jardinière en bois",
+    "categorie": "Bacs et jardinières",
+    "aspect": "Bois naturel",
+    "entretien": "Moyen",
+    "budget": "€",
+    "usages": [
+      "Terrasse",
+      "balcon"
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Chaleureuse et facile à intégrer partout.",
+    "a_savoir": "Prévoir un film intérieur pour protéger le bois.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "pots-en-terre-cuite",
+    "univers": "Aménagements",
+    "nom": "Pots en terre cuite",
+    "categorie": "Bacs et jardinières",
+    "aspect": "Terre cuite",
+    "entretien": "Faible",
+    "budget": "€",
+    "usages": [
+      "Terrasse",
+      "escalier"
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Le grand classique, qui laisse respirer les racines.",
+    "a_savoir": "Choisir une terre cuite ingélive.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "vase-d-anduze",
+    "univers": "Aménagements",
+    "nom": "Vase d'Anduze",
+    "categorie": "Bacs et jardinières",
+    "aspect": "Terre cuite vernissée",
+    "entretien": "Faible",
+    "budget": "€€€",
+    "usages": [
+      "Point focal",
+      "entrée"
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Un vase emblématique des jardins du Sud.",
+    "a_savoir": "Fragile et précieux : le placer à l'abri des chocs.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "carre-sureleve",
+    "univers": "Aménagements",
+    "nom": "Carré surélevé",
+    "categorie": "Bacs et jardinières",
+    "aspect": "Bois ou métal",
+    "entretien": "Moyen",
+    "budget": "€",
+    "usages": [
+      "Coin aromatiques ou potager"
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Jardiner sans se baisser, avec une terre bien drainée.",
+    "a_savoir": "Le remplissage en terre demande un gros volume.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "claustra-en-bois",
+    "univers": "Aménagements",
+    "nom": "Claustra en bois",
+    "categorie": "Clôtures et brise-vue",
+    "aspect": "Lames de bois",
+    "entretien": "Moyen",
+    "budget": "€€",
+    "usages": [
+      "Terrasse",
+      "limite de propriété"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Un brise-vue léger qui laisse passer l'air.",
+    "a_savoir": "Le bois grisaille sans entretien.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "ganivelle-en-chataignier",
+    "univers": "Aménagements",
+    "nom": "Ganivelle en châtaignier",
+    "categorie": "Clôtures et brise-vue",
+    "aspect": "Lattes de châtaignier",
+    "entretien": "Très faible",
+    "budget": "€",
+    "usages": [
+      "Clôture",
+      "bordure de massif"
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Une clôture naturelle et rustique.",
+    "a_savoir": "Brise-vue partiel seulement.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "brande-de-bruyere",
+    "univers": "Aménagements",
+    "nom": "Brande de bruyère",
+    "categorie": "Clôtures et brise-vue",
+    "aspect": "Bruyère naturelle",
+    "entretien": "Très faible",
+    "budget": "€",
+    "usages": [
+      "Brise-vue sur grillage"
+    ],
+    "ambiances": [
+      "Naturel",
+      "Exotique"
+    ],
+    "pourquoi_on_laime": "Un brise-vue naturel et immédiat.",
+    "a_savoir": "Se dégrade en 8 à 10 ans environ.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "panneau-en-acier-decoupe",
+    "univers": "Aménagements",
+    "nom": "Panneau en acier découpé",
+    "categorie": "Clôtures et brise-vue",
+    "aspect": "Corten ou acier peint, motifs",
+    "entretien": "Très faible",
+    "budget": "€€€",
+    "usages": [
+      "Limite",
+      "mur",
+      "entrée"
+    ],
+    "ambiances": [
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "Un brise-vue décoratif qui joue avec la lumière.",
+    "a_savoir": "Investissement plus important.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "treillage",
+    "univers": "Aménagements",
+    "nom": "Treillage",
+    "categorie": "Clôtures et brise-vue",
+    "aspect": "Bois ou métal",
+    "entretien": "Faible",
+    "budget": "€",
+    "usages": [
+      "Mur",
+      "support de grimpantes"
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Le support idéal pour faire grimper rosiers et clématites.",
+    "a_savoir": "À fixer solidement.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "terrasse-en-bois-exotique",
+    "univers": "Aménagements",
+    "nom": "Terrasse en bois exotique",
+    "categorie": "Terrasses en bois",
+    "aspect": "Ipé, cumaru…",
+    "entretien": "Faible",
+    "budget": "€€€",
+    "usages": [
+      "Terrasse",
+      "plage de piscine"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Exotique"
+    ],
+    "pourquoi_on_laime": "Un bois très dense et durable.",
+    "a_savoir": "Préférer un bois issu de forêts gérées durablement (label FSC).",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "terrasse-en-bois-composite",
+    "univers": "Aménagements",
+    "nom": "Terrasse en bois composite",
+    "categorie": "Terrasses en bois",
+    "aspect": "Teintes bois ou gris",
+    "entretien": "Très faible",
+    "budget": "€€",
+    "usages": [
+      "Terrasse"
+    ],
+    "ambiances": [
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "Ni échardes ni lasure à prévoir.",
+    "a_savoir": "Peut chauffer en plein soleil.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "terrasse-en-pin-traite",
+    "univers": "Aménagements",
+    "nom": "Terrasse en pin traité",
+    "categorie": "Terrasses en bois",
+    "aspect": "Bois clair",
+    "entretien": "Moyen",
+    "budget": "€",
+    "usages": [
+      "Terrasse"
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "La solution bois la plus abordable.",
+    "a_savoir": "Durée de vie plus courte qu'un bois exotique.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "abri-de-jardin",
+    "univers": "Aménagements",
+    "nom": "Abri de jardin",
+    "categorie": "Structures",
+    "aspect": "Bois ou métal",
+    "entretien": "Faible",
+    "budget": "€€",
+    "usages": [
+      "Rangement"
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Tout ranger sans encombrer le garage.",
+    "a_savoir": "Déclaration en mairie selon la surface.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "cuisine-d-ete",
+    "univers": "Aménagements",
+    "nom": "Cuisine d'été",
+    "categorie": "Structures",
+    "aspect": "Maçonnée ou en modules",
+    "entretien": "Faible",
+    "budget": "€€€",
+    "usages": [
+      "Terrasse"
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "Cuisiner dehors avec ses invités.",
+    "a_savoir": "Arrivées d'eau et d'électricité à prévoir.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  }
+]

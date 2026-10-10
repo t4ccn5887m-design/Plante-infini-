@@ -4,8 +4,6 @@
  * Usage : node scripts/find-plant-photos.mjs
  */
 
-import fs from "fs/promises";
-import path from "path";
 import {
   DELAY_MS,
   MAX_CANDIDATES,
@@ -18,12 +16,17 @@ import {
   textLooksLikeMacro,
 } from "./photoCandidateUtils.mjs";
 import {
-  ROOT,
-  listCataloguePlantsForScripts,
+  getCandidateBucket,
+  loadCandidatesStore,
+  saveCandidatesStore,
+} from "./photoCatalogueStore.mjs";
+import {
+  listCatalogueEntriesForUnivers,
   loadEnvLocal,
+  parseUniversArg,
 } from "./plantCatalogueIds.mjs";
 
-const CANDIDATES_PATH = path.join(ROOT, "sevya/photo-candidates.json");
+const PEOPLE_KEYWORDS = ["person", "people", "portrait", "woman", "man", "child", "face", "selfie"];
 const COMMONS_API = "https://commons.wikimedia.org/w/api.php";
 
 function dedupeKey(c) {
@@ -115,7 +118,12 @@ async function fetchImageInfos(titles) {
   return out;
 }
 
-function mapWikimediaHit(title, info, searchQuery) {
+function textLooksLikePeople(...parts) {
+  const blob = parts.join(" ").toLowerCase();
+  return PEOPLE_KEYWORDS.some((kw) => blob.includes(kw));
+}
+
+function mapWikimediaHit(title, info, searchQuery, { rejectMacro = true, rejectPeople = false } = {}) {
   const meta = info.extmetadata || {};
   const licenseName = stripHtml(meta.LicenseShortName?.value || "");
   const licenseUrl = stripHtml(meta.LicenseUrl?.value || "");
@@ -127,7 +135,8 @@ function mapWikimediaHit(title, info, searchQuery) {
   if (width < MIN_IMAGE_WIDTH) return null;
   if (mime && !mime.startsWith("image/")) return null;
   if (!isWikimediaLicenseAccepted(licenseName, licenseUrl)) return null;
-  if (textLooksLikeMacro(title, description)) return null;
+  if (rejectMacro && textLooksLikeMacro(title, description)) return null;
+  if (rejectPeople && textLooksLikePeople(title, description)) return null;
 
   const hdUrl = info.url;
   const thumbnailUrl = info.thumburl || info.url;
@@ -148,7 +157,7 @@ function mapWikimediaHit(title, info, searchQuery) {
   };
 }
 
-async function collectWikimedia(nom_latin) {
+async function collectWikimedia(nom_latin, options = {}) {
   if (!nom_latin?.trim()) return [];
 
   const seenTitles = new Set();
@@ -186,7 +195,7 @@ async function collectWikimedia(nom_latin) {
     const queryByTitle = new Map(batch.map((b) => [b.title, b.searchQuery]));
 
     for (const { title, info } of infos) {
-      const mapped = mapWikimediaHit(title, info, queryByTitle.get(title));
+      const mapped = mapWikimediaHit(title, info, queryByTitle.get(title), options);
       if (mapped) candidates.push(mapped);
       if (candidates.length >= MAX_CANDIDATES) break;
     }
@@ -292,77 +301,147 @@ async function collectPixabay(plant, apiKey, slotsLeft) {
   return candidates;
 }
 
-async function loadExisting() {
-  try {
-    return JSON.parse(await fs.readFile(CANDIDATES_PATH, "utf8"));
-  } catch {
-    return { updatedAt: null, plants: {} };
+async function collectPixabayQueries(queries, apiKey, slotsLeft, mapFn) {
+  const candidates = [];
+  const seen = new Set();
+  for (const q of queries) {
+    if (candidates.length >= slotsLeft) break;
+    console.log(`  → Pixabay « ${q} »`);
+    const hits = await fetchPixabay(q, apiKey);
+    await sleep(DELAY_MS);
+    for (const hit of hits) {
+      const mapped = mapFn(hit, q);
+      if (!mapped) continue;
+      const key = dedupeKey(mapped);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      candidates.push(mapped);
+      if (candidates.length >= slotsLeft) break;
+    }
+  }
+  return candidates;
+}
+
+function mapPixabayHitAmenagements(hit, searchQuery) {
+  if (textLooksLikePeople(hit.pageURL || "", hit.tags || "")) return null;
+  if (pixabayTagsLookLikeMacro(hit.tags)) return null;
+  return mapPixabayHit(hit, searchQuery);
+}
+
+function mapPixabayHitMineral(hit, searchQuery) {
+  return mapPixabayHit(hit, searchQuery);
+}
+
+async function collectForMineral(entry, apiKey) {
+  const nom = entry.nom;
+  let candidates = await collectWikimedia(nom, { rejectMacro: false });
+  const slotsLeft = MAX_CANDIDATES - candidates.length;
+  if (slotsLeft > 0 && apiKey) {
+    const fromPx = await collectPixabayQueries(
+      [`${nom} texture`, `${nom} garden path`, `${nom} terrace`],
+      apiKey,
+      slotsLeft,
+      mapPixabayHitMineral
+    );
+    mergeCandidates(candidates, fromPx, MAX_CANDIDATES);
+  }
+  return candidates.slice(0, MAX_CANDIDATES);
+}
+
+async function collectForAmenagements(entry, apiKey) {
+  const nom = entry.nom;
+  let candidates = await collectWikimedia(nom, { rejectMacro: false, rejectPeople: true });
+  const slotsLeft = MAX_CANDIDATES - candidates.length;
+  if (slotsLeft > 0 && apiKey) {
+    const fromPx = await collectPixabayQueries(
+      [`garden ${nom}`, `${nom} backyard`],
+      apiKey,
+      slotsLeft,
+      mapPixabayHitAmenagements
+    );
+    mergeCandidates(candidates, fromPx, MAX_CANDIDATES);
+  }
+  return candidates.slice(0, MAX_CANDIDATES);
+}
+
+function mergeCandidates(target, extra, max) {
+  const seen = new Set(target.map(dedupeKey));
+  for (const c of extra) {
+    const k = dedupeKey(c);
+    if (seen.has(k)) continue;
+    seen.add(k);
+    target.push(c);
+    if (target.length >= max) break;
   }
 }
 
+async function collectForVegetal(entry, apiKey) {
+  let candidates = [];
+  console.log("  Wikimedia Commons…");
+  candidates = await collectWikimedia(entry.nom_latin);
+  const slotsLeft = MAX_CANDIDATES - candidates.length;
+  if (slotsLeft > 0) {
+    if (!apiKey) {
+      console.warn("  PIXABAY_API_KEY absente — Pixabay ignoré.");
+    } else {
+      console.log(`  Pixabay (jusqu'à ${slotsLeft} de plus)…`);
+      const fromPx = await collectPixabay(entry, apiKey, slotsLeft);
+      mergeCandidates(candidates, fromPx, MAX_CANDIDATES);
+    }
+  }
+  return candidates.slice(0, MAX_CANDIDATES);
+}
+
 async function main() {
+  const univers = parseUniversArg();
   const env = loadEnvLocal();
   const apiKey = env.PIXABAY_API_KEY?.trim() || "";
 
-  const plants = await listCataloguePlantsForScripts();
-  const store = await loadExisting();
-  if (!store.plants) store.plants = {};
+  const entries = await listCatalogueEntriesForUnivers(univers);
+  const store = await loadCandidatesStore();
+  const bucket = getCandidateBucket(store, univers);
 
   let processed = 0;
   let skipped = 0;
 
-  for (const plant of plants) {
-    const id = plant.catalogueId;
-    const existing = store.plants[id];
+  for (const entry of entries) {
+    const id = entry.catalogueId;
+    const existing = bucket[id];
     if (existing?.candidates?.length > 0) {
       skipped += 1;
       continue;
     }
 
-    console.log(`\n[${processed + skipped + 1}/${plants.length}] ${plant.nom} (${id})`);
+    console.log(`\n[${processed + skipped + 1}/${entries.length}] ${entry.nom} (${id}) — ${univers}`);
 
     let candidates = [];
-    console.log("  Wikimedia Commons…");
-    candidates = await collectWikimedia(plant.nom_latin);
-
-    const slotsLeft = MAX_CANDIDATES - candidates.length;
-    if (slotsLeft > 0) {
-      if (!apiKey) {
-        console.warn("  PIXABAY_API_KEY absente — Pixabay ignoré.");
-      } else {
-        console.log(`  Pixabay (jusqu'à ${slotsLeft} de plus)…`);
-        const fromPx = await collectPixabay(plant, apiKey, slotsLeft);
-        const seen = new Set(candidates.map(dedupeKey));
-        for (const c of fromPx) {
-          const k = dedupeKey(c);
-          if (seen.has(k)) continue;
-          seen.add(k);
-          candidates.push(c);
-          if (candidates.length >= MAX_CANDIDATES) break;
-        }
-      }
+    if (univers === "vegetal") {
+      candidates = await collectForVegetal(entry, apiKey);
+    } else if (univers === "mineral") {
+      console.log("  Wikimedia Commons…");
+      candidates = await collectForMineral(entry, apiKey);
+    } else {
+      console.log("  Wikimedia Commons…");
+      candidates = await collectForAmenagements(entry, apiKey);
     }
 
-    candidates = candidates.slice(0, MAX_CANDIDATES);
-
-    store.plants[id] = {
+    bucket[id] = {
       catalogueId: id,
-      jsonId: plant.jsonId,
-      nom: plant.nom,
-      nom_latin: plant.nom_latin,
-      categorie: plant.categorie,
+      jsonId: entry.jsonId,
+      nom: entry.nom,
+      nom_latin: entry.nom_latin || "",
+      categorie: entry.categorie,
+      univers,
       fetchedAt: new Date().toISOString(),
       candidates,
     };
     processed += 1;
-    store.updatedAt = new Date().toISOString();
-    await fs.writeFile(CANDIDATES_PATH, `${JSON.stringify(store, null, 2)}\n`, "utf8");
+    await saveCandidatesStore(store);
   }
 
-  store.updatedAt = new Date().toISOString();
-  await fs.writeFile(CANDIDATES_PATH, `${JSON.stringify(store, null, 2)}\n`, "utf8");
+  await saveCandidatesStore(store);
 
-  console.log(`\nTerminé. ${processed} plante(s) traitées, ${skipped} déjà en cache.`);
+  console.log(`\nTerminé (${univers}). ${processed} entrée(s) traitées, ${skipped} déjà en cache.`);
 }
 
 main().catch((err) => {

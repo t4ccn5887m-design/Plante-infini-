@@ -107,6 +107,7 @@ export default function IdeesAccueilScreen({
   onOpenAmbiances,
   onOpenItemDetail,
   onOpenCataloguePlant,
+  onOpenCatalogueItem,
 }) {
   const [search, setSearch] = useState("");
   const [quizNotice, setQuizNotice] = useState(null);
@@ -150,6 +151,10 @@ export default function IdeesAccueilScreen({
   const openPlant = (item) => {
     if (item.universe === "vegetal" && onOpenCataloguePlant) {
       onOpenCataloguePlant(item.id, "catalogue");
+      return;
+    }
+    if ((item.universe === "mineral" || item.universe === "deco") && onOpenCatalogueItem) {
+      onOpenCatalogueItem(item.universe, item.id, "catalogue");
       return;
     }
     onOpenItemDetail?.(discoveryFromCatalogueItem(item));
@@ -257,6 +262,7 @@ export default function IdeesAccueilScreen({
                 subtitle={item.subtitle}
                 photo_url={item.photo_url}
                 categorie={item.categorie}
+                catalogUniverse={item.universe}
                 inGarden={inGarden(item)}
                 toggling={togglingKey === item.key}
                 onOpen={() => openPlant(item)}
