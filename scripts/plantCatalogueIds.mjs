@@ -14,6 +14,22 @@ export const LEGACY_JSON_ID_LINKS = {
   "geranium-rozanne": "geranium-vivace",
 };
 
+export const MINERAL_LEGACY_JSON_ID_LINKS = {
+  "dalles-travertin": "travertin",
+  "bordure-acier-corten": "bordure-en-acier-corten",
+  "gravier-blanc": "gravier-de-marbre-blanc",
+  "galet-riviere": "galets-roules",
+  "pas-japonais-gres": "pas-japonais-en-pierre-naturelle",
+  "ardoise-concassee": "paillage-d-ardoise",
+  "rocher-ardoise": "rochers-decoratifs",
+};
+
+export const AMENAGEMENT_LEGACY_JSON_ID_LINKS = {
+  "claustra-bois": "claustra-en-bois",
+  "pot-terre-cuite": "pots-en-terre-cuite",
+  "borne-solaire": "balisage-solaire",
+};
+
 function normalizeKey(value) {
   return String(value || "")
     .trim()
@@ -79,11 +95,16 @@ export function publicCatalogueDir(univers = "vegetal") {
   return path.join(ROOT, "public/catalogue/vegetal");
 }
 
-async function resolveLegacyIdByNom(row, legacyItems) {
+async function resolveLegacyIdForJsonRow(row, legacyItems, manualLinks) {
   const byNom = new Map();
   for (const item of legacyItems) {
     byNom.set(normalizeKey(item.nom), item);
   }
+  const jsonIdToLegacyId = new Map(
+    Object.entries(manualLinks).map(([legacyId, jsonId]) => [jsonId, legacyId])
+  );
+  const linkedLegacyId = jsonIdToLegacyId.get(row.id);
+  if (linkedLegacyId) return linkedLegacyId;
   const legacy = byNom.get(normalizeKey(row.nom));
   return legacy ? legacy.id : row.id;
 }
@@ -132,7 +153,7 @@ export async function listCatalogueEntriesForUnivers(univers) {
     return Promise.all(
       rows.map(async (row) => ({
         univers: "mineral",
-        catalogueId: await resolveLegacyIdByNom(row, legacy),
+        catalogueId: await resolveLegacyIdForJsonRow(row, legacy, MINERAL_LEGACY_JSON_ID_LINKS),
         jsonId: row.id,
         nom: row.nom,
         nom_latin: "",
@@ -148,7 +169,7 @@ export async function listCatalogueEntriesForUnivers(univers) {
     return Promise.all(
       rows.map(async (row) => ({
         univers: "amenagements",
-        catalogueId: await resolveLegacyIdByNom(row, legacy),
+        catalogueId: await resolveLegacyIdForJsonRow(row, legacy, AMENAGEMENT_LEGACY_JSON_ID_LINKS),
         jsonId: row.id,
         nom: row.nom,
         nom_latin: "",
