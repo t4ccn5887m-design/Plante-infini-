@@ -1,12 +1,22 @@
 #!/usr/bin/env node
 /**
- * Recherche de candidates Pixabay pour le catalogue végétal.
+ * Candidates Wikimedia Commons + Pixabay pour le catalogue végétal (plante entière).
  * Usage : node scripts/find-plant-photos.mjs
- * Prérequis : PIXABAY_API_KEY dans .env.local
  */
 
 import fs from "fs/promises";
 import path from "path";
+import {
+  DELAY_MS,
+  MAX_CANDIDATES,
+  MIN_IMAGE_WIDTH,
+  WIKIMEDIA_USER_AGENT,
+  isWikimediaLicenseAccepted,
+  pixabayTagsLookLikeMacro,
+  sleep,
+  stripHtml,
+  textLooksLikeMacro,
+} from "./photoCandidateUtils.mjs";
 import {
   ROOT,
   listCataloguePlantsForScripts,
@@ -14,36 +24,192 @@ import {
 } from "./plantCatalogueIds.mjs";
 
 const CANDIDATES_PATH = path.join(ROOT, "sevya/photo-candidates.json");
-const DELAY_MS = 1100;
-const MAX_CANDIDATES = 6;
-const MIN_RESULTS_BEFORE_FRENCH = 4;
+const COMMONS_API = "https://commons.wikimedia.org/w/api.php";
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+function dedupeKey(c) {
+  if (c.source === "Pixabay") return `px:${c.pixabayId}`;
+  return `wm:${c.wikimediaTitle || c.pageUrl}`;
 }
 
-function mapHit(hit) {
+async function wikimediaFetch(params) {
+  const url = new URL(COMMONS_API);
+  url.searchParams.set("format", "json");
+  url.searchParams.set("origin", "*");
+  for (const [k, v] of Object.entries(params)) {
+    url.searchParams.set(k, v);
+  }
+
+  while (true) {
+    const res = await fetch(url, {
+      headers: { "User-Agent": WIKIMEDIA_USER_AGENT },
+    });
+    if (res.status === 429) {
+      console.warn("Wikimedia 429 — pause 30 s…");
+      await sleep(30000);
+      continue;
+    }
+    if (!res.ok) {
+      throw new Error(`Wikimedia ${res.status}`);
+    }
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.info || "Wikimedia error");
+    return data;
+  }
+}
+
+async function listCategoryFiles(categoryTitle) {
+  const files = [];
+  let cmcontinue;
+  do {
+    const data = await wikimediaFetch({
+      action: "query",
+      list: "categorymembers",
+      cmtitle: categoryTitle,
+      cmtype: "file",
+      cmlimit: "50",
+      ...(cmcontinue ? { cmcontinue } : {}),
+    });
+    await sleep(DELAY_MS);
+    const batch = data.query?.categorymembers || [];
+    files.push(...batch.map((m) => m.title).filter(Boolean));
+    cmcontinue = data.continue?.cmcontinue;
+  } while (cmcontinue && files.length < 80);
+  return files;
+}
+
+async function searchFileNamespace(query) {
+  const data = await wikimediaFetch({
+    action: "query",
+    generator: "search",
+    gsrsearch: query,
+    gsrnamespace: "6",
+    gsrlimit: "30",
+    prop: "info",
+  });
+  await sleep(DELAY_MS);
+  const pages = data.query?.pages || {};
+  return Object.values(pages)
+    .map((p) => p.title)
+    .filter((t) => t?.startsWith("File:"));
+}
+
+async function fetchImageInfos(titles) {
+  if (!titles.length) return [];
+  const chunk = titles.slice(0, 40);
+  const data = await wikimediaFetch({
+    action: "query",
+    titles: chunk.join("|"),
+    prop: "imageinfo",
+    iiprop: "url|size|extmetadata|mime",
+    iiurlwidth: "800",
+  });
+  await sleep(DELAY_MS);
+
+  const pages = data.query?.pages || {};
+  const out = [];
+  for (const page of Object.values(pages)) {
+    const info = page.imageinfo?.[0];
+    if (!info) continue;
+    out.push({ title: page.title, info });
+  }
+  return out;
+}
+
+function mapWikimediaHit(title, info, searchQuery) {
+  const meta = info.extmetadata || {};
+  const licenseName = stripHtml(meta.LicenseShortName?.value || "");
+  const licenseUrl = stripHtml(meta.LicenseUrl?.value || "");
+  const artist = stripHtml(meta.Artist?.value || meta.Credit?.value || "");
+  const description = stripHtml(meta.ImageDescription?.value || "");
+
+  const width = info.width || 0;
+  const mime = info.mime || "";
+  if (width < MIN_IMAGE_WIDTH) return null;
+  if (mime && !mime.startsWith("image/")) return null;
+  if (!isWikimediaLicenseAccepted(licenseName, licenseUrl)) return null;
+  if (textLooksLikeMacro(title, description)) return null;
+
+  const hdUrl = info.url;
+  const thumbnailUrl = info.thumburl || info.url;
+  if (!hdUrl) return null;
+
+  const pageUrl = `https://commons.wikimedia.org/wiki/${encodeURIComponent(title.replace(/ /g, "_"))}`;
+
   return {
-    pixabayId: hit.id,
-    previewUrl: hit.previewURL,
-    hdUrl: hit.largeImageURL || hit.webformatURL || hit.previewURL,
-    author: hit.user,
-    pageUrl: hit.pageURL,
+    source: "Wikimedia",
+    wikimediaTitle: title,
+    hdUrl,
+    thumbnailUrl,
+    author: artist || "Auteur inconnu",
+    licenseName,
+    licenseUrl,
+    pageUrl,
+    searchQuery,
   };
 }
 
-async function fetchPixabay(query, apiKey) {
+async function collectWikimedia(nom_latin) {
+  if (!nom_latin?.trim()) return [];
+
+  const seenTitles = new Set();
+  const titleList = [];
+
+  const catName = `Category:${nom_latin.trim()}`;
+  try {
+    const fromCat = await listCategoryFiles(catName);
+    for (const t of fromCat) {
+      if (!seenTitles.has(t)) {
+        seenTitles.add(t);
+        titleList.push({ title: t, searchQuery: `category:${catName}` });
+      }
+    }
+  } catch (e) {
+    console.warn(`  Wikimedia catégorie : ${e.message}`);
+  }
+
+  try {
+    const fromSearch = await searchFileNamespace(nom_latin.trim());
+    for (const t of fromSearch) {
+      if (!seenTitles.has(t)) {
+        seenTitles.add(t);
+        titleList.push({ title: t, searchQuery: `search:${nom_latin.trim()}` });
+      }
+    }
+  } catch (e) {
+    console.warn(`  Wikimedia recherche : ${e.message}`);
+  }
+
+  const candidates = [];
+  for (let i = 0; i < titleList.length && candidates.length < MAX_CANDIDATES; i += 40) {
+    const batch = titleList.slice(i, i + 40);
+    const infos = await fetchImageInfos(batch.map((b) => b.title));
+    const queryByTitle = new Map(batch.map((b) => [b.title, b.searchQuery]));
+
+    for (const { title, info } of infos) {
+      const mapped = mapWikimediaHit(title, info, queryByTitle.get(title));
+      if (mapped) candidates.push(mapped);
+      if (candidates.length >= MAX_CANDIDATES) break;
+    }
+  }
+
+  return candidates;
+}
+
+async function fetchPixabay(query, apiKey, extraParams = {}) {
   const url = new URL("https://pixabay.com/api/");
   url.searchParams.set("key", apiKey);
   url.searchParams.set("q", query);
   url.searchParams.set("image_type", "photo");
   url.searchParams.set("per_page", "20");
   url.searchParams.set("safesearch", "true");
+  for (const [k, v] of Object.entries(extraParams)) {
+    url.searchParams.set(k, v);
+  }
 
   while (true) {
     const res = await fetch(url);
     if (res.status === 429) {
-      console.warn("Pixabay 429 — pause 30 s puis nouvel essai…");
+      console.warn("Pixabay 429 — pause 30 s…");
       await sleep(30000);
       continue;
     }
@@ -56,21 +222,70 @@ async function fetchPixabay(query, apiKey) {
   }
 }
 
-async function collectCandidates(queries, apiKey) {
-  const seen = new Set();
+function mapPixabayHit(hit, searchQuery) {
+  const tags = hit.tags || "";
+  if (pixabayTagsLookLikeMacro(tags)) return null;
+  if (textLooksLikeMacro(hit.pageURL || "", tags)) return null;
+
+  const width = hit.imageWidth || hit.webformatWidth || 0;
+  if (width > 0 && width < MIN_IMAGE_WIDTH) return null;
+
+  return {
+    source: "Pixabay",
+    pixabayId: hit.id,
+    hdUrl: hit.largeImageURL || hit.webformatURL || hit.previewURL,
+    thumbnailUrl: hit.previewURL || hit.webformatURL,
+    author: hit.user || "",
+    licenseName: "Pixabay License",
+    licenseUrl: "https://pixabay.com/service/license/",
+    pageUrl: hit.pageURL,
+    searchQuery,
+  };
+}
+
+function pixabayQueriesForPlant(nom_latin, categorie) {
+  const latin = nom_latin.trim();
+  const queries = [`${latin} whole plant`];
+
+  const cat = categorie || "";
+  if (cat === "Arbres") queries.push(`${latin} tree`);
+  else if (cat === "Arbustes" || cat === "Haies") queries.push(`${latin} shrub`);
+  else queries.push(`${latin} plant garden`);
+
+  queries.push(`${latin} isolated white background`);
+  return queries;
+}
+
+async function collectPixabay(plant, apiKey, slotsLeft) {
+  if (!apiKey || slotsLeft <= 0) return [];
+
+  const queries = pixabayQueriesForPlant(plant.nom_latin, plant.categorie);
   const candidates = [];
+  const seen = new Set();
 
-  for (const query of queries) {
-    if (!query?.trim()) continue;
-    console.log(`  → recherche « ${query} »`);
-    const hits = await fetchPixabay(query.trim(), apiKey);
-    await sleep(DELAY_MS);
+  for (const q of queries) {
+    if (candidates.length >= slotsLeft) break;
 
-    for (const hit of hits) {
-      if (seen.has(hit.id)) continue;
-      seen.add(hit.id);
-      candidates.push(mapHit(hit));
-      if (candidates.length >= MAX_CANDIDATES) return candidates;
+    const variants =
+      q.includes("white background") || q.includes("isolated")
+        ? [{ colors: "white" }, { colors: "transparent" }, {}]
+        : [{}];
+
+    for (const extra of variants) {
+      if (candidates.length >= slotsLeft) break;
+      console.log(`  → Pixabay « ${q} »${extra.colors ? ` (${extra.colors})` : ""}`);
+      const hits = await fetchPixabay(q, apiKey, extra);
+      await sleep(DELAY_MS);
+
+      for (const hit of hits) {
+        const mapped = mapPixabayHit(hit, extra.colors ? `${q} [colors=${extra.colors}]` : q);
+        if (!mapped) continue;
+        const key = dedupeKey(mapped);
+        if (seen.has(key)) continue;
+        seen.add(key);
+        candidates.push(mapped);
+        if (candidates.length >= slotsLeft) break;
+      }
     }
   }
 
@@ -79,8 +294,7 @@ async function collectCandidates(queries, apiKey) {
 
 async function loadExisting() {
   try {
-    const raw = await fs.readFile(CANDIDATES_PATH, "utf8");
-    return JSON.parse(raw);
+    return JSON.parse(await fs.readFile(CANDIDATES_PATH, "utf8"));
   } catch {
     return { updatedAt: null, plants: {} };
   }
@@ -88,11 +302,7 @@ async function loadExisting() {
 
 async function main() {
   const env = loadEnvLocal();
-  const apiKey = env.PIXABAY_API_KEY?.trim();
-  if (!apiKey) {
-    console.error("PIXABAY_API_KEY manquante dans .env.local");
-    process.exit(1);
-  }
+  const apiKey = env.PIXABAY_API_KEY?.trim() || "";
 
   const plants = await listCataloguePlantsForScripts();
   const store = await loadExisting();
@@ -112,19 +322,27 @@ async function main() {
     console.log(`\n[${processed + skipped + 1}/${plants.length}] ${plant.nom} (${id})`);
 
     let candidates = [];
-    if (plant.nom_latin) {
-      candidates = await collectCandidates([plant.nom_latin], apiKey);
-    }
-    if (candidates.length < MIN_RESULTS_BEFORE_FRENCH && plant.nom) {
-      const seen = new Set(candidates.map((c) => c.pixabayId));
-      const fromFrench = await collectCandidates([plant.nom], apiKey);
-      for (const c of fromFrench) {
-        if (seen.has(c.pixabayId)) continue;
-        seen.add(c.pixabayId);
-        candidates.push(c);
-        if (candidates.length >= MAX_CANDIDATES) break;
+    console.log("  Wikimedia Commons…");
+    candidates = await collectWikimedia(plant.nom_latin);
+
+    const slotsLeft = MAX_CANDIDATES - candidates.length;
+    if (slotsLeft > 0) {
+      if (!apiKey) {
+        console.warn("  PIXABAY_API_KEY absente — Pixabay ignoré.");
+      } else {
+        console.log(`  Pixabay (jusqu'à ${slotsLeft} de plus)…`);
+        const fromPx = await collectPixabay(plant, apiKey, slotsLeft);
+        const seen = new Set(candidates.map(dedupeKey));
+        for (const c of fromPx) {
+          const k = dedupeKey(c);
+          if (seen.has(k)) continue;
+          seen.add(k);
+          candidates.push(c);
+          if (candidates.length >= MAX_CANDIDATES) break;
+        }
       }
     }
+
     candidates = candidates.slice(0, MAX_CANDIDATES);
 
     store.plants[id] = {
@@ -137,7 +355,6 @@ async function main() {
       candidates,
     };
     processed += 1;
-
     store.updatedAt = new Date().toISOString();
     await fs.writeFile(CANDIDATES_PATH, `${JSON.stringify(store, null, 2)}\n`, "utf8");
   }
@@ -146,7 +363,6 @@ async function main() {
   await fs.writeFile(CANDIDATES_PATH, `${JSON.stringify(store, null, 2)}\n`, "utf8");
 
   console.log(`\nTerminé. ${processed} plante(s) traitées, ${skipped} déjà en cache.`);
-  console.log(`Fichier : ${CANDIDATES_PATH}`);
 }
 
 main().catch((err) => {

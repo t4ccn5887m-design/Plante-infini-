@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { demoteGardenCoupsItem, loadGardenCoupsItems } from "@/lib/gardenCoupsItems";
+import { cataloguePhotoFillStyle } from "@/lib/cataloguePhotoDisplay";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const PLACEHOLDER_COLORS = ["#8C7AB0", "#7E8F6A", "#5F7BB0", "#A8925F", "#B9667F", "#6F8A5C"];
@@ -77,7 +78,14 @@ function CoupsCard({ item, removing, onOpen, onRemove }) {
           <img
             src={photo}
             alt=""
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              ...cataloguePhotoFillStyle(photo),
+            }}
           />
         ) : null}
         <button

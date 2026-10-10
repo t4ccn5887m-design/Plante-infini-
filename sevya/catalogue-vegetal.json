@@ -35,7 +35,13 @@
     ],
     "pourquoi_on_laime": "Le symbole du Sud, au feuillage argenté toute l'année.",
     "a_savoir": "Craint les grands froids et les sols détrempés en hiver.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "erable-du-japon",
@@ -65,7 +71,13 @@
     ],
     "pourquoi_on_laime": "Une silhouette élégante et des couleurs d'automne spectaculaires.",
     "a_savoir": "N'aime ni le vent fort ni le plein soleil brûlant.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "erable-champetre",
@@ -94,7 +106,13 @@
     ],
     "pourquoi_on_laime": "Un arbre local, robuste, qui supporte presque tout.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "bouleau-de-l-himalaya",
@@ -133,7 +151,13 @@
     ],
     "pourquoi_on_laime": "Son écorce d'un blanc pur illumine le jardin, même en hiver.",
     "a_savoir": "Racines superficielles : éviter près d'une terrasse.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "magnolia-a-grandes-fleurs",
@@ -163,7 +187,13 @@
     ],
     "pourquoi_on_laime": "De grandes fleurs parfumées et un feuillage brillant toute l'année.",
     "a_savoir": "Prend de la place avec les années.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "magnolia-de-soulange",
@@ -191,7 +221,13 @@
     ],
     "pourquoi_on_laime": "Une floraison spectaculaire avant même l'arrivée des feuilles.",
     "a_savoir": "Les gelées tardives peuvent abîmer les fleurs.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "cerisier-du-japon",
@@ -219,7 +255,13 @@
     ],
     "pourquoi_on_laime": "Un nuage de fleurs roses au printemps.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "pommier-d-ornement",
@@ -250,7 +292,13 @@
     ],
     "pourquoi_on_laime": "Des fleurs au printemps, de petites pommes décoratives en automne.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "arbre-de-judee",
@@ -278,7 +326,13 @@
     ],
     "pourquoi_on_laime": "Ses fleurs roses poussent directement sur les branches.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "lilas-des-indes",
@@ -307,7 +361,13 @@
     ],
     "pourquoi_on_laime": "Une floraison généreuse en plein été et une jolie écorce.",
     "a_savoir": "A besoin de chaleur pour bien fleurir.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "mimosa",
@@ -335,7 +395,13 @@
     ],
     "pourquoi_on_laime": "Des pompons jaunes parfumés au cœur de l'hiver.",
     "a_savoir": "Craint le gel ; peut drageonner.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "arbre-de-soie",
@@ -363,7 +429,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage léger et des fleurs en pompons soyeux.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "savonnier",
@@ -393,7 +465,13 @@
     ],
     "pourquoi_on_laime": "Des fleurs jaunes en été puis des fruits en forme de lanternes.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "ginkgo",
@@ -421,7 +499,13 @@
     ],
     "pourquoi_on_laime": "Un arbre millénaire au feuillage en éventail.",
     "a_savoir": "Préférer un sujet mâle : les fruits des femelles sentent mauvais.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "catalpa-boule",
@@ -452,7 +536,13 @@
     ],
     "pourquoi_on_laime": "Une tête ronde et dense qui fait une ombre agréable.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "fevier-dore",
@@ -485,7 +575,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage léger et lumineux qui laisse passer la lumière.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "liquidambar",
@@ -513,7 +609,13 @@
     ],
     "pourquoi_on_laime": "L'un des plus beaux feuillages d'automne.",
     "a_savoir": "A besoin de place.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "chene-vert",
@@ -552,7 +654,13 @@
     ],
     "pourquoi_on_laime": "Un arbre robuste qui reste vert toute l'année.",
     "a_savoir": "Croissance lente.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "pin-parasol",
@@ -589,7 +697,13 @@
     ],
     "pourquoi_on_laime": "L'arbre emblématique des paysages provençaux.",
     "a_savoir": "A besoin de beaucoup de place.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "cypres-de-provence",
@@ -628,7 +742,13 @@
     ],
     "pourquoi_on_laime": "Une silhouette verticale qui structure le jardin.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "palmier-de-chine",
@@ -665,7 +785,13 @@
     ],
     "pourquoi_on_laime": "Le palmier le plus résistant au froid.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "figuier",
@@ -693,7 +819,13 @@
     ],
     "pourquoi_on_laime": "Un parfum d'été et des fruits à cueillir.",
     "a_savoir": "Sève irritante pour la peau.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "murier-platane",
@@ -724,7 +856,13 @@
     ],
     "pourquoi_on_laime": "Le roi de l'ombre en été, sans fruits salissants.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "sorbier-des-oiseleurs",
@@ -753,7 +891,13 @@
     ],
     "pourquoi_on_laime": "Ses baies orange régalent les oiseaux.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "prunier-pourpre",
@@ -788,7 +932,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage pourpre qui fait contraste toute la saison.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "amelanchier",
@@ -817,7 +967,13 @@
     ],
     "pourquoi_on_laime": "Des fleurs au printemps, des baies en été, des couleurs en automne.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "cornouiller-de-kousa",
@@ -846,7 +1002,13 @@
     ],
     "pourquoi_on_laime": "Des fleurs étoilées spectaculaires et de belles couleurs d'automne.",
     "a_savoir": "Préfère un sol non calcaire.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "hortensia",
@@ -876,7 +1038,13 @@
     ],
     "pourquoi_on_laime": "De grosses fleurs généreuses tout l'été.",
     "a_savoir": "Craint la sécheresse ; toxique si ingéré.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "hortensia-panicule",
@@ -906,7 +1074,13 @@
     ],
     "pourquoi_on_laime": "Plus robuste que l'hortensia classique, il supporte le soleil.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "hortensia-a-feuilles-de-chene",
@@ -938,7 +1112,13 @@
     ],
     "pourquoi_on_laime": "Des fleurs en été et un feuillage rouge en automne.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "lilas",
@@ -965,7 +1145,13 @@
     ],
     "pourquoi_on_laime": "Un parfum inoubliable au printemps.",
     "a_savoir": "Drageonne avec le temps.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "seringat",
@@ -993,7 +1179,13 @@
     ],
     "pourquoi_on_laime": "Un parfum de fleur d'oranger au début de l'été.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "weigela",
@@ -1021,7 +1213,13 @@
     ],
     "pourquoi_on_laime": "Facile, très fleuri et peu exigeant.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "abelia",
@@ -1053,7 +1251,13 @@
     ],
     "pourquoi_on_laime": "Une floraison très longue, parfaite pour les abeilles.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "arbre-aux-papillons",
@@ -1083,7 +1287,13 @@
     ],
     "pourquoi_on_laime": "Il attire les papillons tout l'été.",
     "a_savoir": "Se ressème facilement : préférer les variétés stériles.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "hibiscus-de-syrie",
@@ -1112,7 +1322,13 @@
     ],
     "pourquoi_on_laime": "De grandes fleurs à l'allure exotique, mais très rustique.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "pittosporum-tobira",
@@ -1151,7 +1367,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage persistant brillant et un parfum de fleur d'oranger.",
     "a_savoir": "Craint les fortes gelées.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "pittosporum-tenuifolium",
@@ -1190,7 +1412,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage fin et décoratif, idéal en haie libre.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "oranger-du-mexique",
@@ -1220,7 +1448,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage brillant et des fleurs parfumées deux fois par an.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "viorne-obier",
@@ -1250,7 +1484,13 @@
     ],
     "pourquoi_on_laime": "Des boules blanches au printemps et des baies pour les oiseaux.",
     "a_savoir": "Baies toxiques crues.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "laurier-tin",
@@ -1283,7 +1523,13 @@
     ],
     "pourquoi_on_laime": "Il fleurit en plein hiver et reste vert toute l'année.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "cornouiller-sanguin",
@@ -1314,7 +1560,13 @@
     ],
     "pourquoi_on_laime": "Ses tiges rouges colorent le jardin en hiver.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "fusain-du-japon",
@@ -1354,7 +1606,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage persistant et lumineux, même à l'ombre.",
     "a_savoir": "Toxique si ingéré.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "camelia",
@@ -1384,7 +1642,13 @@
     ],
     "pourquoi_on_laime": "Des fleurs parfaites à la sortie de l'hiver.",
     "a_savoir": "Exige une terre non calcaire.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "rhododendron",
@@ -1413,7 +1677,13 @@
     ],
     "pourquoi_on_laime": "Une floraison spectaculaire dans les coins ombragés.",
     "a_savoir": "Exige une terre de bruyère ; toxique si ingéré.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "azalee-du-japon",
@@ -1440,7 +1710,13 @@
     ],
     "pourquoi_on_laime": "Un coussin de fleurs, parfait au jardin japonais.",
     "a_savoir": "Exige une terre non calcaire.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "pieris",
@@ -1468,7 +1744,13 @@
     ],
     "pourquoi_on_laime": "De jeunes pousses rouge vif et des grappes de clochettes.",
     "a_savoir": "Terre non calcaire ; toxique si ingéré.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "skimmia",
@@ -1501,7 +1783,13 @@
     ],
     "pourquoi_on_laime": "Il décore les coins d'ombre tout l'hiver.",
     "a_savoir": "Exige une terre non calcaire.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "bambou-sacre",
@@ -1540,7 +1828,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage léger qui rougit en hiver.",
     "a_savoir": "Baies toxiques.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "ceanothe",
@@ -1569,7 +1863,13 @@
     ],
     "pourquoi_on_laime": "Une cascade de fleurs bleu intense au printemps.",
     "a_savoir": "N'aime pas les sols lourds.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "ciste",
@@ -1599,7 +1899,13 @@
     ],
     "pourquoi_on_laime": "Le roi des talus secs et ensoleillés.",
     "a_savoir": "Craint l'humidité en hiver.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "callicarpa",
@@ -1628,7 +1934,13 @@
     ],
     "pourquoi_on_laime": "Des baies violettes étonnantes en automne.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "spiree",
@@ -1657,7 +1969,13 @@
     ],
     "pourquoi_on_laime": "Une floraison abondante pour un entretien minimal.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "deutzia",
@@ -1684,7 +2002,13 @@
     ],
     "pourquoi_on_laime": "Une pluie de petites fleurs au printemps.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "forsythia",
@@ -1710,7 +2034,13 @@
     ],
     "pourquoi_on_laime": "Le premier éclat de jaune du printemps.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "arbre-a-perruque",
@@ -1741,7 +2071,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage pourpre et des plumets vaporeux.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "epine-vinette",
@@ -1776,7 +2112,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage coloré qui fait aussi une haie défensive.",
     "a_savoir": "Épineux.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "mahonia",
@@ -1808,7 +2150,13 @@
     ],
     "pourquoi_on_laime": "Des grappes jaunes parfumées en plein hiver.",
     "a_savoir": "Feuillage piquant.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "sureau-noir-pourpre",
@@ -1838,7 +2186,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage pourpre découpé comme de la dentelle.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "rosier-arbustif",
@@ -1869,7 +2223,13 @@
     ],
     "pourquoi_on_laime": "Le charme du jardin fleuri, avec des fleurs tout l'été.",
     "a_savoir": "Demande une taille chaque année.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "corete-du-japon",
@@ -1897,7 +2257,13 @@
     ],
     "pourquoi_on_laime": "Des pompons jaunes, même à l'ombre.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "hamamelis",
@@ -1927,7 +2293,13 @@
     ],
     "pourquoi_on_laime": "Des fleurs parfumées en plein hiver.",
     "a_savoir": "Préfère un sol non calcaire.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "lavatere-arbustive",
@@ -1959,7 +2331,13 @@
     ],
     "pourquoi_on_laime": "Une croissance rapide et des fleurs tout l'été.",
     "a_savoir": "Vit assez peu de temps (5 à 8 ans).",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "cordyline",
@@ -1997,7 +2375,13 @@
     ],
     "pourquoi_on_laime": "Une silhouette exotique et graphique.",
     "a_savoir": "Craint le gel en dessous de -8 °C.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "yucca",
@@ -2027,7 +2411,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage graphique et des hampes florales spectaculaires.",
     "a_savoir": "Feuilles pointues.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "fatsia",
@@ -2066,7 +2456,13 @@
     ],
     "pourquoi_on_laime": "De grandes feuilles exotiques pour les coins d'ombre.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "aucuba",
@@ -2106,7 +2502,13 @@
     ],
     "pourquoi_on_laime": "Il éclaire les coins les plus sombres du jardin.",
     "a_savoir": "Baies toxiques.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "photinia",
@@ -2137,7 +2539,13 @@
     ],
     "pourquoi_on_laime": "Ses jeunes pousses rouge vif colorent la haie.",
     "a_savoir": "Sensible aux maladies des feuilles en climat humide.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "laurier-cerise",
@@ -2175,7 +2583,13 @@
     ],
     "pourquoi_on_laime": "Une haie dense et rapide, même à l'ombre.",
     "a_savoir": "Feuilles et fruits toxiques ; très vigoureux.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "charme-commun",
@@ -2213,7 +2627,13 @@
     ],
     "pourquoi_on_laime": "La charmille classique : elle garde ses feuilles sèches en hiver.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "hetre",
@@ -2252,7 +2672,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage qui reste en place tout l'hiver.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "troene",
@@ -2292,7 +2718,13 @@
     ],
     "pourquoi_on_laime": "Le classique de la haie taillée, facile partout.",
     "a_savoir": "Baies toxiques.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "thuya",
@@ -2329,7 +2761,13 @@
     ],
     "pourquoi_on_laime": "Une haie très dense pour un brise-vue rapide.",
     "a_savoir": "Toxique si ingéré ; peu favorable à la biodiversité.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "eleagnus",
@@ -2358,7 +2796,13 @@
     ],
     "pourquoi_on_laime": "Il résiste au vent, au sel et à la sécheresse.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "escallonia",
@@ -2389,7 +2833,13 @@
     ],
     "pourquoi_on_laime": "Une haie fleurie qui adore le bord de mer.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "osmanthe",
@@ -2417,7 +2867,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage dense et des fleurs au parfum de jasmin.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "chevrefeuille-arbustif",
@@ -2456,7 +2912,13 @@
     ],
     "pourquoi_on_laime": "Parfait pour une petite haie basse bien taillée.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "buis",
@@ -2494,7 +2956,13 @@
     ],
     "pourquoi_on_laime": "Le classique des bordures et des formes taillées.",
     "a_savoir": "Très exposé à la pyrale du buis ; toxique si ingéré.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "houx",
@@ -2525,7 +2993,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage brillant et des baies rouges en hiver.",
     "a_savoir": "Feuilles piquantes ; baies toxiques.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "if",
@@ -2565,7 +3039,13 @@
     ],
     "pourquoi_on_laime": "Idéal pour les haies taillées et les formes sculptées.",
     "a_savoir": "Toutes les parties sont très toxiques.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "bambou-non-tracant",
@@ -2604,7 +3084,13 @@
     ],
     "pourquoi_on_laime": "Un brise-vue léger et vivant, sans envahir le jardin.",
     "a_savoir": "Bien choisir une variété non traçante.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "griselinia",
@@ -2643,7 +3129,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage lumineux, parfait près de la mer.",
     "a_savoir": "Craint les grands froids.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "buisson-ardent",
@@ -2675,7 +3167,13 @@
     ],
     "pourquoi_on_laime": "Une haie défensive couverte de baies pour les oiseaux.",
     "a_savoir": "Épineux.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "cypres-de-leyland",
@@ -2712,7 +3210,13 @@
     ],
     "pourquoi_on_laime": "Le brise-vue le plus rapide.",
     "a_savoir": "Pousse très vite : demande deux tailles par an.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "jasmin-etoile",
@@ -2751,7 +3255,13 @@
     ],
     "pourquoi_on_laime": "Un parfum enivrant et un feuillage vert toute l'année.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "glycine",
@@ -2780,7 +3290,13 @@
     ],
     "pourquoi_on_laime": "Des grappes de fleurs parfumées sur une pergola.",
     "a_savoir": "Très vigoureuse ; graines toxiques.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "clematite-des-montagnes",
@@ -2808,7 +3324,13 @@
     ],
     "pourquoi_on_laime": "Une avalanche de petites fleurs au printemps.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "clematite-a-grandes-fleurs",
@@ -2838,7 +3360,13 @@
     ],
     "pourquoi_on_laime": "De grandes fleurs spectaculaires sur un treillage.",
     "a_savoir": "Aime avoir la tête au soleil et le pied à l'ombre.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "chevrefeuille-grimpant",
@@ -2868,7 +3396,13 @@
     ],
     "pourquoi_on_laime": "Un parfum puissant les soirs d'été.",
     "a_savoir": "Baies toxiques.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "bignone",
@@ -2897,7 +3431,13 @@
     ],
     "pourquoi_on_laime": "Des trompettes orange tout l'été.",
     "a_savoir": "Très vigoureuse ; peut drageonner.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "rosier-grimpant",
@@ -2927,7 +3467,13 @@
     ],
     "pourquoi_on_laime": "Le charme d'une façade couverte de roses.",
     "a_savoir": "Demande une taille et un palissage.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "hortensia-grimpant",
@@ -2955,7 +3501,13 @@
     ],
     "pourquoi_on_laime": "Il fleurit même sur un mur exposé au nord.",
     "a_savoir": "Lent à démarrer.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "vigne-vierge",
@@ -2984,7 +3536,13 @@
     ],
     "pourquoi_on_laime": "Elle habille un mur toute seule et rougit en automne.",
     "a_savoir": "S'accroche aux murs : attention aux gouttières.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "lierre",
@@ -3023,7 +3581,13 @@
     ],
     "pourquoi_on_laime": "Il couvre tout, même à l'ombre, et nourrit les insectes en automne.",
     "a_savoir": "Baies toxiques ; peut abîmer les vieux crépis.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "passiflore",
@@ -3054,7 +3618,13 @@
     ],
     "pourquoi_on_laime": "Des fleurs étonnantes à l'allure exotique.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "bougainvillier",
@@ -3083,7 +3653,13 @@
     "envies": [],
     "pourquoi_on_laime": "La couleur éclatante des façades du Sud.",
     "a_savoir": "Ne supporte pas le gel : en pot à rentrer l'hiver hors du littoral.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "morelle-faux-jasmin",
@@ -3114,7 +3690,13 @@
     ],
     "pourquoi_on_laime": "Une floraison blanche qui n'en finit pas.",
     "a_savoir": "Toxique si ingéré.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "akebia",
@@ -3141,7 +3723,13 @@
     ],
     "pourquoi_on_laime": "Des fleurs au parfum de chocolat et un feuillage léger.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "lavande",
@@ -3173,7 +3761,13 @@
     ],
     "pourquoi_on_laime": "Son parfum et ses fleurs attirent les abeilles tout l'été.",
     "a_savoir": "Craint l'eau stagnante en hiver.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "agapanthe",
@@ -3201,7 +3795,13 @@
     ],
     "pourquoi_on_laime": "De grosses boules bleues en plein été.",
     "a_savoir": "Les variétés à feuilles persistantes craignent le gel.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "sauge-arbustive",
@@ -3235,7 +3835,13 @@
     ],
     "pourquoi_on_laime": "Une floraison interminable, du printemps aux gelées.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "sauge-des-bois",
@@ -3266,7 +3872,13 @@
     ],
     "pourquoi_on_laime": "Des épis violets qui attirent les abeilles.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "nepeta",
@@ -3298,7 +3910,13 @@
     ],
     "pourquoi_on_laime": "Une bordure bleue facile, adorée des abeilles… et des chats.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "gaura",
@@ -3331,7 +3949,13 @@
     ],
     "pourquoi_on_laime": "Des fleurs légères comme des papillons tout l'été.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "echinacee",
@@ -3360,7 +3984,13 @@
     ],
     "pourquoi_on_laime": "Une fleur généreuse adorée des papillons.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "rudbeckia",
@@ -3391,7 +4021,13 @@
     ],
     "pourquoi_on_laime": "Un soleil de fleurs jaunes en fin d'été.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "hemerocalle",
@@ -3420,7 +4056,13 @@
     ],
     "pourquoi_on_laime": "Increvable et très fleurie.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "iris",
@@ -3447,7 +4089,13 @@
     ],
     "pourquoi_on_laime": "Des fleurs majestueuses au printemps.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "pivoine",
@@ -3474,7 +4122,13 @@
     ],
     "pourquoi_on_laime": "Des fleurs somptueuses et parfumées.",
     "a_savoir": "N'aime pas être déplacée.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "geranium-vivace",
@@ -3506,7 +4160,13 @@
     ],
     "pourquoi_on_laime": "Un tapis fleuri tout l'été, sans effort.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "alchemille",
@@ -3535,7 +4195,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage où la rosée perle comme des diamants.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "heuchere",
@@ -3574,7 +4240,13 @@
     ],
     "pourquoi_on_laime": "Des feuillages colorés toute l'année à l'ombre.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "hosta",
@@ -3605,7 +4277,13 @@
     ],
     "pourquoi_on_laime": "Le roi des feuillages pour les coins d'ombre.",
     "a_savoir": "Attention aux limaces.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "fougere-male",
@@ -3639,7 +4317,13 @@
     ],
     "pourquoi_on_laime": "Une ambiance de sous-bois, sans aucun entretien.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "astilbe",
@@ -3668,7 +4352,13 @@
     ],
     "pourquoi_on_laime": "Des plumets colorés pour les coins frais.",
     "a_savoir": "Craint la sécheresse.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "anemone-du-japon",
@@ -3698,7 +4388,13 @@
     ],
     "pourquoi_on_laime": "Elle illumine la fin de l'été à mi-ombre.",
     "a_savoir": "Peut s'étendre.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "aster",
@@ -3727,7 +4423,13 @@
     ],
     "pourquoi_on_laime": "Une explosion de couleurs à l'automne.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "orpin",
@@ -3758,7 +4460,13 @@
     ],
     "pourquoi_on_laime": "Une plante grasse increvable, adorée des papillons en automne.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "achillee",
@@ -3789,7 +4497,13 @@
     ],
     "pourquoi_on_laime": "Elle résiste au sec et attire les insectes utiles.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "coreopsis",
@@ -3820,7 +4534,13 @@
     ],
     "pourquoi_on_laime": "Un nuage de petites fleurs jaunes tout l'été.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "gaillarde",
@@ -3852,7 +4572,13 @@
     ],
     "pourquoi_on_laime": "Des couleurs chaudes et une grande résistance au sec.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "verveine-de-buenos-aires",
@@ -3883,7 +4609,13 @@
     ],
     "pourquoi_on_laime": "Des fleurs légères qui flottent au-dessus des massifs.",
     "a_savoir": "Se ressème facilement.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "perovskia",
@@ -3915,7 +4647,13 @@
     ],
     "pourquoi_on_laime": "Un nuage bleu argenté qui adore la sécheresse.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "euphorbe-des-garrigues",
@@ -3954,7 +4692,13 @@
     ],
     "pourquoi_on_laime": "Une silhouette architecturale toute l'année.",
     "a_savoir": "Sève irritante : porter des gants.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "hellebore",
@@ -3985,7 +4729,13 @@
     ],
     "pourquoi_on_laime": "Des fleurs en plein hiver, à l'ombre.",
     "a_savoir": "Toxique si ingéré.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "bergenia",
@@ -4017,7 +4767,13 @@
     ],
     "pourquoi_on_laime": "De grandes feuilles qui rougissent en hiver.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "phlox",
@@ -4045,7 +4801,13 @@
     ],
     "pourquoi_on_laime": "Des panicules parfumées en plein été.",
     "a_savoir": "Sensible à l'oïdium s'il manque d'eau.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "digitale",
@@ -4075,7 +4837,13 @@
     ],
     "pourquoi_on_laime": "De hautes hampes de clochettes, idéales en sous-bois.",
     "a_savoir": "Très toxique si ingérée.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "lupin",
@@ -4102,7 +4870,13 @@
     ],
     "pourquoi_on_laime": "Des épis colorés, l'âme du jardin de campagne.",
     "a_savoir": "Préfère un sol non calcaire ; graines toxiques.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "tritoma",
@@ -4132,7 +4906,13 @@
     ],
     "pourquoi_on_laime": "Des torches de feu spectaculaires.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "canna",
@@ -4161,7 +4941,13 @@
     ],
     "pourquoi_on_laime": "De grandes feuilles et des fleurs éclatantes, pour un air tropical.",
     "a_savoir": "Rhizomes à protéger ou à rentrer l'hiver.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "bananier-du-japon",
@@ -4192,7 +4978,13 @@
     ],
     "pourquoi_on_laime": "L'effet jungle garanti, même dans le Nord.",
     "a_savoir": "Le gel détruit le feuillage ; repart au printemps si le pied est protégé.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "phormium",
@@ -4231,7 +5023,13 @@
     ],
     "pourquoi_on_laime": "De longues feuilles colorées et graphiques.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "agave",
@@ -4271,7 +5069,13 @@
     ],
     "pourquoi_on_laime": "Une sculpture vivante qui ne demande presque rien.",
     "a_savoir": "Épines : à éloigner des passages ; craint l'humidité.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "acanthe",
@@ -4299,7 +5103,13 @@
     ],
     "pourquoi_on_laime": "De grandes feuilles sculpturales et des hampes majestueuses.",
     "a_savoir": "Peut s'étendre.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "penstemon",
@@ -4329,7 +5139,13 @@
     ],
     "pourquoi_on_laime": "Des clochettes colorées tout l'été.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "vergerette",
@@ -4364,7 +5180,13 @@
     ],
     "pourquoi_on_laime": "Elle se glisse entre les pierres et fleurit sans arrêt.",
     "a_savoir": "Se ressème partout.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "valeriane-rouge",
@@ -4396,7 +5218,13 @@
     ],
     "pourquoi_on_laime": "Elle pousse même sur les murs et attire les papillons.",
     "a_savoir": "Se ressème facilement.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "muguet",
@@ -4423,7 +5251,13 @@
     ],
     "pourquoi_on_laime": "Le parfum du mois de mai.",
     "a_savoir": "Très toxique si ingéré.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "dahlia",
@@ -4452,7 +5286,13 @@
     ],
     "pourquoi_on_laime": "Des fleurs généreuses jusqu'aux gelées.",
     "a_savoir": "Tubercules à protéger du gel.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "allium",
@@ -4480,7 +5320,13 @@
     ],
     "pourquoi_on_laime": "Des boules violettes graphiques au-dessus des massifs.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "tulipe",
@@ -4506,7 +5352,13 @@
     "envies": [],
     "pourquoi_on_laime": "Le grand classique du printemps.",
     "a_savoir": "Bulbes à planter à l'automne.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "narcisse",
@@ -4534,7 +5386,13 @@
     ],
     "pourquoi_on_laime": "Il revient chaque printemps sans effort.",
     "a_savoir": "Toxique si ingéré.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "lis",
@@ -4560,7 +5418,13 @@
     "envies": [],
     "pourquoi_on_laime": "Des fleurs élégantes au parfum puissant.",
     "a_savoir": "Toxique pour les chats.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "miscanthus",
@@ -4594,7 +5458,13 @@
     ],
     "pourquoi_on_laime": "Des plumeaux qui bougent au vent jusqu'en hiver.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "herbe-aux-ecouvillons",
@@ -4624,7 +5494,13 @@
     ],
     "pourquoi_on_laime": "Des épis duveteux très doux au toucher.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "cheveux-d-ange",
@@ -4655,7 +5531,13 @@
     ],
     "pourquoi_on_laime": "Une chevelure blonde qui ondule au moindre souffle.",
     "a_savoir": "Se ressème.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "calamagrostis",
@@ -4688,7 +5570,13 @@
     ],
     "pourquoi_on_laime": "Une graminée verticale très élégante.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "laiche",
@@ -4728,7 +5616,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage fin et persistant pour les zones ombragées.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "fetuque-bleue",
@@ -4767,7 +5661,13 @@
     ],
     "pourquoi_on_laime": "De petites boules bleues très graphiques.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "panic-erige",
@@ -4798,7 +5698,13 @@
     ],
     "pourquoi_on_laime": "Un nuage de fleurs aérien et un feuillage qui rougit.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "herbe-du-japon",
@@ -4829,7 +5735,13 @@
     ],
     "pourquoi_on_laime": "Une cascade dorée qui illumine l'ombre.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "herbe-sanguine",
@@ -4860,7 +5772,13 @@
     ],
     "pourquoi_on_laime": "Des feuilles rouge vif, saisissantes à contre-jour.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "muhlenbergia",
@@ -4889,7 +5807,13 @@
     ],
     "pourquoi_on_laime": "Un nuage rose spectaculaire en automne.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "herbe-de-la-pampa",
@@ -4916,7 +5840,13 @@
     "envies": [],
     "pourquoi_on_laime": "De grands plumeaux spectaculaires.",
     "a_savoir": "Espèce invasive dans plusieurs régions : préférer un miscanthus.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "pervenche",
@@ -4946,7 +5876,13 @@
     ],
     "pourquoi_on_laime": "Un tapis vert persistant qui couvre l'ombre.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "thym-serpolet",
@@ -4975,7 +5911,13 @@
     ],
     "pourquoi_on_laime": "Un tapis parfumé qu'on peut fouler entre les pas japonais.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "herbe-aux-turquoises",
@@ -5014,7 +5956,13 @@
     ],
     "pourquoi_on_laime": "Un tapis dense qui remplace le gazon à l'ombre.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "bugle-rampante",
@@ -5044,7 +5992,13 @@
     ],
     "pourquoi_on_laime": "Un couvre-sol coloré pour les zones fraîches.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "geranium-a-grosses-racines",
@@ -5074,7 +6028,13 @@
     ],
     "pourquoi_on_laime": "Un couvre-sol parfumé qui pousse même au sec et à l'ombre.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "cotoneaster-rampant",
@@ -5105,7 +6065,13 @@
     ],
     "pourquoi_on_laime": "Il couvre les talus et se couvre de baies rouges.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "phlox-mousse",
@@ -5133,7 +6099,13 @@
     ],
     "pourquoi_on_laime": "Un tapis de fleurs au printemps, idéal en rocaille.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "lamier",
@@ -5162,7 +6134,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage argenté qui éclaire l'ombre.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "romarin",
@@ -5193,7 +6171,13 @@
     ],
     "pourquoi_on_laime": "Parfumé, mellifère et utile en cuisine.",
     "a_savoir": "Craint l'humidité en hiver.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "thym",
@@ -5222,7 +6206,13 @@
     ],
     "pourquoi_on_laime": "Un petit coussin parfumé pour le soleil.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "sauge-officinale",
@@ -5261,7 +6251,13 @@
     ],
     "pourquoi_on_laime": "Un feuillage gris décoratif et des fleurs pour les abeilles.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "santoline",
@@ -5299,7 +6295,13 @@
     ],
     "pourquoi_on_laime": "De petites boules argentées qui sentent bon.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "immortelle",
@@ -5328,7 +6330,13 @@
     ],
     "pourquoi_on_laime": "Un parfum de curry et un feuillage argenté.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "menthe",
@@ -5356,7 +6364,13 @@
     ],
     "pourquoi_on_laime": "Fraîche et parfumée, parfaite près de la cuisine.",
     "a_savoir": "Très envahissante : à planter en pot.",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "ciboulette",
@@ -5384,7 +6398,13 @@
     ],
     "pourquoi_on_laime": "Des pompons mauves décoratifs et une herbe utile.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "laurier-sauce",
@@ -5423,7 +6443,13 @@
     ],
     "pourquoi_on_laime": "Le laurier de la cuisine, qui fait aussi une belle haie.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   },
   {
     "id": "origan",
@@ -5453,6 +6479,12 @@
     ],
     "pourquoi_on_laime": "Mellifère, parfumé et indestructible.",
     "a_savoir": "",
-    "photo_url": ""
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
   }
 ]

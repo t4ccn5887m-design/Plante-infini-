@@ -1,4 +1,7 @@
+import { CATALOGUE_PHOTO_SURFACE } from "@/lib/cataloguePhotoConstants";
 import { getCategoriePlaceholderColor } from "@/lib/cataloguePlants";
+
+export { CATALOGUE_PHOTO_SURFACE } from "@/lib/cataloguePhotoConstants";
 
 function IconLeaf({ size = 28, stroke = "#FFFFFF" }) {
   return (
@@ -26,16 +29,34 @@ export default function CataloguePlantVisual({
   categorie,
   height = 118,
   leafStroke = "rgba(255,255,255,0.85)",
+  photoDetouree = false,
 }) {
   const bg = getCategoriePlaceholderColor(categorie);
 
   if (photo_url) {
+    const surface = photoDetouree === "oui" || photoDetouree === true ? "#FFFFFF" : CATALOGUE_PHOTO_SURFACE;
     return (
-      <div style={{ height, position: "relative", background: "#DDD7CC" }}>
+      <div
+        style={{
+          height,
+          position: "relative",
+          background: surface,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <img
           src={photo_url}
           alt=""
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          style={{
+            maxWidth: "100%",
+            maxHeight: "100%",
+            width: "auto",
+            height: "auto",
+            objectFit: "contain",
+            display: "block",
+          }}
         />
       </div>
     );

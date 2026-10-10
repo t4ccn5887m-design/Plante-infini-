@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Télécharge les photos choisies, génère WebP 900px, met à jour catalogue-vegetal.json.
+ * Applique les photos validées (originale ou fond blanc) au catalogue.
  * Usage : node scripts/apply-plant-photos.mjs
  */
 
@@ -12,9 +12,11 @@ import {
   loadCatalogueJson,
   listCataloguePlantsForScripts,
 } from "./plantCatalogueIds.mjs";
+import { runRembgWhiteBackground, isRembgAvailable } from "./rembgRunner.mjs";
 
 const CHOICES_PATH = path.join(ROOT, "sevya/photo-choices.json");
 const CATALOGUE_PATH = path.join(ROOT, "sevya/catalogue-vegetal.json");
+const REMBG_CACHE_DIR = path.join(ROOT, "sevya/photo-rembg-cache");
 const OUT_DIR = path.join(ROOT, "public/catalogue/vegetal");
 const DELAY_MS = 1100;
 
@@ -26,6 +28,25 @@ async function downloadBuffer(url) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Download ${res.status} ${url}`);
   return Buffer.from(await res.arrayBuffer());
+}
+
+async function loadImageForChoice(choice) {
+  const variant = choice.displayVariant || "original";
+  const candidate = choice.candidate;
+
+  if (variant === "white_bg") {
+    if (choice.rembgCacheFile) {
+      const cachePath = path.join(REMBG_CACHE_DIR, choice.rembgCacheFile);
+      return fs.readFile(cachePath);
+    }
+    const buf = await downloadBuffer(candidate.hdUrl || candidate.thumbnailUrl);
+    if (!(await isRembgAvailable())) {
+      throw new Error("rembg indisponible — générez l’aperçu « Fond blanc » dans /admin/photos");
+    }
+    return runRembgWhiteBackground(buf);
+  }
+
+  return downloadBuffer(candidate.hdUrl || candidate.thumbnailUrl);
 }
 
 async function main() {
@@ -53,7 +74,7 @@ async function main() {
       skipped += 1;
       continue;
     }
-    if (choice.status !== "selected" || choice.candidateIndex == null) {
+    if (choice.status !== "selected" || !choice.candidate) {
       skipped += 1;
       continue;
     }
@@ -65,31 +86,35 @@ async function main() {
     }
 
     const candidate = choice.candidate;
-    if (!candidate?.hdUrl) {
-      console.warn(`Pas de hdUrl pour ${catalogueId}`);
-      continue;
-    }
+    const detouree = (choice.displayVariant || "original") === "white_bg";
 
-    console.log(`Téléchargement ${catalogueId}…`);
-    const buf = await downloadBuffer(candidate.hdUrl);
+    console.log(`Traitement ${catalogueId} (${detouree ? "fond blanc" : "original"})…`);
+    const buf = await loadImageForChoice(choice);
     await sleep(DELAY_MS);
 
     const webp = await sharp(buf)
       .rotate()
-      .resize({ width: 900, withoutEnlargement: true })
+      .resize({
+        width: 900,
+        height: 900,
+        fit: "inside",
+        withoutEnlargement: true,
+      })
       .webp({ quality: 82 })
       .toBuffer();
 
     const outFile = `${catalogueId}.webp`;
-    const outPath = path.join(OUT_DIR, outFile);
-    await fs.writeFile(outPath, webp);
+    await fs.writeFile(path.join(OUT_DIR, outFile), webp);
 
     const row = jsonById.get(meta.jsonId);
     if (row) {
       row.photo_url = `/catalogue/vegetal/${outFile}`;
-      row.photo_source = "Pixabay";
+      row.photo_source = candidate.source || "";
       row.photo_auteur = candidate.author || "";
+      row.photo_licence = candidate.licenseName || "";
+      row.photo_licence_url = candidate.licenseUrl || "";
       row.photo_lien = candidate.pageUrl || "";
+      row.photo_detouree = detouree ? "oui" : "non";
     }
 
     applied += 1;
@@ -97,7 +122,7 @@ async function main() {
 
   await fs.writeFile(CATALOGUE_PATH, `${JSON.stringify(catalogue, null, 2)}\n`, "utf8");
 
-  console.log(`\n${applied} photo(s) appliquée(s), ${skipped} entrée(s) ignorée(s) (aucune / invalide).`);
+  console.log(`\n${applied} photo(s) appliquée(s), ${skipped} entrée(s) ignorée(s).`);
 }
 
 main().catch((err) => {

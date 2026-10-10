@@ -1,3 +1,4 @@
+import { CATALOGUE_PHOTO_SURFACE } from "@/components/catalogue/CataloguePlantVisual";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const icStroke = {
@@ -62,7 +63,16 @@ export default function CatalogueArticleRow({
         }}
       >
         {article.photo_url ? (
-          <img src={article.photo_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <img
+            src={article.photo_url}
+            alt=""
+            style={{
+              maxWidth: "100%",
+              maxHeight: "100%",
+              objectFit: "contain",
+              background: CATALOGUE_PHOTO_SURFACE,
+            }}
+          />
         ) : (
           fallbackIcon
         )}

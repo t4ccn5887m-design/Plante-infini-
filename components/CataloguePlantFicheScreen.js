@@ -3,6 +3,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
+import CataloguePhotoCredit from "@/components/catalogue/CataloguePhotoCredit";
 import CataloguePlantVisual from "@/components/catalogue/CataloguePlantVisual";
 import { getCataloguePlantById } from "@/lib/cataloguePlants";
 import {
@@ -116,32 +117,9 @@ export default function CataloguePlantFicheScreen({
               categorie={plant.categorie}
               height={280}
               leafStroke="rgba(255,255,255,0.9)"
+              photoDetouree={plant.photo_detouree}
             />
-            {plant.photo_url && plant.photo_auteur ? (
-              <p
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  margin: 0,
-                  padding: "8px 12px",
-                  fontSize: 11,
-                  color: "#6B7268",
-                  background: "linear-gradient(transparent, rgba(255,255,255,0.92))",
-                }}
-              >
-                Photo :{" "}
-                {plant.photo_lien ? (
-                  <a href={plant.photo_lien} target="_blank" rel="noopener noreferrer" style={{ color: "#6B7268" }}>
-                    {plant.photo_auteur}
-                  </a>
-                ) : (
-                  plant.photo_auteur
-                )}{" "}
-                / Pixabay
-              </p>
-            ) : null}
+            <CataloguePhotoCredit plant={plant} />
           </div>
           <div
             style={{

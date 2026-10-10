@@ -28,6 +28,7 @@ import {
   promoteCatalogueMineralToGarden,
   promoteCataloguePlantToGarden,
 } from "@/lib/promoteCatalogueToGarden";
+import { cataloguePhotoFillStyle } from "@/lib/cataloguePhotoDisplay";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const UNIVERSES = [
@@ -170,7 +171,14 @@ function IdeeCard({ item, inGarden, toggling, onOpen, onToggleHeart }) {
           <img
             src={photo}
             alt=""
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              ...cataloguePhotoFillStyle(photo),
+            }}
           />
         ) : null}
         <HeartButton

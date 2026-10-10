@@ -42,7 +42,15 @@ export default function handler(req, res) {
   }
 
   if (req.method === "POST") {
-    const { catalogueId, status, candidateIndex, candidate } = req.body || {};
+    const {
+      catalogueId,
+      status,
+      candidateIndex,
+      candidate,
+      displayVariant,
+      rembgCacheFile,
+    } = req.body || {};
+
     if (!catalogueId || !status) {
       return res.status(400).json({ error: "invalid_body" });
     }
@@ -62,6 +70,8 @@ export default function handler(req, res) {
         status: "selected",
         candidateIndex,
         candidate,
+        displayVariant: displayVariant === "white_bg" ? "white_bg" : "original",
+        rembgCacheFile: rembgCacheFile || null,
         updatedAt: new Date().toISOString(),
       };
     } else {
@@ -76,5 +86,5 @@ export default function handler(req, res) {
 }
 
 export const config = {
-  api: { bodyParser: { sizeLimit: "256kb" } },
+  api: { bodyParser: { sizeLimit: "512kb" } },
 };
