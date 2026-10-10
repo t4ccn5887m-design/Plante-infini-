@@ -1,1 +1,2104 @@
-{}
+{
+  "olivier": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Blumengärten Hirschstetten Wien 2014 Garten der Provence.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/d/da/Blumeng%C3%A4rten_Hirschstetten_Wien_2014_Garten_der_Provence.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/Blumeng%C3%A4rten_Hirschstetten_Wien_2014_Garten_der_Provence.jpg/960px-Blumeng%C3%A4rten_Hirschstetten_Wien_2014_Garten_der_Provence.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Manfred Werner - Tsui",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ABlumeng%C3%A4rten_Hirschstetten_Wien_2014_Garten_der_Provence.jpg",
+      "searchQuery": "category:Category:Olea europaea"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:02:56.621Z"
+  },
+  "erable-japon": {
+    "status": "selected",
+    "candidateIndex": 3,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Real Jardín Botánico Juan Carlos I (RPS 07-06-2014) Acer Palmatum Ornatum.png",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Real_Jard%C3%ADn_Bot%C3%A1nico_Juan_Carlos_I_%28RPS_07-06-2014%29_Acer_Palmatum_Ornatum.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f6/Real_Jard%C3%ADn_Bot%C3%A1nico_Juan_Carlos_I_%28RPS_07-06-2014%29_Acer_Palmatum_Ornatum.png/960px-Real_Jard%C3%ADn_Bot%C3%A1nico_Juan_Carlos_I_%28RPS_07-06-2014%29_Acer_Palmatum_Ornatum.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Raimundo Pastor",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AReal_Jard%C3%ADn_Bot%C3%A1nico_Juan_Carlos_I_(RPS_07-06-2014)_Acer_Palmatum_Ornatum.png",
+      "searchQuery": "category:Category:Acer palmatum"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:03:06.429Z"
+  },
+  "erable-champetre": {
+    "status": "selected",
+    "candidateIndex": 1,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Acer campestre 006.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/d/df/Acer_campestre_006.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/Acer_campestre_006.jpg/960px-Acer_campestre_006.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Willow",
+      "licenseName": "CC BY-SA 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AAcer_campestre_006.jpg",
+      "searchQuery": "category:Category:Acer campestre"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:03:28.580Z"
+  },
+  "bouleau-de-l-himalaya": {
+    "status": "selected",
+    "candidateIndex": 2,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Brzoza nadrzeczna Betula utilis var jacquemontii RB3.JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Brzoza_nadrzeczna_Betula_utilis_var_jacquemontii_RB3.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Brzoza_nadrzeczna_Betula_utilis_var_jacquemontii_RB3.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "author": "Auteur inconnu",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ABrzoza_nadrzeczna_Betula_utilis_var_jacquemontii_RB3.JPG",
+      "searchQuery": "search:Betula utilis 'Jacquemontii'"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:03:45.331Z"
+  },
+  "magnolia-a-grandes-fleurs": {
+    "status": "selected",
+    "candidateIndex": 0,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Jardin des plantes Nantes-Magnolia Hectot.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/0/05/Jardin_des_plantes_Nantes-Magnolia_Hectot.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/05/Jardin_des_plantes_Nantes-Magnolia_Hectot.jpg/960px-Jardin_des_plantes_Nantes-Magnolia_Hectot.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Pymouss44",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AJardin_des_plantes_Nantes-Magnolia_Hectot.jpg",
+      "searchQuery": "category:Category:Magnolia grandiflora"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:04:08.446Z"
+  },
+  "magnolia-de-soulange": {
+    "status": "selected",
+    "candidateIndex": 1,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:2022-05-21 13 44 24 A Saucer Magnolia sapling along Tranquility Court in the Franklin Farm section of Oak Hill, Fairfax County, Virginia.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/2/29/2022-05-21_13_44_24_A_Saucer_Magnolia_sapling_along_Tranquility_Court_in_the_Franklin_Farm_section_of_Oak_Hill%2C_Fairfax_County%2C_Virginia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/2022-05-21_13_44_24_A_Saucer_Magnolia_sapling_along_Tranquility_Court_in_the_Franklin_Farm_section_of_Oak_Hill%2C_Fairfax_County%2C_Virginia.jpg/960px-2022-05-21_13_44_24_A_Saucer_Magnolia_sapling_along_Tranquility_Court_in_the_Franklin_Farm_section_of_Oak_Hill%2C_Fairfax_County%2C_Virginia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Famartin",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A2022-05-21_13_44_24_A_Saucer_Magnolia_sapling_along_Tranquility_Court_in_the_Franklin_Farm_section_of_Oak_Hill%2C_Fairfax_County%2C_Virginia.jpg",
+      "searchQuery": "category:Category:Magnolia × soulangeana"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:04:23.262Z"
+  },
+  "cerisier-du-japon": {
+    "status": "selected",
+    "candidateIndex": 4,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Cerasus jamasakura at Chofukuji, Toyokawa (2012.08.13).jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Cerasus_jamasakura_at_Chofukuji%2C_Toyokawa_%282012.08.13%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0f/Cerasus_jamasakura_at_Chofukuji%2C_Toyokawa_%282012.08.13%29.jpg/960px-Cerasus_jamasakura_at_Chofukuji%2C_Toyokawa_%282012.08.13%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Lombroso",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ACerasus_jamasakura_at_Chofukuji%2C_Toyokawa_(2012.08.13).jpg",
+      "searchQuery": "category:Category:Prunus serrulata"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:04:36.460Z"
+  },
+  "pommier-d-ornement": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:04:55.762Z"
+  },
+  "arbre-de-judee": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:არღავანი Cercis siliquastrum Judasbaum 2.JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/5/58/%E1%83%90%E1%83%A0%E1%83%A6%E1%83%90%E1%83%95%E1%83%90%E1%83%9C%E1%83%98_Cercis_siliquastrum_Judasbaum_2.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/58/%E1%83%90%E1%83%A0%E1%83%A6%E1%83%90%E1%83%95%E1%83%90%E1%83%9C%E1%83%98_Cercis_siliquastrum_Judasbaum_2.JPG/960px-%E1%83%90%E1%83%A0%E1%83%A6%E1%83%90%E1%83%95%E1%83%90%E1%83%9C%E1%83%98_Cercis_siliquastrum_Judasbaum_2.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Lazaregagnidze",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A%E1%83%90%E1%83%A0%E1%83%A6%E1%83%90%E1%83%95%E1%83%90%E1%83%9C%E1%83%98_Cercis_siliquastrum_Judasbaum_2.JPG",
+      "searchQuery": "category:Category:Cercis siliquastrum"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:05:04.427Z"
+  },
+  "lilas-des-indes": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:05:30.095Z"
+  },
+  "mimosa": {
+    "status": "selected",
+    "candidateIndex": 2,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Acacia dealbata-1.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/8/82/Acacia_dealbata-1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/82/Acacia_dealbata-1.jpg/960px-Acacia_dealbata-1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Eugene Zelenko ( talk · contribs )",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AAcacia_dealbata-1.jpg",
+      "searchQuery": "search:Acacia dealbata"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:05:47.078Z"
+  },
+  "arbre-de-soie": {
+    "status": "selected",
+    "candidateIndex": 2,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Maale Adumim 33 21-05-17 13-23.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Maale_Adumim_33_21-05-17_13-23.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/Maale_Adumim_33_21-05-17_13-23.jpg/960px-Maale_Adumim_33_21-05-17_13-23.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "B1408",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AMaale_Adumim_33_21-05-17_13-23.jpg",
+      "searchQuery": "category:Category:Albizia julibrissin"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:05:58.877Z"
+  },
+  "savonnier": {
+    "status": "selected",
+    "candidateIndex": 1,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:KoelreuteriaPaniculata2.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/6/61/KoelreuteriaPaniculata2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/61/KoelreuteriaPaniculata2.jpg/960px-KoelreuteriaPaniculata2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Fanghong",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AKoelreuteriaPaniculata2.jpg",
+      "searchQuery": "category:Category:Koelreuteria paniculata"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:06:13.960Z"
+  },
+  "ginkgo": {
+    "status": "selected",
+    "candidateIndex": 0,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Fond.Beyeler Gingko.JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Fond.Beyeler_Gingko.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f1/Fond.Beyeler_Gingko.JPG/960px-Fond.Beyeler_Gingko.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Warburg",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AFond.Beyeler_Gingko.JPG",
+      "searchQuery": "category:Category:Ginkgo biloba"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:06:34.178Z"
+  },
+  "catalpa-boule": {
+    "status": "selected",
+    "candidateIndex": 4,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Unknown plant 2013-07-14 20-15-50.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/9/92/Unknown_plant_2013-07-14_20-15-50.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/9/92/Unknown_plant_2013-07-14_20-15-50.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "author": "Giftmischer87",
+      "licenseName": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AUnknown_plant_2013-07-14_20-15-50.jpg",
+      "searchQuery": "category:Category:Catalpa bignonioides 'Nana'"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:06:40.644Z"
+  },
+  "fevier-dore": {
+    "status": "selected",
+    "candidateIndex": 0,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:2013-06-02 10 09 31 'Sunburst' Honeylocust in Elko Nevada.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/9/97/2013-06-02_10_09_31_%27Sunburst%27_Honeylocust_in_Elko_Nevada.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/2013-06-02_10_09_31_%27Sunburst%27_Honeylocust_in_Elko_Nevada.jpg/960px-2013-06-02_10_09_31_%27Sunburst%27_Honeylocust_in_Elko_Nevada.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Famartin",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A2013-06-02_10_09_31_'Sunburst'_Honeylocust_in_Elko_Nevada.jpg",
+      "searchQuery": "category:Category:Gleditsia triacanthos 'Sunburst'"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:06:51.309Z"
+  },
+  "liquidambar": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Falling Leaves drifting past my camera-021 (8687549685).jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/7/77/Falling_Leaves_drifting_past_my_camera-021_%288687549685%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Falling_Leaves_drifting_past_my_camera-021_%288687549685%29.jpg/960px-Falling_Leaves_drifting_past_my_camera-021_%288687549685%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Sheba_Also 43,000 photos",
+      "licenseName": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AFalling_Leaves_drifting_past_my_camera-021_(8687549685).jpg",
+      "searchQuery": "category:Category:Liquidambar styraciflua"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:06:58.711Z"
+  },
+  "chene-vert": {
+    "status": "selected",
+    "candidateIndex": 3,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Encinaelmonticonet23.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/2/23/Encinaelmonticonet23.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/Encinaelmonticonet23.jpg/960px-Encinaelmonticonet23.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Elmontico.es",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AEncinaelmonticonet23.jpg",
+      "searchQuery": "category:Category:Quercus ilex"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:07:19.709Z"
+  },
+  "pin-parasol": {
+    "status": "selected",
+    "candidateIndex": 4,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Pinus pinea Costa Sancti Petri.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Pinus_pinea_Costa_Sancti_Petri.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b2/Pinus_pinea_Costa_Sancti_Petri.jpg/960px-Pinus_pinea_Costa_Sancti_Petri.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Matt Westgate from everywhere",
+      "licenseName": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3APinus_pinea_Costa_Sancti_Petri.jpg",
+      "searchQuery": "category:Category:Pinus pinea"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:07:35.993Z"
+  },
+  "cypres-de-provence": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:07:50.009Z"
+  },
+  "palmier-de-chine": {
+    "status": "selected",
+    "candidateIndex": 3,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Trachycarpus fortunei P1010099.JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/5/52/Trachycarpus_fortunei_P1010099.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Trachycarpus_fortunei_P1010099.JPG/960px-Trachycarpus_fortunei_P1010099.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Geert De Maerschalck at Dutch Wikipedia",
+      "licenseName": "Public domain",
+      "licenseUrl": "",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ATrachycarpus_fortunei_P1010099.JPG",
+      "searchQuery": "search:Trachycarpus fortunei"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:07:56.926Z"
+  },
+  "figuier": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:08:08.826Z"
+  },
+  "murier-platane": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:08:18.976Z"
+  },
+  "sorbier-des-oiseleurs": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:08:28.642Z"
+  },
+  "prunier-pourpre": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:08:40.462Z"
+  },
+  "amelanchier": {
+    "status": "selected",
+    "candidateIndex": 0,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Amelanchier lamarckii struik.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Amelanchier_lamarckii_struik.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Amelanchier_lamarckii_struik.jpg/960px-Amelanchier_lamarckii_struik.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Rasbak",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AAmelanchier_lamarckii_struik.jpg",
+      "searchQuery": "category:Category:Amelanchier lamarckii"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:08:52.279Z"
+  },
+  "cornouiller-de-kousa": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:09:03.660Z"
+  },
+  "hortensia-macrophylla": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Hortensia 3.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/8/81/Hortensia_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/81/Hortensia_3.jpg/960px-Hortensia_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Chris.urs-o",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AHortensia_3.jpg",
+      "searchQuery": "category:Category:Hydrangea macrophylla"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:09:13.624Z"
+  },
+  "hortensia-panicule": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:09:22.634Z"
+  },
+  "hortensia-a-feuilles-de-chene": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:09:31.389Z"
+  },
+  "lilas": {
+    "status": "selected",
+    "candidateIndex": 1,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Flieder (3).JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/6/60/Flieder_%283%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Flieder_%283%29.JPG/960px-Flieder_%283%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Hswaton",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AFlieder_(3).JPG",
+      "searchQuery": "category:Category:Syringa vulgaris"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:09:41.661Z"
+  },
+  "seringat": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:09:48.063Z"
+  },
+  "weigela": {
+    "status": "selected",
+    "candidateIndex": 0,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Weigela florida a2.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/9/99/Weigela_florida_a2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Weigela_florida_a2.jpg/960px-Weigela_florida_a2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Opiola Jerzy (Poland)",
+      "licenseName": "CC BY-SA 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AWeigela_florida_a2.jpg",
+      "searchQuery": "category:Category:Weigela florida"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:09:52.460Z"
+  },
+  "abelia": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Abelia × grandiflora 'Frances Mason' kz1.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/9/96/Abelia_%C3%97_grandiflora_%27Frances_Mason%27_kz1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/Abelia_%C3%97_grandiflora_%27Frances_Mason%27_kz1.jpg/960px-Abelia_%C3%97_grandiflora_%27Frances_Mason%27_kz1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Krzysztof Ziarnek, Kenraiz",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AAbelia_%C3%97_grandiflora_'Frances_Mason'_kz1.jpg",
+      "searchQuery": "search:Abelia × grandiflora"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:10:03.531Z"
+  },
+  "buddleia": {
+    "status": "selected",
+    "candidateIndex": 2,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Buddleja davidii Prague 2013 1.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/a/aa/Buddleja_davidii_Prague_2013_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/aa/Buddleja_davidii_Prague_2013_1.jpg/960px-Buddleja_davidii_Prague_2013_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Karelj",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ABuddleja_davidii_Prague_2013_1.jpg",
+      "searchQuery": "category:Category:Buddleja davidii"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:10:07.745Z"
+  },
+  "hibiscus-de-syrie": {
+    "status": "selected",
+    "candidateIndex": 1,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:2007-07-09Hibiscus syriacus05.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ea/2007-07-09Hibiscus_syriacus05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ea/2007-07-09Hibiscus_syriacus05.jpg/960px-2007-07-09Hibiscus_syriacus05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Wildfeuer",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A2007-07-09Hibiscus_syriacus05.jpg",
+      "searchQuery": "category:Category:Hibiscus syriacus"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:10:16.764Z"
+  },
+  "pittosporum-tobira": {
+    "status": "selected",
+    "candidateIndex": 1,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Madeira, Palheiro Gardens - Pittosporum tobira (Chinesischer Klebsame, Japan) IMG 2216.JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/8/84/Madeira%2C_Palheiro_Gardens_-_Pittosporum_tobira_%28Chinesischer_Klebsame%2C_Japan%29_IMG_2216.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/84/Madeira%2C_Palheiro_Gardens_-_Pittosporum_tobira_%28Chinesischer_Klebsame%2C_Japan%29_IMG_2216.JPG/960px-Madeira%2C_Palheiro_Gardens_-_Pittosporum_tobira_%28Chinesischer_Klebsame%2C_Japan%29_IMG_2216.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Hedwig Storch",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AMadeira%2C_Palheiro_Gardens_-_Pittosporum_tobira_(Chinesischer_Klebsame%2C_Japan)_IMG_2216.JPG",
+      "searchQuery": "category:Category:Pittosporum tobira"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:10:27.980Z"
+  },
+  "pittosporum": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:10:36.297Z"
+  },
+  "oranger-du-mexique": {
+    "status": "selected",
+    "candidateIndex": 5,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Gardenology.org-IMG 9804 rbgm10dec.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/9/96/Gardenology.org-IMG_9804_rbgm10dec.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/Gardenology.org-IMG_9804_rbgm10dec.jpg/960px-Gardenology.org-IMG_9804_rbgm10dec.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Raffi Kojian",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AGardenology.org-IMG_9804_rbgm10dec.jpg",
+      "searchQuery": "category:Category:Choisya ternata"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:10:44.297Z"
+  },
+  "viorne-obier": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:10:56.914Z"
+  },
+  "laurier-tin": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:14:00.935Z"
+  },
+  "cornouiller-sanguin": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:20131115Cornus sanguinea1.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/0/07/20131115Cornus_sanguinea1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/20131115Cornus_sanguinea1.jpg/960px-20131115Cornus_sanguinea1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "AnRo0002",
+      "licenseName": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A20131115Cornus_sanguinea1.jpg",
+      "searchQuery": "category:Category:Cornus sanguinea"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:14:09.096Z"
+  },
+  "fusain-du-japon": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Euonymus japonicus habitus2 2009December13 DehesaBoyaldePuertollano.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Euonymus_japonicus_habitus2_2009December13_DehesaBoyaldePuertollano.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4f/Euonymus_japonicus_habitus2_2009December13_DehesaBoyaldePuertollano.jpg/960px-Euonymus_japonicus_habitus2_2009December13_DehesaBoyaldePuertollano.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Javier martin",
+      "licenseName": "Public domain",
+      "licenseUrl": "",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AEuonymus_japonicus_habitus2_2009December13_DehesaBoyaldePuertollano.jpg",
+      "searchQuery": "category:Category:Euonymus japonicus"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:14:13.179Z"
+  },
+  "camelia": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Blüte der Kamelie.JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/0/02/Bl%C3%BCte_der_Kamelie.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/02/Bl%C3%BCte_der_Kamelie.JPG/960px-Bl%C3%BCte_der_Kamelie.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Marco Almbauer",
+      "licenseName": "Public domain",
+      "licenseUrl": "",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ABl%C3%BCte_der_Kamelie.JPG",
+      "searchQuery": "category:Category:Camellia japonica"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:14:23.996Z"
+  },
+  "rhododendron": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:14:32.815Z"
+  },
+  "azalee-du-japon": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:14:37.779Z"
+  },
+  "pieris": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Isola Bella (88).JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/3/31/Isola_Bella_%2888%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/31/Isola_Bella_%2888%29.JPG/960px-Isola_Bella_%2888%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "JoJan",
+      "licenseName": "CC BY 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AIsola_Bella_(88).JPG",
+      "searchQuery": "category:Category:Pieris japonica"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:34:30.771Z"
+  },
+  "skimmia": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:'Skimmia japonica' - Southgate Road of the City of London Cemetery, Newham, London England.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/2/29/%27Skimmia_japonica%27_-_Southgate_Road_of_the_City_of_London_Cemetery%2C_Newham%2C_London_England.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/%27Skimmia_japonica%27_-_Southgate_Road_of_the_City_of_London_Cemetery%2C_Newham%2C_London_England.jpg/960px-%27Skimmia_japonica%27_-_Southgate_Road_of_the_City_of_London_Cemetery%2C_Newham%2C_London_England.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Acabashi",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A'Skimmia_japonica'_-_Southgate_Road_of_the_City_of_London_Cemetery%2C_Newham%2C_London_England.jpg",
+      "searchQuery": "category:Category:Skimmia japonica"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:34:33.452Z"
+  },
+  "bambou-sacre": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:34:40.122Z"
+  },
+  "ceanothe": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:London - April 2009 (3516617464).jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/0/09/London_-_April_2009_%283516617464%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/09/London_-_April_2009_%283516617464%29.jpg/960px-London_-_April_2009_%283516617464%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Cristian Bortes from Cluj-Napoca, Romania",
+      "licenseName": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ALondon_-_April_2009_(3516617464).jpg",
+      "searchQuery": "category:Category:Ceanothus"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:34:42.769Z"
+  },
+  "ciste": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:לוטם מרווני בהר שוקף.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b9/%D7%9C%D7%95%D7%98%D7%9D_%D7%9E%D7%A8%D7%95%D7%95%D7%A0%D7%99_%D7%91%D7%94%D7%A8_%D7%A9%D7%95%D7%A7%D7%A3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/%D7%9C%D7%95%D7%98%D7%9D_%D7%9E%D7%A8%D7%95%D7%95%D7%A0%D7%99_%D7%91%D7%94%D7%A8_%D7%A9%D7%95%D7%A7%D7%A3.jpg/960px-%D7%9C%D7%95%D7%98%D7%9D_%D7%9E%D7%A8%D7%95%D7%95%D7%A0%D7%99_%D7%91%D7%94%D7%A8_%D7%A9%D7%95%D7%A7%D7%A3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Eilat Elbaum",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A%D7%9C%D7%95%D7%98%D7%9D_%D7%9E%D7%A8%D7%95%D7%95%D7%A0%D7%99_%D7%91%D7%94%D7%A8_%D7%A9%D7%95%D7%A7%D7%A3.jpg",
+      "searchQuery": "category:Category:Cistus"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:34:49.354Z"
+  },
+  "callicarpa": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Callicarpa bodinerii Profusion 4.JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Callicarpa_bodinerii_Profusion_4.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1a/Callicarpa_bodinerii_Profusion_4.JPG/960px-Callicarpa_bodinerii_Profusion_4.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "GRIMAUD",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ACallicarpa_bodinerii_Profusion_4.JPG",
+      "searchQuery": "category:Category:Callicarpa bodinieri 'Profusion'"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:34:52.872Z"
+  },
+  "spiree": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:2018-06-01 (122) Nature at Bichlhäusl in Frankenfels, Austria.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3d/2018-06-01_%28122%29_Nature_at_Bichlh%C3%A4usl_in_Frankenfels%2C_Austria.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3d/2018-06-01_%28122%29_Nature_at_Bichlh%C3%A4usl_in_Frankenfels%2C_Austria.jpg/960px-2018-06-01_%28122%29_Nature_at_Bichlh%C3%A4usl_in_Frankenfels%2C_Austria.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "GT1976",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A2018-06-01_(122)_Nature_at_Bichlh%C3%A4usl_in_Frankenfels%2C_Austria.jpg",
+      "searchQuery": "category:Category:Spiraea"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:34:57.236Z"
+  },
+  "deutzia": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Deutzia scabra A.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/8/81/Deutzia_scabra_A.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/81/Deutzia_scabra_A.jpg/960px-Deutzia_scabra_A.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Wouter Hagens",
+      "licenseName": "Public domain",
+      "licenseUrl": "",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ADeutzia_scabra_A.jpg",
+      "searchQuery": "search:Deutzia"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:35:00.452Z"
+  },
+  "forsythia": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:35:02.972Z"
+  },
+  "arbre-a-perruque": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Cotinus coggygria 20130613 Budapest 138.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Cotinus_coggygria_20130613_Budapest_138.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Cotinus_coggygria_20130613_Budapest_138.jpg/960px-Cotinus_coggygria_20130613_Budapest_138.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Mark Ahsmann",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ACotinus_coggygria_20130613_Budapest_138.jpg",
+      "searchQuery": "category:Category:Cotinus coggygria"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:35:07.119Z"
+  },
+  "epine-vinette": {
+    "status": "selected",
+    "candidateIndex": 4,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Berberis thunbergii (tree s2).jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Berberis_thunbergii_%28tree_s2%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/Berberis_thunbergii_%28tree_s2%29.jpg/960px-Berberis_thunbergii_%28tree_s2%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Alpsdake",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ABerberis_thunbergii_(tree_s2).jpg",
+      "searchQuery": "category:Category:Berberis thunbergii"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:35:12.170Z"
+  },
+  "mahonia": {
+    "status": "selected",
+    "candidateIndex": 4,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Mahonia x media - Flickr - peganum (1).jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Mahonia_x_media_-_Flickr_-_peganum_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3f/Mahonia_x_media_-_Flickr_-_peganum_%281%29.jpg/960px-Mahonia_x_media_-_Flickr_-_peganum_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "peganum from Small Dole, England",
+      "licenseName": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AMahonia_x_media_-_Flickr_-_peganum_(1).jpg",
+      "searchQuery": "search:Mahonia × media"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:35:19.855Z"
+  },
+  "sureau-noir-pourpre": {
+    "status": "selected",
+    "candidateIndex": 2,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Ruhland, Rudolf-Breitscheid-Str. 7, Schlitzblättriger Holunder 'Black Lace' blühend im Vorgarten, Frühsommer, 01.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Ruhland%2C_Rudolf-Breitscheid-Str._7%2C_Schlitzbl%C3%A4ttriger_Holunder_%27Black_Lace%27_bl%C3%BChend_im_Vorgarten%2C_Fr%C3%BChsommer%2C_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dd/Ruhland%2C_Rudolf-Breitscheid-Str._7%2C_Schlitzbl%C3%A4ttriger_Holunder_%27Black_Lace%27_bl%C3%BChend_im_Vorgarten%2C_Fr%C3%BChsommer%2C_01.jpg/960px-Ruhland%2C_Rudolf-Breitscheid-Str._7%2C_Schlitzbl%C3%A4ttriger_Holunder_%27Black_Lace%27_bl%C3%BChend_im_Vorgarten%2C_Fr%C3%BChsommer%2C_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Wilhelm Zimmerling PAR",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ARuhland%2C_Rudolf-Breitscheid-Str._7%2C_Schlitzbl%C3%A4ttriger_Holunder_'Black_Lace'_bl%C3%BChend_im_Vorgarten%2C_Fr%C3%BChsommer%2C_01.jpg",
+      "searchQuery": "search:Sambucus nigra 'Black Lace'"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:35:27.838Z"
+  },
+  "rosier-arbustif": {
+    "status": "selected",
+    "candidateIndex": 4,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Rosa 'Morden Blush' JRVdH 03.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Rosa_%27Morden_Blush%27_JRVdH_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/Rosa_%27Morden_Blush%27_JRVdH_03.jpg/960px-Rosa_%27Morden_Blush%27_JRVdH_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Cephas",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ARosa_'Morden_Blush'_JRVdH_03.jpg",
+      "searchQuery": "search:Rosa (arbustif)"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:35:32.419Z"
+  },
+  "corete-du-japon": {
+    "status": "selected",
+    "candidateIndex": 4,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Kerria japonica1.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Kerria_japonica1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f2/Kerria_japonica1.jpg/960px-Kerria_japonica1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "KENPEI",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AKerria_japonica1.jpg",
+      "searchQuery": "category:Category:Kerria japonica"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:35:34.386Z"
+  },
+  "hamamelis": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Botanischer Garten München-Nymphenburg 2017 15.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/1/11/Botanischer_Garten_M%C3%BCnchen-Nymphenburg_2017_15.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/11/Botanischer_Garten_M%C3%BCnchen-Nymphenburg_2017_15.jpg/960px-Botanischer_Garten_M%C3%BCnchen-Nymphenburg_2017_15.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Geolina163",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ABotanischer_Garten_M%C3%BCnchen-Nymphenburg_2017_15.jpg",
+      "searchQuery": "category:Category:Hamamelis × intermedia"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:35:37.936Z"
+  },
+  "lavatere-arbustive": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:35:43.289Z"
+  },
+  "cordyline": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:35:57.639Z"
+  },
+  "yucca": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:36:10.006Z"
+  },
+  "fatsia": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:36:17.724Z"
+  },
+  "aucuba": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:36:19.968Z"
+  },
+  "photinia-red-robin": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Photinia × fraseri - 2020- 04-12- Andy Mabbett.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/4/46/Photinia_%C3%97_fraseri_-_2020-_04-12-_Andy_Mabbett.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/Photinia_%C3%97_fraseri_-_2020-_04-12-_Andy_Mabbett.jpg/960px-Photinia_%C3%97_fraseri_-_2020-_04-12-_Andy_Mabbett.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Andy Mabbett",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3APhotinia_%C3%97_fraseri_-_2020-_04-12-_Andy_Mabbett.jpg",
+      "searchQuery": "search:Photinia × fraseri 'Red Robin'"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:36:27.538Z"
+  },
+  "laurier-cerise": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:36:31.503Z"
+  },
+  "charme-commun": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:36:34.236Z"
+  },
+  "hetre": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:36:36.719Z"
+  },
+  "troene": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:36:38.818Z"
+  },
+  "thuya": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:36:40.270Z"
+  },
+  "eleagnus": {
+    "status": "selected",
+    "candidateIndex": 5,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Elaeagnus ebbingei 1c.JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Elaeagnus_ebbingei_1c.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a4/Elaeagnus_ebbingei_1c.JPG/960px-Elaeagnus_ebbingei_1c.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Consultaplantas",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AElaeagnus_ebbingei_1c.JPG",
+      "searchQuery": "search:Elaeagnus × ebbingei"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:36:44.452Z"
+  },
+  "escallonia": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:36:51.170Z"
+  },
+  "osmanthe": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Osmanthus delavayi 02.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/9/92/Osmanthus_delavayi_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/92/Osmanthus_delavayi_02.jpg/960px-Osmanthus_delavayi_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Krzysztof Golik",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AOsmanthus_delavayi_02.jpg",
+      "searchQuery": "search:Osmanthus × burkwoodii"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:36:53.252Z"
+  },
+  "chevrefeuille-arbustif": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:36:56.285Z"
+  },
+  "buis": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:37:01.619Z"
+  },
+  "houx": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:37:04.235Z"
+  },
+  "if": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:37:06.569Z"
+  },
+  "bambou-non-tracant": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:37:15.521Z"
+  },
+  "griselinia": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:37:17.317Z"
+  },
+  "buisson-ardent": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Firethorn Pyracantha Rhodes Arts Complex Museum Theatre Bishop's Stortford Hertfordshire England 2.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/a/ad/Firethorn_Pyracantha_Rhodes_Arts_Complex_Museum_Theatre_Bishop%27s_Stortford_Hertfordshire_England_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Firethorn_Pyracantha_Rhodes_Arts_Complex_Museum_Theatre_Bishop%27s_Stortford_Hertfordshire_England_2.jpg/960px-Firethorn_Pyracantha_Rhodes_Arts_Complex_Museum_Theatre_Bishop%27s_Stortford_Hertfordshire_England_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Acabashi",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AFirethorn_Pyracantha_Rhodes_Arts_Complex_Museum_Theatre_Bishop's_Stortford_Hertfordshire_England_2.jpg",
+      "searchQuery": "category:Category:Pyracantha"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:37:22.502Z"
+  },
+  "cypres-de-leyland": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:37:26.336Z"
+  },
+  "jasmin-etoile": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:'Trachelospermum jasminoides' Jasmin Capel Manor Gardens Enfield London England.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a4/%27Trachelospermum_jasminoides%27_Jasmin_Capel_Manor_Gardens_Enfield_London_England.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a4/%27Trachelospermum_jasminoides%27_Jasmin_Capel_Manor_Gardens_Enfield_London_England.jpg/960px-%27Trachelospermum_jasminoides%27_Jasmin_Capel_Manor_Gardens_Enfield_London_England.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Acabashi",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A'Trachelospermum_jasminoides'_Jasmin_Capel_Manor_Gardens_Enfield_London_England.jpg",
+      "searchQuery": "category:Category:Trachelospermum jasminoides"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:37:28.952Z"
+  },
+  "glycine": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:37:31.270Z"
+  },
+  "clematite-des-montagnes": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:37:33.872Z"
+  },
+  "clematite-a-grandes-fleurs": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:37:36.985Z"
+  },
+  "chevrefeuille-grimpant": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:37:38.437Z"
+  },
+  "bignone": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Campsis radicans climbing nearly five feet.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/9/98/Campsis_radicans_climbing_nearly_five_feet.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/98/Campsis_radicans_climbing_nearly_five_feet.jpg/960px-Campsis_radicans_climbing_nearly_five_feet.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "GTBacchus",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ACampsis_radicans_climbing_nearly_five_feet.jpg",
+      "searchQuery": "category:Category:Campsis radicans"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:37:42.052Z"
+  },
+  "rosier-grimpant": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Rosier grimpant Dortmund.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Rosier_grimpant_Dortmund.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fe/Rosier_grimpant_Dortmund.jpg/960px-Rosier_grimpant_Dortmund.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Thomon",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ARosier_grimpant_Dortmund.jpg",
+      "searchQuery": "search:Rosa (grimpant)"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:37:44.919Z"
+  },
+  "hortensia-grimpant": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Hydrangea anomala subsp. petiolaris 01.JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Hydrangea_anomala_subsp._petiolaris_01.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Hydrangea_anomala_subsp._petiolaris_01.JPG/960px-Hydrangea_anomala_subsp._petiolaris_01.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "AfroBrazilian",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AHydrangea_anomala_subsp._petiolaris_01.JPG",
+      "searchQuery": "category:Category:Hydrangea anomala subsp. petiolaris"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:37:47.302Z"
+  },
+  "vigne-vierge": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Parthenocissus tricuspidata IMG 4671.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Parthenocissus_tricuspidata_IMG_4671.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a3/Parthenocissus_tricuspidata_IMG_4671.jpg/960px-Parthenocissus_tricuspidata_IMG_4671.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "あおもりくま,(Aomorikuma)",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AParthenocissus_tricuspidata_IMG_4671.jpg",
+      "searchQuery": "category:Category:Parthenocissus tricuspidata"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:37:49.217Z"
+  },
+  "lierre": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:37:52.154Z"
+  },
+  "passiflore": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:37:54.952Z"
+  },
+  "bougainvillier": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Bougainvillea 21.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Bougainvillea_21.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0a/Bougainvillea_21.jpg/960px-Bougainvillea_21.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "পাপৰি বৰা",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ABougainvillea_21.jpg",
+      "searchQuery": "category:Category:Bougainvillea"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:37:57.150Z"
+  },
+  "morelle-faux-jasmin": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:37:59.769Z"
+  },
+  "akebia": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:38:02.103Z"
+  },
+  "lavande-officinale": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Atlas roslin pl Lawenda wąskolistna 6958 8775.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Atlas_roslin_pl_Lawenda_w%C4%85skolistna_6958_8775.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/Atlas_roslin_pl_Lawenda_w%C4%85skolistna_6958_8775.jpg/960px-Atlas_roslin_pl_Lawenda_w%C4%85skolistna_6958_8775.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Joanna Boisse",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AAtlas_roslin_pl_Lawenda_w%C4%85skolistna_6958_8775.jpg",
+      "searchQuery": "category:Category:Lavandula angustifolia"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:03.603Z"
+  },
+  "agapanthe": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Malouinière Ville-Bague (4) extérieur.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Malouini%C3%A8re_Ville-Bague_%284%29_ext%C3%A9rieur.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/Malouini%C3%A8re_Ville-Bague_%284%29_ext%C3%A9rieur.jpg/960px-Malouini%C3%A8re_Ville-Bague_%284%29_ext%C3%A9rieur.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Philippe Alès",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AMalouini%C3%A8re_Ville-Bague_(4)_ext%C3%A9rieur.jpg",
+      "searchQuery": "category:Category:Agapanthus"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:06.000Z"
+  },
+  "sauge-arbustive": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Gardenology.org-IMG 2037 hunt09oct.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/0/08/Gardenology.org-IMG_2037_hunt09oct.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Gardenology.org-IMG_2037_hunt09oct.jpg/960px-Gardenology.org-IMG_2037_hunt09oct.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Raffi Kojian",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AGardenology.org-IMG_2037_hunt09oct.jpg",
+      "searchQuery": "category:Category:Salvia microphylla"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:07.633Z"
+  },
+  "sauge-des-bois": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:38:10.336Z"
+  },
+  "nepeta": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:38:12.051Z"
+  },
+  "gaura-lindheimeri": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Gaura lindheimeri - Flickr - peganum (1).jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Gaura_lindheimeri_-_Flickr_-_peganum_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/Gaura_lindheimeri_-_Flickr_-_peganum_%281%29.jpg/960px-Gaura_lindheimeri_-_Flickr_-_peganum_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "peganum from Small Dole, England",
+      "licenseName": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AGaura_lindheimeri_-_Flickr_-_peganum_(1).jpg",
+      "searchQuery": "search:Gaura lindheimeri"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:18.204Z"
+  },
+  "echinacee": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:38:20.303Z"
+  },
+  "rudbeckia": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:03.SteadPark.1625P.NW.WDC.19November2012.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/7/70/03.SteadPark.1625P.NW.WDC.19November2012.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/70/03.SteadPark.1625P.NW.WDC.19November2012.jpg/960px-03.SteadPark.1625P.NW.WDC.19November2012.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Elvert Barnes",
+      "licenseName": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A03.SteadPark.1625P.NW.WDC.19November2012.jpg",
+      "searchQuery": "category:Category:Rudbeckia fulgida"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:22.637Z"
+  },
+  "hemerocalle": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Day Lily After Morning Rain in Brandon Vermont.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Day_Lily_After_Morning_Rain_in_Brandon_Vermont.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a1/Day_Lily_After_Morning_Rain_in_Brandon_Vermont.jpg/960px-Day_Lily_After_Morning_Rain_in_Brandon_Vermont.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Mathieu Landretti",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ADay_Lily_After_Morning_Rain_in_Brandon_Vermont.jpg",
+      "searchQuery": "category:Category:Hemerocallis"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:23.833Z"
+  },
+  "iris": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Iris × germanica general.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Iris_%C3%97_germanica_general.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/Iris_%C3%97_germanica_general.jpg/960px-Iris_%C3%97_germanica_general.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Hüseyin Cahid Doğan",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AIris_%C3%97_germanica_general.jpg",
+      "searchQuery": "search:Iris germanica"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:26.518Z"
+  },
+  "pivoine": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Chinesische Pfingstrose 4.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/8/88/Chinesische_Pfingstrose_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/88/Chinesische_Pfingstrose_4.jpg/960px-Chinesische_Pfingstrose_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Pasman22",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AChinesische_Pfingstrose_4.jpg",
+      "searchQuery": "category:Category:Paeonia lactiflora"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:28.318Z"
+  },
+  "geranium-rozanne": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Geranium x Rozanne 0zz.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/2/20/Geranium_x_Rozanne_0zz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/20/Geranium_x_Rozanne_0zz.jpg/960px-Geranium_x_Rozanne_0zz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Photo by David J. Stang",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AGeranium_x_Rozanne_0zz.jpg",
+      "searchQuery": "category:Category:Geranium 'Rozanne'"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:30.853Z"
+  },
+  "alchemille": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Alchemilla mollis 2.JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Alchemilla_mollis_2.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Alchemilla_mollis_2.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "author": "Ghislain118 http://www.fleurs-des-montagnes.net",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AAlchemilla_mollis_2.JPG",
+      "searchQuery": "category:Category:Alchemilla mollis"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:32.534Z"
+  },
+  "heuchere": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:2018-05-13 (156) Heuchera (alumroot) at Bichlhäusl in Frankenfels, Austria.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d3/2018-05-13_%28156%29_Heuchera_%28alumroot%29_at_Bichlh%C3%A4usl_in_Frankenfels%2C_Austria.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/2018-05-13_%28156%29_Heuchera_%28alumroot%29_at_Bichlh%C3%A4usl_in_Frankenfels%2C_Austria.jpg/960px-2018-05-13_%28156%29_Heuchera_%28alumroot%29_at_Bichlh%C3%A4usl_in_Frankenfels%2C_Austria.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "GT1976",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A2018-05-13_(156)_Heuchera_(alumroot)_at_Bichlh%C3%A4usl_in_Frankenfels%2C_Austria.jpg",
+      "searchQuery": "category:Category:Heuchera"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:34.436Z"
+  },
+  "hosta": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:20210620 Hortus botanicus Leiden - Hosta.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/5/58/20210620_Hortus_botanicus_Leiden_-_Hosta.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/58/20210620_Hortus_botanicus_Leiden_-_Hosta.jpg/960px-20210620_Hortus_botanicus_Leiden_-_Hosta.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Rudolphous",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A20210620_Hortus_botanicus_Leiden_-_Hosta.jpg",
+      "searchQuery": "category:Category:Hosta"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:36.353Z"
+  },
+  "fougere-male": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Dryopteris filix-mas (5454185150).jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Dryopteris_filix-mas_%285454185150%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d7/Dryopteris_filix-mas_%285454185150%29.jpg/960px-Dryopteris_filix-mas_%285454185150%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Matt Lavin from Bozeman, Montana, USA",
+      "licenseName": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ADryopteris_filix-mas_(5454185150).jpg",
+      "searchQuery": "category:Category:Dryopteris filix-mas"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:38.419Z"
+  },
+  "astilbe": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Plante inconnue - Gaston Allard Arboretum 1.JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/2/28/Plante_inconnue_-_Gaston_Allard_Arboretum_1.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Plante_inconnue_-_Gaston_Allard_Arboretum_1.JPG/960px-Plante_inconnue_-_Gaston_Allard_Arboretum_1.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Mith",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3APlante_inconnue_-_Gaston_Allard_Arboretum_1.JPG",
+      "searchQuery": "category:Category:Astilbe"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:40.517Z"
+  },
+  "anemone-du-japon": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Anemone x hybrida September Charm 1zz.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/6/62/Anemone_x_hybrida_September_Charm_1zz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/Anemone_x_hybrida_September_Charm_1zz.jpg/960px-Anemone_x_hybrida_September_Charm_1zz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Photo by David J. Stang",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AAnemone_x_hybrida_September_Charm_1zz.jpg",
+      "searchQuery": "search:Anemone × hybrida"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:42.284Z"
+  },
+  "aster-novae-angliae": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:38:44.969Z"
+  },
+  "orpin": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Atlas roslin pl Rozchodnikowiec okazały 6855 7927.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Atlas_roslin_pl_Rozchodnikowiec_okaza%C5%82y_6855_7927.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Atlas_roslin_pl_Rozchodnikowiec_okaza%C5%82y_6855_7927.jpg/960px-Atlas_roslin_pl_Rozchodnikowiec_okaza%C5%82y_6855_7927.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Anonim Anonim",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AAtlas_roslin_pl_Rozchodnikowiec_okaza%C5%82y_6855_7927.jpg",
+      "searchQuery": "category:Category:Hylotelephium spectabile"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:48.436Z"
+  },
+  "achillee": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:20170428Achillea millefolium6.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5b/20170428Achillea_millefolium6.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5b/20170428Achillea_millefolium6.jpg/960px-20170428Achillea_millefolium6.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "AnRo0002",
+      "licenseName": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A20170428Achillea_millefolium6.jpg",
+      "searchQuery": "category:Category:Achillea millefolium"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:50.436Z"
+  },
+  "coreopsis": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Coreopsis verticillata - Botanischer Garten Mainz IMG 5675.JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/8/80/Coreopsis_verticillata_-_Botanischer_Garten_Mainz_IMG_5675.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/Coreopsis_verticillata_-_Botanischer_Garten_Mainz_IMG_5675.JPG/960px-Coreopsis_verticillata_-_Botanischer_Garten_Mainz_IMG_5675.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Oceancetaceen - Alice Chodura",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ACoreopsis_verticillata_-_Botanischer_Garten_Mainz_IMG_5675.JPG",
+      "searchQuery": "category:Category:Coreopsis verticillata"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:52.535Z"
+  },
+  "gaillarde": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:38:55.737Z"
+  },
+  "verveine-de-buenos-aires": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:'Verbena bonariensis' Clavering Essex England 1.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/7/75/%27Verbena_bonariensis%27_Clavering_Essex_England_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/%27Verbena_bonariensis%27_Clavering_Essex_England_1.jpg/960px-%27Verbena_bonariensis%27_Clavering_Essex_England_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Acabashi",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A'Verbena_bonariensis'_Clavering_Essex_England_1.jpg",
+      "searchQuery": "category:Category:Verbena bonariensis"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:38:57.238Z"
+  },
+  "perovskia": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:00.253Z"
+  },
+  "euphorbe-des-garrigues": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:0 Euphorbia veneta - Samoëns.JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d2/0_Euphorbia_veneta_-_Samo%C3%ABns.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/0_Euphorbia_veneta_-_Samo%C3%ABns.JPG/960px-0_Euphorbia_veneta_-_Samo%C3%ABns.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Jean-Pol GRANDMONT",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A0_Euphorbia_veneta_-_Samo%C3%ABns.JPG",
+      "searchQuery": "category:Category:Euphorbia characias"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:39:02.100Z"
+  },
+  "hellebore": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:05.103Z"
+  },
+  "bergenia": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:06.604Z"
+  },
+  "phlox": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:08.467Z"
+  },
+  "digitale": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:09.768Z"
+  },
+  "lupin": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:11.034Z"
+  },
+  "tritoma": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:12.233Z"
+  },
+  "canna": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:13.335Z"
+  },
+  "bananier-du-japon": {
+    "status": "selected",
+    "candidateIndex": 0,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Gardenology.org-IMG 2492 ucla09.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Gardenology.org-IMG_2492_ucla09.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/Gardenology.org-IMG_2492_ucla09.jpg/960px-Gardenology.org-IMG_2492_ucla09.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Raffi Kojian",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AGardenology.org-IMG_2492_ucla09.jpg",
+      "searchQuery": "category:Category:Musa basjoo"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:39:17.818Z"
+  },
+  "phormium": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:21.920Z"
+  },
+  "agave": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:23.270Z"
+  },
+  "acanthe": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:25.936Z"
+  },
+  "penstemon": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:27.210Z"
+  },
+  "vergerette": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:29.469Z"
+  },
+  "valeriane-rouge": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:30.819Z"
+  },
+  "muguet": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:20170513 PP Skalky u Trebuticek 15.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8c/20170513_PP_Skalky_u_Trebuticek_15.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8c/20170513_PP_Skalky_u_Trebuticek_15.jpg/960px-20170513_PP_Skalky_u_Trebuticek_15.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Krvesaj",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A20170513_PP_Skalky_u_Trebuticek_15.jpg",
+      "searchQuery": "category:Category:Convallaria majalis"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:39:33.086Z"
+  },
+  "dahlia": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:35.267Z"
+  },
+  "allium": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:38.618Z"
+  },
+  "tulipe": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:0152Fc2. Foxtrot Tulips.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d3/0152Fc2._Foxtrot_Tulips.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/0152Fc2._Foxtrot_Tulips.jpg/960px-0152Fc2._Foxtrot_Tulips.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Александровы АГ",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A0152Fc2._Foxtrot_Tulips.jpg",
+      "searchQuery": "category:Category:Tulipa"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:39:40.369Z"
+  },
+  "narcisse": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:41.485Z"
+  },
+  "lis": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:47.153Z"
+  },
+  "miscanthus": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:39:48.451Z"
+  },
+  "herbe-aux-ecouvillons": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Pennisetum alopecuroides 1zz.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/5/51/Pennisetum_alopecuroides_1zz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Pennisetum_alopecuroides_1zz.jpg/960px-Pennisetum_alopecuroides_1zz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Photo by David J. Stang",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3APennisetum_alopecuroides_1zz.jpg",
+      "searchQuery": "search:Pennisetum alopecuroides"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:39:50.553Z"
+  },
+  "cheveux-d-ange": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Nassella lenuissima 0zz.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/8/88/Nassella_lenuissima_0zz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/88/Nassella_lenuissima_0zz.jpg/960px-Nassella_lenuissima_0zz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Photo by David J. Stang",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ANassella_lenuissima_0zz.jpg",
+      "searchQuery": "category:Category:Nassella tenuissima"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:39:52.018Z"
+  },
+  "calamagrostis": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Calamagrostis x acutiflora Karl Foerster 0zz.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Calamagrostis_x_acutiflora_Karl_Foerster_0zz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Calamagrostis_x_acutiflora_Karl_Foerster_0zz.jpg/960px-Calamagrostis_x_acutiflora_Karl_Foerster_0zz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Photo by David J. Stang",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ACalamagrostis_x_acutiflora_Karl_Foerster_0zz.jpg",
+      "searchQuery": "search:Calamagrostis × acutiflora 'Karl Foerster'"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:39:54.069Z"
+  },
+  "laiche": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Carex perraudieriana, Islas Canarias, ES iNaturalist.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/9/95/Carex_perraudieriana%2C_Islas_Canarias%2C_ES_iNaturalist.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/Carex_perraudieriana%2C_Islas_Canarias%2C_ES_iNaturalist.jpg/960px-Carex_perraudieriana%2C_Islas_Canarias%2C_ES_iNaturalist.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "(c) Diego Rodríguez Hernández, some rights reserved (CC BY)",
+      "licenseName": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ACarex_perraudieriana%2C_Islas_Canarias%2C_ES_iNaturalist.jpg",
+      "searchQuery": "category:Category:Carex"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:39:55.718Z"
+  },
+  "fetuque-bleue": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:2011-04-22 Portugal 322 - Lisboa (5695749570).jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/1/15/2011-04-22_Portugal_322_-_Lisboa_%285695749570%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/15/2011-04-22_Portugal_322_-_Lisboa_%285695749570%29.jpg/960px-2011-04-22_Portugal_322_-_Lisboa_%285695749570%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Luiyo from Madrid, Spain",
+      "licenseName": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A2011-04-22_Portugal_322_-_Lisboa_(5695749570).jpg",
+      "searchQuery": "category:Category:Festuca glauca"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:39:57.152Z"
+  },
+  "panic-erige": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Harvesting switchgrass Nov 2016 Cornell.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/6/6d/Harvesting_switchgrass_Nov_2016_Cornell.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6d/Harvesting_switchgrass_Nov_2016_Cornell.jpg/960px-Harvesting_switchgrass_Nov_2016_Cornell.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Wikibiogas",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AHarvesting_switchgrass_Nov_2016_Cornell.jpg",
+      "searchQuery": "category:Category:Panicum virgatum"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:39:58.686Z"
+  },
+  "herbe-du-japon": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Hakonechloa macra Aureola 2zz.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/2/26/Hakonechloa_macra_Aureola_2zz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/Hakonechloa_macra_Aureola_2zz.jpg/960px-Hakonechloa_macra_Aureola_2zz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Photo by David J. Stang",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AHakonechloa_macra_Aureola_2zz.jpg",
+      "searchQuery": "category:Category:Hakonechloa macra 'Aureola'"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:00.701Z"
+  },
+  "herbe-sanguine": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:40:03.951Z"
+  },
+  "muhlenbergia": {
+    "status": "selected",
+    "candidateIndex": 4,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Muhlenbergia (muhly grass) (5992419212).jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Muhlenbergia_%28muhly_grass%29_%285992419212%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/Muhlenbergia_%28muhly_grass%29_%285992419212%29.jpg/960px-Muhlenbergia_%28muhly_grass%29_%285992419212%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "U.S. Fish and Wildlife Service Headquarters",
+      "licenseName": "Public domain",
+      "licenseUrl": "",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AMuhlenbergia_(muhly_grass)_(5992419212).jpg",
+      "searchQuery": "category:Category:Muhlenbergia capillaris"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:08.852Z"
+  },
+  "herbe-de-la-pampa": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Cortaderia argentea 0zz.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Cortaderia_argentea_0zz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0c/Cortaderia_argentea_0zz.jpg/960px-Cortaderia_argentea_0zz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Photo by David J. Stang",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ACortaderia_argentea_0zz.jpg",
+      "searchQuery": "category:Category:Cortaderia selloana"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:12.685Z"
+  },
+  "pervenche": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:20130414Vinca minor02.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a7/20130414Vinca_minor02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a7/20130414Vinca_minor02.jpg/960px-20130414Vinca_minor02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "AnRo0002",
+      "licenseName": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A20130414Vinca_minor02.jpg",
+      "searchQuery": "category:Category:Vinca minor"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:14.735Z"
+  },
+  "thym-serpolet": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:20150813Thymus serpyllum1.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b9/20150813Thymus_serpyllum1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/20150813Thymus_serpyllum1.jpg/960px-20150813Thymus_serpyllum1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "AnRo0002",
+      "licenseName": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A20150813Thymus_serpyllum1.jpg",
+      "searchQuery": "category:Category:Thymus serpyllum"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:17.769Z"
+  },
+  "herbe-aux-turquoises": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:2016 Cycas revoluta. Funchal. Madeira. Portugal-111.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ee/2016_Cycas_revoluta._Funchal._Madeira._Portugal-111.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ee/2016_Cycas_revoluta._Funchal._Madeira._Portugal-111.jpg/960px-2016_Cycas_revoluta._Funchal._Madeira._Portugal-111.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Luis Miguel Bugallo Sánchez (Lmbuga)",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A2016_Cycas_revoluta._Funchal._Madeira._Portugal-111.jpg",
+      "searchQuery": "category:Category:Ophiopogon japonicus"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:19.436Z"
+  },
+  "bugle-rampante": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:20160503Ajuga reptans1.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a7/20160503Ajuga_reptans1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a7/20160503Ajuga_reptans1.jpg/960px-20160503Ajuga_reptans1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "AnRo0002",
+      "licenseName": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A20160503Ajuga_reptans1.jpg",
+      "searchQuery": "category:Category:Ajuga reptans"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:21.037Z"
+  },
+  "geranium-a-grosses-racines": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Giardino alpino d. broglio 8.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/0/07/Giardino_alpino_d._broglio_8.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Giardino_alpino_d._broglio_8.jpg/960px-Giardino_alpino_d._broglio_8.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "VALERIA CARFORA",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AGiardino_alpino_d._broglio_8.jpg",
+      "searchQuery": "category:Category:Geranium macrorrhizum"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:23.019Z"
+  },
+  "cotoneaster-rampant": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Chrysotoxum cautum sur Cotoneaster dammeri (3).JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/7/77/Chrysotoxum_cautum_sur_Cotoneaster_dammeri_%283%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Chrysotoxum_cautum_sur_Cotoneaster_dammeri_%283%29.JPG/960px-Chrysotoxum_cautum_sur_Cotoneaster_dammeri_%283%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Père Igor",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AChrysotoxum_cautum_sur_Cotoneaster_dammeri_(3).JPG",
+      "searchQuery": "category:Category:Cotoneaster dammeri"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:24.935Z"
+  },
+  "phlox-mousse": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Garden with alpine Phlox (Phlox subulata), Ontario (2922554118).jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Garden_with_alpine_Phlox_%28Phlox_subulata%29%2C_Ontario_%282922554118%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Garden_with_alpine_Phlox_%28Phlox_subulata%29%2C_Ontario_%282922554118%29.jpg/960px-Garden_with_alpine_Phlox_%28Phlox_subulata%29%2C_Ontario_%282922554118%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Ryan Schreiber",
+      "licenseName": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AGarden_with_alpine_Phlox_(Phlox_subulata)%2C_Ontario_(2922554118).jpg",
+      "searchQuery": "category:Category:Phlox subulata"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:26.601Z"
+  },
+  "lamier": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:40:29.072Z"
+  },
+  "romarin": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Rosemary Bush (Rosmarinus officinalis) (8346914670).jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/7/73/Rosemary_Bush_%28Rosmarinus_officinalis%29_%288346914670%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/Rosemary_Bush_%28Rosmarinus_officinalis%29_%288346914670%29.jpg/960px-Rosemary_Bush_%28Rosmarinus_officinalis%29_%288346914670%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Bernard DUPONT from FRANCE",
+      "licenseName": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3ARosemary_Bush_(Rosmarinus_officinalis)_(8346914670).jpg",
+      "searchQuery": "category:Category:Salvia rosmarinus"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:31.667Z"
+  },
+  "thym": {
+    "status": "none",
+    "updatedAt": "2026-10-10T18:40:33.702Z"
+  },
+  "sauge-officinale": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Gardenology.org-IMG 0683 bbg09.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Gardenology.org-IMG_0683_bbg09.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Gardenology.org-IMG_0683_bbg09.jpg/960px-Gardenology.org-IMG_0683_bbg09.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Raffi Kojian",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AGardenology.org-IMG_0683_bbg09.jpg",
+      "searchQuery": "category:Category:Salvia officinalis"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:35.368Z"
+  },
+  "santoline": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Gardenology.org-IMG 2696 rbgs11jan.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/3/37/Gardenology.org-IMG_2696_rbgs11jan.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/37/Gardenology.org-IMG_2696_rbgs11jan.jpg/960px-Gardenology.org-IMG_2696_rbgs11jan.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Raffi Kojian",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AGardenology.org-IMG_2696_rbgs11jan.jpg",
+      "searchQuery": "category:Category:Santolina chamaecyparissus"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:37.185Z"
+  },
+  "immortelle": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Gardenology.org-IMG 2737 rbgs11jan.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Gardenology.org-IMG_2737_rbgs11jan.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/Gardenology.org-IMG_2737_rbgs11jan.jpg/960px-Gardenology.org-IMG_2737_rbgs11jan.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Raffi Kojian",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AGardenology.org-IMG_2737_rbgs11jan.jpg",
+      "searchQuery": "category:Category:Helichrysum italicum"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:39.235Z"
+  },
+  "menthe": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Mentha.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Mentha.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a4/Mentha.jpg/960px-Mentha.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "Perfectnews",
+      "licenseName": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AMentha.jpg",
+      "searchQuery": "category:Category:Mentha"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:41.468Z"
+  },
+  "ciboulette": {
+    "status": "selected",
+    "candidateIndex": 6,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:20160225Allium schoenoprasum3.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3f/20160225Allium_schoenoprasum3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3f/20160225Allium_schoenoprasum3.jpg/960px-20160225Allium_schoenoprasum3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "AnRo0002",
+      "licenseName": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A20160225Allium_schoenoprasum3.jpg",
+      "searchQuery": "category:Category:Allium schoenoprasum"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:43.251Z"
+  },
+  "laurier-sauce": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:Edler Lorbeer Laurus nobilis.JPG",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0e/Edler_Lorbeer_Laurus_nobilis.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Edler_Lorbeer_Laurus_nobilis.JPG/960px-Edler_Lorbeer_Laurus_nobilis.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "4028mdk09",
+      "licenseName": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3AEdler_Lorbeer_Laurus_nobilis.JPG",
+      "searchQuery": "category:Category:Laurus nobilis"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:44.369Z"
+  },
+  "origan": {
+    "status": "selected",
+    "candidateIndex": 7,
+    "candidate": {
+      "source": "Wikimedia",
+      "wikimediaTitle": "File:20150429Origanum vulgare.jpg",
+      "hdUrl": "https://upload.wikimedia.org/wikipedia/commons/8/87/20150429Origanum_vulgare.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "thumbnailUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/87/20150429Origanum_vulgare.jpg/960px-20150429Origanum_vulgare.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "author": "AnRo0002",
+      "licenseName": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "pageUrl": "https://commons.wikimedia.org/wiki/File%3A20150429Origanum_vulgare.jpg",
+      "searchQuery": "category:Category:Origanum vulgare"
+    },
+    "displayVariant": "original",
+    "rembgCacheFile": null,
+    "updatedAt": "2026-10-10T18:40:52.002Z"
+  }
+}
