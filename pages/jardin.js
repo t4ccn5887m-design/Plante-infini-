@@ -46,7 +46,6 @@ import {
   nextIncompleteStepId,
   fetchGardenCoupsCount,
 } from "@/lib/gardenDossierGuidance";
-import { shareGardenDossierPdf } from "@/lib/gardenDossierPdf";
 import { loadGardenIntention } from "@/lib/gardenIntention";
 import WilderMainLayout from "@/components/WilderMainLayout";
 import AjouterAuJardinSheet from "@/components/AjouterAuJardinSheet";
@@ -201,7 +200,6 @@ export default function Wilder() {
   const [dossierConfirmProgress, setDossierConfirmProgress] = useState(null);
   const [lastValidatedStepId, setLastValidatedStepId] = useState(null);
   const [guidedCoupsBanner, setGuidedCoupsBanner] = useState(false);
-  const [dossierShareBusy, setDossierShareBusy] = useState(false);
 
   const { isGuest, refreshGuestAccount } = useGuestAccount();
 
@@ -468,15 +466,6 @@ export default function Wilder() {
     },
     [openDossierStepById]
   );
-
-  const handleShareDossierFromConfirm = useCallback(async () => {
-    setDossierShareBusy(true);
-    try {
-      await shareGardenDossierPdf();
-    } finally {
-      setDossierShareBusy(false);
-    }
-  }, []);
 
   const openPaletteDetail = useCallback((palette) => {
     if (!palette?.id) return;
@@ -1274,8 +1263,7 @@ export default function Wilder() {
           nextStepId={nextStepId}
           onNextStep={handleDossierConfirmNext}
           onViewDossier={openBrief}
-          onSharePdf={handleShareDossierFromConfirm}
-          shareBusy={dossierShareBusy}
+          refreshTick={homeGardenRefreshTick}
         />
       );
     } else if (screen === "garden-ambiance-detail") {

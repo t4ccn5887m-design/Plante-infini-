@@ -3,12 +3,8 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  buildGardenBriefPdfParams,
-  createBriefPdfBlob,
-  downloadBriefPdfBlob,
-  shareBriefPdf,
-} from "@/lib/briefPdf";
+import { GARDEN_PDF_USER_ERROR } from "@/lib/gardenBriefPdfDelivery";
+import { useGardenDossierPdfPrepare } from "@/hooks/useGardenDossierPdfPrepare";
 import { computeGardenDossierProgress } from "@/lib/gardenDossierProgress";
 import { loadGardenIntention } from "@/lib/gardenIntention";
 import { loadGardenCoupsItems } from "@/lib/gardenCoupsItems";
@@ -192,8 +188,6 @@ export default function DossierScreen({
   const [ambianceName, setAmbianceName] = useState("");
   const [budgetId, setBudgetId] = useState("");
   const [terrainPhotoCount, setTerrainPhotoCount] = useState(0);
-  const [pdfBusy, setPdfBusy] = useState(false);
-  const [shareBusy, setShareBusy] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const [error, setError] = useState(null);
 
@@ -242,62 +236,46 @@ export default function DossierScreen({
   const visiblePills = pillNames.slice(0, MAX_PILLS);
   const extraCount = Math.max(0, pillNames.length - MAX_PILLS);
 
-  const buildPdfParams = useCallback(async () => {
-    const terrainPhotoDataUrls = await loadGardenTerrainPhotoDataUrls();
-    const fields = loadGardenTerrainFields();
-    return buildGardenBriefPdfParams({
-      displayFirstName: firstNameFromProfile(),
-      ambianceName: loadGardenAmbianceChoice(),
-      intention: loadGardenIntention(),
-      coupsItems: coupsItems,
-      terrainPhotoDataUrls,
-      terrainLines: terrainSummaryLines(fields),
-      budgetLabel: budgetDisplayLabel(loadGardenBudgetChoice()),
-    });
-  }, [coupsItems]);
-
   const canExport = !loading && progress.completedCount >= 1;
 
-  const handleExportPdf = async () => {
-    if (!canExport || pdfBusy) return;
-    setPdfBusy(true);
+  const {
+    pdfPreparing,
+    pdfReady,
+    pdfError,
+    shareFromPrepared,
+    exportFromPrepared,
+  } = useGardenDossierPdfPrepare(canExport, refreshTick);
+
+  const pdfBlocked = !pdfReady || pdfPreparing;
+
+  const handleExportPdf = () => {
+    if (!canExport || pdfBlocked) return;
     setError(null);
     setFeedback(null);
-    try {
-      const pdfParams = await buildPdfParams();
-      const created = await createBriefPdfBlob(pdfParams);
-      if (!created.ok) {
-        setError(t("brief.send_error"));
-        return;
-      }
-      await downloadBriefPdfBlob(created.blob, created.filename);
-      setFeedback(t("brief.download_success"));
-    } catch {
-      setError(t("brief.send_error"));
-    } finally {
-      setPdfBusy(false);
+    const result = exportFromPrepared();
+    if (!result.ok) {
+      if (result.cancelled) return;
+      setError(result.error || GARDEN_PDF_USER_ERROR);
+      return;
     }
+    setFeedback(
+      result.method === "open_tab"
+        ? "PDF ouvert — vous pouvez l'enregistrer depuis le menu de partage."
+        : t("brief.download_success")
+    );
   };
 
-  const handleSharePdf = async () => {
-    if (!canExport || shareBusy) return;
-    setShareBusy(true);
+  const handleSharePdf = () => {
+    if (!canExport || pdfBlocked) return;
     setError(null);
     setFeedback(null);
-    try {
-      const pdfParams = await buildPdfParams();
-      const result = await shareBriefPdf(pdfParams);
-      if (!result.ok) {
-        if (result.cancelled) return;
-        setError(t("brief.send_error"));
-        return;
-      }
-      setFeedback(t("brief.send_success"));
-    } catch {
-      setError(t("brief.send_error"));
-    } finally {
-      setShareBusy(false);
+    const result = shareFromPrepared();
+    if (!result.ok) {
+      if (result.cancelled) return;
+      setError(result.error || GARDEN_PDF_USER_ERROR);
+      return;
     }
+    setFeedback(t("brief.send_success"));
   };
 
   const motText = (intention || "").trim();
@@ -495,6 +473,18 @@ export default function DossierScreen({
         </p>
       ) : null}
 
+      {pdfError ? (
+        <p style={{ margin: 0, fontSize: 13, color: COLORS.error, lineHeight: 1.45 }}>
+          {GARDEN_PDF_USER_ERROR}
+        </p>
+      ) : null}
+
+      {pdfError ? (
+        <p style={{ margin: 0, fontSize: 13, color: COLORS.error, lineHeight: 1.45 }}>
+          {GARDEN_PDF_USER_ERROR}
+        </p>
+      ) : null}
+
       {error ? (
         <p style={{ margin: 0, fontSize: 13, color: COLORS.error, lineHeight: 1.45 }}>
           {error === "load_failed" ? t("brief.load_error") : error}
@@ -508,7 +498,7 @@ export default function DossierScreen({
         <button
           type="button"
           onClick={handleExportPdf}
-          disabled={!canExport || pdfBusy || shareBusy}
+          disabled={!canExport || pdfBlocked}
           style={{
             flex: "1 1 0",
             minHeight: 50,
@@ -522,18 +512,18 @@ export default function DossierScreen({
             alignItems: "center",
             justifyContent: "center",
             gap: 8,
-            cursor: !canExport || pdfBusy ? "default" : "pointer",
+            cursor: !canExport || pdfBlocked ? "default" : "pointer",
             fontFamily: "inherit",
-            opacity: !canExport || pdfBusy ? 0.55 : 1,
+            opacity: !canExport || pdfBlocked ? 0.55 : 1,
           }}
         >
           <IconDownload />
-          Exporter en PDF
+          {pdfPreparing ? "Préparation du PDF…" : "Exporter en PDF"}
         </button>
         <button
           type="button"
           onClick={handleSharePdf}
-          disabled={!canExport || pdfBusy || shareBusy}
+          disabled={!canExport || pdfBlocked}
           style={{
             flex: "1 1 0",
             minHeight: 50,
@@ -547,13 +537,13 @@ export default function DossierScreen({
             alignItems: "center",
             justifyContent: "center",
             gap: 8,
-            cursor: !canExport || shareBusy ? "default" : "pointer",
+            cursor: !canExport || pdfBlocked ? "default" : "pointer",
             fontFamily: "inherit",
-            opacity: !canExport || shareBusy ? 0.55 : 1,
+            opacity: !canExport || pdfBlocked ? 0.55 : 1,
           }}
         >
           <IconSend />
-          Envoyer
+          {pdfPreparing ? "Préparation du PDF…" : "Envoyer"}
         </button>
       </div>
     </div>

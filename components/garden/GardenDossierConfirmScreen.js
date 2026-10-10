@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { stepShortLabel } from "@/lib/gardenDossierGuidance";
+import { GARDEN_PDF_USER_ERROR } from "@/lib/gardenBriefPdfDelivery";
+import { useGardenDossierPdfPrepare } from "@/hooks/useGardenDossierPdfPrepare";
 
 const GREEN = "#2F5E3F";
 
@@ -7,11 +10,32 @@ export default function GardenDossierConfirmScreen({
   nextStepId,
   onNextStep,
   onViewDossier,
-  onSharePdf,
-  shareBusy = false,
+  refreshTick = 0,
 }) {
   const complete = progress.percent >= 100;
   const nextLabel = nextStepId ? stepShortLabel(nextStepId) : null;
+  const [shareFeedback, setShareFeedback] = useState(null);
+  const [shareError, setShareError] = useState(null);
+
+  const { pdfPreparing, pdfReady, pdfError, shareFromPrepared } = useGardenDossierPdfPrepare(
+    complete,
+    refreshTick
+  );
+
+  const handleShare = () => {
+    if (!complete || !pdfReady || pdfPreparing) return;
+    setShareError(null);
+    setShareFeedback(null);
+    const result = shareFromPrepared();
+    if (!result.ok) {
+      if (result.cancelled) return;
+      setShareError(result.error || GARDEN_PDF_USER_ERROR);
+      return;
+    }
+    setShareFeedback("Dossier prêt à partager.");
+  };
+
+  const shareDisabled = !complete || pdfPreparing || !pdfReady;
 
   return (
     <div
@@ -59,15 +83,29 @@ export default function GardenDossierConfirmScreen({
           : `Votre dossier est complet à ${progress.percent} %.`}
       </p>
 
+      {pdfError ? (
+        <p style={{ margin: 0, fontSize: 13, color: "#b42318", maxWidth: 320 }}>{GARDEN_PDF_USER_ERROR}</p>
+      ) : null}
+      {shareError ? (
+        <p style={{ margin: 0, fontSize: 13, color: "#b42318", maxWidth: 320 }}>{shareError}</p>
+      ) : null}
+      {shareFeedback ? (
+        <p style={{ margin: 0, fontSize: 13, color: GREEN, maxWidth: 320 }}>{shareFeedback}</p>
+      ) : null}
+
       <div style={{ width: "100%", maxWidth: 360, display: "flex", flexDirection: "column", gap: 10, marginTop: 8 }}>
         {complete ? (
           <button
             type="button"
-            disabled={shareBusy}
-            onClick={onSharePdf}
-            style={primaryBtnStyle}
+            disabled={shareDisabled}
+            onClick={handleShare}
+            style={{
+              ...primaryBtnStyle,
+              opacity: shareDisabled ? 0.55 : 1,
+              cursor: shareDisabled ? "default" : "pointer",
+            }}
           >
-            {shareBusy ? "Préparation…" : "Envoyer à mon paysagiste"}
+            {pdfPreparing ? "Préparation du PDF…" : "Envoyer à mon paysagiste"}
           </button>
         ) : nextStepId ? (
           <button type="button" onClick={() => onNextStep(nextStepId)} style={primaryBtnStyle}>
