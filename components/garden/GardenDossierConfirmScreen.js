@@ -1,0 +1,112 @@
+import { stepShortLabel } from "@/lib/gardenDossierGuidance";
+
+const GREEN = "#2F5E3F";
+
+export default function GardenDossierConfirmScreen({
+  progress,
+  nextStepId,
+  onNextStep,
+  onViewDossier,
+  onSharePdf,
+  shareBusy = false,
+}) {
+  const complete = progress.percent >= 100;
+  const nextLabel = nextStepId ? stepShortLabel(nextStepId) : null;
+
+  return (
+    <div
+      style={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "32px 24px 24px",
+        textAlign: "center",
+        gap: 16,
+      }}
+    >
+      <div
+        style={{
+          width: 72,
+          height: 72,
+          borderRadius: 999,
+          background: "#E6F0E3",
+          color: GREEN,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <svg width={36} height={36} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="M20 6 9 17l-5-5"
+            stroke="currentColor"
+            strokeWidth={2.6}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+
+      <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, color: "#1F2A22" }}>
+        {complete ? "Votre dossier est complet !" : "C'est noté !"}
+      </h1>
+
+      <p style={{ margin: 0, fontSize: 15, lineHeight: 1.45, color: "#5B6359", maxWidth: 320 }}>
+        {complete
+          ? "Vous pouvez envoyer votre dossier à votre paysagiste."
+          : `Votre dossier est complet à ${progress.percent} %.`}
+      </p>
+
+      <div style={{ width: "100%", maxWidth: 360, display: "flex", flexDirection: "column", gap: 10, marginTop: 8 }}>
+        {complete ? (
+          <button
+            type="button"
+            disabled={shareBusy}
+            onClick={onSharePdf}
+            style={primaryBtnStyle}
+          >
+            {shareBusy ? "Préparation…" : "Envoyer à mon paysagiste"}
+          </button>
+        ) : nextStepId ? (
+          <button type="button" onClick={() => onNextStep(nextStepId)} style={primaryBtnStyle}>
+            Étape suivante : {nextLabel}
+          </button>
+        ) : null}
+
+        <button
+          type="button"
+          onClick={onViewDossier}
+          style={{
+            width: "100%",
+            minHeight: 54,
+            borderRadius: 18,
+            border: `1.5px solid ${GREEN}`,
+            background: "#FFFFFF",
+            color: GREEN,
+            fontSize: 16,
+            fontWeight: 700,
+            cursor: "pointer",
+            fontFamily: "inherit",
+          }}
+        >
+          {complete ? "Voir mon dossier" : "Retour à mon dossier"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+const primaryBtnStyle = {
+  width: "100%",
+  minHeight: 54,
+  borderRadius: 18,
+  border: "none",
+  background: GREEN,
+  color: "#FFFFFF",
+  fontSize: 16,
+  fontWeight: 700,
+  cursor: "pointer",
+  fontFamily: "inherit",
+};

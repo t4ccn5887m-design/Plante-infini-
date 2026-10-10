@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BUDGETS } from "@/lib/pro/briefLabels";
 import { loadGardenBudgetChoice, saveGardenBudgetChoice } from "@/lib/gardenBudgetChoice";
-import GardenFlowScreen, { GardenBackButton } from "@/components/garden/GardenFlowScreen";
+import GardenFlowScreen, { GardenBackButton, GardenPrimaryButton } from "@/components/garden/GardenFlowScreen";
 
 const GREEN = "#2F5E3F";
 const MUTED = "#5B6359";
@@ -10,18 +10,28 @@ const BUDGET_OPTIONS = BUDGETS.map((b) =>
   b.id === "unknown" ? { ...b, label: "Je ne sais pas encore" } : b
 );
 
-export default function GardenBudgetScreen({ onBack, onSaved }) {
-  const [selected, setSelected] = useState(() => loadGardenBudgetChoice());
+export default function GardenBudgetScreen({ onBack, onValidated }) {
+  const savedOnMount = loadGardenBudgetChoice();
+  const [selected, setSelected] = useState(savedOnMount);
 
-  const choose = (id) => {
-    const next = selected === id ? "" : id;
-    setSelected(next);
-    saveGardenBudgetChoice(next);
-    onSaved?.();
+  const canValidate = Boolean(selected) && selected !== savedOnMount;
+  const validateLabel =
+    savedOnMount && selected !== savedOnMount ? "Enregistrer les modifications" : "Valider";
+
+  const handleValidate = () => {
+    if (!selected || !canValidate) return;
+    saveGardenBudgetChoice(selected);
+    onValidated?.();
   };
 
   return (
-    <GardenFlowScreen>
+    <GardenFlowScreen
+      footer={
+        <GardenPrimaryButton disabled={!canValidate} onClick={handleValidate}>
+          {validateLabel}
+        </GardenPrimaryButton>
+      }
+    >
       <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 16 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <GardenBackButton onBack={onBack} />
@@ -39,7 +49,7 @@ export default function GardenBudgetScreen({ onBack, onSaved }) {
               <button
                 key={b.id}
                 type="button"
-                onClick={() => choose(b.id)}
+                onClick={() => setSelected(b.id)}
                 style={{
                   minHeight: 56,
                   borderRadius: 18,

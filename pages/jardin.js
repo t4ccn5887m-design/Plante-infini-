@@ -38,6 +38,16 @@ import GardenAmbianceListScreen from "@/components/garden/GardenAmbianceListScre
 import GardenAmbianceDetailScreen from "@/components/garden/GardenAmbianceDetailScreen";
 import GardenTerrainScreen from "@/components/garden/GardenTerrainScreen";
 import GardenBudgetScreen from "@/components/garden/GardenBudgetScreen";
+import GardenMotScreen from "@/components/garden/GardenMotScreen";
+import GardenDossierConfirmScreen from "@/components/garden/GardenDossierConfirmScreen";
+import {
+  firstIncompleteStepId,
+  loadDossierProgressSnapshot,
+  nextIncompleteStepId,
+  fetchGardenCoupsCount,
+} from "@/lib/gardenDossierGuidance";
+import { shareGardenDossierPdf } from "@/lib/gardenDossierPdf";
+import { loadGardenIntention } from "@/lib/gardenIntention";
 import WilderMainLayout from "@/components/WilderMainLayout";
 import AjouterAuJardinSheet from "@/components/AjouterAuJardinSheet";
 import { openInstallGuideModal } from "@/components/InstallGuideModalHost";
@@ -188,6 +198,10 @@ export default function Wilder() {
   const [addSheetSoon, setAddSheetSoon] = useState(null);
   const [gardenFlowReturn, setGardenFlowReturn] = useState("home");
   const [gardenAmbianceName, setGardenAmbianceName] = useState("");
+  const [dossierConfirmProgress, setDossierConfirmProgress] = useState(null);
+  const [lastValidatedStepId, setLastValidatedStepId] = useState(null);
+  const [guidedCoupsBanner, setGuidedCoupsBanner] = useState(false);
+  const [dossierShareBusy, setDossierShareBusy] = useState(false);
 
   const { isGuest, refreshGuestAccount } = useGuestAccount();
 
@@ -381,6 +395,88 @@ export default function Wilder() {
     setGardenFlowReturn(screen);
     setScreen("garden-budget");
   }, [screen]);
+
+  const openGardenMot = useCallback(
+    (returnTo) => {
+      setGardenFlowReturn(returnTo ?? screen);
+      setScreen("garden-mot");
+    },
+    [screen]
+  );
+
+  const openDossierStepById = useCallback(
+    (stepId) => {
+      if (stepId === "coups-de-coeur") {
+        setGuidedCoupsBanner(true);
+        setReturnScreen("catalogue");
+        setCatalogueView(null);
+        setCatalogueFilters({});
+        setScreen("catalogue");
+        return;
+      }
+      if (stepId === "mot-paysagiste") {
+        setScreen("garden-mot");
+        return;
+      }
+      if (stepId === "ambiance") {
+        setScreen("garden-ambiances");
+        return;
+      }
+      if (stepId === "terrain") {
+        setScreen("garden-terrain");
+        return;
+      }
+      if (stepId === "budget") {
+        setScreen("garden-budget");
+      }
+    },
+    []
+  );
+
+  const showDossierStepConfirm = useCallback(
+    async (completedStepId) => {
+      bumpGardenDossier();
+      const progress = await loadDossierProgressSnapshot();
+      setDossierConfirmProgress(progress);
+      setLastValidatedStepId(completedStepId || null);
+      setScreen("garden-dossier-confirm");
+    },
+    [bumpGardenDossier]
+  );
+
+  const openFirstIncompleteDossierStep = useCallback(async () => {
+    const progress = await loadDossierProgressSnapshot();
+    const stepId = firstIncompleteStepId(progress);
+    if (!stepId) {
+      openBrief();
+      return;
+    }
+    setGardenFlowReturn("home");
+    openDossierStepById(stepId);
+  }, [openBrief, openDossierStepById]);
+
+  const continueCoupsGuidance = useCallback(async () => {
+    const count = await fetchGardenCoupsCount();
+    if (count < 1) return;
+    setGuidedCoupsBanner(false);
+    await showDossierStepConfirm("coups-de-coeur");
+  }, [showDossierStepConfirm]);
+
+  const handleDossierConfirmNext = useCallback(
+    (stepId) => {
+      openDossierStepById(stepId);
+    },
+    [openDossierStepById]
+  );
+
+  const handleShareDossierFromConfirm = useCallback(async () => {
+    setDossierShareBusy(true);
+    try {
+      await shareGardenDossierPdf();
+    } finally {
+      setDossierShareBusy(false);
+    }
+  }, []);
 
   const openPaletteDetail = useCallback((palette) => {
     if (!palette?.id) return;
@@ -657,8 +753,8 @@ export default function Wilder() {
 
   const handleAddSheetMot = useCallback(() => {
     closeAddSheet();
-    goHomeJardin();
-  }, [closeAddSheet, goHomeJardin]);
+    openGardenMot(screen);
+  }, [closeAddSheet, openGardenMot, screen]);
 
   const leaveScanner = useCallback(() => {
     const back = resolveScanBackScreen(returnScreen);
@@ -993,7 +1089,8 @@ export default function Wilder() {
           onOpenAmbiances={() => openGardenAmbiances("home")}
           onOpenTerrain={() => openGardenTerrain("home")}
           onOpenBudget={openGardenBudget}
-          onOpenMot={goHomeJardin}
+          onOpenMot={() => openGardenMot("home")}
+          onContinueDossier={openFirstIncompleteDossierStep}
           accountMenu={accueilDossierHome ? accountMenu : null}
           gardenRefreshTick={homeGardenRefreshTick}
           homeTab={homeTab}
@@ -1062,6 +1159,8 @@ export default function Wilder() {
             onOpenItemDetail={(discovery) => openGardenItemDetail(discovery, "catalogue")}
             onOpenCataloguePlant={openCataloguePlantFiche}
             onOpenCatalogueItem={openCatalogueItemFiche}
+            dossierCoupsGuidance={guidedCoupsBanner}
+            onContinueDossierGuidance={continueCoupsGuidance}
           />
         );
       }
@@ -1072,7 +1171,7 @@ export default function Wilder() {
           t={t}
           refreshTick={homeGardenRefreshTick}
           onOpenCoupsDeCoeur={openCoupsDeCoeur}
-          onOpenMot={goHomeJardin}
+          onOpenMot={() => openGardenMot("brief")}
           onOpenAmbiance={() => openGardenAmbiances("brief")}
           onOpenTerrain={() => openGardenTerrain("brief")}
           onOpenBudget={openGardenBudget}
@@ -1118,7 +1217,9 @@ export default function Wilder() {
     screen === "garden-ambiances" ||
     screen === "garden-ambiance-detail" ||
     screen === "garden-terrain" ||
-    screen === "garden-budget"
+    screen === "garden-budget" ||
+    screen === "garden-mot" ||
+    screen === "garden-dossier-confirm"
   ) {
     let title = "Mon dossier — Wilder";
     let body = null;
@@ -1136,15 +1237,47 @@ export default function Wilder() {
         <GardenAmbianceDetailScreen
           ambianceName={gardenAmbianceName}
           onBack={() => setScreen("garden-ambiances")}
-          onSaved={bumpGardenDossier}
+          onValidated={() => showDossierStepConfirm("ambiance")}
         />
       );
     } else if (screen === "garden-terrain") {
       title = "Mon terrain — Wilder";
-      body = <GardenTerrainScreen onBack={closeGardenFlow} onChanged={bumpGardenDossier} />;
+      body = (
+        <GardenTerrainScreen
+          onBack={closeGardenFlow}
+          onChanged={bumpGardenDossier}
+          onValidated={() => showDossierStepConfirm("terrain")}
+        />
+      );
     } else if (screen === "garden-budget") {
       title = "Mon budget — Wilder";
-      body = <GardenBudgetScreen onBack={closeGardenFlow} onSaved={bumpGardenDossier} />;
+      body = (
+        <GardenBudgetScreen
+          onBack={closeGardenFlow}
+          onValidated={() => showDossierStepConfirm("budget")}
+        />
+      );
+    } else if (screen === "garden-mot") {
+      title = "Mot pour le paysagiste — Wilder";
+      body = (
+        <GardenMotScreen
+          onBack={closeGardenFlow}
+          onValidated={() => showDossierStepConfirm("mot-paysagiste")}
+        />
+      );
+    } else if (screen === "garden-dossier-confirm" && dossierConfirmProgress) {
+      title = "Dossier enregistré — Wilder";
+      const nextStepId = nextIncompleteStepId(dossierConfirmProgress, lastValidatedStepId);
+      body = (
+        <GardenDossierConfirmScreen
+          progress={dossierConfirmProgress}
+          nextStepId={nextStepId}
+          onNextStep={handleDossierConfirmNext}
+          onViewDossier={openBrief}
+          onSharePdf={handleShareDossierFromConfirm}
+          shareBusy={dossierShareBusy}
+        />
+      );
     } else if (screen === "garden-ambiance-detail") {
       title = "Ambiances — Wilder";
       body = (

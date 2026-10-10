@@ -160,7 +160,7 @@ export default function CatalogueHubScreen({
         onRequireAccount,
       });
       if (result.gated) return;
-      if (!result.ok) setError(result.error || "unknown");
+      if (!result.ok) setError(result.error);
       else {
         await refreshGarden();
         onGardenChange?.();

@@ -32,6 +32,32 @@ export function GardenBackButton({ onBack, label = "Retour" }) {
   );
 }
 
+export function GardenPrimaryButton({ children, disabled, onClick }) {
+  const GREEN = "#2F5E3F";
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      style={{
+        width: "100%",
+        minHeight: 54,
+        borderRadius: 18,
+        border: "none",
+        background: disabled ? "#C5CBC6" : GREEN,
+        color: "#FFFFFF",
+        fontSize: 17,
+        fontWeight: 700,
+        cursor: disabled ? "default" : "pointer",
+        fontFamily: "inherit",
+        opacity: disabled ? 0.85 : 1,
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
 export default function GardenFlowScreen({ children, footer }) {
   return (
     <div

@@ -20,6 +20,8 @@ import {
 } from "@/lib/catalogueGardenToggle";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
+const GREEN = "#2F5E3F";
+
 const UNIVERSE_CARDS = [
   {
     id: "vegetal",
@@ -108,6 +110,8 @@ export default function IdeesAccueilScreen({
   onOpenItemDetail,
   onOpenCataloguePlant,
   onOpenCatalogueItem,
+  dossierCoupsGuidance = false,
+  onContinueDossierGuidance,
 }) {
   const [search, setSearch] = useState("");
   const [quizNotice, setQuizNotice] = useState(null);
@@ -175,7 +179,7 @@ export default function IdeesAccueilScreen({
         onRequireAccount,
       });
       if (result.gated) return;
-      if (!result.ok) setError(result.error || "unknown");
+      if (!result.ok) setError(result.error);
       else {
         await refreshGarden();
         onGardenChange?.();
@@ -199,6 +203,43 @@ export default function IdeesAccueilScreen({
         gap: 22,
       }}
     >
+      {dossierCoupsGuidance ? (
+        <div
+          style={{
+            borderRadius: 18,
+            padding: "14px 16px",
+            background: "#E6F0E3",
+            border: `1.5px solid ${GREEN}`,
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+          }}
+        >
+          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.45, color: "#1F2A22", fontWeight: 600 }}>
+            Ajoutez au moins un coup de cœur, puis revenez à votre dossier.
+          </p>
+          <button
+            type="button"
+            onClick={() => onContinueDossierGuidance?.()}
+            style={{
+              alignSelf: "flex-start",
+              minHeight: 44,
+              padding: "0 16px",
+              borderRadius: 14,
+              border: "none",
+              background: GREEN,
+              color: "#FFFFFF",
+              fontSize: 14,
+              fontWeight: 700,
+              cursor: "pointer",
+              fontFamily: "inherit",
+            }}
+          >
+            Continuer mon dossier
+          </button>
+        </div>
+      ) : null}
+
       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700, color: "#1F2A22" }}>Idées</h1>
         <span style={{ fontSize: 15, color: "#5B6359" }}>Que voulez-vous découvrir ?</span>

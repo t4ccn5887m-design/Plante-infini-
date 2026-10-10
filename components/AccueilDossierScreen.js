@@ -199,6 +199,7 @@ export default function AccueilDossierScreen({
   onOpenAmbiances,
   onOpenTerrain,
   onOpenBudget,
+  onContinueDossier,
   onOpenMot,
   onScan,
   gardenRefreshTick = 0,
@@ -300,7 +301,7 @@ export default function AccueilDossierScreen({
         <p style={{ margin: 0, fontSize: 14, lineHeight: 1.45, color: "#E3EEE4" }}>{progressPhrase}</p>
         <button
           type="button"
-          onClick={onOpenDossier}
+          onClick={progress.percent >= 100 ? onOpenDossier : onContinueDossier || onOpenDossier}
           style={{
             alignSelf: "flex-start",
             minHeight: 44,
@@ -328,7 +329,7 @@ export default function AccueilDossierScreen({
             />
             <path d="M14 2v4a2 2 0 0 0 2 2h4" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          Voir mon dossier
+          {progress.percent >= 100 ? "Voir mon dossier" : "Compléter mon dossier"}
         </button>
       </div>
 

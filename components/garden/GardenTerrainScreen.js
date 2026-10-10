@@ -3,6 +3,8 @@ import { AREA_RANGES, TIMELINES, UTILITIES } from "@/lib/pro/briefLabels";
 import {
   loadGardenTerrainFields,
   saveGardenTerrainFields,
+  setGardenTerrainStepValidated,
+  isGardenTerrainStepValidated,
 } from "@/lib/gardenTerrainFields";
 import {
   GARDEN_TERRAIN_MAX_PHOTOS,
@@ -10,7 +12,8 @@ import {
   listGardenTerrainPhotos,
   removeGardenTerrainPhoto,
 } from "@/lib/gardenTerrainPhotos";
-import GardenFlowScreen, { GardenBackButton } from "@/components/garden/GardenFlowScreen";
+import GardenFlowScreen, { GardenBackButton, GardenPrimaryButton } from "@/components/garden/GardenFlowScreen";
+import { getGardenTerrainPhotoCountSync } from "@/lib/gardenTerrainPhotos";
 
 const GREEN = "#2F5E3F";
 const MUTED = "#5B6359";
@@ -43,11 +46,15 @@ function SectionLabel({ children }) {
   );
 }
 
-export default function GardenTerrainScreen({ onBack, onChanged }) {
+export default function GardenTerrainScreen({ onBack, onChanged, onValidated }) {
+  const savedFieldsOnMount = loadGardenTerrainFields();
+  const hadPhotosOnMount = getGardenTerrainPhotoCountSync() >= 1;
+  const stepWasValidatedOnMount = isGardenTerrainStepValidated();
+  const [baselinePhotoCount] = useState(() => getGardenTerrainPhotoCountSync());
   const cameraRef = useRef(null);
   const galleryRef = useRef(null);
   const [photos, setPhotos] = useState([]);
-  const [fields, setFields] = useState(() => loadGardenTerrainFields());
+  const [fields, setFields] = useState(() => ({ ...savedFieldsOnMount }));
   const [busy, setBusy] = useState(false);
 
   const refreshPhotos = useCallback(async () => {
@@ -65,15 +72,31 @@ export default function GardenTerrainScreen({ onBack, onChanged }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const persistFields = (next) => {
-    setFields(next);
-    saveGardenTerrainFields(next);
-    onChanged?.();
+  const toggleField = (key, id) => {
+    setFields((prev) => ({ ...prev, [key]: prev[key] === id ? null : id }));
   };
 
-  const toggleField = (key, id) => {
-    const next = { ...fields, [key]: fields[key] === id ? null : id };
-    persistFields(next);
+  const fieldsDirty =
+    fields.areaRange !== savedFieldsOnMount.areaRange ||
+    fields.timeline !== savedFieldsOnMount.timeline ||
+    fields.utilities !== savedFieldsOnMount.utilities;
+
+  const photosChanged = photos.length !== baselinePhotoCount;
+  const canSubmit =
+    photos.length >= 1 &&
+    (!stepWasValidatedOnMount || fieldsDirty || photosChanged);
+
+  const validateLabel =
+    stepWasValidatedOnMount && (fieldsDirty || photosChanged)
+      ? "Enregistrer les modifications"
+      : "Valider";
+
+  const handleValidate = () => {
+    if (!canSubmit) return;
+    saveGardenTerrainFields(fields);
+    setGardenTerrainStepValidated(true);
+    onChanged?.();
+    onValidated?.();
   };
 
   const addFiles = async (fileList) => {
@@ -99,7 +122,13 @@ export default function GardenTerrainScreen({ onBack, onChanged }) {
   };
 
   return (
-    <GardenFlowScreen>
+    <GardenFlowScreen
+      footer={
+        <GardenPrimaryButton disabled={!canSubmit} onClick={handleValidate}>
+          {validateLabel}
+        </GardenPrimaryButton>
+      }
+    >
       <div style={{ padding: "18px", display: "flex", flexDirection: "column", gap: 16 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <GardenBackButton onBack={onBack} />

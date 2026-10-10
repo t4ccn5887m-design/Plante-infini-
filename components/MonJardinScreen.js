@@ -343,6 +343,7 @@ export default function MonJardinScreen({
   onOpenAmbiances,
   onOpenTerrain,
   onOpenBudget,
+  onContinueDossier,
   onOpenMot,
   accountMenu = null,
   gardenRefreshTick = 0,
@@ -464,6 +465,7 @@ export default function MonJardinScreen({
               onOpenAmbiances={onOpenAmbiances}
               onOpenTerrain={onOpenTerrain}
               onOpenBudget={onOpenBudget}
+              onContinueDossier={onContinueDossier}
               onOpenMot={onOpenMot}
               onScan={onScan}
               gardenRefreshTick={gardenRefreshTick}
