@@ -19,15 +19,29 @@ import { runRembgWhiteBackground, isRembgAvailable } from "./rembgRunner.mjs";
 
 const REMBG_CACHE_DIR = path.join(process.cwd(), "sevya/photo-rembg-cache");
 const DELAY_MS = 1100;
+const WIKIMEDIA_USER_AGENT =
+  "SevyaCatalogue/1.0 (contact : emilien.gaillard9@gmail.com)";
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function downloadBuffer(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Download ${res.status} ${url}`);
-  return Buffer.from(await res.arrayBuffer());
+  const headers = {};
+  if (String(url).includes("wikimedia.org")) {
+    headers["User-Agent"] = WIKIMEDIA_USER_AGENT;
+  }
+
+  while (true) {
+    const res = await fetch(url, { headers });
+    if (res.status === 429) {
+      console.warn("Download 429 — pause 30 s…");
+      await sleep(30000);
+      continue;
+    }
+    if (!res.ok) throw new Error(`Download ${res.status} ${url}`);
+    return Buffer.from(await res.arrayBuffer());
+  }
 }
 
 async function loadImageForChoice(choice) {
