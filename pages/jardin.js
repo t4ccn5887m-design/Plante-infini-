@@ -28,10 +28,8 @@ import MonJardinScreen from "@/components/MonJardinScreen";
 import MesScansScreen from "@/components/MesScansScreen";
 import CoupsDeCoeurScreen from "@/components/CoupsDeCoeurScreen";
 import ResultatScanScreen from "@/components/ResultatScanScreen";
-import IdeesScreen from "@/components/IdeesScreen";
-import CatalogueVegetalScreen from "@/components/CatalogueVegetalScreen";
-import CatalogueMineralScreen from "@/components/CatalogueMineralScreen";
-import CatalogueDecoScreen from "@/components/CatalogueDecoScreen";
+import IdeesAccueilScreen from "@/components/IdeesAccueilScreen";
+import CatalogueHubScreen from "@/components/CatalogueHubScreen";
 import IdeesJardinsScreen from "@/components/IdeesJardinsScreen";
 import DossierScreen from "@/components/DossierScreen";
 import WilderMainLayout from "@/components/WilderMainLayout";
@@ -175,6 +173,7 @@ export default function Wilder() {
   const [homeGardenRefreshTick, setHomeGardenRefreshTick] = useState(0);
   const [homeTab, setHomeTab] = useState("accueil");
   const [catalogueView, setCatalogueView] = useState(null);
+  const [catalogueFilters, setCatalogueFilters] = useState({});
   const [featureGateOpen, setFeatureGateOpen] = useState(false);
   const [featureGateMessageKey, setFeatureGateMessageKey] = useState("feature_gate.message");
   const [featureGateInitialStep, setFeatureGateInitialStep] = useState("prompt");
@@ -279,6 +278,14 @@ export default function Wilder() {
   const openCatalogue = useCallback(() => {
     setReturnScreen("catalogue");
     setCatalogueView(null);
+    setCatalogueFilters({});
+    setScreen("catalogue");
+  }, []);
+
+  const openCatalogueTab = useCallback((tab, filters = {}) => {
+    setReturnScreen("catalogue");
+    setCatalogueFilters(filters);
+    setCatalogueView(tab);
     setScreen("catalogue");
   }, []);
 
@@ -290,6 +297,7 @@ export default function Wilder() {
 
   const backToCatalogueHall = useCallback(() => {
     setCatalogueView(null);
+    setCatalogueFilters({});
   }, []);
 
   const openBrief = useCallback(() => {
@@ -940,26 +948,29 @@ export default function Wilder() {
         onRequireAccount: openRequireAccount,
       };
 
-      if (catalogueView === "vegetal") {
-        pageTitleContent = `${t("catalogue.vegetal_title")} — Wilder`;
-        mainContent = <CatalogueVegetalScreen {...catalogueProps} onBack={backToCatalogueHall} />;
-      } else if (catalogueView === "mineral") {
-        pageTitleContent = `${t("catalogue.mineral_title")} — Wilder`;
-        mainContent = <CatalogueMineralScreen {...catalogueProps} onBack={backToCatalogueHall} />;
-      } else if (catalogueView === "deco") {
-        pageTitleContent = `${t("catalogue.deco_title")} — Wilder`;
-        mainContent = <CatalogueDecoScreen {...catalogueProps} onBack={backToCatalogueHall} />;
-      } else if (catalogueView === "idees") {
+      if (catalogueView === "idees") {
         pageTitleContent = `${t("idees_jardins.title")} — Wilder`;
         mainContent = <IdeesJardinsScreen {...catalogueProps} onBack={backToCatalogueHall} />;
+      } else if (catalogueView === "vegetal" || catalogueView === "mineral" || catalogueView === "deco") {
+        pageTitleContent = "Catalogue — Wilder";
+        mainContent = (
+          <CatalogueHubScreen
+            {...catalogueProps}
+            initialTab={catalogueView}
+            initialFilters={catalogueFilters}
+            onBack={backToCatalogueHall}
+            onOpenItemDetail={(discovery) => openGardenItemDetail(discovery, "catalogue")}
+          />
+        );
       } else {
         pageTitleContent = "Idées — Wilder";
         mainContent = (
-          <IdeesScreen
+          <IdeesAccueilScreen
             t={t}
             canAddToGarden={!isGuest}
             onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
             onRequireAccount={openRequireAccount}
+            onOpenCatalogueTab={openCatalogueTab}
             onOpenAmbiances={() => setCatalogueView("idees")}
             onOpenItemDetail={(discovery) => openGardenItemDetail(discovery, "catalogue")}
           />
