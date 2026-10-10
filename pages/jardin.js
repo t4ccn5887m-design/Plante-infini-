@@ -30,6 +30,7 @@ import CoupsDeCoeurScreen from "@/components/CoupsDeCoeurScreen";
 import ResultatScanScreen from "@/components/ResultatScanScreen";
 import IdeesAccueilScreen from "@/components/IdeesAccueilScreen";
 import CatalogueHubScreen from "@/components/CatalogueHubScreen";
+import CataloguePlantFicheScreen from "@/components/CataloguePlantFicheScreen";
 import IdeesJardinsScreen from "@/components/IdeesJardinsScreen";
 import DossierScreen from "@/components/DossierScreen";
 import WilderMainLayout from "@/components/WilderMainLayout";
@@ -174,6 +175,7 @@ export default function Wilder() {
   const [homeTab, setHomeTab] = useState("accueil");
   const [catalogueView, setCatalogueView] = useState(null);
   const [catalogueFilters, setCatalogueFilters] = useState({});
+  const [catalogueFichePlantId, setCatalogueFichePlantId] = useState(null);
   const [featureGateOpen, setFeatureGateOpen] = useState(false);
   const [featureGateMessageKey, setFeatureGateMessageKey] = useState("feature_gate.message");
   const [featureGateInitialStep, setFeatureGateInitialStep] = useState("prompt");
@@ -237,24 +239,43 @@ export default function Wilder() {
     setScreen("mes-scans");
   }, []);
 
-  const openGardenItemDetail = useCallback((discovery, returnTo = "coups-de-coeur") => {
-    if (!discovery) return;
-    const latest =
-      discovery.id != null
-        ? loadDiscoveries().find((d) => d.id === discovery.id) || discovery
-        : discovery;
-    setCurrentDiscovery(latest);
-    setResult({
-      nom: latest.nom,
-      nom_latin: latest.nom_latin,
-      description: latest.description || "",
-      type: latest.type || "plante",
-      rarete: latest.rarete || "commun",
-    });
-    setCaptured(null);
+  const openCataloguePlantFiche = useCallback((plantId, returnTo = "catalogue") => {
+    if (!plantId) return;
+    setCatalogueFichePlantId(plantId);
     setReturnScreen(returnTo);
-    setScreen("result");
+    setScreen("catalogue-fiche");
   }, []);
+
+  const leaveCatalogueFiche = useCallback(() => {
+    setCatalogueFichePlantId(null);
+    setScreen(returnScreen || "catalogue");
+  }, [returnScreen]);
+
+  const openGardenItemDetail = useCallback(
+    (discovery, returnTo = "coups-de-coeur") => {
+      if (!discovery) return;
+      if (discovery.catalogue_plant_id) {
+        openCataloguePlantFiche(discovery.catalogue_plant_id, returnTo);
+        return;
+      }
+      const latest =
+        discovery.id != null
+          ? loadDiscoveries().find((d) => d.id === discovery.id) || discovery
+          : discovery;
+      setCurrentDiscovery(latest);
+      setResult({
+        nom: latest.nom,
+        nom_latin: latest.nom_latin,
+        description: latest.description || "",
+        type: latest.type || "plante",
+        rarete: latest.rarete || "commun",
+      });
+      setCaptured(null);
+      setReturnScreen(returnTo);
+      setScreen("result");
+    },
+    [openCataloguePlantFiche]
+  );
 
   const openScanResult = useCallback(
     (discovery) => {
@@ -960,6 +981,7 @@ export default function Wilder() {
             initialFilters={catalogueFilters}
             onBack={backToCatalogueHall}
             onOpenItemDetail={(discovery) => openGardenItemDetail(discovery, "catalogue")}
+            onOpenCataloguePlant={openCataloguePlantFiche}
           />
         );
       } else {
@@ -973,6 +995,7 @@ export default function Wilder() {
             onOpenCatalogueTab={openCatalogueTab}
             onOpenAmbiances={() => setCatalogueView("idees")}
             onOpenItemDetail={(discovery) => openGardenItemDetail(discovery, "catalogue")}
+            onOpenCataloguePlant={openCataloguePlantFiche}
           />
         );
       }
@@ -1207,6 +1230,28 @@ export default function Wilder() {
             {t("error.retry")}
           </button>
         </div>
+      </>
+    );
+  }
+
+  /* ── FICHE PLANTE CATALOGUE ── */
+  if (screen === "catalogue-fiche" && catalogueFichePlantId) {
+    return (
+      <>
+        <Head>
+          <title>Fiche plante — Wilder</title>
+        </Head>
+        <div className="screen-enter-fast" style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
+          <CataloguePlantFicheScreen
+            plantId={catalogueFichePlantId}
+            t={t}
+            onBack={leaveCatalogueFiche}
+            canAddToGarden={!isGuest}
+            onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
+            onRequireAccount={openRequireAccount}
+          />
+        </div>
+        {featureGateOverlay}
       </>
     );
   }

@@ -1,0 +1,5458 @@
+[
+  {
+    "id": "olivier",
+    "nom": "Olivier",
+    "nom_latin": "Olea europaea",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Facile",
+    "arrosage": "Faible",
+    "rusticite_c": -10,
+    "hauteur_adulte": "4-8 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Mai-Juin",
+    "couleurs": "Feuillage argenté",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Peu d'entretien",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Le symbole du Sud, au feuillage argenté toute l'année.",
+    "a_savoir": "Craint les grands froids et les sols détrempés en hiver.",
+    "photo_url": ""
+  },
+  {
+    "id": "erable-du-japon",
+    "nom": "Érable du Japon",
+    "nom_latin": "Acer palmatum",
+    "categorie": "Arbres",
+    "exposition": "Mi-ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "2-6 m",
+    "feuillage_persistant": "Non",
+    "floraison": "",
+    "couleurs": "Feuillage rouge ou vert",
+    "mois_interet": [
+      4,
+      5,
+      10,
+      11
+    ],
+    "ambiances": [
+      "Zen",
+      "Contemporain"
+    ],
+    "envies": [
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Une silhouette élégante et des couleurs d'automne spectaculaires.",
+    "a_savoir": "N'aime ni le vent fort ni le plein soleil brûlant.",
+    "photo_url": ""
+  },
+  {
+    "id": "erable-champetre",
+    "nom": "Érable champêtre",
+    "nom_latin": "Acer campestre",
+    "categorie": "Arbres",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -30,
+    "hauteur_adulte": "8-12 m",
+    "feuillage_persistant": "Non",
+    "floraison": "",
+    "couleurs": "Feuillage jaune d'or à l'automne",
+    "mois_interet": [
+      10,
+      11
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Un arbre local, robuste, qui supporte presque tout.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "bouleau-de-l-himalaya",
+    "nom": "Bouleau de l'Himalaya",
+    "nom_latin": "Betula utilis 'Jacquemontii'",
+    "categorie": "Arbres",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "8-12 m",
+    "feuillage_persistant": "Non",
+    "floraison": "",
+    "couleurs": "Écorce blanche",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Naturel",
+      "Zen"
+    ],
+    "envies": [
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Son écorce d'un blanc pur illumine le jardin, même en hiver.",
+    "a_savoir": "Racines superficielles : éviter près d'une terrasse.",
+    "photo_url": ""
+  },
+  {
+    "id": "magnolia-a-grandes-fleurs",
+    "nom": "Magnolia à grandes fleurs",
+    "nom_latin": "Magnolia grandiflora",
+    "categorie": "Arbres",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "6-15 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Juin-Septembre",
+    "couleurs": "Blanc crème parfumé",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Exotique"
+    ],
+    "envies": [
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "De grandes fleurs parfumées et un feuillage brillant toute l'année.",
+    "a_savoir": "Prend de la place avec les années.",
+    "photo_url": ""
+  },
+  {
+    "id": "magnolia-de-soulange",
+    "nom": "Magnolia de Soulange",
+    "nom_latin": "Magnolia × soulangeana",
+    "categorie": "Arbres",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "4-8 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Mars-Avril",
+    "couleurs": "Rose et blanc",
+    "mois_interet": [
+      3,
+      4
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Zen"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Une floraison spectaculaire avant même l'arrivée des feuilles.",
+    "a_savoir": "Les gelées tardives peuvent abîmer les fleurs.",
+    "photo_url": ""
+  },
+  {
+    "id": "cerisier-du-japon",
+    "nom": "Cerisier du Japon",
+    "nom_latin": "Prunus serrulata",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "4-8 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Avril",
+    "couleurs": "Rose",
+    "mois_interet": [
+      4,
+      10
+    ],
+    "ambiances": [
+      "Zen",
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Un nuage de fleurs roses au printemps.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "pommier-d-ornement",
+    "nom": "Pommier d'ornement",
+    "nom_latin": "Malus 'Evereste'",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "4-6 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Avril-Mai",
+    "couleurs": "Blanc, fruits rouges",
+    "mois_interet": [
+      4,
+      5,
+      9,
+      10,
+      11
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Des fleurs au printemps, de petites pommes décoratives en automne.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "arbre-de-judee",
+    "nom": "Arbre de Judée",
+    "nom_latin": "Cercis siliquastrum",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -15,
+    "hauteur_adulte": "5-8 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Avril",
+    "couleurs": "Rose violacé",
+    "mois_interet": [
+      4
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Ses fleurs roses poussent directement sur les branches.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "lilas-des-indes",
+    "nom": "Lilas des Indes",
+    "nom_latin": "Lagerstroemia indica",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "3-6 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet-Septembre",
+    "couleurs": "Rose, blanc, rouge",
+    "mois_interet": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Une floraison généreuse en plein été et une jolie écorce.",
+    "a_savoir": "A besoin de chaleur pour bien fleurir.",
+    "photo_url": ""
+  },
+  {
+    "id": "mimosa",
+    "nom": "Mimosa",
+    "nom_latin": "Acacia dealbata",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Facile",
+    "arrosage": "Faible",
+    "rusticite_c": -8,
+    "hauteur_adulte": "6-10 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Janvier-Mars",
+    "couleurs": "Jaune",
+    "mois_interet": [
+      1,
+      2,
+      3
+    ],
+    "ambiances": [
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Des pompons jaunes parfumés au cœur de l'hiver.",
+    "a_savoir": "Craint le gel ; peut drageonner.",
+    "photo_url": ""
+  },
+  {
+    "id": "arbre-de-soie",
+    "nom": "Arbre de soie",
+    "nom_latin": "Albizia julibrissin",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Facile",
+    "arrosage": "Faible",
+    "rusticite_c": -15,
+    "hauteur_adulte": "5-8 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet-Août",
+    "couleurs": "Rose",
+    "mois_interet": [
+      7,
+      8
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Exotique"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Un feuillage léger et des fleurs en pompons soyeux.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "savonnier",
+    "nom": "Savonnier",
+    "nom_latin": "Koelreuteria paniculata",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -20,
+    "hauteur_adulte": "6-10 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet",
+    "couleurs": "Jaune",
+    "mois_interet": [
+      7,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Naturel",
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Des fleurs jaunes en été puis des fruits en forme de lanternes.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "ginkgo",
+    "nom": "Ginkgo",
+    "nom_latin": "Ginkgo biloba",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "10-20 m",
+    "feuillage_persistant": "Non",
+    "floraison": "",
+    "couleurs": "Jaune d'or à l'automne",
+    "mois_interet": [
+      10,
+      11
+    ],
+    "ambiances": [
+      "Zen",
+      "Contemporain"
+    ],
+    "envies": [
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un arbre millénaire au feuillage en éventail.",
+    "a_savoir": "Préférer un sujet mâle : les fruits des femelles sentent mauvais.",
+    "photo_url": ""
+  },
+  {
+    "id": "catalpa-boule",
+    "nom": "Catalpa boule",
+    "nom_latin": "Catalpa bignonioides 'Nana'",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "4-6 m",
+    "feuillage_persistant": "Non",
+    "floraison": "",
+    "couleurs": "Grandes feuilles vertes",
+    "mois_interet": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre"
+    ],
+    "envies": [
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "Une tête ronde et dense qui fait une ombre agréable.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "fevier-dore",
+    "nom": "Févier doré",
+    "nom_latin": "Gleditsia triacanthos 'Sunburst'",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -25,
+    "hauteur_adulte": "8-12 m",
+    "feuillage_persistant": "Non",
+    "floraison": "",
+    "couleurs": "Feuillage jaune doré",
+    "mois_interet": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Naturel"
+    ],
+    "envies": [
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un feuillage léger et lumineux qui laisse passer la lumière.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "liquidambar",
+    "nom": "Liquidambar",
+    "nom_latin": "Liquidambar styraciflua",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "10-15 m",
+    "feuillage_persistant": "Non",
+    "floraison": "",
+    "couleurs": "Rouge flamboyant à l'automne",
+    "mois_interet": [
+      10,
+      11
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "L'un des plus beaux feuillages d'automne.",
+    "a_savoir": "A besoin de place.",
+    "photo_url": ""
+  },
+  {
+    "id": "chene-vert",
+    "nom": "Chêne vert",
+    "nom_latin": "Quercus ilex",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -15,
+    "hauteur_adulte": "8-15 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Feuillage persistant",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Naturel"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un arbre robuste qui reste vert toute l'année.",
+    "a_savoir": "Croissance lente.",
+    "photo_url": ""
+  },
+  {
+    "id": "pin-parasol",
+    "nom": "Pin parasol",
+    "nom_latin": "Pinus pinea",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -12,
+    "hauteur_adulte": "10-20 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Silhouette en parasol",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "L'arbre emblématique des paysages provençaux.",
+    "a_savoir": "A besoin de beaucoup de place.",
+    "photo_url": ""
+  },
+  {
+    "id": "cypres-de-provence",
+    "nom": "Cyprès de Provence",
+    "nom_latin": "Cupressus sempervirens",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -15,
+    "hauteur_adulte": "8-15 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Silhouette en colonne",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Contemporain"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Une silhouette verticale qui structure le jardin.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "palmier-de-chine",
+    "nom": "Palmier de Chine",
+    "nom_latin": "Trachycarpus fortunei",
+    "categorie": "Arbres",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "3-8 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Feuilles en éventail",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Exotique"
+    ],
+    "envies": [
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Le palmier le plus résistant au froid.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "figuier",
+    "nom": "Figuier",
+    "nom_latin": "Ficus carica",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -15,
+    "hauteur_adulte": "3-6 m",
+    "feuillage_persistant": "Non",
+    "floraison": "",
+    "couleurs": "Grandes feuilles, figues",
+    "mois_interet": [
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un parfum d'été et des fruits à cueillir.",
+    "a_savoir": "Sève irritante pour la peau.",
+    "photo_url": ""
+  },
+  {
+    "id": "murier-platane",
+    "nom": "Mûrier platane",
+    "nom_latin": "Morus platanifolia 'Fruitless'",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "6-8 m",
+    "feuillage_persistant": "Non",
+    "floraison": "",
+    "couleurs": "Grandes feuilles",
+    "mois_interet": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre"
+    ],
+    "envies": [
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "Le roi de l'ombre en été, sans fruits salissants.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "sorbier-des-oiseleurs",
+    "nom": "Sorbier des oiseleurs",
+    "nom_latin": "Sorbus aucuparia",
+    "categorie": "Arbres",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "6-10 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai",
+    "couleurs": "Blanc, baies orange",
+    "mois_interet": [
+      5,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Naturel"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Ses baies orange régalent les oiseaux.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "prunier-pourpre",
+    "nom": "Prunier pourpre",
+    "nom_latin": "Prunus cerasifera 'Pissardii'",
+    "categorie": "Arbres",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "5-8 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Mars",
+    "couleurs": "Rose pâle, feuillage pourpre",
+    "mois_interet": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Contemporain"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Un feuillage pourpre qui fait contraste toute la saison.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "amelanchier",
+    "nom": "Amélanchier",
+    "nom_latin": "Amelanchier lamarckii",
+    "categorie": "Arbres",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "3-6 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Avril",
+    "couleurs": "Blanc",
+    "mois_interet": [
+      4,
+      6,
+      10
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Des fleurs au printemps, des baies en été, des couleurs en automne.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "cornouiller-de-kousa",
+    "nom": "Cornouiller de Kousa",
+    "nom_latin": "Cornus kousa",
+    "categorie": "Arbres",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "3-6 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai-Juin",
+    "couleurs": "Blanc",
+    "mois_interet": [
+      5,
+      6,
+      10
+    ],
+    "ambiances": [
+      "Zen",
+      "Champêtre"
+    ],
+    "envies": [
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Des fleurs étoilées spectaculaires et de belles couleurs d'automne.",
+    "a_savoir": "Préfère un sol non calcaire.",
+    "photo_url": ""
+  },
+  {
+    "id": "hortensia",
+    "nom": "Hortensia",
+    "nom_latin": "Hydrangea macrophylla",
+    "categorie": "Arbustes",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Facile",
+    "arrosage": "Élevé",
+    "rusticite_c": -15,
+    "hauteur_adulte": "1-2 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Septembre",
+    "couleurs": "Rose, bleu, blanc",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Zen"
+    ],
+    "envies": [
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "De grosses fleurs généreuses tout l'été.",
+    "a_savoir": "Craint la sécheresse ; toxique si ingéré.",
+    "photo_url": ""
+  },
+  {
+    "id": "hortensia-panicule",
+    "nom": "Hortensia paniculé",
+    "nom_latin": "Hydrangea paniculata",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "1,5-2,5 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet-Octobre",
+    "couleurs": "Blanc puis rose",
+    "mois_interet": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Contemporain"
+    ],
+    "envies": [
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Plus robuste que l'hortensia classique, il supporte le soleil.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "hortensia-a-feuilles-de-chene",
+    "nom": "Hortensia à feuilles de chêne",
+    "nom_latin": "Hydrangea quercifolia",
+    "categorie": "Arbustes",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "1-2 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Août",
+    "couleurs": "Blanc",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      10,
+      11
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Des fleurs en été et un feuillage rouge en automne.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "lilas",
+    "nom": "Lilas",
+    "nom_latin": "Syringa vulgaris",
+    "categorie": "Arbustes",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "3-5 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Avril-Mai",
+    "couleurs": "Mauve, blanc",
+    "mois_interet": [
+      4,
+      5
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Un parfum inoubliable au printemps.",
+    "a_savoir": "Drageonne avec le temps.",
+    "photo_url": ""
+  },
+  {
+    "id": "seringat",
+    "nom": "Seringat",
+    "nom_latin": "Philadelphus",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "1,5-3 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai-Juin",
+    "couleurs": "Blanc parfumé",
+    "mois_interet": [
+      5,
+      6
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Un parfum de fleur d'oranger au début de l'été.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "weigela",
+    "nom": "Weigela",
+    "nom_latin": "Weigela florida",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "1-2 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai-Juin",
+    "couleurs": "Rose, rouge",
+    "mois_interet": [
+      5,
+      6
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Facile, très fleuri et peu exigeant.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "abelia",
+    "nom": "Abélia",
+    "nom_latin": "Abelia × grandiflora",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "1-2 m",
+    "feuillage_persistant": "Semi-persistant",
+    "floraison": "Juin-Octobre",
+    "couleurs": "Blanc rosé",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Contemporain"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Une floraison très longue, parfaite pour les abeilles.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "arbre-aux-papillons",
+    "nom": "Arbre aux papillons",
+    "nom_latin": "Buddleja davidii",
+    "categorie": "Arbustes",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -20,
+    "hauteur_adulte": "2-3 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet-Octobre",
+    "couleurs": "Mauve, blanc, rose",
+    "mois_interet": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Il attire les papillons tout l'été.",
+    "a_savoir": "Se ressème facilement : préférer les variétés stériles.",
+    "photo_url": ""
+  },
+  {
+    "id": "hibiscus-de-syrie",
+    "nom": "Hibiscus de Syrie",
+    "nom_latin": "Hibiscus syriacus",
+    "categorie": "Arbustes",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "2-3 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet-Septembre",
+    "couleurs": "Bleu, rose, blanc",
+    "mois_interet": [
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Exotique"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "De grandes fleurs à l'allure exotique, mais très rustique.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "pittosporum-tobira",
+    "nom": "Pittosporum tobira",
+    "nom_latin": "Pittosporum tobira",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -10,
+    "hauteur_adulte": "1,5-3 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Mai-Juin",
+    "couleurs": "Blanc parfumé",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Contemporain"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un feuillage persistant brillant et un parfum de fleur d'oranger.",
+    "a_savoir": "Craint les fortes gelées.",
+    "photo_url": ""
+  },
+  {
+    "id": "pittosporum-tenuifolium",
+    "nom": "Pittosporum tenuifolium",
+    "nom_latin": "Pittosporum tenuifolium",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -12,
+    "hauteur_adulte": "2-4 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Feuillage panaché ou pourpre",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Un feuillage fin et décoratif, idéal en haie libre.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "oranger-du-mexique",
+    "nom": "Oranger du Mexique",
+    "nom_latin": "Choisya ternata",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "1,5-2 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Avril-Mai, Septembre",
+    "couleurs": "Blanc parfumé",
+    "mois_interet": [
+      4,
+      5,
+      9
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Contemporain"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Un feuillage brillant et des fleurs parfumées deux fois par an.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "viorne-obier",
+    "nom": "Viorne obier",
+    "nom_latin": "Viburnum opulus",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "2-4 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai-Juin",
+    "couleurs": "Blanc, baies rouges",
+    "mois_interet": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Des boules blanches au printemps et des baies pour les oiseaux.",
+    "a_savoir": "Baies toxiques crues.",
+    "photo_url": ""
+  },
+  {
+    "id": "laurier-tin",
+    "nom": "Laurier-tin",
+    "nom_latin": "Viburnum tinus",
+    "categorie": "Arbustes",
+    "exposition": "Soleil à ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "2-3 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Décembre-Avril",
+    "couleurs": "Blanc rosé",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      12
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Peu d'entretien",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Il fleurit en plein hiver et reste vert toute l'année.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "cornouiller-sanguin",
+    "nom": "Cornouiller sanguin",
+    "nom_latin": "Cornus sanguinea",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "2-4 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai",
+    "couleurs": "Blanc, bois rouge en hiver",
+    "mois_interet": [
+      1,
+      2,
+      5,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Naturel",
+      "Contemporain"
+    ],
+    "envies": [
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Ses tiges rouges colorent le jardin en hiver.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "fusain-du-japon",
+    "nom": "Fusain du Japon",
+    "nom_latin": "Euonymus japonicus",
+    "categorie": "Arbustes",
+    "exposition": "Soleil à ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "1-3 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Feuillage vert ou panaché",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Un coin d'ombre",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un feuillage persistant et lumineux, même à l'ombre.",
+    "a_savoir": "Toxique si ingéré.",
+    "photo_url": ""
+  },
+  {
+    "id": "camelia",
+    "nom": "Camélia",
+    "nom_latin": "Camellia japonica",
+    "categorie": "Arbustes",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "2-4 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Février-Avril",
+    "couleurs": "Rose, rouge, blanc",
+    "mois_interet": [
+      2,
+      3,
+      4
+    ],
+    "ambiances": [
+      "Zen",
+      "Champêtre"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Des fleurs parfaites à la sortie de l'hiver.",
+    "a_savoir": "Exige une terre non calcaire.",
+    "photo_url": ""
+  },
+  {
+    "id": "rhododendron",
+    "nom": "Rhododendron",
+    "nom_latin": "Rhododendron",
+    "categorie": "Arbustes",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Moyen",
+    "arrosage": "Élevé",
+    "rusticite_c": -20,
+    "hauteur_adulte": "1-3 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Avril-Juin",
+    "couleurs": "Rose, mauve, rouge",
+    "mois_interet": [
+      4,
+      5,
+      6
+    ],
+    "ambiances": [
+      "Zen",
+      "Champêtre"
+    ],
+    "envies": [
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "Une floraison spectaculaire dans les coins ombragés.",
+    "a_savoir": "Exige une terre de bruyère ; toxique si ingéré.",
+    "photo_url": ""
+  },
+  {
+    "id": "azalee-du-japon",
+    "nom": "Azalée du Japon",
+    "nom_latin": "Rhododendron (azalée japonaise)",
+    "categorie": "Arbustes",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "0,5-1 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Avril-Mai",
+    "couleurs": "Rose, rouge, blanc",
+    "mois_interet": [
+      4,
+      5
+    ],
+    "ambiances": [
+      "Zen"
+    ],
+    "envies": [
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "Un coussin de fleurs, parfait au jardin japonais.",
+    "a_savoir": "Exige une terre non calcaire.",
+    "photo_url": ""
+  },
+  {
+    "id": "pieris",
+    "nom": "Pieris",
+    "nom_latin": "Pieris japonica",
+    "categorie": "Arbustes",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "1-2 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Mars-Avril",
+    "couleurs": "Blanc, jeunes pousses rouges",
+    "mois_interet": [
+      3,
+      4
+    ],
+    "ambiances": [
+      "Zen"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "De jeunes pousses rouge vif et des grappes de clochettes.",
+    "a_savoir": "Terre non calcaire ; toxique si ingéré.",
+    "photo_url": ""
+  },
+  {
+    "id": "skimmia",
+    "nom": "Skimmia",
+    "nom_latin": "Skimmia japonica",
+    "categorie": "Arbustes",
+    "exposition": "Ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "0,5-1 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Mars-Avril",
+    "couleurs": "Boutons rouges en hiver",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Zen",
+      "Contemporain"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Il décore les coins d'ombre tout l'hiver.",
+    "a_savoir": "Exige une terre non calcaire.",
+    "photo_url": ""
+  },
+  {
+    "id": "bambou-sacre",
+    "nom": "Bambou sacré",
+    "nom_latin": "Nandina domestica",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "1-2 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Juin-Juillet",
+    "couleurs": "Feuillage rouge en hiver",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Zen",
+      "Contemporain"
+    ],
+    "envies": [
+      "Couleur toute l'année",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un feuillage léger qui rougit en hiver.",
+    "a_savoir": "Baies toxiques.",
+    "photo_url": ""
+  },
+  {
+    "id": "ceanothe",
+    "nom": "Céanothe",
+    "nom_latin": "Ceanothus",
+    "categorie": "Arbustes",
+    "exposition": "Soleil",
+    "entretien": "Facile",
+    "arrosage": "Faible",
+    "rusticite_c": -12,
+    "hauteur_adulte": "1,5-3 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Avril-Mai",
+    "couleurs": "Bleu",
+    "mois_interet": [
+      4,
+      5
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Se cacher des voisins"
+    ],
+    "pourquoi_on_laime": "Une cascade de fleurs bleu intense au printemps.",
+    "a_savoir": "N'aime pas les sols lourds.",
+    "photo_url": ""
+  },
+  {
+    "id": "ciste",
+    "nom": "Ciste",
+    "nom_latin": "Cistus",
+    "categorie": "Arbustes",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -12,
+    "hauteur_adulte": "0,5-1,2 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Mai-Juillet",
+    "couleurs": "Rose, blanc",
+    "mois_interet": [
+      5,
+      6,
+      7
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Naturel"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Le roi des talus secs et ensoleillés.",
+    "a_savoir": "Craint l'humidité en hiver.",
+    "photo_url": ""
+  },
+  {
+    "id": "callicarpa",
+    "nom": "Callicarpa",
+    "nom_latin": "Callicarpa bodinieri 'Profusion'",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "1,5-2,5 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet",
+    "couleurs": "Baies violettes en automne",
+    "mois_interet": [
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Des baies violettes étonnantes en automne.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "spiree",
+    "nom": "Spirée",
+    "nom_latin": "Spiraea",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "0,5-2 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Avril-Juin",
+    "couleurs": "Blanc, rose",
+    "mois_interet": [
+      4,
+      5,
+      6
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Une floraison abondante pour un entretien minimal.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "deutzia",
+    "nom": "Deutzia",
+    "nom_latin": "Deutzia",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "1-2 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai-Juin",
+    "couleurs": "Blanc, rose pâle",
+    "mois_interet": [
+      5,
+      6
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Une pluie de petites fleurs au printemps.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "forsythia",
+    "nom": "Forsythia",
+    "nom_latin": "Forsythia × intermedia",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "2-3 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Mars",
+    "couleurs": "Jaune vif",
+    "mois_interet": [
+      3
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "envies": [
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Le premier éclat de jaune du printemps.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "arbre-a-perruque",
+    "nom": "Arbre à perruque",
+    "nom_latin": "Cotinus coggygria",
+    "categorie": "Arbustes",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -20,
+    "hauteur_adulte": "2-4 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Juillet",
+    "couleurs": "Feuillage pourpre, plumets roses",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      10
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre"
+    ],
+    "envies": [
+      "Peu d'entretien",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Un feuillage pourpre et des plumets vaporeux.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "epine-vinette",
+    "nom": "Épine-vinette",
+    "nom_latin": "Berberis thunbergii",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -25,
+    "hauteur_adulte": "0,5-1,5 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Avril",
+    "couleurs": "Feuillage pourpre ou doré",
+    "mois_interet": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un feuillage coloré qui fait aussi une haie défensive.",
+    "a_savoir": "Épineux.",
+    "photo_url": ""
+  },
+  {
+    "id": "mahonia",
+    "nom": "Mahonia",
+    "nom_latin": "Mahonia × media",
+    "categorie": "Arbustes",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "1,5-3 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Novembre-Février",
+    "couleurs": "Jaune parfumé",
+    "mois_interet": [
+      1,
+      2,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Zen",
+      "Naturel"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Attirer les abeilles",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Des grappes jaunes parfumées en plein hiver.",
+    "a_savoir": "Feuillage piquant.",
+    "photo_url": ""
+  },
+  {
+    "id": "sureau-noir-pourpre",
+    "nom": "Sureau noir pourpre",
+    "nom_latin": "Sambucus nigra 'Black Lace'",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "2-3 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin",
+    "couleurs": "Rose, feuillage pourpre",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Contemporain"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Un feuillage pourpre découpé comme de la dentelle.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "rosier-arbustif",
+    "nom": "Rosier arbustif",
+    "nom_latin": "Rosa (arbustif)",
+    "categorie": "Arbustes",
+    "exposition": "Soleil",
+    "entretien": "Moyen",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "0,8-1,5 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai-Octobre",
+    "couleurs": "Toutes couleurs",
+    "mois_interet": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Le charme du jardin fleuri, avec des fleurs tout l'été.",
+    "a_savoir": "Demande une taille chaque année.",
+    "photo_url": ""
+  },
+  {
+    "id": "corete-du-japon",
+    "nom": "Corète du Japon",
+    "nom_latin": "Kerria japonica",
+    "categorie": "Arbustes",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "1-2 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Avril-Mai",
+    "couleurs": "Jaune",
+    "mois_interet": [
+      4,
+      5
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "envies": [
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "Des pompons jaunes, même à l'ombre.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "hamamelis",
+    "nom": "Hamamélis",
+    "nom_latin": "Hamamelis × intermedia",
+    "categorie": "Arbustes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "2-4 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Janvier-Mars",
+    "couleurs": "Jaune, orange",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      10
+    ],
+    "ambiances": [
+      "Zen",
+      "Naturel"
+    ],
+    "envies": [
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Des fleurs parfumées en plein hiver.",
+    "a_savoir": "Préfère un sol non calcaire.",
+    "photo_url": ""
+  },
+  {
+    "id": "lavatere-arbustive",
+    "nom": "Lavatère arbustive",
+    "nom_latin": "Lavatera × clementii",
+    "categorie": "Arbustes",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -15,
+    "hauteur_adulte": "1,5-2 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Octobre",
+    "couleurs": "Rose",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Une croissance rapide et des fleurs tout l'été.",
+    "a_savoir": "Vit assez peu de temps (5 à 8 ans).",
+    "photo_url": ""
+  },
+  {
+    "id": "cordyline",
+    "nom": "Cordyline",
+    "nom_latin": "Cordyline australis",
+    "categorie": "Arbustes",
+    "exposition": "Soleil",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -8,
+    "hauteur_adulte": "1-4 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Feuillage en touffe",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Exotique",
+      "Contemporain"
+    ],
+    "envies": [
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Une silhouette exotique et graphique.",
+    "a_savoir": "Craint le gel en dessous de -8 °C.",
+    "photo_url": ""
+  },
+  {
+    "id": "yucca",
+    "nom": "Yucca",
+    "nom_latin": "Yucca filamentosa",
+    "categorie": "Arbustes",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -20,
+    "hauteur_adulte": "0,6-1,5 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Juillet-Août",
+    "couleurs": "Blanc",
+    "mois_interet": [
+      7,
+      8
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Exotique",
+      "Contemporain"
+    ],
+    "envies": [
+      "Peu d'entretien",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Un feuillage graphique et des hampes florales spectaculaires.",
+    "a_savoir": "Feuilles pointues.",
+    "photo_url": ""
+  },
+  {
+    "id": "fatsia",
+    "nom": "Fatsia",
+    "nom_latin": "Fatsia japonica",
+    "categorie": "Arbustes",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -12,
+    "hauteur_adulte": "1,5-3 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Octobre-Novembre",
+    "couleurs": "Grandes feuilles lustrées",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Exotique",
+      "Zen"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "De grandes feuilles exotiques pour les coins d'ombre.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "aucuba",
+    "nom": "Aucuba",
+    "nom_latin": "Aucuba japonica",
+    "categorie": "Arbustes",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "1-2 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Feuillage tacheté d'or",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Peu d'entretien",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Il éclaire les coins les plus sombres du jardin.",
+    "a_savoir": "Baies toxiques.",
+    "photo_url": ""
+  },
+  {
+    "id": "photinia",
+    "nom": "Photinia",
+    "nom_latin": "Photinia × fraseri 'Red Robin'",
+    "categorie": "Haies",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "2-4 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Mai",
+    "couleurs": "Jeunes pousses rouges",
+    "mois_interet": [
+      3,
+      4,
+      5,
+      9
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Ses jeunes pousses rouge vif colorent la haie.",
+    "a_savoir": "Sensible aux maladies des feuilles en climat humide.",
+    "photo_url": ""
+  },
+  {
+    "id": "laurier-cerise",
+    "nom": "Laurier-cerise",
+    "nom_latin": "Prunus laurocerasus",
+    "categorie": "Haies",
+    "exposition": "Soleil à ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "2-5 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Avril-Mai",
+    "couleurs": "Blanc",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Contemporain"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Une haie dense et rapide, même à l'ombre.",
+    "a_savoir": "Feuilles et fruits toxiques ; très vigoureux.",
+    "photo_url": ""
+  },
+  {
+    "id": "charme-commun",
+    "nom": "Charme commun",
+    "nom_latin": "Carpinus betulus",
+    "categorie": "Haies",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "2-4 m en haie",
+    "feuillage_persistant": "Semi-persistant",
+    "floraison": "",
+    "couleurs": "Feuillage marcescent",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Se cacher des voisins"
+    ],
+    "pourquoi_on_laime": "La charmille classique : elle garde ses feuilles sèches en hiver.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "hetre",
+    "nom": "Hêtre",
+    "nom_latin": "Fagus sylvatica",
+    "categorie": "Haies",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "2-4 m en haie",
+    "feuillage_persistant": "Semi-persistant",
+    "floraison": "",
+    "couleurs": "Vert ou pourpre",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Un feuillage qui reste en place tout l'hiver.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "troene",
+    "nom": "Troène",
+    "nom_latin": "Ligustrum",
+    "categorie": "Haies",
+    "exposition": "Soleil à ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "1,5-3 m",
+    "feuillage_persistant": "Semi-persistant",
+    "floraison": "Juin",
+    "couleurs": "Blanc",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Contemporain"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Peu d'entretien",
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Le classique de la haie taillée, facile partout.",
+    "a_savoir": "Baies toxiques.",
+    "photo_url": ""
+  },
+  {
+    "id": "thuya",
+    "nom": "Thuya",
+    "nom_latin": "Thuja plicata",
+    "categorie": "Haies",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "2-5 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Vert sombre",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Contemporain"
+    ],
+    "envies": [
+      "Se cacher des voisins"
+    ],
+    "pourquoi_on_laime": "Une haie très dense pour un brise-vue rapide.",
+    "a_savoir": "Toxique si ingéré ; peu favorable à la biodiversité.",
+    "photo_url": ""
+  },
+  {
+    "id": "eleagnus",
+    "nom": "Éléagnus",
+    "nom_latin": "Elaeagnus × ebbingei",
+    "categorie": "Haies",
+    "exposition": "Soleil à ombre",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -15,
+    "hauteur_adulte": "2-4 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Octobre-Novembre",
+    "couleurs": "Feuillage argenté, fleurs parfumées",
+    "mois_interet": [
+      10,
+      11
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Contemporain"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Il résiste au vent, au sel et à la sécheresse.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "escallonia",
+    "nom": "Escallonia",
+    "nom_latin": "Escallonia",
+    "categorie": "Haies",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -12,
+    "hauteur_adulte": "1,5-2,5 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Juin-Septembre",
+    "couleurs": "Rose, rouge",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Une haie fleurie qui adore le bord de mer.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "osmanthe",
+    "nom": "Osmanthe",
+    "nom_latin": "Osmanthus × burkwoodii",
+    "categorie": "Haies",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "2-3 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Avril",
+    "couleurs": "Blanc parfumé",
+    "mois_interet": [
+      4
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Contemporain"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Un feuillage dense et des fleurs au parfum de jasmin.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "chevrefeuille-arbustif",
+    "nom": "Chèvrefeuille arbustif",
+    "nom_latin": "Lonicera nitida",
+    "categorie": "Haies",
+    "exposition": "Soleil à ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "1-1,5 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Petites feuilles",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Zen"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Parfait pour une petite haie basse bien taillée.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "buis",
+    "nom": "Buis",
+    "nom_latin": "Buxus sempervirens",
+    "categorie": "Haies",
+    "exposition": "Soleil à ombre",
+    "entretien": "Moyen",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "0,3-1,5 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Vert foncé",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre"
+    ],
+    "envies": [
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Le classique des bordures et des formes taillées.",
+    "a_savoir": "Très exposé à la pyrale du buis ; toxique si ingéré.",
+    "photo_url": ""
+  },
+  {
+    "id": "houx",
+    "nom": "Houx",
+    "nom_latin": "Ilex aquifolium",
+    "categorie": "Haies",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "2-5 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Mai",
+    "couleurs": "Baies rouges en hiver",
+    "mois_interet": [
+      1,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Un coin d'ombre",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Un feuillage brillant et des baies rouges en hiver.",
+    "a_savoir": "Feuilles piquantes ; baies toxiques.",
+    "photo_url": ""
+  },
+  {
+    "id": "if",
+    "nom": "If",
+    "nom_latin": "Taxus baccata",
+    "categorie": "Haies",
+    "exposition": "Soleil à ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "1-4 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Vert sombre",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre",
+      "Zen"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "Idéal pour les haies taillées et les formes sculptées.",
+    "a_savoir": "Toutes les parties sont très toxiques.",
+    "photo_url": ""
+  },
+  {
+    "id": "bambou-non-tracant",
+    "nom": "Bambou non traçant",
+    "nom_latin": "Fargesia",
+    "categorie": "Haies",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "2-4 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Feuillage léger",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Zen",
+      "Exotique"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "Un brise-vue léger et vivant, sans envahir le jardin.",
+    "a_savoir": "Bien choisir une variété non traçante.",
+    "photo_url": ""
+  },
+  {
+    "id": "griselinia",
+    "nom": "Griselinia",
+    "nom_latin": "Griselinia littoralis",
+    "categorie": "Haies",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -10,
+    "hauteur_adulte": "1,5-3 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Vert pomme lustré",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un feuillage lumineux, parfait près de la mer.",
+    "a_savoir": "Craint les grands froids.",
+    "photo_url": ""
+  },
+  {
+    "id": "buisson-ardent",
+    "nom": "Buisson ardent",
+    "nom_latin": "Pyracantha",
+    "categorie": "Haies",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -20,
+    "hauteur_adulte": "2-3 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Mai",
+    "couleurs": "Baies orange ou rouges",
+    "mois_interet": [
+      5,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Une haie défensive couverte de baies pour les oiseaux.",
+    "a_savoir": "Épineux.",
+    "photo_url": ""
+  },
+  {
+    "id": "cypres-de-leyland",
+    "nom": "Cyprès de Leyland",
+    "nom_latin": "× Cuprocyparis leylandii",
+    "categorie": "Haies",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "3-6 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Vert",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Contemporain"
+    ],
+    "envies": [
+      "Se cacher des voisins"
+    ],
+    "pourquoi_on_laime": "Le brise-vue le plus rapide.",
+    "a_savoir": "Pousse très vite : demande deux tailles par an.",
+    "photo_url": ""
+  },
+  {
+    "id": "jasmin-etoile",
+    "nom": "Jasmin étoilé",
+    "nom_latin": "Trachelospermum jasminoides",
+    "categorie": "Grimpantes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -12,
+    "hauteur_adulte": "3-6 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Juin-Juillet",
+    "couleurs": "Blanc très parfumé",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Un parfum enivrant et un feuillage vert toute l'année.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "glycine",
+    "nom": "Glycine",
+    "nom_latin": "Wisteria sinensis",
+    "categorie": "Grimpantes",
+    "exposition": "Soleil",
+    "entretien": "Moyen",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "8-15 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Avril-Mai",
+    "couleurs": "Mauve, blanc",
+    "mois_interet": [
+      4,
+      5
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Zen"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "Des grappes de fleurs parfumées sur une pergola.",
+    "a_savoir": "Très vigoureuse ; graines toxiques.",
+    "photo_url": ""
+  },
+  {
+    "id": "clematite-des-montagnes",
+    "nom": "Clématite des montagnes",
+    "nom_latin": "Clematis montana",
+    "categorie": "Grimpantes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "5-8 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Avril-Mai",
+    "couleurs": "Rose, blanc",
+    "mois_interet": [
+      4,
+      5
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Une avalanche de petites fleurs au printemps.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "clematite-a-grandes-fleurs",
+    "nom": "Clématite à grandes fleurs",
+    "nom_latin": "Clematis (hybrides)",
+    "categorie": "Grimpantes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "2-3 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai-Septembre",
+    "couleurs": "Toutes couleurs",
+    "mois_interet": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "De grandes fleurs spectaculaires sur un treillage.",
+    "a_savoir": "Aime avoir la tête au soleil et le pied à l'ombre.",
+    "photo_url": ""
+  },
+  {
+    "id": "chevrefeuille-grimpant",
+    "nom": "Chèvrefeuille grimpant",
+    "nom_latin": "Lonicera periclymenum",
+    "categorie": "Grimpantes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "3-6 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Septembre",
+    "couleurs": "Crème et rose parfumé",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Un parfum puissant les soirs d'été.",
+    "a_savoir": "Baies toxiques.",
+    "photo_url": ""
+  },
+  {
+    "id": "bignone",
+    "nom": "Bignone",
+    "nom_latin": "Campsis radicans",
+    "categorie": "Grimpantes",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -20,
+    "hauteur_adulte": "6-10 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet-Septembre",
+    "couleurs": "Orange",
+    "mois_interet": [
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Exotique"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Des trompettes orange tout l'été.",
+    "a_savoir": "Très vigoureuse ; peut drageonner.",
+    "photo_url": ""
+  },
+  {
+    "id": "rosier-grimpant",
+    "nom": "Rosier grimpant",
+    "nom_latin": "Rosa (grimpant)",
+    "categorie": "Grimpantes",
+    "exposition": "Soleil",
+    "entretien": "Moyen",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "2-5 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai-Septembre",
+    "couleurs": "Toutes couleurs",
+    "mois_interet": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Le charme d'une façade couverte de roses.",
+    "a_savoir": "Demande une taille et un palissage.",
+    "photo_url": ""
+  },
+  {
+    "id": "hortensia-grimpant",
+    "nom": "Hortensia grimpant",
+    "nom_latin": "Hydrangea anomala subsp. petiolaris",
+    "categorie": "Grimpantes",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "5-10 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Juillet",
+    "couleurs": "Blanc",
+    "mois_interet": [
+      6,
+      7
+    ],
+    "ambiances": [
+      "Zen",
+      "Champêtre"
+    ],
+    "envies": [
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "Il fleurit même sur un mur exposé au nord.",
+    "a_savoir": "Lent à démarrer.",
+    "photo_url": ""
+  },
+  {
+    "id": "vigne-vierge",
+    "nom": "Vigne vierge",
+    "nom_latin": "Parthenocissus tricuspidata",
+    "categorie": "Grimpantes",
+    "exposition": "Soleil à ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "10-15 m",
+    "feuillage_persistant": "Non",
+    "floraison": "",
+    "couleurs": "Rouge à l'automne",
+    "mois_interet": [
+      10,
+      11
+    ],
+    "ambiances": [
+      "Naturel",
+      "Contemporain"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Elle habille un mur toute seule et rougit en automne.",
+    "a_savoir": "S'accroche aux murs : attention aux gouttières.",
+    "photo_url": ""
+  },
+  {
+    "id": "lierre",
+    "nom": "Lierre",
+    "nom_latin": "Hedera helix",
+    "categorie": "Grimpantes",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "5-15 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Septembre-Octobre",
+    "couleurs": "Vert ou panaché",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Naturel"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Un coin d'ombre",
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Il couvre tout, même à l'ombre, et nourrit les insectes en automne.",
+    "a_savoir": "Baies toxiques ; peut abîmer les vieux crépis.",
+    "photo_url": ""
+  },
+  {
+    "id": "passiflore",
+    "nom": "Passiflore",
+    "nom_latin": "Passiflora caerulea",
+    "categorie": "Grimpantes",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -12,
+    "hauteur_adulte": "4-6 m",
+    "feuillage_persistant": "Semi-persistant",
+    "floraison": "Juin-Octobre",
+    "couleurs": "Blanc et bleu",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Exotique",
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Des fleurs étonnantes à l'allure exotique.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "bougainvillier",
+    "nom": "Bougainvillier",
+    "nom_latin": "Bougainvillea",
+    "categorie": "Grimpantes",
+    "exposition": "Soleil",
+    "entretien": "Moyen",
+    "arrosage": "Moyen",
+    "rusticite_c": -3,
+    "hauteur_adulte": "3-6 m",
+    "feuillage_persistant": "Semi-persistant",
+    "floraison": "Juin-Octobre",
+    "couleurs": "Fuchsia, orange",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Exotique"
+    ],
+    "envies": [],
+    "pourquoi_on_laime": "La couleur éclatante des façades du Sud.",
+    "a_savoir": "Ne supporte pas le gel : en pot à rentrer l'hiver hors du littoral.",
+    "photo_url": ""
+  },
+  {
+    "id": "morelle-faux-jasmin",
+    "nom": "Morelle faux-jasmin",
+    "nom_latin": "Solanum laxum",
+    "categorie": "Grimpantes",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -8,
+    "hauteur_adulte": "3-5 m",
+    "feuillage_persistant": "Semi-persistant",
+    "floraison": "Juin-Octobre",
+    "couleurs": "Blanc",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Une floraison blanche qui n'en finit pas.",
+    "a_savoir": "Toxique si ingéré.",
+    "photo_url": ""
+  },
+  {
+    "id": "akebia",
+    "nom": "Akébia",
+    "nom_latin": "Akebia quinata",
+    "categorie": "Grimpantes",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "5-8 m",
+    "feuillage_persistant": "Semi-persistant",
+    "floraison": "Avril",
+    "couleurs": "Chocolat parfumé",
+    "mois_interet": [
+      4
+    ],
+    "ambiances": [
+      "Zen",
+      "Naturel"
+    ],
+    "envies": [
+      "Se cacher des voisins"
+    ],
+    "pourquoi_on_laime": "Des fleurs au parfum de chocolat et un feuillage léger.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "lavande",
+    "nom": "Lavande",
+    "nom_latin": "Lavandula angustifolia",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -15,
+    "hauteur_adulte": "40-60 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "Juin-Août",
+    "couleurs": "Violet",
+    "mois_interet": [
+      6,
+      7,
+      8
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre",
+      "Naturel"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Son parfum et ses fleurs attirent les abeilles tout l'été.",
+    "a_savoir": "Craint l'eau stagnante en hiver.",
+    "photo_url": ""
+  },
+  {
+    "id": "agapanthe",
+    "nom": "Agapanthe",
+    "nom_latin": "Agapanthus",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -10,
+    "hauteur_adulte": "60-100 cm",
+    "feuillage_persistant": "Semi-persistant",
+    "floraison": "Juillet-Août",
+    "couleurs": "Bleu, blanc",
+    "mois_interet": [
+      7,
+      8
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Contemporain"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "De grosses boules bleues en plein été.",
+    "a_savoir": "Les variétés à feuilles persistantes craignent le gel.",
+    "photo_url": ""
+  },
+  {
+    "id": "sauge-arbustive",
+    "nom": "Sauge arbustive",
+    "nom_latin": "Salvia microphylla",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -12,
+    "hauteur_adulte": "60-100 cm",
+    "feuillage_persistant": "Semi-persistant",
+    "floraison": "Mai-Novembre",
+    "couleurs": "Rouge, rose",
+    "mois_interet": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Une floraison interminable, du printemps aux gelées.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "sauge-des-bois",
+    "nom": "Sauge des bois",
+    "nom_latin": "Salvia nemorosa",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -25,
+    "hauteur_adulte": "40-60 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Septembre",
+    "couleurs": "Violet",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Des épis violets qui attirent les abeilles.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "nepeta",
+    "nom": "Népéta",
+    "nom_latin": "Nepeta × faassenii",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -20,
+    "hauteur_adulte": "30-60 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai-Septembre",
+    "couleurs": "Bleu lavande",
+    "mois_interet": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Une bordure bleue facile, adorée des abeilles… et des chats.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "gaura",
+    "nom": "Gaura",
+    "nom_latin": "Gaura lindheimeri",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -15,
+    "hauteur_adulte": "60-100 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Octobre",
+    "couleurs": "Blanc, rose",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Naturel",
+      "Méditerranéen",
+      "Contemporain"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Des fleurs légères comme des papillons tout l'été.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "echinacee",
+    "nom": "Échinacée",
+    "nom_latin": "Echinacea purpurea",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "60-100 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet-Septembre",
+    "couleurs": "Rose, blanc",
+    "mois_interet": [
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Une fleur généreuse adorée des papillons.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "rudbeckia",
+    "nom": "Rudbeckia",
+    "nom_latin": "Rudbeckia fulgida",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "50-80 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet-Octobre",
+    "couleurs": "Jaune d'or",
+    "mois_interet": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un soleil de fleurs jaunes en fin d'été.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "hemerocalle",
+    "nom": "Hémérocalle",
+    "nom_latin": "Hemerocallis",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "50-90 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Août",
+    "couleurs": "Jaune, orange, rouge",
+    "mois_interet": [
+      6,
+      7,
+      8
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Contemporain"
+    ],
+    "envies": [
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Increvable et très fleurie.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "iris",
+    "nom": "Iris",
+    "nom_latin": "Iris germanica",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -25,
+    "hauteur_adulte": "60-90 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai",
+    "couleurs": "Toutes couleurs",
+    "mois_interet": [
+      5
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Des fleurs majestueuses au printemps.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "pivoine",
+    "nom": "Pivoine",
+    "nom_latin": "Paeonia lactiflora",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "70-90 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai-Juin",
+    "couleurs": "Rose, blanc, rouge",
+    "mois_interet": [
+      5,
+      6
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Des fleurs somptueuses et parfumées.",
+    "a_savoir": "N'aime pas être déplacée.",
+    "photo_url": ""
+  },
+  {
+    "id": "geranium-vivace",
+    "nom": "Géranium vivace",
+    "nom_latin": "Geranium 'Rozanne'",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "40-60 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Octobre",
+    "couleurs": "Bleu violet",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "envies": [
+      "Peu d'entretien",
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Un tapis fleuri tout l'été, sans effort.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "alchemille",
+    "nom": "Alchémille",
+    "nom_latin": "Alchemilla mollis",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil à ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "30-50 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Juillet",
+    "couleurs": "Vert acide",
+    "mois_interet": [
+      6,
+      7
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Zen"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un feuillage où la rosée perle comme des diamants.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "heuchere",
+    "nom": "Heuchère",
+    "nom_latin": "Heuchera",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "20-50 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "Juin-Juillet",
+    "couleurs": "Feuillage pourpre, ambre ou vert",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Zen"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Des feuillages colorés toute l'année à l'ombre.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "hosta",
+    "nom": "Hosta",
+    "nom_latin": "Hosta",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Facile",
+    "arrosage": "Élevé",
+    "rusticite_c": -30,
+    "hauteur_adulte": "30-80 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet-Août",
+    "couleurs": "Feuillage bleu, vert ou panaché",
+    "mois_interet": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Zen",
+      "Exotique"
+    ],
+    "envies": [
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "Le roi des feuillages pour les coins d'ombre.",
+    "a_savoir": "Attention aux limaces.",
+    "photo_url": ""
+  },
+  {
+    "id": "fougere-male",
+    "nom": "Fougère mâle",
+    "nom_latin": "Dryopteris filix-mas",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "60-100 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "",
+    "couleurs": "Frondes vertes",
+    "mois_interet": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Zen",
+      "Naturel"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Une ambiance de sous-bois, sans aucun entretien.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "astilbe",
+    "nom": "Astilbe",
+    "nom_latin": "Astilbe",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Facile",
+    "arrosage": "Élevé",
+    "rusticite_c": -30,
+    "hauteur_adulte": "40-90 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Août",
+    "couleurs": "Rose, rouge, blanc",
+    "mois_interet": [
+      6,
+      7,
+      8
+    ],
+    "ambiances": [
+      "Zen",
+      "Champêtre"
+    ],
+    "envies": [
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "Des plumets colorés pour les coins frais.",
+    "a_savoir": "Craint la sécheresse.",
+    "photo_url": ""
+  },
+  {
+    "id": "anemone-du-japon",
+    "nom": "Anémone du Japon",
+    "nom_latin": "Anemone × hybrida",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "60-120 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Août-Octobre",
+    "couleurs": "Rose, blanc",
+    "mois_interet": [
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Zen"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Elle illumine la fin de l'été à mi-ombre.",
+    "a_savoir": "Peut s'étendre.",
+    "photo_url": ""
+  },
+  {
+    "id": "aster",
+    "nom": "Aster",
+    "nom_latin": "Symphyotrichum",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "40-120 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Septembre-Novembre",
+    "couleurs": "Mauve, rose, bleu",
+    "mois_interet": [
+      9,
+      10,
+      11
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Une explosion de couleurs à l'automne.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "orpin",
+    "nom": "Orpin",
+    "nom_latin": "Hylotelephium spectabile",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -25,
+    "hauteur_adulte": "40-60 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Août-Octobre",
+    "couleurs": "Rose",
+    "mois_interet": [
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Naturel",
+      "Contemporain",
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Une plante grasse increvable, adorée des papillons en automne.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "achillee",
+    "nom": "Achillée",
+    "nom_latin": "Achillea millefolium",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -30,
+    "hauteur_adulte": "50-80 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Septembre",
+    "couleurs": "Jaune, rose, rouge",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Elle résiste au sec et attire les insectes utiles.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "coreopsis",
+    "nom": "Coréopsis",
+    "nom_latin": "Coreopsis verticillata",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -25,
+    "hauteur_adulte": "40-60 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Septembre",
+    "couleurs": "Jaune",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un nuage de petites fleurs jaunes tout l'été.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "gaillarde",
+    "nom": "Gaillarde",
+    "nom_latin": "Gaillardia",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -20,
+    "hauteur_adulte": "30-60 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Octobre",
+    "couleurs": "Rouge et jaune",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Naturel",
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Des couleurs chaudes et une grande résistance au sec.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "verveine-de-buenos-aires",
+    "nom": "Verveine de Buenos Aires",
+    "nom_latin": "Verbena bonariensis",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -12,
+    "hauteur_adulte": "100-150 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Octobre",
+    "couleurs": "Violet",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Naturel",
+      "Contemporain"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Des fleurs légères qui flottent au-dessus des massifs.",
+    "a_savoir": "Se ressème facilement.",
+    "photo_url": ""
+  },
+  {
+    "id": "perovskia",
+    "nom": "Pérovskia",
+    "nom_latin": "Salvia yangii",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -20,
+    "hauteur_adulte": "80-120 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet-Octobre",
+    "couleurs": "Bleu lavande",
+    "mois_interet": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Contemporain",
+      "Naturel"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un nuage bleu argenté qui adore la sécheresse.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "euphorbe-des-garrigues",
+    "nom": "Euphorbe des garrigues",
+    "nom_latin": "Euphorbia characias",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -15,
+    "hauteur_adulte": "80-120 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "Mars-Mai",
+    "couleurs": "Vert acide",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Contemporain"
+    ],
+    "envies": [
+      "Peu d'entretien",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Une silhouette architecturale toute l'année.",
+    "a_savoir": "Sève irritante : porter des gants.",
+    "photo_url": ""
+  },
+  {
+    "id": "hellebore",
+    "nom": "Hellébore",
+    "nom_latin": "Helleborus",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "30-50 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "Décembre-Mars",
+    "couleurs": "Blanc, rose, pourpre",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      12
+    ],
+    "ambiances": [
+      "Zen",
+      "Champêtre"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Des fleurs en plein hiver, à l'ombre.",
+    "a_savoir": "Toxique si ingéré.",
+    "photo_url": ""
+  },
+  {
+    "id": "bergenia",
+    "nom": "Bergénia",
+    "nom_latin": "Bergenia cordifolia",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil à ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "30-40 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "Mars-Avril",
+    "couleurs": "Rose",
+    "mois_interet": [
+      3,
+      4,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Zen"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Peu d'entretien",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "De grandes feuilles qui rougissent en hiver.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "phlox",
+    "nom": "Phlox",
+    "nom_latin": "Phlox paniculata",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "80-120 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet-Septembre",
+    "couleurs": "Rose, mauve, blanc",
+    "mois_interet": [
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Des panicules parfumées en plein été.",
+    "a_savoir": "Sensible à l'oïdium s'il manque d'eau.",
+    "photo_url": ""
+  },
+  {
+    "id": "digitale",
+    "nom": "Digitale",
+    "nom_latin": "Digitalis purpurea",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "80-150 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai-Juillet",
+    "couleurs": "Pourpre, blanc",
+    "mois_interet": [
+      5,
+      6,
+      7
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "De hautes hampes de clochettes, idéales en sous-bois.",
+    "a_savoir": "Très toxique si ingérée.",
+    "photo_url": ""
+  },
+  {
+    "id": "lupin",
+    "nom": "Lupin",
+    "nom_latin": "Lupinus",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "80-100 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai-Juin",
+    "couleurs": "Toutes couleurs",
+    "mois_interet": [
+      5,
+      6
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Des épis colorés, l'âme du jardin de campagne.",
+    "a_savoir": "Préfère un sol non calcaire ; graines toxiques.",
+    "photo_url": ""
+  },
+  {
+    "id": "tritoma",
+    "nom": "Tritoma",
+    "nom_latin": "Kniphofia",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -15,
+    "hauteur_adulte": "80-120 cm",
+    "feuillage_persistant": "Semi-persistant",
+    "floraison": "Juin-Septembre",
+    "couleurs": "Orange, jaune",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Exotique",
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Des torches de feu spectaculaires.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "canna",
+    "nom": "Canna",
+    "nom_latin": "Canna indica",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Facile",
+    "arrosage": "Élevé",
+    "rusticite_c": -5,
+    "hauteur_adulte": "100-150 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet-Octobre",
+    "couleurs": "Rouge, orange, jaune",
+    "mois_interet": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Exotique"
+    ],
+    "envies": [
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "De grandes feuilles et des fleurs éclatantes, pour un air tropical.",
+    "a_savoir": "Rhizomes à protéger ou à rentrer l'hiver.",
+    "photo_url": ""
+  },
+  {
+    "id": "bananier-du-japon",
+    "nom": "Bananier du Japon",
+    "nom_latin": "Musa basjoo",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Facile",
+    "arrosage": "Élevé",
+    "rusticite_c": -15,
+    "hauteur_adulte": "2-4 m",
+    "feuillage_persistant": "Non",
+    "floraison": "",
+    "couleurs": "Immenses feuilles",
+    "mois_interet": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Exotique"
+    ],
+    "envies": [
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "L'effet jungle garanti, même dans le Nord.",
+    "a_savoir": "Le gel détruit le feuillage ; repart au printemps si le pied est protégé.",
+    "photo_url": ""
+  },
+  {
+    "id": "phormium",
+    "nom": "Phormium",
+    "nom_latin": "Phormium tenax",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -10,
+    "hauteur_adulte": "1-2 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Feuillage bronze, rose ou panaché",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Exotique",
+      "Contemporain"
+    ],
+    "envies": [
+      "Couleur toute l'année",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "De longues feuilles colorées et graphiques.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "agave",
+    "nom": "Agave",
+    "nom_latin": "Agave americana",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -8,
+    "hauteur_adulte": "1-1,5 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Rosette bleu-gris",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Exotique",
+      "Contemporain"
+    ],
+    "envies": [
+      "Peu d'entretien",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Une sculpture vivante qui ne demande presque rien.",
+    "a_savoir": "Épines : à éloigner des passages ; craint l'humidité.",
+    "photo_url": ""
+  },
+  {
+    "id": "acanthe",
+    "nom": "Acanthe",
+    "nom_latin": "Acanthus mollis",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "80-150 cm",
+    "feuillage_persistant": "Semi-persistant",
+    "floraison": "Juin-Juillet",
+    "couleurs": "Blanc et pourpre",
+    "mois_interet": [
+      6,
+      7
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre"
+    ],
+    "envies": [
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "De grandes feuilles sculpturales et des hampes majestueuses.",
+    "a_savoir": "Peut s'étendre.",
+    "photo_url": ""
+  },
+  {
+    "id": "penstemon",
+    "nom": "Penstemon",
+    "nom_latin": "Penstemon",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "60-80 cm",
+    "feuillage_persistant": "Semi-persistant",
+    "floraison": "Juin-Octobre",
+    "couleurs": "Rouge, rose, violet",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Des clochettes colorées tout l'été.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "vergerette",
+    "nom": "Vergerette",
+    "nom_latin": "Erigeron karvinskianus",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -12,
+    "hauteur_adulte": "20-30 cm",
+    "feuillage_persistant": "Semi-persistant",
+    "floraison": "Mai-Novembre",
+    "couleurs": "Blanc rosé",
+    "mois_interet": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Méditerranéen",
+      "Naturel"
+    ],
+    "envies": [
+      "Peu d'entretien",
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Elle se glisse entre les pierres et fleurit sans arrêt.",
+    "a_savoir": "Se ressème partout.",
+    "photo_url": ""
+  },
+  {
+    "id": "valeriane-rouge",
+    "nom": "Valériane rouge",
+    "nom_latin": "Centranthus ruber",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -20,
+    "hauteur_adulte": "50-80 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai-Septembre",
+    "couleurs": "Rouge, rose, blanc",
+    "mois_interet": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Naturel"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Elle pousse même sur les murs et attire les papillons.",
+    "a_savoir": "Se ressème facilement.",
+    "photo_url": ""
+  },
+  {
+    "id": "muguet",
+    "nom": "Muguet",
+    "nom_latin": "Convallaria majalis",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "15-25 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai",
+    "couleurs": "Blanc parfumé",
+    "mois_interet": [
+      5
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "Le parfum du mois de mai.",
+    "a_savoir": "Très toxique si ingéré.",
+    "photo_url": ""
+  },
+  {
+    "id": "dahlia",
+    "nom": "Dahlia",
+    "nom_latin": "Dahlia",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Moyen",
+    "arrosage": "Moyen",
+    "rusticite_c": 0,
+    "hauteur_adulte": "50-150 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet-Octobre",
+    "couleurs": "Toutes couleurs",
+    "mois_interet": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Des fleurs généreuses jusqu'aux gelées.",
+    "a_savoir": "Tubercules à protéger du gel.",
+    "photo_url": ""
+  },
+  {
+    "id": "allium",
+    "nom": "Allium",
+    "nom_latin": "Allium 'Purple Sensation'",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -25,
+    "hauteur_adulte": "60-90 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai-Juin",
+    "couleurs": "Violet",
+    "mois_interet": [
+      5,
+      6
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Des boules violettes graphiques au-dessus des massifs.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "tulipe",
+    "nom": "Tulipe",
+    "nom_latin": "Tulipa",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "30-60 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Avril-Mai",
+    "couleurs": "Toutes couleurs",
+    "mois_interet": [
+      4,
+      5
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Contemporain"
+    ],
+    "envies": [],
+    "pourquoi_on_laime": "Le grand classique du printemps.",
+    "a_savoir": "Bulbes à planter à l'automne.",
+    "photo_url": ""
+  },
+  {
+    "id": "narcisse",
+    "nom": "Narcisse",
+    "nom_latin": "Narcissus",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "20-40 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Mars-Avril",
+    "couleurs": "Jaune, blanc",
+    "mois_interet": [
+      3,
+      4
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "envies": [
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Il revient chaque printemps sans effort.",
+    "a_savoir": "Toxique si ingéré.",
+    "photo_url": ""
+  },
+  {
+    "id": "lis",
+    "nom": "Lis",
+    "nom_latin": "Lilium",
+    "categorie": "Fleurs et vivaces",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "80-150 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Août",
+    "couleurs": "Blanc, orange, rose",
+    "mois_interet": [
+      6,
+      7,
+      8
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "envies": [],
+    "pourquoi_on_laime": "Des fleurs élégantes au parfum puissant.",
+    "a_savoir": "Toxique pour les chats.",
+    "photo_url": ""
+  },
+  {
+    "id": "miscanthus",
+    "nom": "Miscanthus",
+    "nom_latin": "Miscanthus sinensis",
+    "categorie": "Graminées",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "1-2 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Septembre-Octobre",
+    "couleurs": "Plumeaux argentés ou dorés",
+    "mois_interet": [
+      1,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Naturel",
+      "Contemporain",
+      "Zen"
+    ],
+    "envies": [
+      "Peu d'entretien",
+      "Se cacher des voisins",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Des plumeaux qui bougent au vent jusqu'en hiver.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "herbe-aux-ecouvillons",
+    "nom": "Herbe aux écouvillons",
+    "nom_latin": "Pennisetum alopecuroides",
+    "categorie": "Graminées",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -20,
+    "hauteur_adulte": "60-100 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Août-Octobre",
+    "couleurs": "Épis duveteux",
+    "mois_interet": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "ambiances": [
+      "Naturel",
+      "Contemporain"
+    ],
+    "envies": [
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Des épis duveteux très doux au toucher.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "cheveux-d-ange",
+    "nom": "Cheveux d'ange",
+    "nom_latin": "Nassella tenuissima",
+    "categorie": "Graminées",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -15,
+    "hauteur_adulte": "40-60 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Août",
+    "couleurs": "Blond",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Naturel",
+      "Méditerranéen",
+      "Contemporain"
+    ],
+    "envies": [
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Une chevelure blonde qui ondule au moindre souffle.",
+    "a_savoir": "Se ressème.",
+    "photo_url": ""
+  },
+  {
+    "id": "calamagrostis",
+    "nom": "Calamagrostis",
+    "nom_latin": "Calamagrostis × acutiflora 'Karl Foerster'",
+    "categorie": "Graminées",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "1,2-1,8 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Juin-Août",
+    "couleurs": "Épis dorés",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Naturel"
+    ],
+    "envies": [
+      "Peu d'entretien",
+      "Se cacher des voisins"
+    ],
+    "pourquoi_on_laime": "Une graminée verticale très élégante.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "laiche",
+    "nom": "Laîche",
+    "nom_latin": "Carex",
+    "categorie": "Graminées",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -20,
+    "hauteur_adulte": "20-50 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Feuillage vert, bronze ou panaché",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Zen",
+      "Contemporain"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Peu d'entretien",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Un feuillage fin et persistant pour les zones ombragées.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "fetuque-bleue",
+    "nom": "Fétuque bleue",
+    "nom_latin": "Festuca glauca",
+    "categorie": "Graminées",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -25,
+    "hauteur_adulte": "20-30 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "Juin",
+    "couleurs": "Bleu argenté",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Peu d'entretien",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "De petites boules bleues très graphiques.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "panic-erige",
+    "nom": "Panic érigé",
+    "nom_latin": "Panicum virgatum",
+    "categorie": "Graminées",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -30,
+    "hauteur_adulte": "1-1,5 m",
+    "feuillage_persistant": "Non",
+    "floraison": "Août-Octobre",
+    "couleurs": "Rouge à l'automne",
+    "mois_interet": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "ambiances": [
+      "Naturel",
+      "Contemporain"
+    ],
+    "envies": [
+      "Peu d'entretien",
+      "Se cacher des voisins"
+    ],
+    "pourquoi_on_laime": "Un nuage de fleurs aérien et un feuillage qui rougit.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "herbe-du-japon",
+    "nom": "Herbe du Japon",
+    "nom_latin": "Hakonechloa macra 'Aureola'",
+    "categorie": "Graminées",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "30-40 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "",
+    "couleurs": "Jaune doré",
+    "mois_interet": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Zen"
+    ],
+    "envies": [
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "Une cascade dorée qui illumine l'ombre.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "herbe-sanguine",
+    "nom": "Herbe sanguine",
+    "nom_latin": "Imperata cylindrica 'Red Baron'",
+    "categorie": "Graminées",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "30-50 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "",
+    "couleurs": "Feuillage rouge",
+    "mois_interet": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Zen"
+    ],
+    "envies": [
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Des feuilles rouge vif, saisissantes à contre-jour.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "muhlenbergia",
+    "nom": "Muhlenbergia",
+    "nom_latin": "Muhlenbergia capillaris",
+    "categorie": "Graminées",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -12,
+    "hauteur_adulte": "60-90 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Septembre-Octobre",
+    "couleurs": "Nuage rose",
+    "mois_interet": [
+      9,
+      10
+    ],
+    "ambiances": [
+      "Naturel",
+      "Contemporain",
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un nuage rose spectaculaire en automne.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "herbe-de-la-pampa",
+    "nom": "Herbe de la pampa",
+    "nom_latin": "Cortaderia selloana",
+    "categorie": "Graminées",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -15,
+    "hauteur_adulte": "2-3 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Août-Octobre",
+    "couleurs": "Plumeaux blancs",
+    "mois_interet": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "ambiances": [
+      "Exotique"
+    ],
+    "envies": [],
+    "pourquoi_on_laime": "De grands plumeaux spectaculaires.",
+    "a_savoir": "Espèce invasive dans plusieurs régions : préférer un miscanthus.",
+    "photo_url": ""
+  },
+  {
+    "id": "pervenche",
+    "nom": "Pervenche",
+    "nom_latin": "Vinca minor",
+    "categorie": "Couvre-sols",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "10-20 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "Mars-Mai",
+    "couleurs": "Bleu",
+    "mois_interet": [
+      3,
+      4,
+      5
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un tapis vert persistant qui couvre l'ombre.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "thym-serpolet",
+    "nom": "Thym serpolet",
+    "nom_latin": "Thymus serpyllum",
+    "categorie": "Couvre-sols",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -25,
+    "hauteur_adulte": "5-10 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "Juin-Juillet",
+    "couleurs": "Rose",
+    "mois_interet": [
+      6,
+      7
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Naturel"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un tapis parfumé qu'on peut fouler entre les pas japonais.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "herbe-aux-turquoises",
+    "nom": "Herbe aux turquoises",
+    "nom_latin": "Ophiopogon japonicus",
+    "categorie": "Couvre-sols",
+    "exposition": "Soleil à ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -15,
+    "hauteur_adulte": "10-20 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "",
+    "couleurs": "Vert foncé",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Zen",
+      "Contemporain"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un tapis dense qui remplace le gazon à l'ombre.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "bugle-rampante",
+    "nom": "Bugle rampante",
+    "nom_latin": "Ajuga reptans",
+    "categorie": "Couvre-sols",
+    "exposition": "Mi-ombre, ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "10-20 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "Avril-Juin",
+    "couleurs": "Bleu, feuillage pourpre",
+    "mois_interet": [
+      4,
+      5,
+      6
+    ],
+    "ambiances": [
+      "Naturel",
+      "Zen"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Un couvre-sol coloré pour les zones fraîches.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "geranium-a-grosses-racines",
+    "nom": "Géranium à grosses racines",
+    "nom_latin": "Geranium macrorrhizum",
+    "categorie": "Couvre-sols",
+    "exposition": "Soleil à ombre",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -25,
+    "hauteur_adulte": "30-40 cm",
+    "feuillage_persistant": "Semi-persistant",
+    "floraison": "Mai-Juin",
+    "couleurs": "Rose",
+    "mois_interet": [
+      5,
+      6,
+      10
+    ],
+    "ambiances": [
+      "Naturel",
+      "Champêtre"
+    ],
+    "envies": [
+      "Un coin d'ombre",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un couvre-sol parfumé qui pousse même au sec et à l'ombre.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "cotoneaster-rampant",
+    "nom": "Cotonéaster rampant",
+    "nom_latin": "Cotoneaster dammeri",
+    "categorie": "Couvre-sols",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -20,
+    "hauteur_adulte": "20-30 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "Mai-Juin",
+    "couleurs": "Blanc, baies rouges",
+    "mois_interet": [
+      5,
+      6,
+      9,
+      10,
+      11
+    ],
+    "ambiances": [
+      "Naturel"
+    ],
+    "envies": [
+      "Peu d'entretien",
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Il couvre les talus et se couvre de baies rouges.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "phlox-mousse",
+    "nom": "Phlox mousse",
+    "nom_latin": "Phlox subulata",
+    "categorie": "Couvre-sols",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -25,
+    "hauteur_adulte": "10-15 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "Avril-Mai",
+    "couleurs": "Rose, mauve, blanc",
+    "mois_interet": [
+      4,
+      5
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un tapis de fleurs au printemps, idéal en rocaille.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "lamier",
+    "nom": "Lamier",
+    "nom_latin": "Lamium maculatum",
+    "categorie": "Couvre-sols",
+    "exposition": "Ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "15-20 cm",
+    "feuillage_persistant": "Semi-persistant",
+    "floraison": "Avril-Juin",
+    "couleurs": "Rose, feuillage argenté",
+    "mois_interet": [
+      4,
+      5,
+      6
+    ],
+    "ambiances": [
+      "Naturel",
+      "Zen"
+    ],
+    "envies": [
+      "Un coin d'ombre"
+    ],
+    "pourquoi_on_laime": "Un feuillage argenté qui éclaire l'ombre.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "romarin",
+    "nom": "Romarin",
+    "nom_latin": "Salvia rosmarinus",
+    "categorie": "Aromatiques",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -12,
+    "hauteur_adulte": "0,5-1,5 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Février-Mai",
+    "couleurs": "Bleu",
+    "mois_interet": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "ambiances": [
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "Parfumé, mellifère et utile en cuisine.",
+    "a_savoir": "Craint l'humidité en hiver.",
+    "photo_url": ""
+  },
+  {
+    "id": "thym",
+    "nom": "Thym",
+    "nom_latin": "Thymus vulgaris",
+    "categorie": "Aromatiques",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -15,
+    "hauteur_adulte": "20-30 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "Mai-Juillet",
+    "couleurs": "Rose pâle",
+    "mois_interet": [
+      5,
+      6,
+      7
+    ],
+    "ambiances": [
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un petit coussin parfumé pour le soleil.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "sauge-officinale",
+    "nom": "Sauge officinale",
+    "nom_latin": "Salvia officinalis",
+    "categorie": "Aromatiques",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -15,
+    "hauteur_adulte": "40-60 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "Juin-Juillet",
+    "couleurs": "Violet, feuillage gris",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Un feuillage gris décoratif et des fleurs pour les abeilles.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "santoline",
+    "nom": "Santoline",
+    "nom_latin": "Santolina chamaecyparissus",
+    "categorie": "Aromatiques",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -15,
+    "hauteur_adulte": "30-50 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "Juin-Juillet",
+    "couleurs": "Jaune, feuillage argenté",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Peu d'entretien",
+      "Couleur toute l'année"
+    ],
+    "pourquoi_on_laime": "De petites boules argentées qui sentent bon.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "immortelle",
+    "nom": "Immortelle",
+    "nom_latin": "Helichrysum italicum",
+    "categorie": "Aromatiques",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -12,
+    "hauteur_adulte": "30-50 cm",
+    "feuillage_persistant": "Oui",
+    "floraison": "Juin-Août",
+    "couleurs": "Jaune",
+    "mois_interet": [
+      6,
+      7,
+      8
+    ],
+    "ambiances": [
+      "Méditerranéen"
+    ],
+    "envies": [
+      "Peu d'entretien",
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Un parfum de curry et un feuillage argenté.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "menthe",
+    "nom": "Menthe",
+    "nom_latin": "Mentha",
+    "categorie": "Aromatiques",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Élevé",
+    "rusticite_c": -25,
+    "hauteur_adulte": "30-60 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet-Août",
+    "couleurs": "Mauve",
+    "mois_interet": [
+      6,
+      7,
+      8
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles"
+    ],
+    "pourquoi_on_laime": "Fraîche et parfumée, parfaite près de la cuisine.",
+    "a_savoir": "Très envahissante : à planter en pot.",
+    "photo_url": ""
+  },
+  {
+    "id": "ciboulette",
+    "nom": "Ciboulette",
+    "nom_latin": "Allium schoenoprasum",
+    "categorie": "Aromatiques",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -25,
+    "hauteur_adulte": "20-30 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Mai-Juin",
+    "couleurs": "Mauve",
+    "mois_interet": [
+      5,
+      6
+    ],
+    "ambiances": [
+      "Champêtre"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Des pompons mauves décoratifs et une herbe utile.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "laurier-sauce",
+    "nom": "Laurier-sauce",
+    "nom_latin": "Laurus nobilis",
+    "categorie": "Aromatiques",
+    "exposition": "Soleil, mi-ombre",
+    "entretien": "Très facile",
+    "arrosage": "Moyen",
+    "rusticite_c": -12,
+    "hauteur_adulte": "2-6 m",
+    "feuillage_persistant": "Oui",
+    "floraison": "Mars-Avril",
+    "couleurs": "Feuillage vert foncé",
+    "mois_interet": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Contemporain"
+    ],
+    "envies": [
+      "Se cacher des voisins",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Le laurier de la cuisine, qui fait aussi une belle haie.",
+    "a_savoir": "",
+    "photo_url": ""
+  },
+  {
+    "id": "origan",
+    "nom": "Origan",
+    "nom_latin": "Origanum vulgare",
+    "categorie": "Aromatiques",
+    "exposition": "Soleil",
+    "entretien": "Très facile",
+    "arrosage": "Faible",
+    "rusticite_c": -25,
+    "hauteur_adulte": "30-50 cm",
+    "feuillage_persistant": "Non",
+    "floraison": "Juillet-Septembre",
+    "couleurs": "Rose",
+    "mois_interet": [
+      7,
+      8,
+      9
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Naturel"
+    ],
+    "envies": [
+      "Attirer les abeilles",
+      "Peu d'entretien"
+    ],
+    "pourquoi_on_laime": "Mellifère, parfumé et indestructible.",
+    "a_savoir": "",
+    "photo_url": ""
+  }
+]

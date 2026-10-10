@@ -1,4 +1,4 @@
-import { hashCatalogueColor } from "@/lib/catalogueIdeesHelpers";
+import CataloguePlantVisual from "@/components/catalogue/CataloguePlantVisual";
 
 export function HeartToggle({ filled, disabled, label, onClick }) {
   return (
@@ -54,15 +54,20 @@ export default function CatalogueIdeaCard({
   nom,
   subtitle,
   photo_url,
+  categorie,
   inGarden,
   toggling,
   onOpen,
   onToggleHeart,
+  imageHeight = 118,
+  borderRadius = 20,
+  titleSize = 15,
+  showHeart = true,
 }) {
   return (
     <div
       style={{
-        borderRadius: 18,
+        borderRadius,
         overflow: "hidden",
         border: "1.5px solid #EEE9E0",
         display: "flex",
@@ -71,40 +76,38 @@ export default function CatalogueIdeaCard({
     >
       <div
         style={{
-          height: 86,
           position: "relative",
-          background: photo_url ? "#DDD7CC" : hashCatalogueColor(nom),
+          height: imageHeight,
           display: "flex",
           justifyContent: "flex-end",
           alignItems: "flex-start",
-          padding: 6,
+          padding: showHeart ? 8 : 0,
+          boxSizing: "border-box",
         }}
       >
-        {photo_url ? (
-          <img
-            src={photo_url}
-            alt=""
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+        <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+          <CataloguePlantVisual photo_url={photo_url} categorie={categorie} height={imageHeight} />
+        </div>
+        {showHeart ? (
+          <HeartToggle
+            filled={inGarden}
+            disabled={toggling}
+            label={
+              inGarden ? `Retirer ${nom} de vos coups de cœur` : `Ajouter ${nom} à vos coups de cœur`
+            }
+            onClick={onToggleHeart}
           />
         ) : null}
-        <HeartToggle
-          filled={inGarden}
-          disabled={toggling}
-          label={
-            inGarden ? `Retirer ${nom} de vos coups de cœur` : `Ajouter ${nom} à vos coups de cœur`
-          }
-          onClick={onToggleHeart}
-        />
       </div>
       <button
         type="button"
         onClick={onOpen}
         disabled={toggling}
         style={{
-          padding: "8px 10px 10px",
+          padding: "10px 12px 12px",
           display: "flex",
           flexDirection: "column",
-          gap: 2,
+          gap: 3,
           border: "none",
           background: "transparent",
           cursor: "pointer",
@@ -116,7 +119,7 @@ export default function CatalogueIdeaCard({
       >
         <span
           style={{
-            fontSize: 14,
+            fontSize: titleSize,
             fontWeight: 700,
             whiteSpace: "nowrap",
             overflow: "hidden",
@@ -125,7 +128,9 @@ export default function CatalogueIdeaCard({
         >
           {nom}
         </span>
-        <span style={{ fontSize: 12, color: "#5B6359", lineHeight: 1.35 }}>{subtitle}</span>
+        {subtitle ? (
+          <span style={{ fontSize: 12, color: "#5B6359", lineHeight: 1.35 }}>{subtitle}</span>
+        ) : null}
       </button>
     </div>
   );

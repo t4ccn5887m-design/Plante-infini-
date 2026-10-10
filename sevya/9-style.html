@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Sevya – Trouver mon style</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'Quicksand',system-ui,sans-serif;color:#1F2A22}
+a{color:#2F5E3F}a:hover{color:#1F3F2A}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 12px; background: #E6DFD3; font-family: 'Quicksand', system-ui, sans-serif; color: #1F2A22">
+<div style="height: 100%; box-sizing: border-box; background: #FFFFFF; border-radius: 30px; display: flex; flex-direction: column; overflow: hidden; padding: 18px; gap: 18px">
+
+<div style="display: flex; align-items: center; gap: 12px">
+<a href="IdeesHub.dc.html" aria-label="Fermer" style="width: 44px; height: 44px; border-radius: 999px; background: #F2EEE7; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4D554B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></a>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 15px; font-weight: 700">Trouver mon style</span>
+<div style="height: 8px; border-radius: 999px; background: #ECE6F5"><div style="width: {{progress}}; height: 8px; border-radius: 999px; background: #6A5896"></div></div>
+</div>
+<span style="font-size: 13px; font-weight: 700; color: #5E4C8C; min-width: 34px; text-align: right">{{counter}}</span>
+</div>
+
+<sc-if value="{{inQuiz}}" hint-placeholder-val="{{ true }}">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 18px">
+<p style="margin: 0; font-size: 16px; font-weight: 600; color: #3B4339; text-align: center">Ce jardin vous plaît ?</p>
+<div style="flex-grow: 1; border-radius: 26px; background: {{card.color}}; padding: 18px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-end; min-height: 400px">
+<span style="font-size: 18px; font-weight: 700; color: #FFFFFF; line-height: 1.3">{{card.label}}</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<button type="button" onClick="{{no}}" style="min-height: 60px; border-radius: 20px; border: 1.5px solid #E4DED3; background: #FFFFFF; color: #4D554B; font-family: inherit; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>Pas pour moi</button>
+<button type="button" onClick="{{yes}}" style="min-height: 60px; border-radius: 20px; border: none; background: #2F5E3F; color: #FFFFFF; font-family: inherit; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>J'aime</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{done}}" hint-placeholder-val="{{ false }}">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 16px">
+<div style="border-radius: 26px; background: {{resultColor}}; padding: 22px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; min-height: 300px; color: #FFFFFF">
+<span style="font-size: 13px; font-weight: 700; letter-spacing: 1.2px; color: #F2EEE7">VOTRE STYLE</span>
+<span style="font-size: 32px; font-weight: 700">{{resultName}}</span>
+<span style="font-size: 15px; color: #F2EEE7">{{resultSecond}}</span>
+</div>
+<p style="margin: 0; font-size: 15px; line-height: 1.5; color: #3B4339">Votre paysagiste verra cette ambiance dans votre dossier. Vous pourrez toujours la changer.</p>
+<div style="flex-grow: 1"></div>
+<sc-if value="{{notChosen}}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{choose}}" style="width: 100%; min-height: 54px; border: none; border-radius: 18px; background: #2F5E3F; color: #FFFFFF; font-family: inherit; font-size: 17px; font-weight: 700">C'est mon ambiance</button>
+</sc-if>
+<sc-if value="{{chosen}}" hint-placeholder-val="{{ false }}">
+<a href="Main.dc.html" style="width: 100%; min-height: 54px; box-sizing: border-box; border: 1.5px solid #2F5E3F; border-radius: 18px; background: #E6F0E3; color: #2F5E3F; text-decoration: none; font-size: 17px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Ajoutée · retour à mon dossier</a>
+</sc-if>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<a href="Ambiance.dc.html" style="min-height: 48px; border-radius: 16px; border: 1.5px solid #E4DED3; color: #1F2A22; text-decoration: none; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center">Voir l'ambiance</a>
+<button type="button" onClick="{{restart}}" style="min-height: 48px; border-radius: 16px; border: 1.5px solid #E4DED3; background: #FFFFFF; color: #1F2A22; font-family: inherit; font-size: 15px; font-weight: 700">Recommencer</button>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { idx: 0, scores: {}, chosen: false };
+}
+renderVals() {
+const cards = [
+{ tag: 'med', label: 'Terrasse en pierre claire, oliviers en pots', color: '#A97F4E' },
+{ tag: 'nat', label: 'Allée de graminées hautes et fleurs sauvages', color: '#8A8452' },
+{ tag: 'zen', label: 'Petit bassin, mousses et érable du Japon', color: '#5E7A62' },
+{ tag: 'cha', label: 'Massif généreux de roses et de sauges', color: '#86689A' },
+{ tag: 'con', label: 'Lignes nettes, bacs en acier, gazon tondu', color: '#4F5B57' },
+{ tag: 'exo', label: 'Bananiers et très grandes feuilles', color: '#3F6B4A' }
+];
+const names = { med: 'Méditerranéen', nat: 'Naturel', zen: 'Zen', cha: 'Champêtre', con: 'Contemporain', exo: 'Exotique' };
+const colors = { med: '#A97F4E', nat: '#8A8452', zen: '#5E7A62', cha: '#86689A', con: '#4F5B57', exo: '#3F6B4A' };
+const idx = this.state.idx;
+const total = cards.length;
+const done = idx >= total;
+const scores = this.state.scores || {};
+const answer = (liked) => {
+const next = Object.assign({}, this.state.scores || {});
+if (liked) { const t = cards[this.state.idx].tag; next[t] = (next[t] || 0) + 1; }
+this.setState({ idx: this.state.idx + 1, scores: next });
+};
+const ranked = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
+const first = ranked[0] || 'nat';
+const second = ranked[1];
+return {
+inQuiz: !done,
+done: done,
+card: done ? cards[total - 1] : cards[idx],
+counter: (done ? total : idx + 1) + ' / ' + total,
+progress: Math.round(((done ? total : idx) / total) * 100) + '%',
+yes: () => answer(true),
+no: () => answer(false),
+resultName: names[first],
+resultColor: colors[first],
+resultSecond: second ? 'avec une touche ' + (second === 'exo' || second === 'med' ? 'd’' : 'de ') + names[second].toLowerCase() : 'Un choix bien affirmé',
+chosen: !!this.state.chosen,
+notChosen: !this.state.chosen,
+choose: () => this.setState({ chosen: true }),
+restart: () => this.setState({ idx: 0, scores: {}, chosen: false })
+};
+}
+}
+</script>
+</body>
+</html>

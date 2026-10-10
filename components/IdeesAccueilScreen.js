@@ -4,11 +4,12 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import CatalogueIdeaCard from "@/components/catalogue/CatalogueIdeaCard";
+import CataloguePlantVisual from "@/components/catalogue/CataloguePlantVisual";
 import {
-  buildCatalogueSubtitle,
+  CATALOGUE_ENVIES,
+  currentMonthLabel,
   discoveryFromCatalogueItem,
-  getPlantsInSeason,
-  getVisibleEnviePills,
+  getPlantsBeautifulNow,
   normalizeCatalogueSearch,
   searchAllCatalogue,
 } from "@/lib/catalogueIdeesHelpers";
@@ -23,111 +24,77 @@ const UNIVERSE_CARDS = [
   {
     id: "vegetal",
     title: "Végétal",
-    subtitle: "Arbres, arbustes, vivaces…",
+    subtitle: "Arbres, fleurs, haies, graminées",
     bg: "#E6F0E3",
-    labelColor: "#2F5E3F",
-    chevron: "#4E7B52",
+    iconStroke: "#4E7B52",
+    subtitleColor: "#3F6443",
+    icon: "leaf",
   },
   {
     id: "mineral",
     title: "Minéral",
-    subtitle: "Paillage, pierres, bordures…",
-    bg: "#F2EEE7",
-    labelColor: "#4D554B",
-    chevron: "#6B7268",
+    subtitle: "Dallages, graviers, pierres",
+    bg: "#EEEAE3",
+    iconStroke: "#5F665D",
+    subtitleColor: "#4D554B",
+    icon: "mineral",
   },
   {
     id: "deco",
     title: "Aménagements",
-    subtitle: "Mobilier, poterie, lumière…",
+    subtitle: "Pergola, bassin, éclairage",
     bg: "#F6E7D8",
-    labelColor: "#8A4A22",
-    chevron: "#C0652E",
+    iconStroke: "#C0652E",
+    subtitleColor: "#8A4A22",
+    icon: "deco",
   },
   {
     id: "ambiances",
     title: "Ambiances",
-    subtitle: "Jardins toutes faits",
+    subtitle: "Méditerranéen, zen, champêtre",
     bg: "#ECE6F5",
-    labelColor: "#5E4C8C",
-    chevron: "#6A5896",
+    iconStroke: "#6A5896",
+    subtitleColor: "#5E4C8C",
+    icon: "sparkle",
   },
 ];
 
-function SectionLabel({ children }) {
-  return (
-    <span
-      style={{
-        fontSize: 12,
-        fontWeight: 700,
-        letterSpacing: "1.2px",
-        color: "#5B6359",
-      }}
-    >
-      {children}
-    </span>
-  );
-}
-
-function UniverseCard({ card, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      style={{
-        borderRadius: 18,
-        padding: "14px 14px 12px",
-        background: card.bg,
-        border: "none",
-        display: "flex",
-        alignItems: "center",
-        gap: 10,
-        minHeight: 72,
-        cursor: "pointer",
-        fontFamily: "inherit",
-        textAlign: "left",
-        color: "#1F2A22",
-        width: "100%",
-      }}
-    >
-      <span style={{ display: "flex", flexDirection: "column", flexGrow: 1, gap: 2, minWidth: 0 }}>
-        <span style={{ fontSize: 15, fontWeight: 700 }}>{card.title}</span>
-        <span style={{ fontSize: 12, color: card.labelColor, lineHeight: 1.35 }}>{card.subtitle}</span>
-      </span>
-      <svg width={18} height={18} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path
-          d="m9 18 6-6-6-6"
-          stroke={card.chevron}
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+function UniverseIcon({ type, stroke }) {
+  const ic = { stroke, strokeWidth: 2, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" };
+  if (type === "mineral") {
+    return (
+      <svg width={26} height={26} viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 17h18" style={ic} />
+        <path d="M5 17l2-6 4-2 5 1 3 7" style={ic} />
+        <path d="M9 21h6" style={ic} />
       </svg>
-    </button>
-  );
-}
-
-function EnviePill({ children, onClick }) {
+    );
+  }
+  if (type === "deco") {
+    return (
+      <svg width={26} height={26} viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 9h18" style={ic} />
+        <path d="M5 9v12M19 9v12" style={ic} />
+        <path d="M3 5h18" style={ic} />
+        <path d="M9 9v4M15 9v4" style={ic} />
+      </svg>
+    );
+  }
+  if (type === "sparkle") {
+    return (
+      <svg width={26} height={26} viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" style={ic} />
+      </svg>
+    );
+  }
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      style={{
-        minHeight: 36,
-        padding: "0 14px",
-        borderRadius: 999,
-        border: "1.5px solid #E4DED3",
-        background: "#FFFFFF",
-        color: "#4D554B",
-        fontFamily: "inherit",
-        fontSize: 13,
-        fontWeight: 600,
-        cursor: "pointer",
-        flexShrink: 0,
-      }}
-    >
-      {children}
-    </button>
+    <svg width={26} height={26} viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"
+        style={ic}
+      />
+      <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" style={ic} />
+    </svg>
   );
 }
 
@@ -139,6 +106,7 @@ export default function IdeesAccueilScreen({
   onOpenCatalogueTab,
   onOpenAmbiances,
   onOpenItemDetail,
+  onOpenCataloguePlant,
 }) {
   const [search, setSearch] = useState("");
   const [quizNotice, setQuizNotice] = useState(null);
@@ -158,31 +126,14 @@ export default function IdeesAccueilScreen({
     refreshGarden();
   }, [refreshGarden]);
 
-  const searchQuery = normalizeCatalogueSearch(search);
-  const searchActive = searchQuery.length > 0;
-
+  const searchActive = normalizeCatalogueSearch(search).length > 0;
   const searchResults = useMemo(
     () => (searchActive ? searchAllCatalogue(search) : []),
     [search, searchActive]
   );
 
-  const enviePills = useMemo(() => getVisibleEnviePills(), []);
-  const seasonPlants = useMemo(() => getPlantsInSeason(), []);
-  const showSeasonSection = !searchActive && seasonPlants.length > 0;
-
-  const seasonItems = useMemo(
-    () =>
-      seasonPlants.map((p) => ({
-        key: `season-v-${p.id}`,
-        universe: "vegetal",
-        id: p.id,
-        nom: p.nom,
-        photo_url: p.photo_url,
-        subtitle: buildCatalogueSubtitle({ kind: "vegetal", raw: p }, t),
-        raw: p,
-      })),
-    [seasonPlants, t]
-  );
+  const seasonPlants = useMemo(() => getPlantsBeautifulNow(), []);
+  const monthLabel = currentMonthLabel();
 
   const handleUniverse = (id) => {
     if (id === "ambiances") {
@@ -192,10 +143,16 @@ export default function IdeesAccueilScreen({
     onOpenCatalogueTab?.(id, {});
   };
 
-  const handleEnviePill = (pill) => {
-    const filters =
-      pill.kind === "envie" ? { envieTag: pill.value } : { exposition: pill.value };
-    onOpenCatalogueTab?.("vegetal", filters);
+  const handleEnvie = (envie) => {
+    onOpenCatalogueTab?.("vegetal", { envie });
+  };
+
+  const openPlant = (item) => {
+    if (item.universe === "vegetal" && onOpenCataloguePlant) {
+      onOpenCataloguePlant(item.id, "catalogue");
+      return;
+    }
+    onOpenItemDetail?.(discoveryFromCatalogueItem(item));
   };
 
   const handleToggle = async (item) => {
@@ -226,45 +183,20 @@ export default function IdeesAccueilScreen({
   const inGarden = (item) =>
     gardenState ? isCatalogueItemInGarden(item.universe, item.id, gardenState) : false;
 
-  const renderGrid = (items) => (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-        gap: 10,
-      }}
-    >
-      {items.map((item) => (
-        <CatalogueIdeaCard
-          key={item.key}
-          nom={item.nom}
-          subtitle={item.subtitle}
-          photo_url={item.photo_url}
-          inGarden={inGarden(item)}
-          toggling={togglingKey === item.key}
-          onOpen={() => onOpenItemDetail?.(discoveryFromCatalogueItem(item))}
-          onToggleHeart={() => handleToggle(item)}
-        />
-      ))}
-    </div>
-  );
-
   return (
     <div
       style={{
         flex: 1,
         overflow: "auto",
-        padding: "18px 18px 8px",
+        padding: "20px 18px 16px",
         display: "flex",
         flexDirection: "column",
-        gap: 14,
+        gap: 22,
       }}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, color: "#1F2A22" }}>Idées</h1>
-        <span style={{ fontSize: 14, color: "#5B6359" }}>
-          Explorez le catalogue ou cherchez une plante, une pierre, un aménagement.
-        </span>
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700, color: "#1F2A22" }}>Idées</h1>
+        <span style={{ fontSize: 15, color: "#5B6359" }}>Que voulez-vous découvrir ?</span>
       </div>
 
       <label
@@ -273,7 +205,7 @@ export default function IdeesAccueilScreen({
           display: "flex",
           alignItems: "center",
           gap: 10,
-          minHeight: 48,
+          minHeight: 50,
           padding: "0 16px",
           borderRadius: 16,
           background: "#F2EEE7",
@@ -288,8 +220,8 @@ export default function IdeesAccueilScreen({
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Olivier, haie, pergola…"
-          aria-label="Rechercher dans le catalogue"
+          placeholder="Rechercher : olivier, gravier, pergola…"
+          aria-label="Rechercher une idée"
           style={{
             flexGrow: 1,
             border: "none",
@@ -306,25 +238,78 @@ export default function IdeesAccueilScreen({
       {error ? <p style={{ margin: 0, fontSize: 13, color: COLORS.error }}>{String(error)}</p> : null}
 
       {searchActive ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <SectionLabel>RÉSULTATS</SectionLabel>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+            gap: 12,
+          }}
+        >
           {searchResults.length === 0 ? (
-            <p style={{ margin: 0, fontSize: 14, color: "#5B6359" }}>Aucun résultat pour cette recherche.</p>
+            <p style={{ margin: 0, fontSize: 14, color: "#5B6359", gridColumn: "1 / -1" }}>
+              Aucun résultat pour cette recherche.
+            </p>
           ) : (
-            renderGrid(searchResults)
+            searchResults.map((item) => (
+              <CatalogueIdeaCard
+                key={item.key}
+                nom={item.nom}
+                subtitle={item.subtitle}
+                photo_url={item.photo_url}
+                categorie={item.categorie}
+                inGarden={inGarden(item)}
+                toggling={togglingKey === item.key}
+                onOpen={() => openPlant(item)}
+                onToggleHeart={() => handleToggle(item)}
+              />
+            ))
           )}
         </div>
       ) : (
         <>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-              gap: 8,
-            }}
-          >
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
             {UNIVERSE_CARDS.map((card) => (
-              <UniverseCard key={card.id} card={card} onClick={() => handleUniverse(card.id)} />
+              <button
+                key={card.id}
+                type="button"
+                onClick={() => handleUniverse(card.id)}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  gap: 18,
+                  minHeight: 168,
+                  boxSizing: "border-box",
+                  padding: 16,
+                  borderRadius: 24,
+                  background: card.bg,
+                  border: "none",
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                  textAlign: "left",
+                  color: "#1F2A22",
+                }}
+              >
+                <span
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 16,
+                    background: "#FFFFFF",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <UniverseIcon type={card.icon} stroke={card.iconStroke} />
+                </span>
+                <span style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                  <span style={{ fontSize: 19, fontWeight: 700 }}>{card.title}</span>
+                  <span style={{ fontSize: 13, lineHeight: 1.35, color: card.subtitleColor }}>
+                    {card.subtitle}
+                  </span>
+                </span>
+              </button>
             ))}
           </div>
 
@@ -332,47 +317,126 @@ export default function IdeesAccueilScreen({
             type="button"
             onClick={() => setQuizNotice("Bientôt disponible")}
             style={{
-              borderRadius: 18,
-              padding: "14px 16px",
-              border: "1.5px dashed #C8C2B6",
-              background: "#FAF8F4",
               display: "flex",
-              flexDirection: "column",
-              gap: 4,
+              alignItems: "center",
+              gap: 14,
+              padding: "16px 18px",
+              borderRadius: 22,
+              background: "#2F5E3F",
+              border: "none",
+              color: "#FFFFFF",
+              minHeight: 44,
               cursor: "pointer",
               fontFamily: "inherit",
               textAlign: "left",
               width: "100%",
             }}
           >
-            <span style={{ fontSize: 14, fontWeight: 700, color: "#1F2A22" }}>
-              Vous ne savez pas par où commencer ?
+            <span style={{ display: "flex", flexDirection: "column", gap: 3, flexGrow: 1 }}>
+              <span style={{ fontSize: 16, fontWeight: 700 }}>Vous ne savez pas par où commencer ?</span>
+              <span style={{ fontSize: 14, color: "#D7E7D9" }}>Trouvez votre style en une minute</span>
             </span>
-            <span style={{ fontSize: 13, color: "#5B6359", lineHeight: 1.4 }}>
-              Un court questionnaire pour orienter vos recherches.
+            <span
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 999,
+                background: "#FFFFFF",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <svg width={18} height={18} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="m9 18 6-6-6-6" stroke="#2F5E3F" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </span>
           </button>
           {quizNotice ? (
-            <p style={{ margin: 0, fontSize: 13, color: "#5B6359", textAlign: "center" }}>{quizNotice}</p>
+            <p style={{ margin: "-12px 0 0", fontSize: 13, color: "#5B6359", textAlign: "center" }}>
+              {quizNotice}
+            </p>
           ) : null}
 
-          {enviePills.length > 0 ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <SectionLabel>SELON VOS ENVIES</SectionLabel>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                {enviePills.map((pill) => (
-                  <EnviePill key={pill.id} onClick={() => handleEnviePill(pill)}>
-                    {pill.label}
-                  </EnviePill>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <span style={{ fontSize: 17, fontWeight: 700, color: "#1F2A22" }}>Selon vos envies</span>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {CATALOGUE_ENVIES.map((envie) => (
+                <button
+                  key={envie}
+                  type="button"
+                  onClick={() => handleEnvie(envie)}
+                  style={{
+                    minHeight: 40,
+                    padding: "0 14px",
+                    borderRadius: 999,
+                    border: "1.5px solid #E4DED3",
+                    background: "#FFFFFF",
+                    color: "#1F2A22",
+                    fontSize: 14,
+                    fontWeight: 600,
+                    fontFamily: "inherit",
+                    cursor: "pointer",
+                  }}
+                >
+                  {envie}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {seasonPlants.length > 0 ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                <span style={{ fontSize: 17, fontWeight: 700, color: "#1F2A22" }}>Belles en ce moment</span>
+                <span style={{ fontSize: 13, color: "#5B6359" }}>{monthLabel}</span>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  gap: 10,
+                  overflowX: "auto",
+                  paddingBottom: 4,
+                  marginRight: -18,
+                  paddingRight: 18,
+                }}
+              >
+                {seasonPlants.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => onOpenCataloguePlant?.(p.id, "catalogue")}
+                    style={{
+                      flex: "0 0 136px",
+                      borderRadius: 18,
+                      overflow: "hidden",
+                      border: "1.5px solid #EEE9E0",
+                      background: "#FFFFFF",
+                      padding: 0,
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                      textAlign: "left",
+                      color: "#1F2A22",
+                    }}
+                  >
+                    <CataloguePlantVisual photo_url={p.photo_url} categorie={p.categorie} height={104} />
+                    <span
+                      style={{
+                        display: "block",
+                        padding: "9px 11px 11px",
+                        fontSize: 14,
+                        fontWeight: 700,
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {p.nom}
+                    </span>
+                  </button>
                 ))}
               </div>
-            </div>
-          ) : null}
-
-          {showSeasonSection ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <SectionLabel>BELLES EN CE MOMENT</SectionLabel>
-              {renderGrid(seasonItems)}
             </div>
           ) : null}
         </>

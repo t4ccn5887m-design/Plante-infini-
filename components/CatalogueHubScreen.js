@@ -4,11 +4,15 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import CatalogueIdeaCard from "@/components/catalogue/CatalogueIdeaCard";
-import { CATALOGUE_FAMILLES, filterCataloguePlants } from "@/lib/cataloguePlants";
 import { DECO_FAMILLES, filterCatalogueDeco } from "@/lib/catalogueDeco";
 import { MINERAL_FAMILLES, filterCatalogueMinerals } from "@/lib/catalogueMinerals";
 import {
+  CATALOGUE_CATEGORIES,
+  filterCataloguePlants,
+} from "@/lib/cataloguePlants";
+import {
   buildCatalogueSubtitle,
+  buildVegetalCardLine,
   discoveryFromCatalogueItem,
 } from "@/lib/catalogueIdeesHelpers";
 import {
@@ -24,55 +28,8 @@ const TABS = [
   { id: "deco", label: "Aménagements" },
 ];
 
-function TabButton({ active, children, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      style={{
-        flex: "1 1 0",
-        minHeight: 40,
-        borderRadius: 12,
-        border: "none",
-        background: active ? "#1F2A22" : "transparent",
-        color: active ? "#FFFFFF" : "#5B6359",
-        fontFamily: "inherit",
-        fontSize: 13,
-        fontWeight: active ? 700 : 600,
-        cursor: "pointer",
-      }}
-    >
-      {children}
-    </button>
-  );
-}
-
-function FamillePill({ active, children, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      style={{
-        minHeight: 34,
-        padding: "0 13px",
-        borderRadius: 999,
-        border: active ? "none" : "1.5px solid #E4DED3",
-        background: active ? "#E6F0E3" : "#FFFFFF",
-        color: active ? "#2F5E3F" : "#4D554B",
-        fontFamily: "inherit",
-        fontSize: 12,
-        fontWeight: active ? 700 : 600,
-        cursor: "pointer",
-        flexShrink: 0,
-      }}
-    >
-      {children}
-    </button>
-  );
-}
-
 function familleLabel(tab, familleId, t) {
-  if (tab === "vegetal") return t(`catalogue.famille_${familleId}`);
+  if (tab === "vegetal") return familleId;
   if (tab === "mineral") return t(`catalogue.mineral_famille_${familleId}`);
   return t(`catalogue.deco_famille_${familleId}`);
 }
@@ -86,21 +43,26 @@ export default function CatalogueHubScreen({
   onGardenChange,
   onRequireAccount,
   onOpenItemDetail,
+  onOpenCataloguePlant,
 }) {
   const [tab, setTab] = useState(initialTab);
-  const [famille, setFamille] = useState(initialFilters.famille ?? null);
-  const [envieTag, setEnvieTag] = useState(initialFilters.envieTag ?? null);
-  const [exposition, setExposition] = useState(initialFilters.exposition ?? null);
+  const [sub, setSub] = useState(initialFilters.categorie || initialFilters.famille || "Tous");
+  const [envie, setEnvie] = useState(initialFilters.envie || initialFilters.envieTag || null);
   const [gardenState, setGardenState] = useState(null);
   const [togglingKey, setTogglingKey] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     setTab(initialTab);
-    setFamille(initialFilters.famille ?? null);
-    setEnvieTag(initialFilters.envieTag ?? null);
-    setExposition(initialFilters.exposition ?? null);
-  }, [initialTab, initialFilters.famille, initialFilters.envieTag, initialFilters.exposition]);
+    setSub(initialFilters.categorie || initialFilters.famille || "Tous");
+    setEnvie(initialFilters.envie || initialFilters.envieTag || null);
+  }, [
+    initialTab,
+    initialFilters.categorie,
+    initialFilters.famille,
+    initialFilters.envie,
+    initialFilters.envieTag,
+  ]);
 
   const refreshGarden = useCallback(async () => {
     try {
@@ -114,28 +76,29 @@ export default function CatalogueHubScreen({
     refreshGarden();
   }, [refreshGarden]);
 
-  const familleIds = useMemo(() => {
-    if (tab === "vegetal") return CATALOGUE_FAMILLES;
-    if (tab === "mineral") return MINERAL_FAMILLES;
-    return DECO_FAMILLES;
+  const subOptions = useMemo(() => {
+    if (tab === "vegetal") return ["Tous", ...CATALOGUE_CATEGORIES];
+    if (tab === "mineral") return ["Tous", ...MINERAL_FAMILLES];
+    return ["Tous", ...DECO_FAMILLES];
   }, [tab]);
 
   const filteredItems = useMemo(() => {
     if (tab === "vegetal") {
-      let list = filterCataloguePlants({ envieTag: envieTag || null, famille: famille || null });
-      if (exposition) list = list.filter((p) => p.exposition === exposition);
-      return list.map((p) => ({
+      const categorie = sub === "Tous" ? null : sub;
+      return filterCataloguePlants({ envie, categorie }).map((p) => ({
         key: `v-${p.id}`,
         universe: "vegetal",
         id: p.id,
         nom: p.nom,
         photo_url: p.photo_url,
-        subtitle: buildCatalogueSubtitle({ kind: "vegetal", raw: p }, t),
+        categorie: p.categorie,
+        subtitle: buildVegetalCardLine(p),
         raw: p,
       }));
     }
     if (tab === "mineral") {
-      return filterCatalogueMinerals({ famille: famille || null }).map((m) => ({
+      const famille = sub === "Tous" ? null : sub;
+      return filterCatalogueMinerals({ famille }).map((m) => ({
         key: `m-${m.id}`,
         universe: "mineral",
         id: m.id,
@@ -145,7 +108,8 @@ export default function CatalogueHubScreen({
         raw: m,
       }));
     }
-    return filterCatalogueDeco({ famille: famille || null }).map((d) => ({
+    const famille = sub === "Tous" ? null : sub;
+    return filterCatalogueDeco({ famille }).map((d) => ({
       key: `d-${d.id}`,
       universe: "deco",
       id: d.id,
@@ -154,17 +118,24 @@ export default function CatalogueHubScreen({
       subtitle: buildCatalogueSubtitle({ kind: "deco", raw: d }, t),
       raw: d,
     }));
-  }, [tab, famille, envieTag, exposition, t]);
+  }, [tab, sub, envie, t]);
 
-  const countLabel = `${filteredItems.length} idée${filteredItems.length > 1 ? "s" : ""}`;
+  const countLabel = `${filteredItems.length} idée${filteredItems.length > 1 ? "s" : ""}${
+    sub !== "Tous" ? ` · ${tab === "vegetal" ? sub : familleLabel(tab, sub, t)}` : ""
+  }${envie && tab === "vegetal" ? ` · ${envie}` : ""}`;
 
   const handleTabChange = (nextTab) => {
     setTab(nextTab);
-    setFamille(null);
-    if (nextTab !== "vegetal") {
-      setEnvieTag(null);
-      setExposition(null);
+    setSub("Tous");
+    if (nextTab !== "vegetal") setEnvie(null);
+  };
+
+  const openItem = (item) => {
+    if (item.universe === "vegetal" && onOpenCataloguePlant) {
+      onOpenCataloguePlant(item.id, "catalogue");
+      return;
     }
+    onOpenItemDetail?.(discoveryFromCatalogueItem(item));
   };
 
   const handleToggle = async (item) => {
@@ -195,118 +166,185 @@ export default function CatalogueHubScreen({
   const inGarden = (item) =>
     gardenState ? isCatalogueItemInGarden(item.universe, item.id, gardenState) : false;
 
-  const filterHint =
-    tab === "vegetal" && (envieTag || exposition)
-      ? envieTag
-        ? t(`catalogue.envie_${envieTag}`)
-        : exposition
-      : null;
+  const tabStyle = (active) =>
+    active
+      ? {
+          minHeight: 44,
+          border: "none",
+          borderRadius: 12,
+          background: "#FFFFFF",
+          fontFamily: "inherit",
+          fontSize: 14,
+          fontWeight: 700,
+          color: "#1F2A22",
+          boxShadow: "0 1px 3px rgba(31,42,34,0.12)",
+          cursor: "pointer",
+        }
+      : {
+          minHeight: 44,
+          border: "none",
+          borderRadius: 12,
+          background: "transparent",
+          fontFamily: "inherit",
+          fontSize: 14,
+          fontWeight: 600,
+          color: "#5B6359",
+          cursor: "pointer",
+        };
+
+  const subStyle = (active) =>
+    active
+      ? {
+          flexShrink: 0,
+          minHeight: 38,
+          padding: "0 14px",
+          borderRadius: 999,
+          border: "none",
+          background: "#1F2A22",
+          color: "#FFFFFF",
+          fontFamily: "inherit",
+          fontSize: 13,
+          fontWeight: 700,
+          whiteSpace: "nowrap",
+          cursor: "pointer",
+        }
+      : {
+          flexShrink: 0,
+          minHeight: 38,
+          padding: "0 14px",
+          borderRadius: 999,
+          border: "1.5px solid #E4DED3",
+          background: "#FFFFFF",
+          color: "#4D554B",
+          fontFamily: "inherit",
+          fontSize: 13,
+          fontWeight: 600,
+          whiteSpace: "nowrap",
+          cursor: "pointer",
+        };
 
   return (
-    <div
-      style={{
-        flex: 1,
-        overflow: "auto",
-        display: "flex",
-        flexDirection: "column",
-        gap: 12,
-      }}
-    >
-      <div style={{ padding: "12px 18px 0", display: "flex", alignItems: "center", gap: 10 }}>
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label="Retour"
+    <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+      <div
+        style={{
+          padding: "16px 18px 12px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 14,
+          borderBottom: "1.5px solid #F2EEE7",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button
+            type="button"
+            onClick={onBack}
+            aria-label="Retour aux idées"
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 999,
+              background: "#F2EEE7",
+              border: "none",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              cursor: "pointer",
+            }}
+          >
+            <svg width={20} height={20} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="m15 18-6-6 6-6" stroke="#1F2A22" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: "#1F2A22" }}>Le catalogue</h1>
+        </div>
+
+        <div
           style={{
-            width: 40,
-            height: 40,
-            borderRadius: 999,
-            border: "1.5px solid #EEE9E0",
-            background: "#FFFFFF",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            flexShrink: 0,
+            display: "grid",
+            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+            gap: 4,
+            padding: 4,
+            borderRadius: 16,
+            background: "#F2EEE7",
           }}
         >
-          <svg width={18} height={18} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M19 12H5" stroke="#1F2A22" strokeWidth={2} strokeLinecap="round" />
-            <path d="m12 19-7-7 7-7" stroke="#1F2A22" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-        <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: "#1F2A22" }}>Catalogue</h1>
-          {filterHint ? (
-            <span style={{ fontSize: 13, color: "#5B6359" }}>Filtre : {filterHint}</span>
-          ) : null}
+          {TABS.map((row) => (
+            <button
+              key={row.id}
+              type="button"
+              aria-pressed={tab === row.id}
+              onClick={() => handleTabChange(row.id)}
+              style={tabStyle(tab === row.id)}
+            >
+              {row.label}
+            </button>
+          ))}
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            overflowX: "auto",
+            marginRight: -18,
+            paddingRight: 18,
+            scrollbarWidth: "none",
+          }}
+        >
+          {subOptions.map((label) => {
+            const value = label === "Tous" ? "Tous" : label;
+            const display = tab === "vegetal" || label === "Tous" ? label : familleLabel(tab, label, t);
+            return (
+              <button
+                key={`${tab}-${label}`}
+                type="button"
+                aria-pressed={sub === value}
+                onClick={() => setSub(value)}
+                style={subStyle(sub === value)}
+              >
+                {display}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       <div
         style={{
-          margin: "0 18px",
-          padding: 4,
-          borderRadius: 14,
-          background: "#F2EEE7",
+          flex: 1,
+          overflow: "auto",
+          padding: "14px 18px 16px",
           display: "flex",
-          gap: 4,
+          flexDirection: "column",
+          gap: 12,
         }}
       >
-        {TABS.map((row) => (
-          <TabButton key={row.id} active={tab === row.id} onClick={() => handleTabChange(row.id)}>
-            {row.label}
-          </TabButton>
-        ))}
-      </div>
+        <span style={{ fontSize: 13, fontWeight: 600, color: "#5B6359" }}>{countLabel}</span>
 
-      <div
-        style={{
-          display: "flex",
-          gap: 6,
-          overflowX: "auto",
-          padding: "0 18px",
-          scrollbarWidth: "none",
-        }}
-      >
-        <FamillePill active={!famille} onClick={() => setFamille(null)}>
-          Tous
-        </FamillePill>
-        {familleIds.map((fid) => (
-          <FamillePill key={fid} active={famille === fid} onClick={() => setFamille(fid)}>
-            {familleLabel(tab, fid, t)}
-          </FamillePill>
-        ))}
-      </div>
+        {error ? <p style={{ margin: 0, fontSize: 13, color: COLORS.error }}>{String(error)}</p> : null}
 
-      <div style={{ padding: "0 18px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: "#2F5E3F" }}>{countLabel}</span>
-      </div>
-
-      {error ? (
-        <p style={{ margin: 0, padding: "0 18px", fontSize: 13, color: COLORS.error }}>{String(error)}</p>
-      ) : null}
-
-      <div
-        style={{
-          padding: "0 18px 8px",
-          display: "grid",
-          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-          gap: 10,
-        }}
-      >
-        {filteredItems.map((item) => (
-          <CatalogueIdeaCard
-            key={item.key}
-            nom={item.nom}
-            subtitle={item.subtitle}
-            photo_url={item.photo_url}
-            inGarden={inGarden(item)}
-            toggling={togglingKey === item.key}
-            onOpen={() => onOpenItemDetail?.(discoveryFromCatalogueItem(item))}
-            onToggleHeart={() => handleToggle(item)}
-          />
-        ))}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+            gap: 12,
+          }}
+        >
+          {filteredItems.map((item) => (
+            <CatalogueIdeaCard
+              key={item.key}
+              nom={item.nom}
+              subtitle={item.subtitle}
+              photo_url={item.photo_url}
+              categorie={item.categorie}
+              inGarden={inGarden(item)}
+              toggling={togglingKey === item.key}
+              onOpen={() => openItem(item)}
+              onToggleHeart={() => handleToggle(item)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

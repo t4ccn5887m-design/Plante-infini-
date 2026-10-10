@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Sevya – Le catalogue</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'Quicksand',system-ui,sans-serif;color:#1F2A22}
+a{color:#2F5E3F}a:hover{color:#1F3F2A}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 12px; background: #E6DFD3; font-family: 'Quicksand', system-ui, sans-serif; color: #1F2A22">
+<div style="height: 100%; box-sizing: border-box; background: #FFFFFF; border-radius: 30px; display: flex; flex-direction: column; overflow: hidden">
+
+<div style="padding: 16px 18px 12px; display: flex; flex-direction: column; gap: 14px; border-bottom: 1.5px solid #F2EEE7">
+<div style="display: flex; align-items: center; gap: 10px">
+<a href="IdeesHub.dc.html" aria-label="Retour aux idées" style="width: 44px; height: 44px; border-radius: 999px; background: #F2EEE7; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F2A22" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; font-size: 22px; font-weight: 700">Le catalogue</h1>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 16px; background: #F2EEE7">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+<button type="button" onClick="{{t.pick}}" aria-pressed="{{t.pressed}}" style="{{t.style}}">{{t.label}}</button>
+</sc-for>
+</div>
+
+<div style="display: flex; gap: 8px; overflow-x: auto; margin-right: -18px; padding-right: 18px">
+<sc-for list="{{subs}}" as="s" hint-placeholder-count="5">
+<button type="button" onClick="{{s.pick}}" aria-pressed="{{s.pressed}}" style="{{s.style}}">{{s.label}}</button>
+</sc-for>
+</div>
+</div>
+
+<div style="flex-grow: 1; overflow-y: auto; padding: 14px 18px 16px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 13px; font-weight: 600; color: #5B6359">{{countLabel}}</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{items}}" as="p" hint-placeholder-count="4">
+<div style="border-radius: 20px; overflow: hidden; border: 1.5px solid #EEE9E0; display: flex; flex-direction: column">
+<div style="height: 118px; background: {{p.color}}; display: flex; justify-content: flex-end; align-items: flex-start; padding: 8px">
+<button type="button" onClick="{{p.toggle}}" aria-label="{{p.aria}}" style="width: 40px; height: 40px; border-radius: 999px; border: none; background: #FFFFFF; display: flex; align-items: center; justify-content: center">
+<sc-if value="{{p.liked}}" hint-placeholder-val="{{ false }}">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="#C0652E" stroke="#C0652E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+</sc-if>
+<sc-if value="{{p.notLiked}}" hint-placeholder-val="{{ true }}">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4D554B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+</sc-if>
+</button>
+</div>
+<a href="Fiche.dc.html" style="padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 3px; text-decoration: none; color: #1F2A22">
+<span style="font-size: 15px; font-weight: 700">{{p.name}}</span>
+<span style="font-size: 12px; color: #5B6359">{{p.line}}</span>
+</a>
+</div>
+</sc-for>
+</div>
+</div>
+
+<nav aria-label="Navigation principale" style="margin: 0 10px 10px; background: #FFFFFF; border-radius: 26px; box-shadow: 0 4px 18px rgba(31,42,34,0.12); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: end; padding: 8px 4px 10px">
+<a href="Main.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; min-height: 44px; text-decoration: none; color: #6B7268; font-size: 12px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg>Accueil</a>
+<a href="IdeesHub.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; min-height: 44px; text-decoration: none; color: #2F5E3F; font-size: 12px; font-weight: 700"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"></path></svg>Idées</a>
+<a href="Ajout.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #2F5E3F; font-size: 12px; font-weight: 700"><span style="width: 56px; height: 56px; box-sizing: border-box; border-radius: 999px; background: #2F5E3F; border: 4px solid #FFFFFF; margin-top: -30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(47,94,63,0.35)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></span>Ajouter</a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; min-height: 44px; text-decoration: none; color: #6B7268; font-size: 12px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>Coups de cœur</a>
+<a href="Dossier.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; min-height: 44px; text-decoration: none; color: #6B7268; font-size: 12px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path></svg>Dossier</a>
+</nav>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { tab: 'veg', sub: 'Tout', liked: {} };
+}
+renderVals() {
+const data = {
+veg: {
+label: 'Végétal',
+subs: ['Tout', 'Arbres', 'Arbustes', 'Fleurs et vivaces', 'Graminées', 'Grimpantes', 'Haies'],
+items: [
+{ id: 'olivier', name: 'Olivier', line: 'Arbre · Plein soleil', sub: 'Arbres', color: '#7E8F6A' },
+{ id: 'erable', name: 'Érable du Japon', line: 'Arbre · Mi-ombre', sub: 'Arbres', color: '#B5573F' },
+{ id: 'lavande', name: 'Lavande', line: 'Vivace · Très facile', sub: 'Fleurs et vivaces', color: '#8C7AB0' },
+{ id: 'hortensia', name: 'Hortensia', line: 'Arbuste · Ombre légère', sub: 'Arbustes', color: '#B9667F' },
+{ id: 'miscanthus', name: 'Miscanthus', line: 'Graminée · Facile', sub: 'Graminées', color: '#B8A372' },
+{ id: 'jasmin', name: 'Jasmin étoilé', line: 'Grimpante · Parfumée', sub: 'Grimpantes', color: '#6F8A73' },
+{ id: 'photinia', name: 'Photinia', line: 'Haie · Persistante', sub: 'Haies', color: '#A0483F' },
+{ id: 'agapanthe', name: 'Agapanthe', line: 'Vivace · Soleil', sub: 'Fleurs et vivaces', color: '#5F7BB0' }
+]
+},
+min: {
+label: 'Minéral',
+subs: ['Tout', 'Dallages', 'Graviers', 'Pas japonais', 'Murets et bordures', 'Pierres déco'],
+items: [
+{ id: 'calcaire', name: 'Dallage calcaire', line: 'Dallage · Clair', sub: 'Dallages', color: '#D8C9AE' },
+{ id: 'gres', name: 'Grès cérame bois', line: 'Dallage · Sans entretien', sub: 'Dallages', color: '#A88A6C' },
+{ id: 'gravier', name: 'Gravier blanc', line: 'Gravier · Lumineux', sub: 'Graviers', color: '#E3DCCD' },
+{ id: 'ardoise', name: 'Paillage ardoise', line: 'Gravier · Contemporain', sub: 'Graviers', color: '#5C6166' },
+{ id: 'pas', name: 'Pas japonais', line: 'Pierre naturelle', sub: 'Pas japonais', color: '#9C9A91' },
+{ id: 'gabion', name: 'Muret gabion', line: 'Muret · Moderne', sub: 'Murets et bordures', color: '#7D7A72' }
+]
+},
+amen: {
+label: 'Aménagements',
+subs: ['Tout', 'Pergolas', 'Bassins', 'Éclairage', 'Mobilier', 'Bacs et jardinières'],
+items: [
+{ id: 'pergola', name: 'Pergola bois', line: 'Pergola · Chaleureuse', sub: 'Pergolas', color: '#9A7652' },
+{ id: 'bioclim', name: 'Pergola bioclimatique', line: 'Pergola · Lames orientables', sub: 'Pergolas', color: '#5E6468' },
+{ id: 'bassin', name: 'Petit bassin', line: 'Bassin · Zen', sub: 'Bassins', color: '#4F7A86' },
+{ id: 'spots', name: 'Spots encastrés', line: 'Éclairage · Discret', sub: 'Éclairage', color: '#3E4A52' },
+{ id: 'banc', name: 'Banc en pierre', line: 'Mobilier · Intemporel', sub: 'Mobilier', color: '#B3A58C' },
+{ id: 'corten', name: 'Bac en acier corten', line: 'Jardinière · Contemporain', sub: 'Bacs et jardinières', color: '#9B5A3A' }
+]
+}
+};
+const tab = this.state.tab;
+const sub = this.state.sub;
+const liked = this.state.liked || {};
+const cur = data[tab];
+const tabStyleOn = 'min-height: 44px; border: none; border-radius: 12px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 700; color: #1F2A22; box-shadow: 0 1px 3px rgba(31,42,34,0.12)';
+const tabStyleOff = 'min-height: 44px; border: none; border-radius: 12px; background: transparent; font-family: inherit; font-size: 14px; font-weight: 600; color: #5B6359';
+const subOn = 'flex-shrink: 0; min-height: 38px; padding: 0 14px; border-radius: 999px; border: none; background: #1F2A22; color: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 700; white-space: nowrap';
+const subOff = 'flex-shrink: 0; min-height: 38px; padding: 0 14px; border-radius: 999px; border: 1.5px solid #E4DED3; background: #FFFFFF; color: #4D554B; font-family: inherit; font-size: 13px; font-weight: 600; white-space: nowrap';
+const tabs = ['veg', 'min', 'amen'].map((k) => ({
+label: data[k].label,
+pressed: k === tab ? 'true' : 'false',
+style: k === tab ? tabStyleOn : tabStyleOff,
+pick: () => this.setState({ tab: k, sub: 'Tout' })
+}));
+const subs = cur.subs.map((s) => ({
+label: s,
+pressed: s === sub ? 'true' : 'false',
+style: s === sub ? subOn : subOff,
+pick: () => this.setState({ sub: s })
+}));
+const filtered = cur.items.filter((it) => sub === 'Tout' || it.sub === sub);
+const items = filtered.map((it) => {
+const on = !!liked[it.id];
+return Object.assign({}, it, {
+liked: on,
+notLiked: !on,
+aria: on ? 'Retirer ' + it.name + ' de mes coups de cœur' : 'Ajouter ' + it.name + ' à mes coups de cœur',
+toggle: () => {
+const next = Object.assign({}, this.state.liked || {});
+next[it.id] = !next[it.id];
+this.setState({ liked: next });
+}
+});
+});
+return {
+tabs: tabs,
+subs: subs,
+items: items,
+countLabel: items.length + (items.length > 1 ? ' idées' : ' idée') + (sub === 'Tout' ? '' : ' · ' + sub)
+};
+}
+}
+</script>
+</body>
+</html>
