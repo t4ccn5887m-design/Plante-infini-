@@ -6,7 +6,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import CatalogueIdeaCard from "@/components/catalogue/CatalogueIdeaCard";
 import CataloguePlantVisual from "@/components/catalogue/CataloguePlantVisual";
 import { IDEES_ENVIE_CHIPS } from "@/lib/catalogueFamilles";
+import IdeesCategoryCard from "@/components/atelier/IdeesCategoryCard";
 import { buildIdeesComposerCards } from "@/lib/catalogueIdeesCompose";
+import { getIdeesCategoryCoverUrl } from "@/lib/ideesCategoryCover";
 import {
   currentMonthLabel,
   discoveryFromCatalogueItem,
@@ -22,46 +24,6 @@ import {
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const GREEN = "#2F5E3F";
-
-function UniverseIcon({ type, stroke }) {
-  const ic = { stroke, strokeWidth: 2, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" };
-  if (type === "paillages") {
-    return (
-      <svg width={26} height={26} viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="6" cy="16" r="2.2" style={ic} />
-        <circle cx="12.5" cy="18" r="1.7" style={ic} />
-        <circle cx="17.5" cy="15" r="2.4" style={ic} />
-        <circle cx="9" cy="10.5" r="1.6" style={ic} />
-        <circle cx="15" cy="9" r="1.4" style={ic} />
-      </svg>
-    );
-  }
-  if (type === "bordures") {
-    return (
-      <svg width={26} height={26} viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M3 20c4-6 9-9 18-10" style={ic} />
-        <path d="M3 14c4-5 9-7.5 18-8.5" style={ic} />
-        <path d="M6 17.5l1.6 1.6M10 14.5l1.6 1.6M14.5 12.3l1.4 1.8M18.6 10.8l1.2 1.9" style={ic} />
-      </svg>
-    );
-  }
-  if (type === "styles") {
-    return (
-      <svg width={26} height={26} viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" style={ic} />
-      </svg>
-    );
-  }
-  return (
-    <svg width={26} height={26} viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"
-        style={ic}
-      />
-      <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" style={ic} />
-    </svg>
-  );
-}
 
 export default function IdeesAccueilScreen({
   t,
@@ -288,60 +250,13 @@ export default function IdeesAccueilScreen({
             <span style={{ fontSize: 17, fontWeight: 700, color: "#1F2A22" }}>Composer mon jardin</span>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
               {composerCards.map((card) => (
-                <button
+                <IdeesCategoryCard
                   key={card.id}
-                  type="button"
+                  title={card.title}
+                  count={card.count}
+                  photoUrl={getIdeesCategoryCoverUrl(card.id)}
                   onClick={() => handleUniverse(card.id)}
-                  style={{
-                    position: "relative",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    gap: 16,
-                    minHeight: 150,
-                    boxSizing: "border-box",
-                    padding: 15,
-                    borderRadius: 24,
-                    background: card.bg,
-                    border: "none",
-                    cursor: "pointer",
-                    fontFamily: "inherit",
-                    textAlign: "left",
-                    color: "#1F2A22",
-                  }}
-                >
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: 15,
-                      right: 14,
-                      fontSize: 12,
-                      fontWeight: 700,
-                      color: "#5B6359",
-                    }}
-                  >
-                    {card.count}
-                  </span>
-                  <span
-                    style={{
-                      width: 46,
-                      height: 46,
-                      borderRadius: 15,
-                      background: "#FFFFFF",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <UniverseIcon type={card.icon} stroke={card.iconStroke} />
-                  </span>
-                  <span style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                    <span style={{ fontSize: 17, fontWeight: 700 }}>{card.title}</span>
-                    <span style={{ fontSize: 12.5, lineHeight: 1.35, color: card.subtitleColor }}>
-                      {card.subtitle}
-                    </span>
-                  </span>
-                </button>
+                />
               ))}
             </div>
           </div>

@@ -187,3 +187,222 @@ html.atelier-theme .wilder-v2-main-layout-content {
     min-height: 100dvh !important;
   }
 }
+
+/* ── Barre d'onglets flottante ── */
+
+html.atelier-theme .wilder-v2-tabbar.atelier-tabbar {
+  background: rgba(23, 36, 28, 0.92);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  box-shadow: none;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 8px 4px 10px;
+}
+
+html.atelier-theme .atelier-tabbar .atelier-tabbar__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  min-height: 44px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--mute);
+  padding: 0;
+}
+
+html.atelier-theme .atelier-tabbar .atelier-tabbar__item.is-active {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+html.atelier-theme .atelier-tabbar .atelier-tabbar__fab-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--sage);
+  padding: 0;
+}
+
+html.atelier-theme .atelier-tabbar .atelier-tabbar__fab {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: var(--sage);
+  color: var(--bg);
+  margin-top: -22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: none;
+}
+
+html.atelier-theme .atelier-tabbar .atelier-tabbar__fab svg path {
+  stroke: var(--bg);
+}
+
+/* ── Cartes catégorie Idées ── */
+
+html.atelier-theme .atelier-category-card {
+  position: relative;
+  display: block;
+  min-height: 148px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  text-align: left;
+  background: var(--card);
+}
+
+html.atelier-theme .atelier-category-card__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+html.atelier-theme .atelier-category-card__photo--empty {
+  background: var(--card);
+}
+
+html.atelier-theme .atelier-category-card__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 35%, rgba(15, 26, 20, 0.88) 100%);
+  pointer-events: none;
+}
+
+html.atelier-theme .atelier-category-card__body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 148px;
+  padding: 14px;
+  box-sizing: border-box;
+}
+
+html.atelier-theme .atelier-category-card__count {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--sage);
+  margin-bottom: 4px;
+}
+
+html.atelier-theme .atelier-category-card__title {
+  font-family: var(--font-title, Fraunces, serif);
+  font-size: 19px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.15;
+}
+
+/* ── Liste étapes dossier ── */
+
+html.atelier-theme .atelier-step-list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: var(--atelier-radius-panel);
+  overflow: hidden;
+  background: var(--card);
+}
+
+html.atelier-theme .atelier-step-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+}
+
+html.atelier-theme .atelier-step-row:last-child {
+  border-bottom: none;
+}
+
+html.atelier-theme .atelier-step-row--btn {
+  cursor: pointer;
+  min-height: 44px;
+}
+
+html.atelier-theme .atelier-step-row__num {
+  font-style: normal;
+  font-family: var(--font-title, Fraunces, serif);
+  font-size: 13px;
+  color: var(--mute);
+  flex-shrink: 0;
+  width: 28px;
+}
+
+html.atelier-theme .atelier-step-row__title {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 500;
+  min-width: 0;
+}
+
+html.atelier-theme .atelier-step-row__status {
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+html.atelier-theme .atelier-step-row__status.is-done {
+  color: var(--sage);
+}
+
+html.atelier-theme .atelier-step-row__status.is-todo {
+  color: var(--clay);
+}
+
+/* ── Feuilles / modales / toasts ── */
+
+html.atelier-theme .modal-sheet,
+html.atelier-theme .modal-backdrop .modal-sheet {
+  background: var(--card) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--line);
+  box-shadow: none !important;
+}
+
+html.atelier-theme .organize-saved-toast,
+html.atelier-theme .badge-unlock-toast,
+html.atelier-theme .potager-community-toast {
+  background: var(--card) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--line) !important;
+  box-shadow: none !important;
+}
+
+html.atelier-theme .realisation-pastille {
+  background: var(--sage) !important;
+  color: var(--bg) !important;
+}

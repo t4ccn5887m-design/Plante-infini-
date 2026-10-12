@@ -26,7 +26,7 @@ const cardWrap = {
   width: "100%",
   maxWidth: 380,
   background: WILDER_COLORS.screen,
-  borderRadius: 24,
+  borderRadius: 28,
   overflow: "hidden",
   alignSelf: "flex-start",
   display: "flex",

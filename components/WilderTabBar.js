@@ -1,6 +1,3 @@
-const ACTIVE = "#2F5E3F";
-const INACTIVE = "#6B7268";
-
 const ic = {
   stroke: "currentColor",
   strokeWidth: 2,
@@ -26,13 +23,13 @@ function IconIdees({ size = 22 }) {
   );
 }
 
-function IconPlus({ size = 26 }) {
+function IconPlus({ size = 24 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
       <path
         d="M12 5v14M5 12h14"
         fill="none"
-        stroke="#FFFFFF"
+        stroke="currentColor"
         strokeWidth={2.4}
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -61,40 +58,8 @@ function IconDossier({ size = 22 }) {
 function TabButton({ active, onClick, label, children, fab = false }) {
   if (fab) {
     return (
-      <button
-        type="button"
-        onClick={onClick}
-        aria-label="Ajouter à mon jardin"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 4,
-          border: "none",
-          background: "transparent",
-          cursor: "pointer",
-          fontFamily: "inherit",
-          color: ACTIVE,
-          fontSize: 12,
-          fontWeight: 700,
-          padding: 0,
-        }}
-      >
-        <span
-          style={{
-            width: 56,
-            height: 56,
-            boxSizing: "border-box",
-            borderRadius: 999,
-            background: ACTIVE,
-            border: "4px solid #FFFFFF",
-            marginTop: -30,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 6px 16px rgba(47,94,63,0.35)",
-          }}
-        >
+      <button type="button" onClick={onClick} aria-label="Ajouter à mon jardin" className="atelier-tabbar__fab-wrap">
+        <span className="atelier-tabbar__fab">
           <IconPlus />
         </span>
         Ajouter
@@ -106,22 +71,7 @@ function TabButton({ active, onClick, label, children, fab = false }) {
     <button
       type="button"
       onClick={onClick}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "flex-end",
-        gap: 4,
-        minHeight: 44,
-        border: "none",
-        background: "transparent",
-        cursor: "pointer",
-        fontFamily: "inherit",
-        color: active ? ACTIVE : INACTIVE,
-        fontSize: 12,
-        fontWeight: active ? 700 : 600,
-        padding: 0,
-      }}
+      className={`atelier-tabbar__item${active ? " is-active" : ""}`}
     >
       {children}
       {label}
@@ -139,16 +89,12 @@ export default function WilderTabBar({
 }) {
   return (
     <nav
-      className="wilder-v2-tabbar"
+      className="wilder-v2-tabbar atelier-tabbar"
       aria-label="Navigation principale"
       style={{
-        background: "#FFFFFF",
-        borderRadius: 26,
-        boxShadow: "0 4px 18px rgba(31,42,34,0.12)",
         display: "grid",
         gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
         alignItems: "end",
-        padding: "8px 4px 10px",
         boxSizing: "border-box",
       }}
     >

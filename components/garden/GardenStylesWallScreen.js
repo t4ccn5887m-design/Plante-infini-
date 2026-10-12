@@ -29,7 +29,7 @@ export default function GardenStylesWallScreen({ onBack, onOpenStyle }) {
         flex: 1,
         overflow: "auto",
         padding: "12px 12px 16px",
-        background: "#FAF8F4",
+        background: "var(--bg, #0F1A14)",
       }}
     >
       <div style={{ padding: "6px 6px 12px" }}>
@@ -70,7 +70,7 @@ export default function GardenStylesWallScreen({ onBack, onOpenStyle }) {
             style={{
               padding: 0,
               border: "none",
-              borderRadius: 14,
+              borderRadius: 18,
               overflow: "hidden",
               cursor: "pointer",
               background: "#E4DDD2",
