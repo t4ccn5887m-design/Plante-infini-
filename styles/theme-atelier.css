@@ -406,3 +406,61 @@ html.atelier-theme .realisation-pastille {
   background: var(--sage) !important;
   color: var(--bg) !important;
 }
+
+/* ── Accueil dossier hero ── */
+
+html.atelier-theme .atelier-accueil-hero {
+  position: relative;
+  border-radius: var(--atelier-radius-panel);
+  overflow: hidden;
+  min-height: 220px;
+  border: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 18px;
+}
+
+html.atelier-theme .atelier-accueil-hero__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+html.atelier-theme .atelier-accueil-hero__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 20%, rgba(15, 26, 20, 0.92) 100%);
+}
+
+html.atelier-theme .atelier-accueil-hero__body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+html.atelier-theme .atelier-accueil-hero__title {
+  margin: 0;
+  font-family: var(--font-title, Fraunces, serif);
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1.08;
+  color: var(--ink);
+}
+
+html.atelier-theme .atelier-accueil-progress {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+html.atelier-theme .atelier-accueil-progress p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--mute);
+}

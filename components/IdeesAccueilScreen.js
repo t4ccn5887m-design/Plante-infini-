@@ -23,7 +23,6 @@ import {
 } from "@/lib/catalogueGardenToggle";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
-const GREEN = "#2F5E3F";
 
 export default function IdeesAccueilScreen({
   t,
@@ -140,14 +139,14 @@ export default function IdeesAccueilScreen({
           style={{
             borderRadius: 18,
             padding: "14px 16px",
-            background: "#E6F0E3",
-            border: `1.5px solid ${GREEN}`,
+            background: "var(--card)",
+            border: "1px solid var(--sage)",
             display: "flex",
             flexDirection: "column",
             gap: 10,
           }}
         >
-          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.45, color: "#1F2A22", fontWeight: 600 }}>
+          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.45, color: COLORS.ink, fontWeight: 600 }}>
             Ajoutez au moins un coup de cœur, puis revenez à votre dossier.
           </p>
           <button
@@ -159,8 +158,8 @@ export default function IdeesAccueilScreen({
               padding: "0 16px",
               borderRadius: 14,
               border: "none",
-              background: GREEN,
-              color: "#FFFFFF",
+              background: COLORS.ink,
+              color: COLORS.screen,
               fontSize: 14,
               fontWeight: 700,
               cursor: "pointer",
@@ -173,8 +172,10 @@ export default function IdeesAccueilScreen({
       ) : null}
 
       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700, color: "#1F2A22" }}>Idées</h1>
-        <span style={{ fontSize: 15, color: "#5B6359" }}>Composez le jardin qui vous ressemble</span>
+        <h1 style={{ margin: 0, fontSize: 28, fontWeight: 400, color: COLORS.ink, fontFamily: "var(--font-title)" }}>
+          Idées
+        </h1>
+        <span style={{ fontSize: 15, color: COLORS.muted }}>Composez le jardin qui vous ressemble</span>
       </div>
 
       <label
@@ -186,7 +187,8 @@ export default function IdeesAccueilScreen({
           minHeight: 50,
           padding: "0 16px",
           borderRadius: 16,
-          background: "#F2EEE7",
+          background: "var(--card)",
+          border: "1px solid var(--line)",
         }}
       >
         <svg width={18} height={18} viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -206,7 +208,7 @@ export default function IdeesAccueilScreen({
             background: "transparent",
             fontFamily: "inherit",
             fontSize: 15,
-            color: "#1F2A22",
+            color: COLORS.ink,
             outline: "none",
             minWidth: 0,
           }}
@@ -321,7 +323,7 @@ export default function IdeesAccueilScreen({
                     borderRadius: 999,
                     border: "1.5px solid #E4DED3",
                     background: "#FFFFFF",
-                    color: "#1F2A22",
+                    color: COLORS.ink,
                     fontSize: 14,
                     fontWeight: 600,
                     fontFamily: "inherit",
@@ -365,7 +367,7 @@ export default function IdeesAccueilScreen({
                       cursor: "pointer",
                       fontFamily: "inherit",
                       textAlign: "left",
-                      color: "#1F2A22",
+                      color: COLORS.ink,
                     }}
                   >
                     <CataloguePlantVisual photo_url={p.photo_url} categorie={p.categorie} height={104} />
