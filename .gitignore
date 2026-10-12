@@ -40,3 +40,7 @@ next-env.d.ts
 # Scripts photo catalogue (local)
 scripts/.venv-rembg/
 sevya/photo-rembg-cache/
+
+# vignettes locales de revue photo
+sevya/.photo-thumbs/
+sevya/photo-candidates.backup.json

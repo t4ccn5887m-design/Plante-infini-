@@ -26,7 +26,7 @@ import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const TABS = [
   { id: "vegetal", label: "Végétal" },
-  { id: "mineral", label: "Minéral" },
+  { id: "mineral", label: "Paillages" },
   { id: "deco", label: "Aménagements" },
 ];
 
@@ -51,12 +51,14 @@ export default function CatalogueHubScreen({
   const [envie, setEnvie] = useState(initialFilters.envie || initialFilters.envieTag || null);
   const [arrosage, setArrosage] = useState(initialFilters.arrosage || null);
   const [search, setSearch] = useState(initialFilters.search || "");
+  const amenagementUnivers = initialFilters.univers || null;
+  const singleUniverseHub = Boolean(amenagementUnivers);
   const [gardenState, setGardenState] = useState(null);
   const [togglingKey, setTogglingKey] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setTab(initialTab);
+    setTab(initialFilters.univers ? "deco" : initialTab);
     setSub(initialFilters.categorie || initialFilters.famille || "Tous");
     setEnvie(initialFilters.envie || initialFilters.envieTag || null);
     setArrosage(initialFilters.arrosage || null);
@@ -69,6 +71,7 @@ export default function CatalogueHubScreen({
     initialFilters.envieTag,
     initialFilters.arrosage,
     initialFilters.search,
+    initialFilters.univers,
   ]);
 
   const refreshGarden = useCallback(async () => {
@@ -86,8 +89,16 @@ export default function CatalogueHubScreen({
   const subOptions = useMemo(() => {
     if (tab === "vegetal") return ["Tous", ...CATALOGUE_CATEGORIES];
     if (tab === "mineral") return ["Tous", ...MINERAL_CATEGORIES];
+    if (amenagementUnivers) {
+      const cats = [
+        ...new Set(
+          filterCatalogueDeco({ univers: amenagementUnivers }).map((d) => d.categorie).filter(Boolean)
+        ),
+      ].sort((a, b) => a.localeCompare(b, "fr"));
+      return ["Tous", ...cats];
+    }
     return ["Tous", ...AMENAGEMENT_CATEGORIES];
-  }, [tab]);
+  }, [tab, amenagementUnivers]);
 
   const filteredItems = useMemo(() => {
     if (tab === "vegetal") {
@@ -117,7 +128,7 @@ export default function CatalogueHubScreen({
       }));
     }
     const categorie = sub === "Tous" ? null : sub;
-    return filterCatalogueDeco({ categorie, search }).map((d) => ({
+    return filterCatalogueDeco({ categorie, univers: amenagementUnivers, search }).map((d) => ({
       key: `d-${d.id}`,
       universe: "deco",
       id: d.id,
@@ -127,7 +138,7 @@ export default function CatalogueHubScreen({
       subtitle: buildAmenagementCardLine(d),
       raw: d,
     }));
-  }, [tab, sub, envie, arrosage, search, t]);
+  }, [tab, sub, envie, arrosage, search, amenagementUnivers, t]);
 
   const countLabel = `${filteredItems.length} idée${filteredItems.length > 1 ? "s" : ""}${
     sub !== "Tous" ? ` · ${subcategoryLabel(sub)}` : ""
@@ -274,7 +285,15 @@ export default function CatalogueHubScreen({
               <path d="m15 18-6-6 6-6" stroke="#1F2A22" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: "#1F2A22" }}>Le catalogue</h1>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: "#1F2A22" }}>
+            {amenagementUnivers === "Bordures"
+              ? "Bordures"
+              : tab === "mineral"
+                ? "Paillages"
+                : tab === "vegetal"
+                  ? "Végétal"
+                  : "Le catalogue"}
+          </h1>
         </div>
 
         <label
@@ -313,28 +332,30 @@ export default function CatalogueHubScreen({
           />
         </label>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-            gap: 4,
-            padding: 4,
-            borderRadius: 16,
-            background: "#F2EEE7",
-          }}
-        >
-          {TABS.map((row) => (
-            <button
-              key={row.id}
-              type="button"
-              aria-pressed={tab === row.id}
-              onClick={() => handleTabChange(row.id)}
-              style={tabStyle(tab === row.id)}
-            >
-              {row.label}
-            </button>
-          ))}
-        </div>
+        {!singleUniverseHub ? (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+              gap: 4,
+              padding: 4,
+              borderRadius: 16,
+              background: "#F2EEE7",
+            }}
+          >
+            {TABS.map((row) => (
+              <button
+                key={row.id}
+                type="button"
+                aria-pressed={tab === row.id}
+                onClick={() => handleTabChange(row.id)}
+                style={tabStyle(tab === row.id)}
+              >
+                {row.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
 
         <div
           style={{

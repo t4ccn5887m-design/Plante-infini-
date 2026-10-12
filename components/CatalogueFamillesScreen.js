@@ -180,7 +180,10 @@ export default function CatalogueFamillesScreen({
 
   const openSearchHub = () => {
     const q = searchDraft.trim();
-    onOpenHub?.(universe, q ? { search: q } : {});
+    onOpenHub?.(data.hubTab || universe, {
+      ...data.hubFilters,
+      ...(q ? { search: q } : {}),
+    });
   };
 
   return (
@@ -273,7 +276,12 @@ export default function CatalogueFamillesScreen({
           <button
             key={tile.categorie}
             type="button"
-            onClick={() => onOpenHub?.(universe, { categorie: tile.categorie })}
+            onClick={() =>
+              onOpenHub?.(data.hubTab || universe, {
+                ...data.hubFilters,
+                categorie: tile.categorie,
+              })
+            }
             style={{
               position: "relative",
               display: "flex",
@@ -306,19 +314,38 @@ export default function CatalogueFamillesScreen({
             >
               {tile.count}
             </span>
-            <span
-              style={{
-                width: 46,
-                height: 46,
-                borderRadius: 15,
-                background: "#FFFFFF",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <FamilleIcon type={tile.icon} stroke={tile.ink} />
-            </span>
+            {tile.swatches?.length ? (
+              <span style={{ display: "flex", alignItems: "center" }}>
+                {tile.swatches.map((color) => (
+                  <span
+                    key={color}
+                    style={{
+                      width: 26,
+                      height: 26,
+                      borderRadius: 999,
+                      background: color,
+                      border: "2.5px solid #fff",
+                      marginRight: -7,
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
+                    }}
+                  />
+                ))}
+              </span>
+            ) : (
+              <span
+                style={{
+                  width: 46,
+                  height: 46,
+                  borderRadius: 15,
+                  background: "#FFFFFF",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <FamilleIcon type={tile.icon} stroke={tile.ink} />
+              </span>
+            )}
             <span style={{ display: "flex", flexDirection: "column", gap: 3 }}>
               <span style={{ fontSize: 17, fontWeight: 700, lineHeight: 1.2 }}>{tile.title}</span>
               <span style={{ fontSize: 12.5, lineHeight: 1.35, color: tile.ink }}>{tile.phrase}</span>
@@ -326,6 +353,17 @@ export default function CatalogueFamillesScreen({
           </button>
         ))}
       </div>
+
+      {data.showGrainLegend ? (
+        <section style={{ marginTop: 22 }}>
+          <h2 style={{ margin: "0 0 10px", fontSize: 17, fontWeight: 700, color: "#1F2A22" }}>
+            Taille des grains
+          </h2>
+          <p style={{ margin: 0, fontSize: 13, lineHeight: 1.45, color: "#5B6359" }}>
+            Sur chaque fiche paillage, choisissez fin, moyen ou gros — l&apos;info part dans votre dossier PDF.
+          </p>
+        </section>
+      ) : null}
 
       {data.showEnvies ? (
         <section style={{ marginTop: 22 }}>
@@ -361,7 +399,7 @@ export default function CatalogueFamillesScreen({
       <p style={{ marginTop: 18, textAlign: "center" }}>
         <button
           type="button"
-          onClick={() => onOpenHub?.(universe, {})}
+          onClick={() => onOpenHub?.(data.hubTab || universe, { ...data.hubFilters })}
           style={{
             border: "none",
             background: "none",

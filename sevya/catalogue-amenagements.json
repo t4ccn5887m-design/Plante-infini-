@@ -1,5 +1,332 @@
 [
   {
+    "id": "bordure-corten",
+    "univers": "Bordures",
+    "nom": "Bordure en acier corten",
+    "categorie": "Métal",
+    "aspect": "Rouille chaude, ligne fine",
+    "entretien": "Aucun",
+    "budget": "€€",
+    "usages": [
+      "Massif",
+      "allée",
+      "gravier"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Méditerranéen",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Une ligne nette et chaude qui sépare gravier et massif.",
+    "a_savoir": "La rouille peut tacher un dallage clair les premiers mois.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bordure-acier-noir",
+    "univers": "Bordures",
+    "nom": "Bordure en acier noir",
+    "categorie": "Métal",
+    "aspect": "Noir mat, très discret",
+    "entretien": "Aucun",
+    "budget": "€€",
+    "usages": [
+      "Massif",
+      "pelouse",
+      "gravier"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Zen"
+    ],
+    "pourquoi_on_laime": "Presque invisible : on ne voit que la courbe du massif.",
+    "a_savoir": "",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bordure-acier-galva",
+    "univers": "Bordures",
+    "nom": "Bordure en acier galvanisé",
+    "categorie": "Métal",
+    "aspect": "Gris métal",
+    "entretien": "Aucun",
+    "budget": "€",
+    "usages": [
+      "Pelouse",
+      "massif",
+      "potager"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Solide et économique, idéale entre pelouse et massif.",
+    "a_savoir": "Moins décorative que le corten.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bordure-rondins",
+    "univers": "Bordures",
+    "nom": "Bordure en rondins de bois",
+    "categorie": "Bois et osier",
+    "aspect": "Bois naturel, rustique",
+    "entretien": "Faible",
+    "budget": "€",
+    "usages": [
+      "Massif",
+      "potager",
+      "allée"
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Un style rustique et chaleureux, facile à poser.",
+    "a_savoir": "Le bois se dégrade en 5 à 10 ans au contact de la terre.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bordure-traverse-bois",
+    "univers": "Bordures",
+    "nom": "Bordure en planches ou traverses",
+    "categorie": "Bois et osier",
+    "aspect": "Bois brut, lignes droites",
+    "entretien": "Faible",
+    "budget": "€€",
+    "usages": [
+      "Massif surélevé",
+      "potager",
+      "allée"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Naturel",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Des lignes droites et franches qui structurent le jardin.",
+    "a_savoir": "Choisir un bois classé pour le contact avec le sol.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bordure-plessis",
+    "univers": "Bordures",
+    "nom": "Bordure en plessis tressé",
+    "categorie": "Bois et osier",
+    "aspect": "Osier ou châtaignier tressé",
+    "entretien": "Moyen",
+    "budget": "€€",
+    "usages": [
+      "Massif",
+      "potager"
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Le charme d'un jardin de campagne, tressé à la main.",
+    "a_savoir": "Dure 3 à 5 ans pour l'osier ; plus pour le châtaignier.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bordure-pierre-naturelle",
+    "univers": "Bordures",
+    "nom": "Bordure en pierre naturelle",
+    "categorie": "Pierre",
+    "aspect": "Blocs de pierre irréguliers",
+    "entretien": "Aucun",
+    "budget": "€€",
+    "usages": [
+      "Massif",
+      "rocaille",
+      "allée"
+    ],
+    "ambiances": [
+      "Méditerranéen",
+      "Naturel",
+      "Champêtre"
+    ],
+    "pourquoi_on_laime": "Une bordure qui semble avoir toujours été là.",
+    "a_savoir": "",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bordure-paves",
+    "univers": "Bordures",
+    "nom": "Bordure en pavés",
+    "categorie": "Pierre",
+    "aspect": "Pavés de granit ou de grès",
+    "entretien": "Aucun",
+    "budget": "€€",
+    "usages": [
+      "Pelouse",
+      "allée",
+      "massif"
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Contemporain",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Une bordure solide qui facilite la tonte au ras.",
+    "a_savoir": "Pose sur béton conseillée.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bordure-ardoise",
+    "univers": "Bordures",
+    "nom": "Bordure en ardoises plantées",
+    "categorie": "Pierre",
+    "aspect": "Ardoises posées debout",
+    "entretien": "Aucun",
+    "budget": "€€",
+    "usages": [
+      "Massif",
+      "allée"
+    ],
+    "ambiances": [
+      "Contemporain",
+      "Zen",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Un effet graphique et sombre, très tendance.",
+    "a_savoir": "Arêtes vives : attention aux enfants.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bordure-galets",
+    "univers": "Bordures",
+    "nom": "Bordure en galets",
+    "categorie": "Pierre",
+    "aspect": "Galets alignés ou en bande",
+    "entretien": "Faible",
+    "budget": "€",
+    "usages": [
+      "Massif",
+      "allée",
+      "bord de bassin"
+    ],
+    "ambiances": [
+      "Zen",
+      "Méditerranéen",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Une transition douce entre massif et gravier.",
+    "a_savoir": "",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bordure-briques",
+    "univers": "Bordures",
+    "nom": "Bordure en briques",
+    "categorie": "Brique et béton",
+    "aspect": "Briques rouges, posées à plat ou en biais",
+    "entretien": "Aucun",
+    "budget": "€",
+    "usages": [
+      "Massif",
+      "pelouse",
+      "potager"
+    ],
+    "ambiances": [
+      "Champêtre",
+      "Naturel"
+    ],
+    "pourquoi_on_laime": "Le charme anglais, avec une couleur chaude.",
+    "a_savoir": "Choisir une brique ingélive.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
+    "id": "bordure-beton",
+    "univers": "Bordures",
+    "nom": "Bordure en béton",
+    "categorie": "Brique et béton",
+    "aspect": "Gris, lignes droites ou courbes",
+    "entretien": "Aucun",
+    "budget": "€",
+    "usages": [
+      "Pelouse",
+      "allée",
+      "massif"
+    ],
+    "ambiances": [
+      "Contemporain"
+    ],
+    "pourquoi_on_laime": "Simple, durable et sans entretien.",
+    "a_savoir": "Aspect plus sobre que la pierre.",
+    "photo_url": "",
+    "photo_source": "",
+    "photo_auteur": "",
+    "photo_licence": "",
+    "photo_licence_url": "",
+    "photo_lien": "",
+    "photo_detouree": "non"
+  },
+  {
     "id": "pergola-bois",
     "univers": "Aménagements",
     "nom": "Pergola bois",
@@ -24,7 +351,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "pergola-metal",
@@ -48,7 +376,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "pergola-bioclimatique",
@@ -72,7 +401,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "voile-d-ombrage",
@@ -98,7 +428,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "tonnelle",
@@ -123,7 +454,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "bassin-naturel",
@@ -149,7 +481,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "bassin-miroir",
@@ -175,7 +508,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "fontaine-murale",
@@ -202,7 +536,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "lame-d-eau",
@@ -227,7 +562,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "jarre-fontaine",
@@ -253,7 +589,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "spots-encastres-au-sol",
@@ -279,7 +616,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "bornes-lumineuses",
@@ -305,7 +643,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "guirlande-guinguette",
@@ -331,7 +670,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "projecteur-d-arbre",
@@ -357,7 +697,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "balisage-solaire",
@@ -382,7 +723,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "banc-en-pierre",
@@ -409,7 +751,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "salon-de-jardin-en-teck",
@@ -434,7 +777,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "bain-de-soleil",
@@ -461,7 +805,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "hamac",
@@ -487,7 +832,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "brasero",
@@ -513,7 +859,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "bac-en-acier-corten",
@@ -538,7 +885,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "jardiniere-en-bois",
@@ -564,7 +912,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "pots-en-terre-cuite",
@@ -590,7 +939,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "vase-d-anduze",
@@ -616,7 +966,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "carre-sureleve",
@@ -641,7 +992,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "claustra-en-bois",
@@ -667,7 +1019,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "ganivelle-en-chataignier",
@@ -693,7 +1046,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "brande-de-bruyere",
@@ -718,7 +1072,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "panneau-en-acier-decoupe",
@@ -744,7 +1099,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "treillage",
@@ -769,7 +1125,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "terrasse-en-bois-exotique",
@@ -795,7 +1152,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "terrasse-en-bois-composite",
@@ -819,7 +1177,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "terrasse-en-pin-traite",
@@ -844,7 +1203,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "abri-de-jardin",
@@ -869,7 +1229,8 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   },
   {
     "id": "cuisine-d-ete",
@@ -894,6 +1255,7 @@
     "photo_licence": "",
     "photo_licence_url": "",
     "photo_lien": "",
-    "photo_detouree": "non"
+    "photo_detouree": "non",
+    "masque": true
   }
 ]

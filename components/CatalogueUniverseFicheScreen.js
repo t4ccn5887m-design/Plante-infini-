@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import CataloguePhotoCredit from "@/components/catalogue/CataloguePhotoCredit";
 import CatalogueUniverseVisual from "@/components/catalogue/CatalogueUniverseVisual";
+import MineralGrainSizePicker from "@/components/catalogue/MineralGrainSizePicker";
 import { getCatalogueAmenagementById } from "@/lib/catalogueAmenagements";
+import { loadMineralGrainChoice, saveMineralGrainChoice } from "@/lib/catalogueMineralGrain";
 import { getCatalogueMineralById } from "@/lib/catalogueMinerals";
 import {
   isCatalogueItemInGarden,
@@ -42,6 +44,7 @@ export default function CatalogueUniverseFicheScreen({
   const [gardenState, setGardenState] = useState(null);
   const [toggling, setToggling] = useState(false);
   const [error, setError] = useState(null);
+  const [grainSize, setGrainSize] = useState(null);
 
   const refreshGarden = useCallback(async () => {
     try {
@@ -54,6 +57,14 @@ export default function CatalogueUniverseFicheScreen({
   useEffect(() => {
     refreshGarden();
   }, [refreshGarden, itemId, universe]);
+
+  useEffect(() => {
+    if (universe === "mineral" && itemId) {
+      setGrainSize(loadMineralGrainChoice(itemId));
+    } else {
+      setGrainSize(null);
+    }
+  }, [universe, itemId]);
 
   if (!item) {
     return (
@@ -221,6 +232,16 @@ export default function CatalogueUniverseFicheScreen({
               <strong>À savoir — </strong>
               {item.a_savoir}
             </div>
+          ) : null}
+
+          {universe === "mineral" ? (
+            <MineralGrainSizePicker
+              value={grainSize}
+              onChange={(next) => {
+                setGrainSize(next);
+                saveMineralGrainChoice(item.id, next);
+              }}
+            />
           ) : null}
 
           {error ? <p style={{ margin: 0, fontSize: 13, color: "#b00020" }}>{error}</p> : null}

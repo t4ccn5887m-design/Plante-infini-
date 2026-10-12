@@ -5,8 +5,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import CatalogueIdeaCard from "@/components/catalogue/CatalogueIdeaCard";
 import CataloguePlantVisual from "@/components/catalogue/CataloguePlantVisual";
+import { IDEES_ENVIE_CHIPS } from "@/lib/catalogueFamilles";
+import { buildIdeesComposerCards } from "@/lib/catalogueIdeesCompose";
 import {
-  CATALOGUE_ENVIES,
   currentMonthLabel,
   discoveryFromCatalogueItem,
   getPlantsBeautifulNow,
@@ -22,67 +23,29 @@ import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const GREEN = "#2F5E3F";
 
-const UNIVERSE_CARDS = [
-  {
-    id: "vegetal",
-    title: "Végétal",
-    subtitle: "Arbres, fleurs, haies, graminées",
-    bg: "#E6F0E3",
-    iconStroke: "#4E7B52",
-    subtitleColor: "#3F6443",
-    icon: "leaf",
-  },
-  {
-    id: "mineral",
-    title: "Minéral",
-    subtitle: "Dallages, graviers, pierres",
-    bg: "#EEEAE3",
-    iconStroke: "#5F665D",
-    subtitleColor: "#4D554B",
-    icon: "mineral",
-  },
-  {
-    id: "deco",
-    title: "Aménagements",
-    subtitle: "Pergola, bassin, éclairage",
-    bg: "#F6E7D8",
-    iconStroke: "#C0652E",
-    subtitleColor: "#8A4A22",
-    icon: "deco",
-  },
-  {
-    id: "ambiances",
-    title: "Ambiances",
-    subtitle: "Méditerranéen, zen, champêtre",
-    bg: "#ECE6F5",
-    iconStroke: "#6A5896",
-    subtitleColor: "#5E4C8C",
-    icon: "sparkle",
-  },
-];
-
 function UniverseIcon({ type, stroke }) {
   const ic = { stroke, strokeWidth: 2, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" };
-  if (type === "mineral") {
+  if (type === "paillages") {
     return (
       <svg width={26} height={26} viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M3 17h18" style={ic} />
-        <path d="M5 17l2-6 4-2 5 1 3 7" style={ic} />
-        <path d="M9 21h6" style={ic} />
+        <circle cx="6" cy="16" r="2.2" style={ic} />
+        <circle cx="12.5" cy="18" r="1.7" style={ic} />
+        <circle cx="17.5" cy="15" r="2.4" style={ic} />
+        <circle cx="9" cy="10.5" r="1.6" style={ic} />
+        <circle cx="15" cy="9" r="1.4" style={ic} />
       </svg>
     );
   }
-  if (type === "deco") {
+  if (type === "bordures") {
     return (
       <svg width={26} height={26} viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M3 9h18" style={ic} />
-        <path d="M5 9v12M19 9v12" style={ic} />
-        <path d="M3 5h18" style={ic} />
-        <path d="M9 9v4M15 9v4" style={ic} />
+        <path d="M3 20c4-6 9-9 18-10" style={ic} />
+        <path d="M3 14c4-5 9-7.5 18-8.5" style={ic} />
+        <path d="M6 17.5l1.6 1.6M10 14.5l1.6 1.6M14.5 12.3l1.4 1.8M18.6 10.8l1.2 1.9" style={ic} />
       </svg>
     );
   }
-  if (type === "sparkle") {
+  if (type === "styles") {
     return (
       <svg width={26} height={26} viewBox="0 0 24 24" aria-hidden="true">
         <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" style={ic} />
@@ -140,9 +103,10 @@ export default function IdeesAccueilScreen({
 
   const seasonPlants = useMemo(() => getPlantsBeautifulNow(), []);
   const monthLabel = currentMonthLabel();
+  const composerCards = useMemo(() => buildIdeesComposerCards(), []);
 
   const handleUniverse = (id) => {
-    if (id === "ambiances") {
+    if (id === "styles") {
       onOpenAmbiances?.();
       return;
     }
@@ -150,11 +114,11 @@ export default function IdeesAccueilScreen({
       onOpenCatalogueFamilles(id);
       return;
     }
-    onOpenCatalogueTab?.(id, {});
+    onOpenCatalogueTab?.(id === "bordures" ? "deco" : id, id === "bordures" ? { univers: "Bordures" } : {});
   };
 
-  const handleEnvie = (envie) => {
-    onOpenCatalogueTab?.("vegetal", { envie });
+  const handleEnvieChip = (chip) => {
+    onOpenCatalogueTab?.("vegetal", chip.filters || {});
   };
 
   const openPlant = (item) => {
@@ -247,7 +211,7 @@ export default function IdeesAccueilScreen({
 
       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700, color: "#1F2A22" }}>Idées</h1>
-        <span style={{ fontSize: 15, color: "#5B6359" }}>Que voulez-vous découvrir ?</span>
+        <span style={{ fontSize: 15, color: "#5B6359" }}>Composez le jardin qui vous ressemble</span>
       </div>
 
       <label
@@ -271,7 +235,7 @@ export default function IdeesAccueilScreen({
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Rechercher : olivier, gravier, pergola…"
+          placeholder="Rechercher : olivier, galets, corten…"
           aria-label="Rechercher une idée"
           style={{
             flexGrow: 1,
@@ -319,50 +283,66 @@ export default function IdeesAccueilScreen({
         </div>
       ) : (
         <>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
-            {UNIVERSE_CARDS.map((card) => (
-              <button
-                key={card.id}
-                type="button"
-                onClick={() => handleUniverse(card.id)}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  gap: 18,
-                  minHeight: 168,
-                  boxSizing: "border-box",
-                  padding: 16,
-                  borderRadius: 24,
-                  background: card.bg,
-                  border: "none",
-                  cursor: "pointer",
-                  fontFamily: "inherit",
-                  textAlign: "left",
-                  color: "#1F2A22",
-                }}
-              >
-                <span
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <span style={{ fontSize: 17, fontWeight: 700, color: "#1F2A22" }}>Composer mon jardin</span>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
+              {composerCards.map((card) => (
+                <button
+                  key={card.id}
+                  type="button"
+                  onClick={() => handleUniverse(card.id)}
                   style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 16,
-                    background: "#FFFFFF",
+                    position: "relative",
                     display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    gap: 16,
+                    minHeight: 150,
+                    boxSizing: "border-box",
+                    padding: 15,
+                    borderRadius: 24,
+                    background: card.bg,
+                    border: "none",
+                    cursor: "pointer",
+                    fontFamily: "inherit",
+                    textAlign: "left",
+                    color: "#1F2A22",
                   }}
                 >
-                  <UniverseIcon type={card.icon} stroke={card.iconStroke} />
-                </span>
-                <span style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                  <span style={{ fontSize: 19, fontWeight: 700 }}>{card.title}</span>
-                  <span style={{ fontSize: 13, lineHeight: 1.35, color: card.subtitleColor }}>
-                    {card.subtitle}
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: 15,
+                      right: 14,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: "#5B6359",
+                    }}
+                  >
+                    {card.count}
                   </span>
-                </span>
-              </button>
-            ))}
+                  <span
+                    style={{
+                      width: 46,
+                      height: 46,
+                      borderRadius: 15,
+                      background: "#FFFFFF",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <UniverseIcon type={card.icon} stroke={card.iconStroke} />
+                  </span>
+                  <span style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    <span style={{ fontSize: 17, fontWeight: 700 }}>{card.title}</span>
+                    <span style={{ fontSize: 12.5, lineHeight: 1.35, color: card.subtitleColor }}>
+                      {card.subtitle}
+                    </span>
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
 
           <button
@@ -414,11 +394,11 @@ export default function IdeesAccueilScreen({
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <span style={{ fontSize: 17, fontWeight: 700, color: "#1F2A22" }}>Selon vos envies</span>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              {CATALOGUE_ENVIES.map((envie) => (
+              {IDEES_ENVIE_CHIPS.map((chip) => (
                 <button
-                  key={envie}
+                  key={chip.label}
                   type="button"
-                  onClick={() => handleEnvie(envie)}
+                  onClick={() => handleEnvieChip(chip)}
                   style={{
                     minHeight: 40,
                     padding: "0 14px",
@@ -432,7 +412,7 @@ export default function IdeesAccueilScreen({
                     cursor: "pointer",
                   }}
                 >
-                  {envie}
+                  {chip.label}
                 </button>
               ))}
             </div>

@@ -86,6 +86,16 @@ async function main() {
     }
 
     if (!choice || choice.status === "none") {
+      const row = jsonById.get(meta?.jsonId);
+      if (row && choice?.status === "none") {
+        row.photo_url = "";
+        row.photo_source = "";
+        row.photo_auteur = "";
+        row.photo_licence = "";
+        row.photo_licence_url = "";
+        row.photo_lien = "";
+        row.photo_detouree = "non";
+      }
       skipped += 1;
       continue;
     }

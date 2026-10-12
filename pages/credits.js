@@ -14,7 +14,7 @@ export default function CreditsPage({ items }) {
   return (
     <>
       <Head>
-        <title>Crédits photos — catalogue végétal</title>
+        <title>Crédits photos — catalogue Sevya</title>
       </Head>
       <div
         style={{
@@ -30,12 +30,11 @@ export default function CreditsPage({ items }) {
             ← Mentions légales
           </Link>
           <h1 style={{ margin: "16px 0 8px", fontSize: 26, fontWeight: 700 }}>
-            Crédits — photographies du catalogue végétal
+            Crédits — photographies du catalogue
           </h1>
           <p style={{ margin: "0 0 24px", fontSize: 14, color: "#5B6359", lineHeight: 1.5 }}>
-            Liste des illustrations utilisées dans le catalogue lorsqu&apos;une photo est associée à une fiche
-            plante. Les images peuvent avoir été redimensionnées ; certaines ont un fond blanc généré localement
-            (détourage).
+            Végétal, paillages et bordures : auteur et licence pour chaque photo affichée dans une fiche. Les
+            images peuvent avoir été redimensionnées ; certaines ont un fond blanc généré localement (détourage).
           </p>
 
           {items.length === 0 ? (

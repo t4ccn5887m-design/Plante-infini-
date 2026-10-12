@@ -359,8 +359,11 @@ export default function Wilder() {
 
   const openCatalogueHubFromFamilles = useCallback(
     (tab, filters = {}) => {
-      setCatalogueFamiliesUniverse(tab);
-      openCatalogueTab(tab, filters);
+      const famillesKey =
+        tab === "bordures" || (tab === "deco" && filters.univers === "Bordures") ? "bordures" : tab;
+      setCatalogueFamiliesUniverse(famillesKey);
+      const viewTab = tab === "bordures" ? "deco" : tab;
+      openCatalogueTab(viewTab, filters);
     },
     [openCatalogueTab]
   );
@@ -1188,7 +1191,11 @@ export default function Wilder() {
       if (catalogueView === "idees") {
         pageTitleContent = `${t("idees_jardins.title")} — Wilder`;
         mainContent = <IdeesJardinsScreen {...catalogueProps} onBack={backToCatalogueHall} />;
-      } else if (catalogueView === "familles" && catalogueFamiliesUniverse) {
+      } else if (
+        catalogueView === "familles" &&
+        catalogueFamiliesUniverse &&
+        ["vegetal", "mineral", "bordures"].includes(catalogueFamiliesUniverse)
+      ) {
         pageTitleContent = "Catalogue — Wilder";
         mainContent = (
           <CatalogueFamillesScreen
