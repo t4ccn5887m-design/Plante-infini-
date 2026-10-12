@@ -106,6 +106,7 @@ export default function IdeesAccueilScreen({
   onGardenChange,
   onRequireAccount,
   onOpenCatalogueTab,
+  onOpenCatalogueFamilles,
   onOpenAmbiances,
   onOpenItemDetail,
   onOpenCataloguePlant,
@@ -143,6 +144,10 @@ export default function IdeesAccueilScreen({
   const handleUniverse = (id) => {
     if (id === "ambiances") {
       onOpenAmbiances?.();
+      return;
+    }
+    if (onOpenCatalogueFamilles) {
+      onOpenCatalogueFamilles(id);
       return;
     }
     onOpenCatalogueTab?.(id, {});

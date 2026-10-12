@@ -49,6 +49,8 @@ export default function CatalogueHubScreen({
   const [tab, setTab] = useState(initialTab);
   const [sub, setSub] = useState(initialFilters.categorie || initialFilters.famille || "Tous");
   const [envie, setEnvie] = useState(initialFilters.envie || initialFilters.envieTag || null);
+  const [arrosage, setArrosage] = useState(initialFilters.arrosage || null);
+  const [search, setSearch] = useState(initialFilters.search || "");
   const [gardenState, setGardenState] = useState(null);
   const [togglingKey, setTogglingKey] = useState(null);
   const [error, setError] = useState(null);
@@ -57,12 +59,16 @@ export default function CatalogueHubScreen({
     setTab(initialTab);
     setSub(initialFilters.categorie || initialFilters.famille || "Tous");
     setEnvie(initialFilters.envie || initialFilters.envieTag || null);
+    setArrosage(initialFilters.arrosage || null);
+    setSearch(initialFilters.search || "");
   }, [
     initialTab,
     initialFilters.categorie,
     initialFilters.famille,
     initialFilters.envie,
     initialFilters.envieTag,
+    initialFilters.arrosage,
+    initialFilters.search,
   ]);
 
   const refreshGarden = useCallback(async () => {
@@ -86,7 +92,7 @@ export default function CatalogueHubScreen({
   const filteredItems = useMemo(() => {
     if (tab === "vegetal") {
       const categorie = sub === "Tous" ? null : sub;
-      return filterCataloguePlants({ envie, categorie }).map((p) => ({
+      return filterCataloguePlants({ envie, categorie, arrosage, search }).map((p) => ({
         key: `v-${p.id}`,
         universe: "vegetal",
         id: p.id,
@@ -99,7 +105,7 @@ export default function CatalogueHubScreen({
     }
     if (tab === "mineral") {
       const categorie = sub === "Tous" ? null : sub;
-      return filterCatalogueMinerals({ categorie }).map((m) => ({
+      return filterCatalogueMinerals({ categorie, search }).map((m) => ({
         key: `m-${m.id}`,
         universe: "mineral",
         id: m.id,
@@ -111,7 +117,7 @@ export default function CatalogueHubScreen({
       }));
     }
     const categorie = sub === "Tous" ? null : sub;
-    return filterCatalogueDeco({ categorie }).map((d) => ({
+    return filterCatalogueDeco({ categorie, search }).map((d) => ({
       key: `d-${d.id}`,
       universe: "deco",
       id: d.id,
@@ -121,16 +127,21 @@ export default function CatalogueHubScreen({
       subtitle: buildAmenagementCardLine(d),
       raw: d,
     }));
-  }, [tab, sub, envie, t]);
+  }, [tab, sub, envie, arrosage, search, t]);
 
   const countLabel = `${filteredItems.length} idée${filteredItems.length > 1 ? "s" : ""}${
     sub !== "Tous" ? ` · ${subcategoryLabel(sub)}` : ""
-  }${envie && tab === "vegetal" ? ` · ${envie}` : ""}`;
+  }${envie && tab === "vegetal" ? ` · ${envie}` : ""}${arrosage && tab === "vegetal" ? ` · arrosage ${arrosage}` : ""}${
+    search?.trim() ? ` · « ${search.trim()} »` : ""
+  }`;
 
   const handleTabChange = (nextTab) => {
     setTab(nextTab);
     setSub("Tous");
-    if (nextTab !== "vegetal") setEnvie(null);
+    if (nextTab !== "vegetal") {
+      setEnvie(null);
+      setArrosage(null);
+    }
   };
 
   const openItem = (item) => {
@@ -265,6 +276,42 @@ export default function CatalogueHubScreen({
           </button>
           <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: "#1F2A22" }}>Le catalogue</h1>
         </div>
+
+        <label
+          htmlFor="catalogue-hub-search"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            minHeight: 44,
+            padding: "0 14px",
+            borderRadius: 14,
+            background: "#F2EEE7",
+          }}
+        >
+          <svg width={16} height={16} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="11" cy="11" r="8" stroke="#5B6359" strokeWidth={2} />
+            <path d="m21 21-4.3-4.3" stroke="#5B6359" strokeWidth={2} strokeLinecap="round" />
+          </svg>
+          <input
+            id="catalogue-hub-search"
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Rechercher…"
+            aria-label="Rechercher dans le catalogue"
+            style={{
+              flex: 1,
+              border: "none",
+              background: "transparent",
+              fontFamily: "inherit",
+              fontSize: 14,
+              color: "#1F2A22",
+              outline: "none",
+              minWidth: 0,
+            }}
+          />
+        </label>
 
         <div
           style={{

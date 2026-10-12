@@ -30,6 +30,7 @@ import CoupsDeCoeurScreen from "@/components/CoupsDeCoeurScreen";
 import ResultatScanScreen from "@/components/ResultatScanScreen";
 import IdeesAccueilScreen from "@/components/IdeesAccueilScreen";
 import CatalogueHubScreen from "@/components/CatalogueHubScreen";
+import CatalogueFamillesScreen from "@/components/CatalogueFamillesScreen";
 import CataloguePlantFicheScreen from "@/components/CataloguePlantFicheScreen";
 import CatalogueUniverseFicheScreen from "@/components/CatalogueUniverseFicheScreen";
 import IdeesJardinsScreen from "@/components/IdeesJardinsScreen";
@@ -191,6 +192,7 @@ export default function Wilder() {
   const [homeTab, setHomeTab] = useState("accueil");
   const [catalogueView, setCatalogueView] = useState(null);
   const [catalogueFilters, setCatalogueFilters] = useState({});
+  const [catalogueFamiliesUniverse, setCatalogueFamiliesUniverse] = useState(null);
   const [catalogueFiche, setCatalogueFiche] = useState(null);
   const [featureGateOpen, setFeatureGateOpen] = useState(false);
   const [featureGateMessageKey, setFeatureGateMessageKey] = useState("feature_gate.message");
@@ -336,6 +338,15 @@ export default function Wilder() {
     setReturnScreen("catalogue");
     setCatalogueView(null);
     setCatalogueFilters({});
+    setCatalogueFamiliesUniverse(null);
+    setScreen("catalogue");
+  }, []);
+
+  const openCatalogueFamilles = useCallback((tab) => {
+    setReturnScreen("catalogue");
+    setCatalogueFamiliesUniverse(tab);
+    setCatalogueFilters({});
+    setCatalogueView("familles");
     setScreen("catalogue");
   }, []);
 
@@ -344,6 +355,31 @@ export default function Wilder() {
     setCatalogueFilters(filters);
     setCatalogueView(tab);
     setScreen("catalogue");
+  }, []);
+
+  const openCatalogueHubFromFamilles = useCallback(
+    (tab, filters = {}) => {
+      setCatalogueFamiliesUniverse(tab);
+      openCatalogueTab(tab, filters);
+    },
+    [openCatalogueTab]
+  );
+
+  const backFromCatalogueHub = useCallback(() => {
+    if (catalogueFamiliesUniverse) {
+      setCatalogueView("familles");
+      setCatalogueFilters({});
+      return;
+    }
+    setCatalogueView(null);
+    setCatalogueFilters({});
+    setCatalogueFamiliesUniverse(null);
+  }, [catalogueFamiliesUniverse]);
+
+  const backFromCatalogueFamilles = useCallback(() => {
+    setCatalogueFamiliesUniverse(null);
+    setCatalogueView(null);
+    setCatalogueFilters({});
   }, []);
 
   const openIdeesJardins = useCallback(() => {
@@ -355,6 +391,7 @@ export default function Wilder() {
   const backToCatalogueHall = useCallback(() => {
     setCatalogueView(null);
     setCatalogueFilters({});
+    setCatalogueFamiliesUniverse(null);
   }, []);
 
   const openBrief = useCallback(() => {
@@ -1151,6 +1188,15 @@ export default function Wilder() {
       if (catalogueView === "idees") {
         pageTitleContent = `${t("idees_jardins.title")} — Wilder`;
         mainContent = <IdeesJardinsScreen {...catalogueProps} onBack={backToCatalogueHall} />;
+      } else if (catalogueView === "familles" && catalogueFamiliesUniverse) {
+        pageTitleContent = "Catalogue — Wilder";
+        mainContent = (
+          <CatalogueFamillesScreen
+            universe={catalogueFamiliesUniverse}
+            onBack={backFromCatalogueFamilles}
+            onOpenHub={openCatalogueHubFromFamilles}
+          />
+        );
       } else if (catalogueView === "vegetal" || catalogueView === "mineral" || catalogueView === "deco") {
         pageTitleContent = "Catalogue — Wilder";
         mainContent = (
@@ -1158,7 +1204,7 @@ export default function Wilder() {
             {...catalogueProps}
             initialTab={catalogueView}
             initialFilters={catalogueFilters}
-            onBack={backToCatalogueHall}
+            onBack={backFromCatalogueHub}
             onOpenItemDetail={(discovery) => openGardenItemDetail(discovery, "catalogue")}
             onOpenCataloguePlant={openCataloguePlantFiche}
             onOpenCatalogueItem={openCatalogueItemFiche}
@@ -1173,6 +1219,7 @@ export default function Wilder() {
             onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
             onRequireAccount={openRequireAccount}
             onOpenCatalogueTab={openCatalogueTab}
+            onOpenCatalogueFamilles={openCatalogueFamilles}
             onOpenAmbiances={() => openGardenAmbiances("catalogue")}
             onOpenItemDetail={(discovery) => openGardenItemDetail(discovery, "catalogue")}
             onOpenCataloguePlant={openCataloguePlantFiche}
