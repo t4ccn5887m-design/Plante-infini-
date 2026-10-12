@@ -1,0 +1,14 @@
+# Brut paysagiste (gitignoré) — ne pas envoyer au build Vercel
+sevya/realisations
+
+# Médias locaux à la racine du repo (hors public/)
+*.jpeg
+*.jpg
+*.mov
+*.MOV
+*.mp4
+
+# Outils photo locaux
+scripts/.venv-rembg/
+sevya/.photo-thumbs/
+sevya/photo-rembg-cache/
