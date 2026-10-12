@@ -1,4 +1,5 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
+import { isAtelierAppRoute } from "@/lib/atelierRoute";
 
 const OG_TITLE = "Wilder";
 const OG_DESCRIPTION = "Explorez la nature autour de vous";
@@ -10,6 +11,7 @@ class WilderDocument extends Document {
   static async getInitialProps(ctx) {
     const initialProps = await Document.getInitialProps(ctx);
     const isAdminRoute = ctx.pathname === "/admin";
+    const atelierTheme = isAtelierAppRoute(ctx.pathname || "");
     const host = ctx.req?.headers?.host;
     const siteUrl =
       process.env.NEXT_PUBLIC_SITE_URL ||
@@ -17,23 +19,30 @@ class WilderDocument extends Document {
         ? `${process.env.NODE_ENV === "production" ? "https" : "http"}://${host}`
         : "");
 
-    return { ...initialProps, siteUrl, isAdminRoute };
+    return { ...initialProps, siteUrl, isAdminRoute, atelierTheme };
   }
 
   render() {
-    const { siteUrl, isAdminRoute } = this.props;
+    const { siteUrl, isAdminRoute, atelierTheme } = this.props;
     const ogImage = siteUrl ? `${siteUrl}${OG_IMAGE_PATH}` : OG_IMAGE_PATH;
     const appTitle = isAdminRoute ? "Wilder Admin" : OG_TITLE;
 
     return (
-      <Html lang="fr">
+      <Html lang="fr" className={atelierTheme ? "atelier-theme" : undefined}>
         <Head>
+          {atelierTheme ? (
+            <style
+              dangerouslySetInnerHTML={{
+                __html: "html,body{background-color:#0F1A14;color:#F1ECE2}",
+              }}
+            />
+          ) : null}
           <meta name="application-name" content={appTitle} />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
           <meta name="apple-mobile-web-app-title" content={appTitle} />
           <meta name="mobile-web-app-capable" content="yes" />
-          <meta name="theme-color" content="#2C5236" />
+          <meta name="theme-color" content="#0F1A14" />
           <meta name="description" content={OG_DESCRIPTION} />
           <meta property="og:type" content="website" />
           <meta property="og:site_name" content={OG_TITLE} />

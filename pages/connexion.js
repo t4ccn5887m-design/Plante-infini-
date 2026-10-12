@@ -415,7 +415,7 @@ export default function ConnexionPage() {
         .sv-page {
           min-height: 100vh;
           min-height: 100dvh;
-          font-family: var(--font-title), "Quicksand", system-ui, sans-serif;
+          font-family: var(--font-title), "Fraunces", Georgia, serif;
           color: ${C.ink};
           background: ${C.shellBg};
           -webkit-font-smoothing: antialiased;

@@ -32,7 +32,7 @@
   --wilder-stagger: 70ms;
   --wilder-forest-photo: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80');
   /* Polices : --font-title / --font-body injectées par next/font dans _app.js */
-  --font-display: var(--font-title, "Quicksand", system-ui, sans-serif);
+  --font-display: var(--font-title, "Fraunces", Georgia, serif);
 
   /* Legacy aliases (reste de l'app) */
   --forest-deep: #1b3d2f;

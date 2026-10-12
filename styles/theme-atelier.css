@@ -1,0 +1,189 @@
+/**
+ * Thème « Atelier » — app particulier (/ , /jardin, …)
+ * Réf. sevya/15-sevya-atelier.html
+ */
+
+html.atelier-theme {
+  --bg: #0f1a14;
+  --card: #17241c;
+  --line: #2a3a30;
+  --ink: #f1ece2;
+  --mute: #a9b3a6;
+  --sage: #c9d6b8;
+  --clay: #d9a47a;
+  --danger: #e07a6a;
+
+  --atelier-radius-card: 22px;
+  --atelier-radius-panel: 28px;
+  --atelier-radius-photo: 18px;
+
+  --font-display: var(--font-title, "Fraunces", Georgia, serif);
+
+  /* Pont vers tokens legacy (migration progressive) */
+  --wilder-surface: var(--card);
+  --wilder-surface-elevated: var(--card);
+  --wilder-text-forest: var(--ink);
+  --wilder-text-muted-light: var(--mute);
+  --wilder-border-light: var(--line);
+  --wilder-shadow-soft: none;
+  --wilder-shadow-hover: none;
+  --forest-deep: var(--bg);
+  --bg-deep: var(--bg);
+  --text-primary: var(--ink);
+  --text-secondary: var(--mute);
+  --text-muted: var(--mute);
+  --border: var(--line);
+
+  background-color: var(--bg);
+  color-scheme: dark;
+}
+
+html.atelier-theme body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* ── Typographie ── */
+
+html.atelier-theme .wilder-v2-shell {
+  font-family: var(--font-body, "Inter", system-ui, sans-serif);
+  color: var(--ink);
+}
+
+html.atelier-theme .wilder-v2-title-hero,
+html.atelier-theme .wilder-v2-title-page,
+html.atelier-theme .wilder-v2-title-section,
+html.atelier-theme .wilder-v2-title-feature,
+html.atelier-theme .wilder-v2-shell h1,
+html.atelier-theme .wilder-v2-shell h2,
+html.atelier-theme .wilder-v2-shell h3 {
+  font-family: var(--font-title, "Fraunces", Georgia, serif);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+html.atelier-theme .wilder-v2-shell em.latin,
+html.atelier-theme .wilder-v2-shell .plant-latin,
+html.atelier-theme .atelier-latin {
+  font-family: var(--font-title, "Fraunces", Georgia, serif);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--mute);
+}
+
+html.atelier-theme .atelier-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+html.atelier-theme .atelier-label--sage {
+  color: var(--sage);
+}
+
+/* ── Boutons ── */
+
+html.atelier-theme .atelier-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 99px;
+  background: var(--ink);
+  color: var(--bg);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+html.atelier-theme .atelier-btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+html.atelier-theme .atelier-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 11px 18px;
+  border-radius: 99px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* ── Champs (fondations) ── */
+
+html.atelier-theme .atelier-field,
+html.atelier-theme .wilder-v2-shell input:not([type="checkbox"]):not([type="radio"]),
+html.atelier-theme .wilder-v2-shell textarea,
+html.atelier-theme .wilder-v2-shell select {
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  border-radius: 14px;
+}
+
+html.atelier-theme .wilder-v2-shell input:focus-visible,
+html.atelier-theme .wilder-v2-shell textarea:focus-visible,
+html.atelier-theme .wilder-v2-shell select:focus-visible {
+  outline: none;
+  border-color: var(--sage);
+}
+
+/* ── Coque jardin (remplace beige) ── */
+
+html.atelier-theme .wilder-v2-main-layout {
+  background: var(--bg) !important;
+  padding: 12px !important;
+}
+
+html.atelier-theme .wilder-v2-main-layout-card {
+  background: var(--bg) !important;
+  border-radius: var(--atelier-radius-panel) !important;
+  border: 1px solid var(--line);
+  box-shadow: none !important;
+}
+
+html.atelier-theme .wilder-v2-main-layout-content {
+  background: var(--bg);
+}
+
+/* PWA standalone — pas de flash blanc */
+@media (display-mode: standalone) {
+  html.atelier-theme {
+    background-color: var(--bg);
+  }
+
+  html.atelier-theme body {
+    padding: 0;
+    background: var(--bg);
+  }
+
+  html.atelier-theme .wilder-v2-shell {
+    min-height: 100dvh !important;
+    padding: 0 !important;
+    background: var(--bg) !important;
+    justify-content: stretch !important;
+  }
+
+  html.atelier-theme .wilder-v2-main-layout-card {
+    border-radius: 0 !important;
+    border: none !important;
+    max-width: none !important;
+    min-height: 100dvh !important;
+  }
+}
