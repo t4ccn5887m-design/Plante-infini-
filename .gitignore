@@ -44,3 +44,6 @@ sevya/photo-rembg-cache/
 # vignettes locales de revue photo
 sevya/.photo-thumbs/
 sevya/photo-candidates.backup.json
+
+# photos brutes du paysagiste (lourdes, privées) : seules les versions WebP publiées sont versionnées
+sevya/realisations/

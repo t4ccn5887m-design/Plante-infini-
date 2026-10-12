@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import CataloguePhotoCredit from "@/components/catalogue/CataloguePhotoCredit";
 import CatalogueUniverseVisual from "@/components/catalogue/CatalogueUniverseVisual";
+import RealisationPastille from "@/components/catalogue/RealisationPastille";
 import MineralGrainSizePicker from "@/components/catalogue/MineralGrainSizePicker";
 import { getCatalogueAmenagementById } from "@/lib/catalogueAmenagements";
 import { loadMineralGrainChoice, saveMineralGrainChoice } from "@/lib/catalogueMineralGrain";
@@ -45,6 +46,7 @@ export default function CatalogueUniverseFicheScreen({
   const [toggling, setToggling] = useState(false);
   const [error, setError] = useState(null);
   const [grainSize, setGrainSize] = useState(null);
+  const [galleryIndex, setGalleryIndex] = useState(0);
 
   const refreshGarden = useCallback(async () => {
     try {
@@ -66,6 +68,10 @@ export default function CatalogueUniverseFicheScreen({
     }
   }, [universe, itemId]);
 
+  useEffect(() => {
+    setGalleryIndex(0);
+  }, [itemId, universe]);
+
   if (!item) {
     return (
       <div style={{ padding: 24, fontSize: 14, color: "#5B6359" }}>
@@ -81,6 +87,17 @@ export default function CatalogueUniverseFicheScreen({
     gardenState && isCatalogueItemInGarden(gardenUniverse, item.id, gardenState);
 
   const usagesLabel = (item.usages || []).join(", ") || "—";
+  const photoGallery =
+    item.photo_gallery?.length > 0
+      ? item.photo_gallery
+      : item.photo_url
+        ? [item.photo_url]
+        : [];
+  const showGalleryCarousel = photoGallery.length > 1;
+  const activePhotoUrl = photoGallery[galleryIndex] || item.photo_url;
+  const isRealisationPhoto = String(item.photo_source || "")
+    .toLowerCase()
+    .includes("realisation");
 
   const handleToggle = async () => {
     if (toggling || !gardenState) return;
@@ -128,14 +145,61 @@ export default function CatalogueUniverseFicheScreen({
           }}
         >
           <div style={{ position: "absolute", inset: 0 }}>
-            <CatalogueUniverseVisual
-              photo_url={item.photo_url}
-              universe={universe === "mineral" ? "mineral" : "amenagements"}
-              height={280}
-              photoFit={photoFit}
-              photoDetouree={item.photo_detouree}
-            />
-            <CataloguePhotoCredit plant={item} />
+            {showGalleryCarousel ? (
+              <div
+                style={{
+                  display: "flex",
+                  height: "100%",
+                  overflowX: "auto",
+                  scrollSnapType: "x mandatory",
+                  gap: 6,
+                  padding: "0 4px",
+                  boxSizing: "border-box",
+                }}
+                onScroll={(e) => {
+                  const el = e.currentTarget;
+                  const w = el.clientWidth || 1;
+                  const idx = Math.round(el.scrollLeft / w);
+                  if (idx !== galleryIndex && idx >= 0 && idx < photoGallery.length) {
+                    setGalleryIndex(idx);
+                  }
+                }}
+              >
+                {photoGallery.map((url) => (
+                  <div
+                    key={url}
+                    style={{
+                      flex: "0 0 calc(100% - 8px)",
+                      height: "100%",
+                      scrollSnapAlign: "center",
+                      position: "relative",
+                      borderRadius: 12,
+                      overflow: "hidden",
+                      background: "#E4DDD2",
+                    }}
+                  >
+                    <img
+                      src={url}
+                      alt=""
+                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                    />
+                    {isRealisationPhoto ? <RealisationPastille /> : null}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <>
+                <CatalogueUniverseVisual
+                  photo_url={activePhotoUrl}
+                  universe={universe === "mineral" ? "mineral" : "amenagements"}
+                  height={280}
+                  photoFit={isRealisationPhoto ? "cover" : photoFit}
+                  photoDetouree={item.photo_detouree}
+                />
+                {isRealisationPhoto ? <RealisationPastille /> : null}
+              </>
+            )}
+            {item.photo_auteur ? <CataloguePhotoCredit plant={item} /> : null}
           </div>
           <div
             style={{

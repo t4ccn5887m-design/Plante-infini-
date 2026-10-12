@@ -41,6 +41,8 @@ import GardenTerrainScreen from "@/components/garden/GardenTerrainScreen";
 import GardenBudgetScreen from "@/components/garden/GardenBudgetScreen";
 import GardenMotScreen from "@/components/garden/GardenMotScreen";
 import GardenDossierConfirmScreen from "@/components/garden/GardenDossierConfirmScreen";
+import GardenStylesWallScreen from "@/components/garden/GardenStylesWallScreen";
+import GardenStyleDetailScreen from "@/components/garden/GardenStyleDetailScreen";
 import {
   firstIncompleteStepId,
   loadDossierProgressSnapshot,
@@ -204,6 +206,7 @@ export default function Wilder() {
   const [dossierConfirmProgress, setDossierConfirmProgress] = useState(null);
   const [lastValidatedStepId, setLastValidatedStepId] = useState(null);
   const [guidedCoupsBanner, setGuidedCoupsBanner] = useState(false);
+  const [gardenStyleId, setGardenStyleId] = useState(null);
 
   const { isGuest, refreshGuestAccount } = useGuestAccount();
 
@@ -294,6 +297,13 @@ export default function Wilder() {
       }
       if (discovery.catalogue_deco_id) {
         openCatalogueItemFiche("deco", discovery.catalogue_deco_id, returnTo);
+        return;
+      }
+      if (discovery.catalogue_style_id) {
+        setReturnScreen(returnTo);
+        setGardenStyleId(discovery.catalogue_style_id);
+        setCatalogueView("style-detail");
+        setScreen("catalogue");
         return;
       }
       const latest =
@@ -391,10 +401,23 @@ export default function Wilder() {
     setScreen("catalogue");
   }, []);
 
+  const openGardenStylesWall = useCallback(() => {
+    setReturnScreen("catalogue");
+    setGardenStyleId(null);
+    setCatalogueView("styles-wall");
+    setScreen("catalogue");
+  }, []);
+
+  const openGardenStyleDetail = useCallback((id) => {
+    setGardenStyleId(id);
+    setCatalogueView("style-detail");
+  }, []);
+
   const backToCatalogueHall = useCallback(() => {
     setCatalogueView(null);
     setCatalogueFilters({});
     setCatalogueFamiliesUniverse(null);
+    setGardenStyleId(null);
   }, []);
 
   const openBrief = useCallback(() => {
@@ -1191,6 +1214,31 @@ export default function Wilder() {
       if (catalogueView === "idees") {
         pageTitleContent = `${t("idees_jardins.title")} — Wilder`;
         mainContent = <IdeesJardinsScreen {...catalogueProps} onBack={backToCatalogueHall} />;
+      } else if (catalogueView === "styles-wall") {
+        pageTitleContent = "Styles de jardin — Wilder";
+        mainContent = (
+          <GardenStylesWallScreen onBack={backToCatalogueHall} onOpenStyle={openGardenStyleDetail} />
+        );
+      } else if (catalogueView === "style-detail" && gardenStyleId) {
+        pageTitleContent = "Style de jardin — Wilder";
+        mainContent = (
+          <GardenStyleDetailScreen
+            styleId={gardenStyleId}
+            t={t}
+            canAddToGarden={!isGuest}
+            onRequireAccount={openRequireAccount}
+            onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
+            onBack={() => {
+              setGardenStyleId(null);
+              if (returnScreen === "coups-de-coeur") {
+                setCatalogueView(null);
+                setScreen("coups-de-coeur");
+              } else {
+                setCatalogueView("styles-wall");
+              }
+            }}
+          />
+        );
       } else if (
         catalogueView === "familles" &&
         catalogueFamiliesUniverse &&
@@ -1228,6 +1276,7 @@ export default function Wilder() {
             onOpenCatalogueTab={openCatalogueTab}
             onOpenCatalogueFamilles={openCatalogueFamilles}
             onOpenAmbiances={() => openGardenAmbiances("catalogue")}
+            onOpenGardenStyles={openGardenStylesWall}
             onOpenItemDetail={(discovery) => openGardenItemDetail(discovery, "catalogue")}
             onOpenCataloguePlant={openCataloguePlantFiche}
             onOpenCatalogueItem={openCatalogueItemFiche}

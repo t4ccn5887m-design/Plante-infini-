@@ -33,7 +33,7 @@ export default function CreditsPage({ items }) {
             Crédits — photographies du catalogue
           </h1>
           <p style={{ margin: "0 0 24px", fontSize: 14, color: "#5B6359", lineHeight: 1.5 }}>
-            Végétal, paillages et bordures : auteur et licence pour chaque photo affichée dans une fiche. Les
+            Végétal, paillages, bordures et styles de jardin : auteur et licence pour chaque photo affichée. Les
             images peuvent avoir été redimensionnées ; certaines ont un fond blanc généré localement (détourage).
           </p>
 

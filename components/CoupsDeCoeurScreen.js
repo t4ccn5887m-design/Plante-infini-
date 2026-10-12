@@ -178,11 +178,17 @@ export default function CoupsDeCoeurScreen({
     refresh();
   }, [refresh, refreshTick]);
 
+  const { catalogItems, styleItems } = useMemo(() => {
+    const styles = items.filter((i) => i.isStyle);
+    const catalog = items.filter((i) => !i.isStyle);
+    return { catalogItems: catalog, styleItems: styles };
+  }, [items]);
+
   const filtered = useMemo(() => {
-    if (filter === "scans") return items.filter((i) => !i.isIdea);
-    if (filter === "idees") return items.filter((i) => i.isIdea);
-    return items;
-  }, [items, filter]);
+    if (filter === "scans") return catalogItems.filter((i) => !i.isIdea);
+    if (filter === "idees") return catalogItems.filter((i) => i.isIdea);
+    return catalogItems;
+  }, [catalogItems, filter]);
 
   const handleRemove = async (item) => {
     if (!demoteMaps || removingId) return;
@@ -288,23 +294,50 @@ export default function CoupsDeCoeurScreen({
           </button>
         </div>
       ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-            gap: 10,
-          }}
-        >
-          {filtered.map((item) => (
-            <CoupsCard
-              key={item.paletteItemId}
-              item={item}
-              removing={removingId === item.paletteItemId}
-              onOpen={onOpenItem}
-              onRemove={handleRemove}
-            />
-          ))}
-        </div>
+        <>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+              gap: 10,
+            }}
+          >
+            {filtered.map((item) => (
+              <CoupsCard
+                key={item.paletteItemId}
+                item={item}
+                removing={removingId === item.paletteItemId}
+                onOpen={onOpenItem}
+                onRemove={handleRemove}
+              />
+            ))}
+          </div>
+
+          {styleItems.length > 0 ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 6 }}>
+              <h2 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: "#1F2A22" }}>
+                Jardins qui lui plaisent
+              </h2>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                  gap: 10,
+                }}
+              >
+                {styleItems.map((item) => (
+                  <CoupsCard
+                    key={item.paletteItemId}
+                    item={item}
+                    removing={removingId === item.paletteItemId}
+                    onOpen={onOpenItem}
+                    onRemove={handleRemove}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </>
       )}
 
       <button
