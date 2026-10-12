@@ -1,5 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { stepShortLabel } from "@/lib/gardenDossierGuidance";
+import {
+  CLIENT_CONTACT_PROFILE_HINT,
+  isClientContactComplete,
+  loadClientContact,
+} from "@/lib/clientContact";
 import { GARDEN_PDF_USER_ERROR } from "@/lib/gardenBriefPdfDelivery";
 import { useGardenDossierPdfPrepare } from "@/hooks/useGardenDossierPdfPrepare";
 
@@ -11,19 +16,41 @@ export default function GardenDossierConfirmScreen({
   onNextStep,
   onViewDossier,
   refreshTick = 0,
+  onOpenProfile,
 }) {
   const complete = progress.percent >= 100;
   const nextLabel = nextStepId ? stepShortLabel(nextStepId) : null;
   const [shareFeedback, setShareFeedback] = useState(null);
   const [shareError, setShareError] = useState(null);
+  const [contactComplete, setContactComplete] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const contact = await loadClientContact();
+      if (!cancelled) setContactComplete(isClientContactComplete(contact));
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [refreshTick]);
+
+  const pdfPrepareEnabled = complete && contactComplete;
 
   const { pdfPreparing, pdfReady, pdfError, shareFromPrepared } = useGardenDossierPdfPrepare(
-    complete,
+    pdfPrepareEnabled,
     refreshTick
   );
 
+  const pdfBlocked = contactComplete && (!pdfReady || pdfPreparing);
+
   const handleShare = () => {
-    if (!complete || !pdfReady || pdfPreparing) return;
+    if (!complete) return;
+    if (!contactComplete) {
+      onOpenProfile?.(CLIENT_CONTACT_PROFILE_HINT);
+      return;
+    }
+    if (pdfBlocked) return;
     setShareError(null);
     setShareFeedback(null);
     const result = shareFromPrepared();
@@ -35,7 +62,7 @@ export default function GardenDossierConfirmScreen({
     setShareFeedback("Dossier prêt à partager.");
   };
 
-  const shareDisabled = !complete || pdfPreparing || !pdfReady;
+  const shareDisabled = !complete || pdfBlocked;
 
   return (
     <div
@@ -105,7 +132,7 @@ export default function GardenDossierConfirmScreen({
               cursor: shareDisabled ? "default" : "pointer",
             }}
           >
-            {pdfPreparing ? "Préparation du PDF…" : "Envoyer à mon paysagiste"}
+            {contactComplete && pdfPreparing ? "Préparation du PDF…" : "Envoyer à mon paysagiste"}
           </button>
         ) : nextStepId ? (
           <button type="button" onClick={() => onNextStep(nextStepId)} style={primaryBtnStyle}>

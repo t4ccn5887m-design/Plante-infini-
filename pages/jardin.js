@@ -186,6 +186,8 @@ export default function Wilder() {
   const [homeScanCategory, setHomeScanCategory] = useState(null);
   const [premiumUserEmail, setPremiumUserEmail] = useState(null);
   const [homeGardenRefreshTick, setHomeGardenRefreshTick] = useState(0);
+  const [contactRefreshTick, setContactRefreshTick] = useState(0);
+  const [profileOpenRequest, setProfileOpenRequest] = useState(null);
   const [homeTab, setHomeTab] = useState("accueil");
   const [catalogueView, setCatalogueView] = useState(null);
   const [catalogueFilters, setCatalogueFilters] = useState({});
@@ -466,6 +468,27 @@ export default function Wilder() {
     },
     [openDossierStepById]
   );
+
+  const gardenDossierRefreshKey = useMemo(
+    () => `${homeGardenRefreshTick}-${contactRefreshTick}`,
+    [homeGardenRefreshTick, contactRefreshTick]
+  );
+
+  const requestOpenProfile = useCallback((message = "") => {
+    setProfileOpenRequest({
+      id: Date.now(),
+      message: message || "",
+    });
+  }, []);
+
+  const handleProfileSaved = useCallback(() => {
+    setContactRefreshTick((n) => n + 1);
+    setProfileOpenRequest(null);
+  }, []);
+
+  const handleProfileDismiss = useCallback(() => {
+    setProfileOpenRequest(null);
+  }, []);
 
   const openPaletteDetail = useCallback((palette) => {
     if (!palette?.id) return;
@@ -1031,6 +1054,9 @@ export default function Wilder() {
           await refreshGuestAccount();
         }}
         onAccountCreated={handleSignupAccountCreated}
+        openProfileRequest={profileOpenRequest}
+        onProfileDismiss={handleProfileDismiss}
+        onProfileSaved={handleProfileSaved}
       />
     ),
     [
@@ -1041,6 +1067,9 @@ export default function Wilder() {
       accueilDossierHome,
       refreshGuestAccount,
       handleSignupAccountCreated,
+      profileOpenRequest,
+      handleProfileDismiss,
+      handleProfileSaved,
     ]
   );
 
@@ -1158,12 +1187,13 @@ export default function Wilder() {
       mainContent = (
         <DossierScreen
           t={t}
-          refreshTick={homeGardenRefreshTick}
+          refreshTick={gardenDossierRefreshKey}
           onOpenCoupsDeCoeur={openCoupsDeCoeur}
           onOpenMot={() => openGardenMot("brief")}
           onOpenAmbiance={() => openGardenAmbiances("brief")}
           onOpenTerrain={() => openGardenTerrain("brief")}
           onOpenBudget={openGardenBudget}
+          onOpenProfile={requestOpenProfile}
         />
       );
     }
@@ -1263,7 +1293,8 @@ export default function Wilder() {
           nextStepId={nextStepId}
           onNextStep={handleDossierConfirmNext}
           onViewDossier={openBrief}
-          refreshTick={homeGardenRefreshTick}
+          refreshTick={gardenDossierRefreshKey}
+          onOpenProfile={requestOpenProfile}
         />
       );
     } else if (screen === "garden-ambiance-detail") {

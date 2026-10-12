@@ -19,7 +19,11 @@ import {
   timelineLabel,
   utilitiesLabel,
 } from "@/lib/pro/briefLabels";
-import { loadPremiumProfile } from "@/lib/premiumProfile";
+import {
+  CLIENT_CONTACT_PROFILE_HINT,
+  isClientContactComplete,
+  loadClientContact,
+} from "@/lib/clientContact";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const GREEN = "#2F5E3F";
@@ -147,12 +151,6 @@ function RowLink({ labelColor, title, subtitle, bg, chevron, onClick, status }) 
 
 const MAX_PILLS = 8;
 
-function firstNameFromProfile() {
-  const name = loadPremiumProfile().displayName?.trim() || "";
-  if (!name) return "";
-  return name.split(/\s+/)[0] || name;
-}
-
 function budgetDisplayLabel(budgetId) {
   if (!budgetId) return "";
   if (budgetId === "unknown") return "Je ne sais pas encore";
@@ -181,8 +179,10 @@ export default function DossierScreen({
   onOpenAmbiance,
   onOpenTerrain,
   onOpenBudget,
+  onOpenProfile,
 }) {
   const [loading, setLoading] = useState(true);
+  const [contactComplete, setContactComplete] = useState(false);
   const [coupsItems, setCoupsItems] = useState([]);
   const [intention, setIntention] = useState("");
   const [ambianceName, setAmbianceName] = useState("");
@@ -202,6 +202,8 @@ export default function DossierScreen({
       setBudgetId(loadGardenBudgetChoice());
       const photos = await loadGardenTerrainPhotoDataUrls();
       setTerrainPhotoCount(photos.length);
+      const contact = await loadClientContact();
+      setContactComplete(isClientContactComplete(contact));
     } catch {
       setCoupsItems([]);
       setError("load_failed");
@@ -237,6 +239,7 @@ export default function DossierScreen({
   const extraCount = Math.max(0, pillNames.length - MAX_PILLS);
 
   const canExport = !loading && progress.completedCount >= 1;
+  const pdfPrepareEnabled = canExport && contactComplete;
 
   const {
     pdfPreparing,
@@ -244,38 +247,50 @@ export default function DossierScreen({
     pdfError,
     shareFromPrepared,
     exportFromPrepared,
-  } = useGardenDossierPdfPrepare(canExport, refreshTick);
+  } = useGardenDossierPdfPrepare(pdfPrepareEnabled, refreshTick);
 
-  const pdfBlocked = !pdfReady || pdfPreparing;
+  const pdfBlocked = contactComplete && (!pdfReady || pdfPreparing);
 
-  const handleExportPdf = () => {
-    if (!canExport || pdfBlocked) return;
-    setError(null);
-    setFeedback(null);
-    const result = exportFromPrepared();
-    if (!result.ok) {
-      if (result.cancelled) return;
-      setError(result.error || GARDEN_PDF_USER_ERROR);
+  const requireContactOr = (action) => {
+    if (!canExport) return;
+    if (!contactComplete) {
+      onOpenProfile?.(CLIENT_CONTACT_PROFILE_HINT);
       return;
     }
-    setFeedback(
-      result.method === "open_tab"
-        ? "PDF ouvert — vous pouvez l'enregistrer depuis le menu de partage."
-        : t("brief.download_success")
-    );
+    if (pdfBlocked) return;
+    action();
+  };
+
+  const handleExportPdf = () => {
+    requireContactOr(() => {
+      setError(null);
+      setFeedback(null);
+      const result = exportFromPrepared();
+      if (!result.ok) {
+        if (result.cancelled) return;
+        setError(result.error || GARDEN_PDF_USER_ERROR);
+        return;
+      }
+      setFeedback(
+        result.method === "open_tab"
+          ? "PDF ouvert — vous pouvez l'enregistrer depuis le menu de partage."
+          : t("brief.download_success")
+      );
+    });
   };
 
   const handleSharePdf = () => {
-    if (!canExport || pdfBlocked) return;
-    setError(null);
-    setFeedback(null);
-    const result = shareFromPrepared();
-    if (!result.ok) {
-      if (result.cancelled) return;
-      setError(result.error || GARDEN_PDF_USER_ERROR);
-      return;
-    }
-    setFeedback(t("brief.send_success"));
+    requireContactOr(() => {
+      setError(null);
+      setFeedback(null);
+      const result = shareFromPrepared();
+      if (!result.ok) {
+        if (result.cancelled) return;
+        setError(result.error || GARDEN_PDF_USER_ERROR);
+        return;
+      }
+      setFeedback(t("brief.send_success"));
+    });
   };
 
   const motText = (intention || "").trim();
@@ -467,15 +482,25 @@ export default function DossierScreen({
         status={<StepStatus complete={budgetComplete} completeLabel="Fait" />}
       />
 
+      <RowLink
+        title="MES COORDONNÉES"
+        labelColor={MUTED}
+        subtitle={contactComplete ? "Profil à jour" : "À compléter"}
+        bg="#FFFFFF"
+        chevron="#6B7268"
+        onClick={() => onOpenProfile?.("")}
+        status={
+          <StepStatus
+            complete={contactComplete}
+            completeLabel="Fait"
+            incompleteLabel="À compléter"
+          />
+        }
+      />
+
       {!canExport && !loading ? (
         <p style={{ margin: 0, fontSize: 13, color: MUTED, lineHeight: 1.45, textAlign: "center" }}>
           Complétez au moins une étape du dossier pour exporter ou envoyer le PDF.
-        </p>
-      ) : null}
-
-      {pdfError ? (
-        <p style={{ margin: 0, fontSize: 13, color: COLORS.error, lineHeight: 1.45 }}>
-          {GARDEN_PDF_USER_ERROR}
         </p>
       ) : null}
 
@@ -518,7 +543,7 @@ export default function DossierScreen({
           }}
         >
           <IconDownload />
-          {pdfPreparing ? "Préparation du PDF…" : "Exporter en PDF"}
+          {contactComplete && pdfPreparing ? "Préparation du PDF…" : "Exporter en PDF"}
         </button>
         <button
           type="button"
@@ -543,7 +568,7 @@ export default function DossierScreen({
           }}
         >
           <IconSend />
-          {pdfPreparing ? "Préparation du PDF…" : "Envoyer"}
+          {contactComplete && pdfPreparing ? "Préparation du PDF…" : "Envoyer"}
         </button>
       </div>
     </div>

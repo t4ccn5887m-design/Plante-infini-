@@ -3,7 +3,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import PremiumAuthStep from "@/components/PremiumAuthStep";
 import { LEGAL_ROUTES } from "@/lib/legal";
-import { loadPremiumProfile, savePremiumProfile } from "@/lib/premiumProfile";
+import {
+  CLIENT_CONTACT_PROFILE_HINT,
+  loadClientContact,
+  saveClientContact,
+} from "@/lib/clientContact";
 import { shareWilderApp } from "@/lib/share";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
@@ -47,12 +51,26 @@ export default function AccountMenu({
   avatarSize = "default",
   onSignOut,
   onAccountCreated,
+  openProfileRequest = null,
+  onProfileDismiss,
+  onProfileSaved,
 }) {
   const [open, setOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState("signup");
   const [profileOpen, setProfileOpen] = useState(false);
-  const [profile, setProfile] = useState(() => loadPremiumProfile());
+  const [profileNotice, setProfileNotice] = useState("");
+  const [profile, setProfile] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    city: "",
+    postalCode: "",
+    email: "",
+  });
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileError, setProfileError] = useState(null);
   const wrapRef = useRef(null);
 
   const closeMenu = useCallback(() => setOpen(false), []);
@@ -80,15 +98,61 @@ export default function AccountMenu({
     await onAccountCreated?.();
   };
 
+  const loadProfileForm = useCallback(async (notice = "") => {
+    setProfileLoading(true);
+    setProfileError(null);
+    try {
+      const contact = await loadClientContact();
+      setProfile({
+        firstName: contact.firstName || "",
+        lastName: contact.lastName || "",
+        phone: contact.phone || "",
+        city: contact.city || "",
+        postalCode: contact.postalCode || "",
+        email: contact.email || userEmail || "",
+      });
+      setProfileNotice(notice);
+      setProfileOpen(true);
+    } catch {
+      setProfileError("Impossible de charger votre profil.");
+    } finally {
+      setProfileLoading(false);
+    }
+  }, [userEmail]);
+
   const handleOpenProfile = () => {
     closeMenu();
-    setProfile(loadPremiumProfile());
-    setProfileOpen(true);
+    loadProfileForm("");
   };
 
-  const handleSaveProfile = () => {
-    savePremiumProfile(profile);
+  useEffect(() => {
+    if (!openProfileRequest?.id) return;
+    closeMenu();
+    loadProfileForm(openProfileRequest.message || CLIENT_CONTACT_PROFILE_HINT);
+  }, [openProfileRequest?.id, openProfileRequest?.message, loadProfileForm]);
+
+  const closeProfileSheet = () => {
     setProfileOpen(false);
+    setProfileNotice("");
+    setProfileError(null);
+    onProfileDismiss?.();
+  };
+
+  const handleSaveProfile = async () => {
+    setProfileSaving(true);
+    setProfileError(null);
+    const result = await saveClientContact({
+      ...profile,
+      email: profile.email || userEmail || "",
+    });
+    setProfileSaving(false);
+    if (!result.ok) {
+      setProfileError("Enregistrement impossible. Réessayez.");
+      return;
+    }
+    setProfileOpen(false);
+    setProfileNotice("");
+    onProfileSaved?.();
   };
 
   const handleSignOut = async () => {
@@ -235,23 +299,95 @@ export default function AccountMenu({
 
       {profileOpen &&
         createPortal(
-          <ProfileSheet title={t("premium_menu.profile")} onClose={() => setProfileOpen(false)}>
-            <label className="wilder-account-field">
-              <span>{t("premium_menu.display_name")}</span>
-              <input
-                type="text"
-                value={profile.displayName}
-                onChange={(e) => setProfile((p) => ({ ...p, displayName: e.target.value }))}
-                placeholder={t("premium_menu.display_name_placeholder")}
-              />
-            </label>
-            <label className="wilder-account-field">
-              <span>{t("cloud.email")}</span>
-              <input type="email" value={userEmail || ""} readOnly className="wilder-account-input-readonly" />
-            </label>
-            <button type="button" className="wilder-account-btn-primary" onClick={handleSaveProfile}>
-              {t("premium_menu.save")}
-            </button>
+          <ProfileSheet title={t("premium_menu.profile")} onClose={closeProfileSheet}>
+            {profileNotice ? (
+              <p
+                style={{
+                  margin: "0 0 12px",
+                  fontSize: 14,
+                  lineHeight: 1.45,
+                  color: "#2F5E3F",
+                  background: "#E6F0E3",
+                  borderRadius: 12,
+                  padding: "10px 12px",
+                }}
+              >
+                {profileNotice}
+              </p>
+            ) : null}
+            {profileLoading ? (
+              <p style={{ margin: 0, fontSize: 14, color: "#5B6359" }}>Chargement…</p>
+            ) : (
+              <>
+                <label className="wilder-account-field">
+                  <span>Prénom</span>
+                  <input
+                    type="text"
+                    autoComplete="given-name"
+                    value={profile.firstName}
+                    onChange={(e) => setProfile((p) => ({ ...p, firstName: e.target.value }))}
+                  />
+                </label>
+                <label className="wilder-account-field">
+                  <span>Nom</span>
+                  <input
+                    type="text"
+                    autoComplete="family-name"
+                    value={profile.lastName}
+                    onChange={(e) => setProfile((p) => ({ ...p, lastName: e.target.value }))}
+                  />
+                </label>
+                <label className="wilder-account-field">
+                  <span>Téléphone</span>
+                  <input
+                    type="tel"
+                    autoComplete="tel"
+                    value={profile.phone}
+                    onChange={(e) => setProfile((p) => ({ ...p, phone: e.target.value }))}
+                  />
+                </label>
+                <label className="wilder-account-field">
+                  <span>Commune</span>
+                  <input
+                    type="text"
+                    autoComplete="address-level2"
+                    value={profile.city}
+                    onChange={(e) => setProfile((p) => ({ ...p, city: e.target.value }))}
+                  />
+                </label>
+                <label className="wilder-account-field">
+                  <span>Code postal</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="postal-code"
+                    value={profile.postalCode}
+                    onChange={(e) => setProfile((p) => ({ ...p, postalCode: e.target.value }))}
+                  />
+                </label>
+                <label className="wilder-account-field">
+                  <span>{t("cloud.email")}</span>
+                  <input
+                    type="email"
+                    value={profile.email || userEmail || ""}
+                    readOnly
+                    className="wilder-account-input-readonly"
+                  />
+                </label>
+                {profileError ? (
+                  <p style={{ margin: "0 0 8px", fontSize: 13, color: "#b42318" }}>{profileError}</p>
+                ) : null}
+                <button
+                  type="button"
+                  className="wilder-account-btn-primary"
+                  style={{ background: "#2F5E3F" }}
+                  disabled={profileSaving}
+                  onClick={handleSaveProfile}
+                >
+                  {profileSaving ? "Enregistrement…" : t("premium_menu.save")}
+                </button>
+              </>
+            )}
           </ProfileSheet>,
           document.body
         )}
