@@ -239,17 +239,26 @@ export default function DossierScreen({
   const extraCount = Math.max(0, pillNames.length - MAX_PILLS);
 
   const canExport = !loading && progress.completedCount >= 1;
+  const dossierComplete = !loading && progress.percent >= 100 && contactComplete;
   const pdfPrepareEnabled = canExport && contactComplete;
 
   const {
+    analyzing,
+    gardenAnalysis,
     pdfPreparing,
     pdfReady,
     pdfError,
     shareFromPrepared,
     exportFromPrepared,
-  } = useGardenDossierPdfPrepare(pdfPrepareEnabled, refreshTick);
+  } = useGardenDossierPdfPrepare(pdfPrepareEnabled, refreshTick, dossierComplete);
 
-  const pdfBlocked = contactComplete && (!pdfReady || pdfPreparing);
+  const pdfBlocked = contactComplete && (!pdfReady || pdfPreparing || analyzing);
+
+  const pdfBusyLabel = analyzing
+    ? "Analyse de votre dossier…"
+    : pdfPreparing
+      ? "Préparation du PDF…"
+      : null;
 
   const requireContactOr = (action) => {
     if (!canExport) return;
@@ -346,6 +355,45 @@ export default function DossierScreen({
           </span>
         </div>
       </div>
+
+      {dossierComplete && gardenAnalysis?.profil ? (
+        <div
+          style={{
+            borderRadius: 18,
+            padding: "14px 16px",
+            background: "#ECE6F5",
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <span
+              style={{
+                fontSize: 12,
+                fontWeight: 700,
+                letterSpacing: "1.1px",
+                color: "#7A67A6",
+              }}
+            >
+              VOTRE PROFIL JARDIN
+            </span>
+            <span style={{ fontSize: 11, fontWeight: 600, color: MUTED }}>Déduit par Sevya de vos choix</span>
+          </div>
+          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.45, color: "#1F2A22", fontWeight: 600 }}>
+            {gardenAnalysis.profil.style}
+          </p>
+          {gardenAnalysis.profil.priorites?.length ? (
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, lineHeight: 1.5, color: "#1F2A22" }}>
+              {gardenAnalysis.profil.priorites.map((p) => (
+                <li key={p} style={{ fontWeight: 700 }}>
+                  {p}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      ) : null}
 
       <button
         type="button"
@@ -543,7 +591,7 @@ export default function DossierScreen({
           }}
         >
           <IconDownload />
-          {contactComplete && pdfPreparing ? "Préparation du PDF…" : "Exporter en PDF"}
+          {contactComplete && pdfBusyLabel ? pdfBusyLabel : "Exporter en PDF"}
         </button>
         <button
           type="button"
@@ -568,7 +616,7 @@ export default function DossierScreen({
           }}
         >
           <IconSend />
-          {contactComplete && pdfPreparing ? "Préparation du PDF…" : "Envoyer"}
+          {contactComplete && pdfBusyLabel ? pdfBusyLabel : "Envoyer"}
         </button>
       </div>
     </div>

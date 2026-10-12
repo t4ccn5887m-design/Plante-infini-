@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createBriefPdfBlob } from "@/lib/briefPdf";
+import { resolveGardenDossierAnalysis } from "@/lib/gardenAnalysisClient";
 import { buildGardenDossierPdfParamsFromStorage } from "@/lib/gardenDossierPdf";
 import {
   deliverPreparedGardenPdf,
@@ -9,12 +10,15 @@ import {
 } from "@/lib/gardenBriefPdfDelivery";
 
 /**
- * Prépare le PDF dossier en arrière-plan (tap iOS = share immédiat).
- * @param {boolean} enabled
+ * Prépare l'analyse (si dossier complet) puis le PDF en arrière-plan (tap iOS = share immédiat).
+ * @param {boolean} enabled — coordonnées + au moins une étape dossier
  * @param {number|string} refreshKey
+ * @param {boolean} runAnalysis — dossier à 100 % + coordonnées
  */
-export function useGardenDossierPdfPrepare(enabled, refreshKey = 0) {
+export function useGardenDossierPdfPrepare(enabled, refreshKey = 0, runAnalysis = false) {
   const [status, setStatus] = useState("idle");
+  const [analyzing, setAnalyzing] = useState(false);
+  const [gardenAnalysis, setGardenAnalysis] = useState(null);
   const preparedRef = useRef(null);
 
   useEffect(() => {
@@ -22,17 +26,35 @@ export function useGardenDossierPdfPrepare(enabled, refreshKey = 0) {
       revokePreparedGardenPdf(preparedRef.current);
       preparedRef.current = null;
       setStatus("idle");
+      setAnalyzing(false);
+      setGardenAnalysis(null);
       return undefined;
     }
 
     let cancelled = false;
     setStatus("loading");
+    setAnalyzing(false);
     revokePreparedGardenPdf(preparedRef.current);
     preparedRef.current = null;
 
     (async () => {
+      let analysisForPdf = null;
+
+      if (runAnalysis) {
+        if (!cancelled) setAnalyzing(true);
+        const { analysis } = await resolveGardenDossierAnalysis();
+        if (cancelled) return;
+        setAnalyzing(false);
+        analysisForPdf = analysis;
+        setGardenAnalysis(analysis);
+      } else {
+        setGardenAnalysis(null);
+      }
+
       try {
-        const params = await buildGardenDossierPdfParamsFromStorage();
+        const params = await buildGardenDossierPdfParamsFromStorage({
+          gardenAnalysis: analysisForPdf,
+        });
         const created = await createBriefPdfBlob(params);
         if (cancelled) return;
         if (!created.ok) {
@@ -51,7 +73,7 @@ export function useGardenDossierPdfPrepare(enabled, refreshKey = 0) {
     return () => {
       cancelled = true;
     };
-  }, [enabled, refreshKey]);
+  }, [enabled, refreshKey, runAnalysis]);
 
   useEffect(
     () => () => {
@@ -75,9 +97,13 @@ export function useGardenDossierPdfPrepare(enabled, refreshKey = 0) {
     return deliverPreparedGardenPdf(preparedRef.current, { intent: "export" });
   }, [status]);
 
+  const pdfPreparing = status === "loading";
+
   return {
     status,
-    pdfPreparing: status === "loading",
+    analyzing,
+    gardenAnalysis,
+    pdfPreparing,
     pdfReady: status === "ready",
     pdfError: status === "error",
     shareFromPrepared,

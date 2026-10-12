@@ -35,14 +35,23 @@ export default function GardenDossierConfirmScreen({
     };
   }, [refreshTick]);
 
+  const dossierComplete = complete && contactComplete;
   const pdfPrepareEnabled = complete && contactComplete;
 
-  const { pdfPreparing, pdfReady, pdfError, shareFromPrepared } = useGardenDossierPdfPrepare(
+  const { analyzing, pdfPreparing, pdfReady, pdfError, shareFromPrepared } = useGardenDossierPdfPrepare(
     pdfPrepareEnabled,
-    refreshTick
+    refreshTick,
+    dossierComplete
   );
 
-  const pdfBlocked = contactComplete && (!pdfReady || pdfPreparing);
+  const pdfBlocked = contactComplete && (!pdfReady || pdfPreparing || analyzing);
+
+  const shareButtonLabel =
+    contactComplete && analyzing
+      ? "Analyse de votre dossier…"
+      : contactComplete && pdfPreparing
+        ? "Préparation du PDF…"
+        : "Envoyer à mon paysagiste";
 
   const handleShare = () => {
     if (!complete) return;
@@ -132,7 +141,7 @@ export default function GardenDossierConfirmScreen({
               cursor: shareDisabled ? "default" : "pointer",
             }}
           >
-            {contactComplete && pdfPreparing ? "Préparation du PDF…" : "Envoyer à mon paysagiste"}
+            {shareButtonLabel}
           </button>
         ) : nextStepId ? (
           <button type="button" onClick={() => onNextStep(nextStepId)} style={primaryBtnStyle}>
