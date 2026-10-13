@@ -21,6 +21,7 @@ import {
   loadAllCatalogueGardenState,
   toggleCatalogueItemInGarden,
 } from "@/lib/catalogueGardenToggle";
+import { AT } from "@/lib/atelierCssVars";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 
@@ -192,8 +193,8 @@ export default function IdeesAccueilScreen({
         }}
       >
         <svg width={18} height={18} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <circle cx="11" cy="11" r="8" stroke="#5B6359" strokeWidth={2} />
-          <path d="m21 21-4.3-4.3" stroke="#5B6359" strokeWidth={2} strokeLinecap="round" />
+          <circle cx="11" cy="11" r="8" stroke="var(--mute)" strokeWidth={2} />
+          <path d="m21 21-4.3-4.3" stroke="var(--mute)" strokeWidth={2} strokeLinecap="round" />
         </svg>
         <input
           id="idees-accueil-search"
@@ -226,7 +227,7 @@ export default function IdeesAccueilScreen({
           }}
         >
           {searchResults.length === 0 ? (
-            <p style={{ margin: 0, fontSize: 14, color: "#5B6359", gridColumn: "1 / -1" }}>
+            <p style={{ margin: 0, fontSize: 14, color: AT.mute, gridColumn: "1 / -1" }}>
               Aucun résultat pour cette recherche.
             </p>
           ) : (
@@ -249,7 +250,9 @@ export default function IdeesAccueilScreen({
       ) : (
         <>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            <span style={{ fontSize: 17, fontWeight: 700, color: "#1F2A22" }}>Composer mon jardin</span>
+            <span className="wilder-v2-title-section" style={{ fontSize: 17, fontWeight: 700, color: AT.ink }}>
+              Composer mon jardin
+            </span>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
               {composerCards.map((card) => (
                 <IdeesCategoryCard
@@ -263,54 +266,25 @@ export default function IdeesAccueilScreen({
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setQuizNotice("Bientôt disponible")}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 14,
-              padding: "16px 18px",
-              borderRadius: 22,
-              background: "#2F5E3F",
-              border: "none",
-              color: "#FFFFFF",
-              minHeight: 44,
-              cursor: "pointer",
-              fontFamily: "inherit",
-              textAlign: "left",
-              width: "100%",
-            }}
-          >
-            <span style={{ display: "flex", flexDirection: "column", gap: 3, flexGrow: 1 }}>
+          <button type="button" className="atelier-idees-quiz-cta" onClick={() => setQuizNotice("Bientôt disponible")}>
+            <span className="atelier-idees-quiz-cta__text">
               <span style={{ fontSize: 16, fontWeight: 700 }}>Vous ne savez pas par où commencer ?</span>
-              <span style={{ fontSize: 14, color: "#D7E7D9" }}>Trouvez votre style en une minute</span>
+              <span style={{ fontSize: 14, opacity: 0.85 }}>Trouvez votre style en une minute</span>
             </span>
-            <span
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 999,
-                background: "#FFFFFF",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-              }}
-            >
-              <svg width={18} height={18} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="m9 18 6-6-6-6" stroke="#2F5E3F" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
+            <span className="atelier-idees-quiz-cta__chev" aria-hidden="true">
+              <svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+                <path d="m9 18 6-6-6-6" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </span>
           </button>
           {quizNotice ? (
-            <p style={{ margin: "-12px 0 0", fontSize: 13, color: "#5B6359", textAlign: "center" }}>
+            <p style={{ margin: "-12px 0 0", fontSize: 13, color: AT.mute, textAlign: "center" }}>
               {quizNotice}
             </p>
           ) : null}
 
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            <span style={{ fontSize: 17, fontWeight: 700, color: "#1F2A22" }}>Selon vos envies</span>
+            <span style={{ fontSize: 17, fontWeight: 700, color: AT.ink }}>Selon vos envies</span>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
               {IDEES_ENVIE_CHIPS.map((chip) => (
                 <button
@@ -321,8 +295,8 @@ export default function IdeesAccueilScreen({
                     minHeight: 40,
                     padding: "0 14px",
                     borderRadius: 999,
-                    border: "1.5px solid #E4DED3",
-                    background: "#FFFFFF",
+                    border: `1.5px solid ${AT.line}`,
+                    background: AT.card,
                     color: COLORS.ink,
                     fontSize: 14,
                     fontWeight: 600,
@@ -339,8 +313,8 @@ export default function IdeesAccueilScreen({
           {seasonPlants.length > 0 ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                <span style={{ fontSize: 17, fontWeight: 700, color: "#1F2A22" }}>Belles en ce moment</span>
-                <span style={{ fontSize: 13, color: "#5B6359" }}>{monthLabel}</span>
+                <span style={{ fontSize: 17, fontWeight: 700, color: AT.ink }}>Belles en ce moment</span>
+                <span style={{ fontSize: 13, color: AT.mute }}>{monthLabel}</span>
               </div>
               <div
                 style={{
@@ -361,8 +335,8 @@ export default function IdeesAccueilScreen({
                       flex: "0 0 136px",
                       borderRadius: 18,
                       overflow: "hidden",
-                      border: "1.5px solid #EEE9E0",
-                      background: "#FFFFFF",
+                      border: `1.5px solid ${AT.line}`,
+                      background: AT.card,
                       padding: 0,
                       cursor: "pointer",
                       fontFamily: "inherit",

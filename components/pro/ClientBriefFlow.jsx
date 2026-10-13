@@ -9,24 +9,30 @@ import {
   X,
 } from "lucide-react";
 import { BRIEF_AMBIANCE_IMAGES, BRIEF_CHOICE_IMAGES } from "@/lib/pro/briefAmbianceImages";
+import StepAEviter, { isAEviterValid } from "@/components/brief/StepAEviter";
+import StepEntretien, { isEntretienValid } from "@/components/brief/StepEntretien";
+import StepExistant, { isExistantValid } from "@/components/brief/StepExistant";
+import StepQuotidien, { isQuotidienValid } from "@/components/brief/StepQuotidien";
+import {
+  EMPTY_BRIEF_DETAILS,
+  normalizeBriefDetails,
+} from "@/lib/brief/briefDetails";
 import {
   AREA_RANGES,
   BUDGETS,
-  MAINTENANCE as MAINTENANCE_DEFS,
   MATERIALS as MATERIAL_DEFS,
   PLANTS as PLANT_DEFS,
-  PRIORITIES,
   TASTES as TASTE_DEFS,
-  TIMELINES,
-  USERS,
   UTILITIES,
 } from "@/lib/pro/briefLabels";
 import {
   clientBriefErrorMessage,
   submitClientBrief,
 } from "@/lib/pro/clientBriefApi";
+import ClientBriefPreviewBanner from "@/components/pro/ClientBriefPreviewBanner";
 
-const TOTAL_STEPS = 10; // 0..9
+const QUESTION_STEPS = 9;
+const THANKS_STEP = 10;
 
 const TASTES = TASTE_DEFS.map((t) => ({
   ...t,
@@ -44,8 +50,6 @@ const MATERIALS = MATERIAL_DEFS.map((m) => ({
   image: BRIEF_CHOICE_IMAGES[m.id],
 }));
 
-const MAINTENANCE = MAINTENANCE_DEFS;
-
 const EMPTY_ANSWERS = {
   tastes: [],
   plants: [],
@@ -59,6 +63,7 @@ const EMPTY_ANSWERS = {
   utilities: null,
   budget: null,
   message: "",
+  details: EMPTY_BRIEF_DETAILS,
 };
 
 const LIST_KEYS = ["tastes", "plants", "materials", "priorities", "users", "photos"];
@@ -81,6 +86,7 @@ function normalizeAnswers(raw) {
     }
   }
   if (typeof merged.message !== "string") merged.message = "";
+  merged.details = normalizeBriefDetails(merged.details);
   return merged;
 }
 
@@ -99,15 +105,17 @@ function readImageAsDataUrl(file) {
 }
 
 function ProgressBar({ step }) {
-  const pct = Math.round(((step + 1) / TOTAL_STEPS) * 100);
+  const q =
+    step <= 0 ? 0 : step >= THANKS_STEP ? QUESTION_STEPS : Math.min(step, QUESTION_STEPS);
+  const pct = Math.round((q / QUESTION_STEPS) * 100);
   return (
-    <div className="bf-progress" aria-label={`Étape ${step + 1} sur ${TOTAL_STEPS}`}>
+    <div className="bf-progress" aria-label={`Étape ${q} sur ${QUESTION_STEPS}`}>
       <div className="bf-progress-track">
         <div className="bf-progress-fill" style={{ width: `${pct}%` }} />
       </div>
       <div className="bf-progress-meta">
         <span>
-          {step + 1} / {TOTAL_STEPS}
+          {q} / {QUESTION_STEPS}
         </span>
         <span>{pct} %</span>
       </div>
@@ -219,8 +227,8 @@ function TasteStep({ answers, setAnswers, ...shell }) {
   return (
     <StepShell
       {...shell}
-      title="Quelles ambiances vous parlent ?"
-      subtitle="Touchez tout ce qui vous inspire — pas besoin de choisir une seule voie."
+      title="Vos coups de cœur"
+      subtitle="Touchez tout ce qui vous inspire — plusieurs choix possibles."
       badge={
         <>
           Plusieurs choix possibles
@@ -266,8 +274,8 @@ function PlantsMaterialsStep({ answers, setAnswers, ...shell }) {
   return (
     <StepShell
       {...shell}
-      title="Végétaux & matières"
-      subtitle="Ce qui vous parle d'un coup d'œil — le placement, c'est le métier du paysagiste."
+      title="Ambiance"
+      subtitle="Végétaux et matières qui vous parlent — le placement, c'est le métier du paysagiste."
       badge={
         <>
           Plusieurs choix possibles
@@ -326,122 +334,28 @@ function PlantsMaterialsStep({ answers, setAnswers, ...shell }) {
   );
 }
 
-function PrioritiesStep({ answers, setAnswers, ...shell }) {
-  const count = answers.priorities.length;
+function MessageStep({ answers, setAnswers, ...shell }) {
+  const message = typeof answers.message === "string" ? answers.message : "";
+  const ok = message.trim().length >= 4;
   return (
     <StepShell
       {...shell}
-      title="Vos priorités"
-      subtitle="Ce qui compte le plus pour votre jardin."
-      badge={
-        <>
-          Plusieurs choix possibles
-          {count > 0 ? ` · ${count}` : ""}
-        </>
-      }
-      nextDisabled={count === 0}
+      title="En quelques mots, votre jardin idéal ?"
+      subtitle="Ce que vous voulez y faire, ce qui compte pour vous."
+      nextDisabled={!ok}
     >
-      <div className="bf-prio-grid">
-        {PRIORITIES.map((p) => {
-          const on = answers.priorities.includes(p.id);
-          return (
-            <button
-              key={p.id}
-              type="button"
-              className={`bf-prio ${on ? "on" : ""}`}
-              onClick={() =>
-                setAnswers((a) => ({
-                  ...a,
-                  priorities: toggleInList(a.priorities, p.id),
-                }))
-              }
-            >
-              <span className="bf-prio-emoji">{p.emoji}</span>
-              <span>{p.label}</span>
-            </button>
-          );
-        })}
-      </div>
+      <textarea
+        className="bf-textarea"
+        rows={5}
+        placeholder="Ex. : un jardin facile à entretenir où mes enfants peuvent jouer…"
+        value={message}
+        onChange={(e) => setAnswers((a) => ({ ...a, message: e.target.value }))}
+      />
     </StepShell>
   );
 }
 
-function UsersStep({ answers, setAnswers, ...shell }) {
-  const count = answers.users.length;
-  return (
-    <StepShell
-      {...shell}
-      title="Qui utilise le jardin ?"
-      subtitle="Ça change les choix (sécurité, circulation, intimité…)."
-      badge={
-        <>
-          Plusieurs choix possibles
-          {count > 0 ? ` · ${count}` : ""}
-        </>
-      }
-      nextDisabled={count === 0}
-    >
-      <div className="bf-prio-grid">
-        {USERS.map((u) => {
-          const on = answers.users.includes(u.id);
-          return (
-            <button
-              key={u.id}
-              type="button"
-              className={`bf-prio ${on ? "on" : ""}`}
-              onClick={() =>
-                setAnswers((a) => ({
-                  ...a,
-                  users: toggleInList(a.users, u.id),
-                }))
-              }
-            >
-              <span className="bf-prio-emoji">{u.emoji}</span>
-              <span>{u.label}</span>
-            </button>
-          );
-        })}
-      </div>
-      <p className="bf-hint">
-        Exemple : avec un chien et des enfants, {shell.studio.contactFirstName}{" "}
-        pensera circulation et plantes robustes dès le premier échange.
-      </p>
-    </StepShell>
-  );
-}
-
-function MaintenanceStep({ answers, setAnswers, ...shell }) {
-  return (
-    <StepShell
-      {...shell}
-      title="L'entretien, pour vous ?"
-      subtitle="Une seule réponse — on affine plus tard sur place."
-      nextDisabled={!answers.maintenance}
-    >
-      <div className="bf-single-list">
-        {MAINTENANCE.map((m) => {
-          const on = answers.maintenance === m.id;
-          return (
-            <button
-              key={m.id}
-              type="button"
-              className={`bf-single ${on ? "on" : ""}`}
-              onClick={() => setAnswers((a) => ({ ...a, maintenance: m.id }))}
-            >
-              <span className="bf-single-radio">{on ? <Check size={16} /> : null}</span>
-              <span>
-                <span className="bf-single-title">{m.title}</span>
-                <span className="bf-single-sub">{m.sub}</span>
-              </span>
-            </button>
-          );
-        })}
-      </div>
-    </StepShell>
-  );
-}
-
-function PhotosStep({ answers, setAnswers, ...shell }) {
+function TerrainPhotosFields({ answers, setAnswers }) {
   const cameraRef = useRef(null);
   const galleryRef = useRef(null);
   const maxPhotos = 4;
@@ -475,16 +389,10 @@ function PhotosStep({ answers, setAnswers, ...shell }) {
   };
 
   return (
-    <StepShell
-      {...shell}
-      title="Photos de votre terrain"
-      subtitle="Facultatif — même une photo floue aide beaucoup."
-      badge="FACULTATIF"
-      skipLabel={photos.length ? "Passer" : undefined}
-      nextLabel={photos.length ? "Continuer" : "Passer"}
-    >
+    <>
       <p className="bf-hint calm">
-        Aucune obligation. Vous pourrez aussi les montrer le jour du RDV.
+        2 ou 3 photos suffisent, de loin si possible. Vous pourrez aussi les
+        montrer le jour du RDV.
       </p>
       <div className="bf-photo-actions">
         <button
@@ -548,7 +456,7 @@ function PhotosStep({ answers, setAnswers, ...shell }) {
           Jusqu&apos;à {maxPhotos} photos · caméra ou galerie
         </div>
       )}
-    </StepShell>
+    </>
   );
 }
 
@@ -556,12 +464,13 @@ function TerrainStep({ answers, setAnswers, ...shell }) {
   return (
     <StepShell
       {...shell}
-      title="Votre terrain en bref"
-      subtitle="Toujours facultatif — ça aide le pro à préparer le RDV et à cadrer un premier ordre de prix."
+      title="Montrez-nous votre jardin"
+      subtitle="Photos et quelques infos — tout est facultatif, mais ça aide beaucoup."
       badge="FACULTATIF"
       skipLabel="Passer"
       onSkip={shell.onNext}
     >
+      <TerrainPhotosFields answers={answers} setAnswers={setAnswers} />
       <div className="bf-section-label">Quelle surface souhaitez-vous aménager ?</div>
       <p className="bf-hint calm">
         Pas la taille du terrain — juste la partie à transformer.
@@ -578,28 +487,6 @@ function TerrainStep({ answers, setAnswers, ...shell }) {
                 setAnswers((a) => ({
                   ...a,
                   areaRange: a.areaRange === o.id ? null : o.id,
-                }))
-              }
-            >
-              {o.label}
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="bf-section-label">Pour quand ?</div>
-      <div className="bf-chips">
-        {TIMELINES.map((o) => {
-          const on = answers.timeline === o.id;
-          return (
-            <button
-              key={o.id}
-              type="button"
-              className={`bf-chip ${on ? "on" : ""}`}
-              onClick={() =>
-                setAnswers((a) => ({
-                  ...a,
-                  timeline: a.timeline === o.id ? null : o.id,
                 }))
               }
             >
@@ -644,21 +531,25 @@ function BudgetStep({
   onSubmit,
   submitting = false,
   submitError = null,
+  preview = false,
   ...shell
 }) {
-  const message = typeof answers.message === "string" ? answers.message : "";
   return (
     <StepShell
       {...shell}
       studio={studio}
-      title="Budget & un mot"
-      subtitle="Toujours facultatif — ça aide juste à cadrer la conversation."
+      title="Quel budget imaginez-vous ?"
+      subtitle="Une fourchette, juste pour orienter votre paysagiste."
       badge="FACULTATIF"
-      skipLabel={submitting ? undefined : "Passer et envoyer"}
-      onSkip={submitting ? undefined : onSubmit}
-      nextLabel={submitting ? "Envoi…" : "Envoyer mon brief"}
-      onNext={onSubmit}
-      nextDisabled={submitting}
+      skipLabel={
+        preview || submitting ? undefined : "Passer et envoyer"
+      }
+      onSkip={preview || submitting ? undefined : onSubmit}
+      nextLabel={
+        preview ? "Aperçu pro" : submitting ? "Envoi…" : "Envoyer mon brief"
+      }
+      onNext={preview ? undefined : onSubmit}
+      nextDisabled={preview || submitting}
       hideNext={false}
     >
       <div className="bf-section-label">Fourchette budgétaire</div>
@@ -683,19 +574,11 @@ function BudgetStep({
           );
         })}
       </div>
-      <div className="bf-section-label">
-        Un mot pour {studio.contactFirstName} ?
-      </div>
-      <textarea
-        className="bf-textarea"
-        rows={4}
-        placeholder="Ce que vous voulez qu'il retienne… (optionnel)"
-        value={message}
-        disabled={submitting}
-        onChange={(e) =>
-          setAnswers((a) => ({ ...a, message: e.target.value }))
-        }
-      />
+      {preview ? (
+        <p className="bc-taste" style={{ marginTop: 12 }}>
+          Aperçu pro : rien n&apos;est envoyé au studio.
+        </p>
+      ) : null}
       {submitError ? <p className="bf-submit-error">{submitError}</p> : null}
     </StepShell>
   );
@@ -704,7 +587,7 @@ function BudgetStep({
 function Thanks({ studio }) {
   return (
     <div className="bf-step bf-thanks">
-      <ProgressBar step={9} />
+      <ProgressBar step={THANKS_STEP} />
       <div className="bf-thanks-icon">
         <Sparkles size={28} />
       </div>
@@ -745,7 +628,7 @@ function Thanks({ studio }) {
   );
 }
 
-export default function ClientBriefFlow({ token, studio }) {
+export default function ClientBriefFlow({ token, studio, preview = false }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState(EMPTY_ANSWERS);
   const [hydrated, setHydrated] = useState(false);
@@ -754,6 +637,10 @@ export default function ClientBriefFlow({ token, studio }) {
   const submittingRef = useRef(false);
 
   useEffect(() => {
+    if (preview) {
+      setHydrated(true);
+      return;
+    }
     try {
       const raw = localStorage.getItem(storageKey(token));
       if (raw) {
@@ -767,7 +654,7 @@ export default function ClientBriefFlow({ token, studio }) {
           !parsed?.submitted &&
           typeof parsed?.step === "number" &&
           parsed.step >= 0 &&
-          parsed.step <= 8
+          parsed.step <= QUESTION_STEPS
         ) {
           setStep(parsed.step);
         }
@@ -776,10 +663,10 @@ export default function ClientBriefFlow({ token, studio }) {
       /* ignore corrupt storage */
     }
     setHydrated(true);
-  }, [token]);
+  }, [token, preview]);
 
   useEffect(() => {
-    if (!hydrated) return;
+    if (preview || !hydrated) return;
     try {
       const safe = normalizeAnswers(answers);
       localStorage.setItem(
@@ -801,13 +688,24 @@ export default function ClientBriefFlow({ token, studio }) {
     } catch {
       /* quota — ignore */
     }
-  }, [answers, step, token, studio.name, hydrated]);
+  }, [answers, step, token, studio.name, hydrated, preview]);
 
   const go = useCallback((n) => setStep(n), []);
   const back = useCallback(() => setStep((s) => Math.max(0, s - 1)), []);
-  const next = useCallback(() => setStep((s) => Math.min(9, s + 1)), []);
+  const next = useCallback(
+    () => setStep((s) => Math.min(QUESTION_STEPS, s + 1)),
+    []
+  );
+
+  const patchDetails = useCallback((updater) => {
+    setAnswers((a) => ({
+      ...a,
+      details: updater(normalizeBriefDetails(a.details)),
+    }));
+  }, []);
 
   const submit = useCallback(async () => {
+    if (preview) return;
     if (submittingRef.current) return;
     submittingRef.current = true;
     setSubmitting(true);
@@ -827,7 +725,7 @@ export default function ClientBriefFlow({ token, studio }) {
           JSON.stringify({
             token,
             studioName: studio.name,
-            step: 9,
+            step: THANKS_STEP,
             answers: { ...safe, photos: [] },
             submitted: true,
             briefId: result.briefId,
@@ -839,7 +737,7 @@ export default function ClientBriefFlow({ token, studio }) {
       }
 
       setAnswers(safe);
-      setStep(9);
+      setStep(THANKS_STEP);
     } catch (e) {
       console.error("[Wilder Pro] submit:", e);
       setSubmitError(clientBriefErrorMessage("submit_failed"));
@@ -847,7 +745,7 @@ export default function ClientBriefFlow({ token, studio }) {
       submittingRef.current = false;
       setSubmitting(false);
     }
-  }, [answers, studio.name, token]);
+  }, [answers, studio.name, token, preview]);
 
   const shellBase = useMemo(
     () => ({
@@ -870,8 +768,9 @@ export default function ClientBriefFlow({ token, studio }) {
 
   return (
     <div className="wp wp-brief">
+      {preview ? <ClientBriefPreviewBanner /> : null}
       <div className="phone">
-        <div className="bf-screen">
+        <div className={`bf-screen${preview ? " bf-screen-preview" : ""}`}>
           {step === 0 && (
             <Welcome studio={studio} onStart={() => go(1)} />
           )}
@@ -893,7 +792,7 @@ export default function ClientBriefFlow({ token, studio }) {
             />
           )}
           {step === 3 && (
-            <PrioritiesStep
+            <MessageStep
               {...shellBase}
               step={3}
               answers={answers}
@@ -901,51 +800,83 @@ export default function ClientBriefFlow({ token, studio }) {
             />
           )}
           {step === 4 && (
-            <UsersStep
+            <StepShell
               {...shellBase}
               step={4}
-              answers={answers}
-              setAnswers={setAnswers}
-            />
+              title="Qui va vivre ce jardin ?"
+              subtitle="Pour qu'il soit pensé pour vous, pas pour une photo."
+              nextDisabled={!isQuotidienValid(answers.details)}
+            >
+              <StepQuotidien
+                details={answers.details}
+                onDetailsChange={patchDetails}
+              />
+            </StepShell>
           )}
           {step === 5 && (
-            <MaintenanceStep
+            <StepShell
               {...shellBase}
               step={5}
-              answers={answers}
-              setAnswers={setAnswers}
-            />
+              title="Ce que vous ne voulez pas"
+              subtitle="Aussi utile que ce que vous aimez. Plusieurs choix possibles."
+              nextDisabled={!isAEviterValid(answers.details)}
+            >
+              <StepAEviter
+                details={answers.details}
+                onDetailsChange={patchDetails}
+              />
+            </StepShell>
           )}
           {step === 6 && (
-            <PhotosStep
+            <TerrainStep
               {...shellBase}
               step={6}
               answers={answers}
               setAnswers={setAnswers}
-              onSkip={next}
             />
           )}
           {step === 7 && (
-            <TerrainStep
+            <StepShell
               {...shellBase}
               step={7}
-              answers={answers}
-              setAnswers={setAnswers}
-            />
+              title="Ce qui existe déjà"
+              subtitle="Si vous ne savez pas, aucun souci : votre paysagiste verra sur place."
+              nextDisabled={!isExistantValid(answers.details)}
+            >
+              <StepExistant
+                details={answers.details}
+                onDetailsChange={patchDetails}
+              />
+            </StepShell>
           )}
           {step === 8 && (
-            <BudgetStep
+            <StepShell
               {...shellBase}
               step={8}
+              title="Entretien et calendrier"
+              subtitle="Un jardin se pense aussi pour le temps que vous avez."
+              nextDisabled={!isEntretienValid(answers.details)}
+            >
+              <StepEntretien
+                details={answers.details}
+                onDetailsChange={patchDetails}
+              />
+            </StepShell>
+          )}
+          {step === 9 && (
+            <BudgetStep
+              {...shellBase}
+              step={9}
               answers={answers}
               setAnswers={setAnswers}
               studio={studio}
+              preview={preview}
               onSubmit={submit}
               submitting={submitting}
               submitError={submitError}
             />
           )}
-          {step === 9 && <Thanks studio={studio} />}
+          {step === THANKS_STEP && <Thanks studio={studio} />}
         </div>
       </div>
     </div>

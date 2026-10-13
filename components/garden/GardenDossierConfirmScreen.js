@@ -8,7 +8,7 @@ import {
 import { GARDEN_PDF_USER_ERROR } from "@/lib/gardenBriefPdfDelivery";
 import { useGardenDossierPdfPrepare } from "@/hooks/useGardenDossierPdfPrepare";
 
-const GREEN = "#2F5E3F";
+const GREEN = "var(--sage)";
 
 export default function GardenDossierConfirmScreen({
   progress,
@@ -38,7 +38,8 @@ export default function GardenDossierConfirmScreen({
   const dossierComplete = complete && contactComplete;
   const pdfPrepareEnabled = complete && contactComplete;
 
-  const { analyzing, pdfPreparing, pdfReady, pdfError, shareFromPrepared } = useGardenDossierPdfPrepare(
+  const { analyzing, analysisError, pdfPreparing, pdfReady, pdfError, shareFromPrepared } =
+    useGardenDossierPdfPrepare(
     pdfPrepareEnabled,
     refreshTick,
     dossierComplete
@@ -91,7 +92,7 @@ export default function GardenDossierConfirmScreen({
           width: 72,
           height: 72,
           borderRadius: 999,
-          background: "#E6F0E3",
+          background: "rgba(201, 214, 184, 0.18)",
           color: GREEN,
           display: "flex",
           alignItems: "center",
@@ -109,16 +110,19 @@ export default function GardenDossierConfirmScreen({
         </svg>
       </div>
 
-      <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, color: "#1F2A22" }}>
+      <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, color: "var(--ink)" }}>
         {complete ? "Votre dossier est complet !" : "C'est noté !"}
       </h1>
 
-      <p style={{ margin: 0, fontSize: 15, lineHeight: 1.45, color: "#5B6359", maxWidth: 320 }}>
+      <p style={{ margin: 0, fontSize: 15, lineHeight: 1.45, color: "var(--mute)", maxWidth: 320 }}>
         {complete
           ? "Vous pouvez envoyer votre dossier à votre paysagiste."
-          : `Votre dossier est complet à ${progress.percent} %.`}
+          : `${progress.completedCount} étape${progress.completedCount > 1 ? "s" : ""} sur ${progress.totalSteps} · ${progress.percent} %`}
       </p>
 
+      {analysisError ? (
+        <p style={{ margin: 0, fontSize: 13, color: "#C0652E", maxWidth: 320 }}>{analysisError}</p>
+      ) : null}
       {pdfError ? (
         <p style={{ margin: 0, fontSize: 13, color: "#b42318", maxWidth: 320 }}>{GARDEN_PDF_USER_ERROR}</p>
       ) : null}
@@ -157,7 +161,7 @@ export default function GardenDossierConfirmScreen({
             minHeight: 54,
             borderRadius: 18,
             border: `1.5px solid ${GREEN}`,
-            background: "#FFFFFF",
+            background: "var(--card)",
             color: GREEN,
             fontSize: 16,
             fontWeight: 700,
@@ -178,7 +182,7 @@ const primaryBtnStyle = {
   borderRadius: 18,
   border: "none",
   background: GREEN,
-  color: "#FFFFFF",
+  color: "var(--bg)",
   fontSize: 16,
   fontWeight: 700,
   cursor: "pointer",

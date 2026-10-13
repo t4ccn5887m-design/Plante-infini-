@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createBriefPdfBlob } from "@/lib/briefPdf";
-import { resolveGardenDossierAnalysis } from "@/lib/gardenAnalysisClient";
+import {
+  GARDEN_ANALYSIS_USER_MESSAGE,
+  resolveGardenDossierAnalysis,
+} from "@/lib/gardenAnalysisClient";
 import { buildGardenDossierPdfParamsFromStorage } from "@/lib/gardenDossierPdf";
 import {
   deliverPreparedGardenPdf,
@@ -19,6 +22,7 @@ export function useGardenDossierPdfPrepare(enabled, refreshKey = 0, runAnalysis 
   const [status, setStatus] = useState("idle");
   const [analyzing, setAnalyzing] = useState(false);
   const [gardenAnalysis, setGardenAnalysis] = useState(null);
+  const [analysisError, setAnalysisError] = useState(null);
   const preparedRef = useRef(null);
 
   useEffect(() => {
@@ -28,6 +32,7 @@ export function useGardenDossierPdfPrepare(enabled, refreshKey = 0, runAnalysis 
       setStatus("idle");
       setAnalyzing(false);
       setGardenAnalysis(null);
+      setAnalysisError(null);
       return undefined;
     }
 
@@ -42,11 +47,16 @@ export function useGardenDossierPdfPrepare(enabled, refreshKey = 0, runAnalysis 
 
       if (runAnalysis) {
         if (!cancelled) setAnalyzing(true);
-        const { analysis } = await resolveGardenDossierAnalysis();
+        const { analysis, message, error } = await resolveGardenDossierAnalysis();
         if (cancelled) return;
         setAnalyzing(false);
         analysisForPdf = analysis;
         setGardenAnalysis(analysis);
+        if (!analysis && error && error !== "auth_required") {
+          setAnalysisError(message || GARDEN_ANALYSIS_USER_MESSAGE);
+        } else {
+          setAnalysisError(null);
+        }
       } else {
         setGardenAnalysis(null);
       }
@@ -103,6 +113,7 @@ export function useGardenDossierPdfPrepare(enabled, refreshKey = 0, runAnalysis 
     status,
     analyzing,
     gardenAnalysis,
+    analysisError,
     pdfPreparing,
     pdfReady: status === "ready",
     pdfError: status === "error",

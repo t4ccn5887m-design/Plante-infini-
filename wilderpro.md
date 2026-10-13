@@ -231,3 +231,36 @@ Ne pas rouvrir monorepo ni casser `/jardin` tant que ces manques MVP ne sont pas
 ---
 
 *Dernière mise à jour : 2026-07-22 — étape C terminée et testée (auth, liens, briefs, PDF, RDV in-app) ; nom produit Amont ; `submit_pro_brief` + `pro_appointments` versionnés en migrations.*
+
+---
+
+## 17. Décisions du 12 octobre 2026 (catalogue, photos, design)
+
+- **Idées = 4 cases** : Végétal (200 plantes, 188 avec photo) · Paillages (ex-Minéral, 4 familles par couleur, taille des grains fin/moyen/gros) · Bordures (ex-Aménagements, photos = réalisations d'Emilien) · Styles de jardin (mur de vues d'ensemble + réalisations + projets 3D, sans texte).
+- **Règle : pas de photo = masqué** (mais toujours résolvable par id pour ne pas casser les coups de cœur).
+- **Photos** : banques libres (Wikimedia/Pixabay) triées à la main ; choix dans sevya/photo-choices.json, photo-picks-vegetal.txt, photo-picks-vues.json, realisations-choix.json. Les photos brutes d'Emilien (sevya/realisations/) sont gitignorées et ne sont jamais publiées telles quelles (EXIF/GPS supprimés).
+- **Bordures** : les banques gratuites ne donnent rien ; sources = réalisations d'Emilien, sinon Adobe Stock (~30 $ pour 10 images).
+- **Design « Atelier »** décidé par Emilien : fond vert nuit #0F1A14, Fraunces + Inter, photo au premier plan, accent sauge #C9D6B8, filets fins. Maquettes : sevya/15-sevya-atelier.html (app) et sevya/16-pdf-atelier.html (PDF : couverture sombre, pages intérieures claires). L'espace pro et /b/[token] seront traités après.
+- **Analyse IA du dossier** en ligne mais en échec silencieux en prod au 12/10 (diagnostic via vercel logs demandé : timeout / clé service role / format).
+
+## 18. Décisions du 13 octobre 2026
+- **Scan photo supprimé** côté particulier (coût IA, hors cœur de cible). Plus de bouton « + » dans la barre.
+- **Barre particulier : Accueil · Idées · Cœurs · Dossier · Partenaires.**
+- **Partenaires** : annuaire des paysagistes payants avec leurs réalisations ; un particulier peut leur envoyer son dossier (source de clients = argument d'abonnement). Décision d'Emilien : visible aussi pour les clients venus par un pro. Lancement en « Bientôt disponible » + « Me prévenir », ouverture réelle à ~10 paysagistes.
+- Prototype cliquable de référence : sevya/25-prototype-particulier.html. Plan de travail : sevya/PROMPT-CE-SOIR.md.
+
+## 19. Décisions du 13 octobre (suite)
+
+- Espace pro : 4 onglets Projets · Agenda · Réalisations · Studio. Plus de bouton +.
+- Accueil Projets : prochain RDV, bouton « Envoyer un lien à un client », 4 cases sans photo
+  (icône + gros chiffre + dernière activité) : Demandes · Briefs prêts · En attente · Mes clients.
+- Objectif du brief : aider le paysagiste à trouver la bonne PROPOSITION D'AMÉNAGEMENT, pas à chiffrer.
+- Brief client : 4 étapes en plus → Votre quotidien, Ce que vous ne voulez pas, Ce qui existe déjà,
+  Entretien et calendrier (9 étapes au total, toujours une option « Je ne sais pas »).
+- Fiche brief pro : ligne « En bref », « Pistes pour votre proposition » (IA, côté pro uniquement,
+  jamais dans le PDF client), qui vit dans le jardin, aime / ne veut pas, existant, entretien, dispos RDV.
+- Suivi après RDV en 1 clic : RDV fait → Proposition envoyée → Gagné / Perdu → Archivé. Pas de devis.
+- SMS : jamais d'envoi automatique payant. On ouvre l'appli Messages avec le texte prérempli (lien sms:).
+- Réalisations : un style en 1 clic (pour les suggérer au bon client) + interrupteur « visible dans Partenaires ».
+- Maquettes de référence : 29 (pro) et 30 (particulier).
+- Logo validé : le sceau italique (S Cormorant italique dans un double cercle, « SEVYA · LE JARDIN AVANT LE JARDIN »). En petit : S + 1 cercle. Fichiers dans sevya/logo/.

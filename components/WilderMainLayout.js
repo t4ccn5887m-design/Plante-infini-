@@ -38,9 +38,9 @@ export default function WilderMainLayout({
   activeNav,
   onNavAccueil,
   onNavIdees,
-  onNavAdd,
   onNavCoupsDeCoeur,
   onNavDossier,
+  onNavPartenaires,
   accountMenu = null,
   children,
   className = "",
@@ -61,9 +61,9 @@ export default function WilderMainLayout({
           activeNav={activeNav}
           onAccueil={onNavAccueil}
           onIdees={onNavIdees}
-          onAdd={onNavAdd}
           onCoupsDeCoeur={onNavCoupsDeCoeur}
           onDossier={onNavDossier}
+          onPartenaires={onNavPartenaires}
         />
       </div>
     </div>

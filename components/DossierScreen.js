@@ -12,6 +12,8 @@ import { readGardenDossierLocalFlags } from "@/lib/gardenDossierLocal";
 import { loadGardenAmbianceChoice } from "@/lib/gardenAmbianceChoice";
 import { loadGardenBudgetChoice } from "@/lib/gardenBudgetChoice";
 import { loadGardenTerrainFields } from "@/lib/gardenTerrainFields";
+import { loadGardenBriefDetails } from "@/lib/gardenBriefDetails";
+import { dossierStepLabel } from "@/lib/gardenDossierProgress";
 import { loadGardenTerrainPhotoDataUrls } from "@/lib/gardenTerrainPhotos";
 import {
   areaRangeLabel,
@@ -26,8 +28,8 @@ import {
 } from "@/lib/clientContact";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
-const GREEN = "#2F5E3F";
-const MUTED = "#5B6359";
+const GREEN = "var(--sage)";
+const MUTED = "var(--mute)";
 
 function CheckIcon() {
   return (
@@ -119,7 +121,7 @@ function RowLink({ labelColor, title, subtitle, bg, chevron, onClick, status }) 
         display: "flex",
         alignItems: "center",
         gap: 12,
-        color: "#1F2A22",
+        color: "var(--ink)",
         minHeight: 44,
         border: "none",
         cursor: "pointer",
@@ -179,6 +181,10 @@ export default function DossierScreen({
   onOpenAmbiance,
   onOpenTerrain,
   onOpenBudget,
+  onOpenQuotidien,
+  onOpenAEviter,
+  onOpenExistant,
+  onOpenEntretien,
   onOpenProfile,
 }) {
   const [loading, setLoading] = useState(true);
@@ -223,10 +229,19 @@ export default function DossierScreen({
         gardenItemCount: coupsItems.length,
         paysagisteMessage: intention,
         ambianceComplete: localFlags.ambianceComplete,
-        terrainPhotosComplete: localFlags.terrainPhotosComplete,
+        terrainComplete: localFlags.terrainPhotosComplete && localFlags.terrainFieldsComplete,
         budgetComplete: localFlags.budgetComplete,
+        details: loadGardenBriefDetails(),
       }),
-    [coupsItems.length, intention, localFlags.ambianceComplete, localFlags.budgetComplete, localFlags.terrainPhotosComplete]
+    [
+      coupsItems.length,
+      intention,
+      localFlags.ambianceComplete,
+      localFlags.budgetComplete,
+      localFlags.terrainPhotosComplete,
+      localFlags.terrainFieldsComplete,
+      refreshTick,
+    ]
   );
 
   const stepComplete = useCallback(
@@ -245,6 +260,7 @@ export default function DossierScreen({
   const {
     analyzing,
     gardenAnalysis,
+    analysisError,
     pdfPreparing,
     pdfReady,
     pdfError,
@@ -304,14 +320,19 @@ export default function DossierScreen({
 
   const motText = (intention || "").trim();
   const coupsComplete = stepComplete("coups-de-coeur");
-  const motComplete = stepComplete("mot-paysagiste");
   const ambianceComplete = stepComplete("ambiance");
+  const motComplete = stepComplete("mot-paysagiste");
+  const quotidienComplete = stepComplete("quotidien");
+  const eviterComplete = stepComplete("a-eviter");
   const terrainComplete = stepComplete("terrain");
+  const existantComplete = stepComplete("existant");
+  const entretienComplete = stepComplete("entretien");
   const budgetComplete = stepComplete("budget");
 
+  const terrainFields = loadGardenTerrainFields();
   const terrainSubtitle = terrainComplete
-    ? `${terrainPhotoCount} photo${terrainPhotoCount > 1 ? "s" : ""}`
-    : "Ajouter des photos";
+    ? `${terrainPhotoCount} photo${terrainPhotoCount > 1 ? "s" : ""} · ${areaRangeLabel(terrainFields.areaRange) || "Surface renseignée"}`
+    : "Photos et infos pratiques";
 
   return (
     <div
@@ -325,14 +346,19 @@ export default function DossierScreen({
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, color: "#1F2A22" }}>Mon dossier jardin</h1>
+        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, color: "var(--ink)" }}>Mon dossier jardin</h1>
+        <p style={{ margin: 0, fontSize: 14, color: MUTED }}>
+          {loading
+            ? "…"
+            : `${progress.completedCount} étape${progress.completedCount > 1 ? "s" : ""} sur ${progress.totalSteps}`}
+        </p>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div
             style={{
               flexGrow: 1,
               height: 8,
               borderRadius: 999,
-              background: "#E6F0E3",
+              background: "rgba(201, 214, 184, 0.18)",
             }}
             role="progressbar"
             aria-valuenow={progress.percent}
@@ -355,6 +381,23 @@ export default function DossierScreen({
           </span>
         </div>
       </div>
+
+      {dossierComplete && analysisError ? (
+        <div
+          role="alert"
+          style={{
+            borderRadius: 14,
+            padding: "12px 14px",
+            border: "1px solid var(--clay, #D9A47A)",
+            background: "var(--card, #17241C)",
+            color: "var(--clay, #D9A47A)",
+            fontSize: 14,
+            lineHeight: 1.45,
+          }}
+        >
+          {analysisError}
+        </div>
+      ) : null}
 
       {dossierComplete && gardenAnalysis?.profil ? (
         <div
@@ -380,11 +423,11 @@ export default function DossierScreen({
             </span>
             <span style={{ fontSize: 11, fontWeight: 600, color: MUTED }}>Déduit par Sevya de vos choix</span>
           </div>
-          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.45, color: "#1F2A22", fontWeight: 600 }}>
+          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.45, color: "var(--ink)", fontWeight: 600 }}>
             {gardenAnalysis.profil.style}
           </p>
           {gardenAnalysis.profil.priorites?.length ? (
-            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, lineHeight: 1.5, color: "#1F2A22" }}>
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, lineHeight: 1.5, color: "var(--ink)" }}>
               {gardenAnalysis.profil.priorites.map((p) => (
                 <li key={p} style={{ fontWeight: 700 }}>
                   {p}
@@ -401,11 +444,11 @@ export default function DossierScreen({
         style={{
           borderRadius: 18,
           padding: "14px 16px",
-          border: "1.5px solid #EEE9E0",
+          border: "1.5px solid var(--line)",
           display: "flex",
           flexDirection: "column",
           gap: 8,
-          background: "#FFFFFF",
+          background: "var(--card)",
           cursor: "pointer",
           fontFamily: "inherit",
           textAlign: "left",
@@ -436,7 +479,7 @@ export default function DossierScreen({
                 style={{
                   padding: "5px 11px",
                   borderRadius: 999,
-                  background: "#E6F0E3",
+                  background: "rgba(201, 214, 184, 0.18)",
                   color: GREEN,
                   fontSize: 13,
                   fontWeight: 700,
@@ -450,7 +493,7 @@ export default function DossierScreen({
                 style={{
                   padding: "5px 11px",
                   borderRadius: 999,
-                  background: "#E6F0E3",
+                  background: "rgba(201, 214, 184, 0.18)",
                   color: GREEN,
                   fontSize: 13,
                   fontWeight: 700,
@@ -463,17 +506,29 @@ export default function DossierScreen({
         ) : null}
       </button>
 
+      <RowLink
+        title="MON AMBIANCE"
+        labelColor="#5E4C8C"
+        subtitle={ambianceName || "À choisir"}
+        bg="#ECE6F5"
+        chevron="#6A5896"
+        onClick={onOpenAmbiance}
+        status={
+          <StepStatus complete={ambianceComplete} completeLabel="Fait" incompleteLabel="à choisir" />
+        }
+      />
+
       <button
         type="button"
         onClick={onOpenMot}
         style={{
           borderRadius: 18,
           padding: "14px 16px",
-          border: "1.5px solid #EEE9E0",
+          border: "1.5px solid var(--line)",
           display: "flex",
           flexDirection: "column",
           gap: 6,
-          background: "#FFFFFF",
+          background: "var(--card)",
           cursor: "pointer",
           fontFamily: "inherit",
           textAlign: "left",
@@ -489,7 +544,7 @@ export default function DossierScreen({
               color: MUTED,
             }}
           >
-            MON MOT POUR LE PAYSAGISTE
+            MOT AU PAYSAGISTE
           </span>
           <StepStatus complete={motComplete} completeLabel="Fait" />
         </div>
@@ -499,15 +554,23 @@ export default function DossierScreen({
       </button>
 
       <RowLink
-        title="MON AMBIANCE"
-        labelColor="#5E4C8C"
-        subtitle={ambianceName || "À choisir"}
-        bg="#ECE6F5"
-        chevron="#6A5896"
-        onClick={onOpenAmbiance}
-        status={
-          <StepStatus complete={ambianceComplete} completeLabel="Fait" incompleteLabel="à choisir" />
-        }
+        title="VOTRE QUOTIDIEN"
+        labelColor="var(--mute)"
+        subtitle={quotidienComplete ? "Renseigné" : dossierStepLabel("quotidien")}
+        bg="var(--card)"
+        chevron="#6B7268"
+        onClick={onOpenQuotidien}
+        status={<StepStatus complete={quotidienComplete} completeLabel="Fait" />}
+      />
+
+      <RowLink
+        title="CE QUE VOUS NE VOULEZ PAS"
+        labelColor="var(--mute)"
+        subtitle={eviterComplete ? "Renseigné" : "Plusieurs choix possibles"}
+        bg="var(--card)"
+        chevron="#6B7268"
+        onClick={onOpenAEviter}
+        status={<StepStatus complete={eviterComplete} completeLabel="Fait" />}
       />
 
       <RowLink
@@ -521,10 +584,30 @@ export default function DossierScreen({
       />
 
       <RowLink
+        title="CE QUI EXISTE DÉJÀ"
+        labelColor="var(--mute)"
+        subtitle={existantComplete ? "Renseigné" : "Orientation, sol…"}
+        bg="var(--card)"
+        chevron="#6B7268"
+        onClick={onOpenExistant}
+        status={<StepStatus complete={existantComplete} completeLabel="Fait" />}
+      />
+
+      <RowLink
+        title="ENTRETIEN ET CALENDRIER"
+        labelColor="var(--mute)"
+        subtitle={entretienComplete ? "Renseigné" : "Temps, calendrier, RDV"}
+        bg="var(--card)"
+        chevron="#6B7268"
+        onClick={onOpenEntretien}
+        status={<StepStatus complete={entretienComplete} completeLabel="Fait" />}
+      />
+
+      <RowLink
         title="MON BUDGET"
-        labelColor="#4D554B"
+        labelColor="var(--mute)"
         subtitle={budgetDisplayLabel(budgetId) || "À indiquer"}
-        bg="#F2EEE7"
+        bg="var(--card)"
         chevron="#6B7268"
         onClick={onOpenBudget}
         status={<StepStatus complete={budgetComplete} completeLabel="Fait" />}
@@ -534,7 +617,7 @@ export default function DossierScreen({
         title="MES COORDONNÉES"
         labelColor={MUTED}
         subtitle={contactComplete ? "Profil à jour" : "À compléter"}
-        bg="#FFFFFF"
+        bg="var(--card)"
         chevron="#6B7268"
         onClick={() => onOpenProfile?.("")}
         status={
@@ -576,8 +659,8 @@ export default function DossierScreen({
             flex: "1 1 0",
             minHeight: 50,
             borderRadius: 16,
-            background: GREEN,
-            color: "#FFFFFF",
+            background: "var(--ink)",
+            color: "var(--bg)",
             border: "none",
             fontSize: 15,
             fontWeight: 700,
@@ -603,7 +686,7 @@ export default function DossierScreen({
             borderRadius: 16,
             border: `1.5px solid ${GREEN}`,
             color: GREEN,
-            background: "#FFFFFF",
+            background: "var(--card)",
             fontSize: 15,
             fontWeight: 700,
             display: "flex",

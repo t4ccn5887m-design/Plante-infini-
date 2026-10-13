@@ -1,5 +1,7 @@
 import CataloguePlantVisual from "@/components/catalogue/CataloguePlantVisual";
 import CatalogueUniverseVisual from "@/components/catalogue/CatalogueUniverseVisual";
+import { AT } from "@/lib/atelierCssVars";
+import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 export function HeartToggle({ filled, disabled, label, onClick }) {
   return (
@@ -16,7 +18,7 @@ export function HeartToggle({ filled, disabled, label, onClick }) {
         height: 40,
         borderRadius: 999,
         border: "none",
-        background: "#FFFFFF",
+        background: AT.card,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -29,8 +31,8 @@ export function HeartToggle({ filled, disabled, label, onClick }) {
         <svg width={18} height={18} viewBox="0 0 24 24" aria-hidden="true">
           <path
             d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
-            fill="#C0652E"
-            stroke="#C0652E"
+            fill="var(--clay)"
+            stroke="var(--clay)"
             strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -40,7 +42,7 @@ export function HeartToggle({ filled, disabled, label, onClick }) {
         <svg width={18} height={18} viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path
             d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
-            stroke="#4D554B"
+            stroke="var(--mute)"
             strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -71,7 +73,8 @@ export default function CatalogueIdeaCard({
       style={{
         borderRadius,
         overflow: "hidden",
-        border: "1.5px solid #EEE9E0",
+        border: `1.5px solid ${AT.line}`,
+        background: AT.card,
         display: "flex",
         flexDirection: "column",
       }}
@@ -124,7 +127,7 @@ export default function CatalogueIdeaCard({
           cursor: "pointer",
           fontFamily: "inherit",
           textAlign: "left",
-          color: "#1F2A22",
+          color: COLORS.ink,
           width: "100%",
         }}
       >

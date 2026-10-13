@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Camera,
   FileText,
-  Home,
+  LayoutGrid,
   CalendarDays,
   User,
+  Users,
   Phone,
   Send,
   Plus,
@@ -23,18 +24,33 @@ import {
   Trash2,
   Pencil,
   X,
+  Bell,
+  Heart,
+  SlidersHorizontal,
 } from "lucide-react";
+import { PARTNERS_LIVE } from "@/lib/partnersPreview";
+import {
+  bucketActivityHint,
+  bucketCounts,
+  buildProNotificationEvents,
+  CLIENT_FILTERS,
+  filterByListCategory,
+  filterMesClients,
+  formatAppointmentBlock,
+  formatTodayHeader,
+  pickNextAppointment,
+} from "@/lib/pro/proLinkBuckets";
 import {
   signInWithEmail,
   signOutCloud,
   signUpWithEmail,
 } from "@/lib/cloudSync";
+import BriefDetailScreen from "@/components/pro/BriefDetailScreen";
 import {
-  buildBriefDetailView,
   createProAppointment,
+  updateProAppointment,
   createProLink,
   ensureProStudio,
-  getBriefPhotoSignedUrls,
   getProAuthUser,
   listProAppointments,
   listProLinksWithBriefs,
@@ -51,12 +67,24 @@ import {
   updateProProject,
   uploadProjectPhotos,
 } from "@/lib/pro/proProjectsApi";
+import { isUrgentBrief } from "@/lib/pro/briefDerive";
+import { PRO_REALISATION_STYLE_OPTIONS } from "@/lib/pro/realisationStyles";
 import {
-  deriveRdvTodos,
-  deriveVigilance,
-  isUrgentBrief,
-} from "@/lib/pro/briefDerive";
-import { printBriefPdf } from "@/lib/pro/briefDetailActions";
+  buildRdvConfirmationSmsBody,
+  rdvConfirmationSmsHref,
+} from "@/lib/pro/appointmentSms";
+import {
+  buildSingleAppointmentIcs,
+  downloadAppointmentIcs,
+  mapsItineraryUrl,
+} from "@/lib/pro/appointmentIcs";
+import {
+  clientAvailabilityFromBrief,
+  isoToPlanDateTime,
+  nextPlanDayOptions,
+  PLAN_TIME_SLOTS,
+  RDV_DURATION_MIN,
+} from "@/lib/pro/planRdvUi";
 
 function readFileAsDataUrl(file) {
   return new Promise((resolve) => {
@@ -120,17 +148,21 @@ function StudioAvatar({ studio, onOpen }) {
 function ProDesktopSidebar({
   tab,
   studio,
-  onNavAccueil,
-  onNavBriefs,
+  onNavProjets,
   onNavAgenda,
   onNavRealisations,
+  onNavStudio,
   onSendLink,
-  onOpenSettings,
 }) {
   const realisationsOn =
     tab === "realisations" ||
     tab === "realisation-detail" ||
     tab === "realisation-form";
+  const projetsOn =
+    tab === "projets" ||
+    tab === "clients" ||
+    tab === "detail" ||
+    tab === "notifs";
 
   return (
     <aside className="wp-sidebar no-print" aria-label="Navigation principale">
@@ -152,21 +184,11 @@ function ProDesktopSidebar({
       <nav className="wp-sidebar-nav" aria-label="Sections">
         <button
           type="button"
-          className={`wp-sidebar-link${tab === "accueil" ? " on" : ""}`}
-          onClick={onNavAccueil}
+          className={`wp-sidebar-link${projetsOn ? " on" : ""}`}
+          onClick={onNavProjets}
         >
-          <Home size={20} aria-hidden />
-          Accueil
-        </button>
-        <button
-          type="button"
-          className={`wp-sidebar-link${
-            tab === "briefs" || tab === "detail" ? " on" : ""
-          }`}
-          onClick={onNavBriefs}
-        >
-          <FileText size={20} aria-hidden />
-          Briefs
+          <LayoutGrid size={20} aria-hidden />
+          Projets
         </button>
         <button
           type="button"
@@ -184,19 +206,23 @@ function ProDesktopSidebar({
           <Images size={20} aria-hidden />
           Réalisations
         </button>
+        <button
+          type="button"
+          className={`wp-sidebar-link${tab === "studio" ? " on" : ""}`}
+          onClick={onNavStudio}
+        >
+          <SlidersHorizontal size={20} aria-hidden />
+          Studio
+        </button>
       </nav>
 
-      <button
-        type="button"
-        className="wp-sidebar-footer"
-        onClick={onOpenSettings}
-      >
+      <button type="button" className="wp-sidebar-footer" onClick={onNavStudio}>
         <span className="wp-sidebar-footer-ava">{studio?.initials || "?"}</span>
         <span className="wp-sidebar-footer-text">
           <span className="wp-sidebar-footer-name">
             {studio?.name || "Mon studio"}
           </span>
-          <span className="wp-sidebar-footer-sub">Réglages du studio</span>
+          <span className="wp-sidebar-footer-sub">Studio</span>
         </span>
       </button>
     </aside>
@@ -252,41 +278,117 @@ function BriefCard({ b, onOpen }) {
   );
 }
 
-function Accueil({
+const LIST_META = {
+  demandes: {
+    title: "Demandes",
+    sub: "Ces particuliers ont choisi votre studio. Leur dossier est déjà rempli.",
+  },
+  ready: {
+    title: "Briefs prêts",
+    sub: "À lire avant le premier rendez-vous.",
+  },
+  wait: {
+    title: "En attente",
+    sub: "Liens envoyés, pas encore remplis.",
+  },
+  clients: {
+    title: "Mes clients",
+    sub: "",
+  },
+};
+
+function ProjetsHome({
   studio,
   items,
   linksStatus,
   linksError,
   onRetryLinks,
   onSend,
-  onBriefs,
-  onOpen,
+  onOpenList,
+  onOpenNotifs,
   onOpenSettings,
+  onOpen,
+  notifCount,
 }) {
-  const ready = items.filter((b) => b.status === "ready" || b.status === "rdv");
-  const waiting = items.filter((b) => b.status === "wait");
-  const empty = linksStatus === "ready" && items.length === 0;
+  const counts = bucketCounts(items);
+  const next = pickNextAppointment(items);
+  const rdvFmt = next ? formatAppointmentBlock(next.nextAppointmentAt) : null;
+  const firstName =
+    studio?.contactFirstName?.trim() ||
+    studio?.name?.trim()?.split(/\s+/)[0] ||
+    "Bonjour";
+
+  const buckets = [
+    ...(PARTNERS_LIVE
+      ? [
+          {
+            key: "demandes",
+            label: "Demandes",
+            icon: Heart,
+            color: "#DB7E44",
+            hot: counts.demandes > 0,
+          },
+        ]
+      : []),
+    {
+      key: "ready",
+      label: "Briefs prêts",
+      icon: FileText,
+      color: "#4E7B52",
+      hot: false,
+    },
+    {
+      key: "wait",
+      label: "En attente",
+      icon: Clock,
+      color: "#8B9088",
+      hot: false,
+    },
+    {
+      key: "clients",
+      label: "Mes clients",
+      icon: Users,
+      color: "#8B9088",
+      hot: false,
+    },
+  ];
 
   return (
     <div className="card-panel">
-      <div className="hero">
-        <StudioAvatar studio={studio} onOpen={onOpenSettings} />
-        <h1>Vos clients, compris d&apos;avance</h1>
-        <p>
-          Envoyez un lien, recevez un brief clair avant même le premier
-          rendez-vous.
-        </p>
+      <div className="wp-pro-top">
+        <div className="wp-pro-brand">
+          Sevya<span>PRO</span>
+        </div>
+        <div className="wp-pro-top-actions">
+          <button
+            type="button"
+            className="wp-icon-btn"
+            onClick={onOpenNotifs}
+            aria-label="Notifications"
+          >
+            <Bell size={19} strokeWidth={1.5} />
+            {notifCount > 0 && (
+              <span className="wp-notif-dot" aria-hidden>
+                {notifCount > 9 ? "9+" : notifCount}
+              </span>
+            )}
+          </button>
+          <StudioAvatar studio={studio} onOpen={onOpenSettings} />
+        </div>
       </div>
+
+      <div className="wp-pro-greet-k">{formatTodayHeader()}</div>
+      <div className="wp-pro-greet-h">Bonjour {firstName}.</div>
 
       {linksStatus === "loading" && (
         <p className="bc-taste" style={{ marginTop: 18 }}>
-          Chargement de vos briefs…
+          Chargement de vos projets…
         </p>
       )}
 
       {linksStatus === "error" && (
         <div className="wp-empty" style={{ marginTop: 8 }}>
-          <p className="wp-empty-title">Impossible de charger vos briefs</p>
+          <p className="wp-empty-title">Impossible de charger vos projets</p>
           <p className="wp-empty-sub">
             {linksError ||
               "Une erreur est survenue. Réessayez dans un instant."}
@@ -297,459 +399,277 @@ function Accueil({
         </div>
       )}
 
-      {empty && (
-        <div className="wp-empty">
-          <p className="wp-empty-title">Envoyez votre premier lien</p>
-          <p className="wp-empty-sub">
-            Votre client remplit son brief en 3 min — sans compte, sans app.
-          </p>
-          <button className="bigbtn" type="button" onClick={onSend}>
-            <Send size={18} /> Envoyer un lien
+      {linksStatus === "ready" && next && rdvFmt && (
+        <div className="wp-pro-next">
+          <div className="wp-pro-next-k">Prochain rendez-vous</div>
+          <button
+            type="button"
+            className="wp-pro-next-row"
+            onClick={() => onOpen(next)}
+          >
+            <div>
+              <div className="wp-pro-next-when">
+                {rdvFmt.line1} · {rdvFmt.line2}
+              </div>
+              <div className="wp-pro-next-who">
+                {next.name}{" "}
+                <span className="wp-pro-next-meta">· {next.city || next.address}</span>
+              </div>
+            </div>
+            <span className="wp-pro-next-link">Relire le brief ›</span>
           </button>
         </div>
       )}
 
-      {linksStatus === "ready" && items.length > 0 && (
-        <>
-          <div className="label">À traiter</div>
-          <div className="wp-accueil-actions">
-          <button className="pcard peach" onClick={onSend} type="button">
-            <span className="ic">
-              <Send size={22} color="#DB7E44" />
-            </span>
-            <span className="tx">
-              <div className="tt">Envoyer un lien</div>
-              <div className="ss">Préparer un nouveau client</div>
-            </span>
-            <ChevronRight className="chev" size={22} />
-          </button>
-          <button className="pcard mint" onClick={onBriefs} type="button">
-            <span className="ic">
-              <FileText size={22} color="#4E7B52" />
-            </span>
-            <span className="tx">
-              <div className="tt">Briefs prêts</div>
-              <div className="ss">
-                {ready.length === 0
-                  ? "Aucun pour l’instant"
-                  : `${ready.length} à consulter`}
-              </div>
-            </span>
-            <span className="count" style={{ color: "#4E7B52" }}>
-              {ready.length}
-            </span>
-          </button>
-          <button className="pcard lav" onClick={onBriefs} type="button">
-            <span className="ic">
-              <CalendarDays size={22} color="#7A67A6" />
-            </span>
-            <span className="tx">
-              <div className="tt">En attente</div>
-              <div className="ss">
-                {waiting.length === 0
-                  ? "Tous les liens sont remplis"
-                  : `${waiting.length} client${waiting.length > 1 ? "s" : ""}`}
-              </div>
-            </span>
-            <span className="count" style={{ color: "#7A67A6" }}>
-              {waiting.length}
-            </span>
-          </button>
-          </div>
+      <div className="wp-pro-send">
+        <button className="bigbtn" type="button" onClick={onSend}>
+          <Send size={18} /> Envoyer un lien à un client
+        </button>
+      </div>
 
-          {ready.length > 0 && (
-            <>
-              <div className="label">Derniers briefs</div>
-              <div className="blist wp-accueil-briefs">
-                {ready.slice(0, 3).map((b) => (
-                  <BriefCard key={b.id} b={b} onOpen={onOpen} />
-                ))}
-              </div>
-            </>
-          )}
-        </>
+      {linksStatus === "ready" && (
+        <div className="wp-bucket-grid">
+          {buckets.map(({ key, label, icon: Icon, color, hot }) => {
+            const n = counts[key] ?? 0;
+            return (
+              <button
+                key={key}
+                type="button"
+                className={`wp-bucket-card${hot ? " hot" : ""}`}
+                onClick={() => onOpenList(key)}
+              >
+                <div className="wp-bucket-top">
+                  <Icon size={22} color={color} strokeWidth={1.5} />
+                  <span className="wp-bucket-n">{n}</span>
+                </div>
+                <div>
+                  <div className="wp-bucket-title">{label}</div>
+                  <div
+                    className={`wp-bucket-sub${hot ? " hot" : ""}`}
+                  >
+                    {bucketActivityHint(items, key)}
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       )}
     </div>
   );
 }
 
-function Briefs({
+function NotifsScreen({ items, onBack, onOpenItem }) {
+  const events = buildProNotificationEvents(items);
+
+  return (
+    <div className="card-panel">
+      <button type="button" className="back" onClick={onBack}>
+        <ArrowLeft size={18} /> Projets
+      </button>
+      <div className="h-title" style={{ fontWeight: 300, marginTop: 4 }}>
+        Du nouveau
+      </div>
+      {events.length === 0 ? (
+        <div className="wp-empty" style={{ marginTop: 24 }}>
+          <p className="wp-empty-title">Rien pour le moment</p>
+          <p className="wp-empty-sub">
+            Les ouvertures de lien et briefs remplis apparaîtront ici.
+          </p>
+        </div>
+      ) : (
+        <div className="wp-notif-list">
+          {events.map((ev) => (
+            <button
+              key={ev.id}
+              type="button"
+              className="wp-notif-row"
+              onClick={() => onOpenItem(ev.itemId, ev.kind)}
+            >
+              <span className="wp-notif-body">
+                <span
+                  className={`wp-notif-pip${
+                    ev.kind === "opened" ? " open" : ""
+                  }`}
+                  aria-hidden
+                />
+                <span>
+                  <span className="wp-notif-text">{ev.title}</span>
+                  <span className="wp-notif-when">{ev.when}</span>
+                </span>
+              </span>
+              <ChevronRight size={18} color="#8B9088" />
+            </button>
+          ))}
+        </div>
+      )}
+      <p className="bc-taste" style={{ marginTop: 20 }}>
+        E-mail et notifications push : bientôt disponibles.
+      </p>
+    </div>
+  );
+}
+
+function ClientList({
+  category,
   items,
-  studio,
   linksStatus,
   linksError,
   onRetryLinks,
+  onBack,
   onOpen,
-  onOpenSettings,
+  onSend,
 }) {
-  const [f, setF] = useState("all");
-  const filtered = items.filter((b) => f === "all" || b.status === f);
-  const shown = [...filtered].sort((a, b) => {
+  const meta = LIST_META[category] || LIST_META.clients;
+  const [query, setQuery] = useState("");
+  const [clientFilter, setClientFilter] = useState(CLIENT_FILTERS.cours);
+
+  let shown = [];
+  if (category === "clients") {
+    shown = filterMesClients(items, { query, filter: clientFilter });
+  } else {
+    shown = filterByListCategory(items, category);
+  }
+  shown = [...shown].sort((a, b) => {
     const ua = isUrgentBrief(a.brief) ? 0 : 1;
     const ub = isUrgentBrief(b.brief) ? 0 : 1;
     return ua - ub;
   });
-  const empty = linksStatus === "ready" && items.length === 0;
 
   return (
     <div className="card-panel">
-      <div className="head-row">
-        <div>
-          <div className="h-title">Mes briefs</div>
-          <div className="h-sub">
-            {linksStatus === "loading"
-              ? "Chargement…"
-              : linksStatus === "error"
-                ? "Chargement interrompu"
-                : `${items.length} client${items.length !== 1 ? "s" : ""}`}
-          </div>
-        </div>
-        <StudioAvatar studio={studio} onOpen={onOpenSettings} />
+      <button type="button" className="back" onClick={onBack}>
+        <ArrowLeft size={18} /> Projets
+      </button>
+      <div className="h-title" style={{ fontWeight: 300, marginTop: 4 }}>
+        {meta.title}
       </div>
+      {meta.sub ? (
+        <p className="bc-taste" style={{ marginTop: 6 }}>
+          {meta.sub}
+        </p>
+      ) : null}
 
       {linksStatus === "loading" && (
         <p className="bc-taste" style={{ marginTop: 18 }}>
-          Chargement de vos briefs…
+          Chargement…
         </p>
       )}
 
       {linksStatus === "error" && (
         <div className="wp-empty" style={{ marginTop: 18 }}>
-          <p className="wp-empty-title">Impossible de charger vos briefs</p>
-          <p className="wp-empty-sub">
-            {linksError ||
-              "Une erreur est survenue. Réessayez dans un instant."}
-          </p>
+          <p className="wp-empty-title">Impossible de charger la liste</p>
+          <p className="wp-empty-sub">{linksError}</p>
           <button className="linebtn" type="button" onClick={onRetryLinks}>
             Réessayer
           </button>
         </div>
       )}
 
-      {linksStatus === "ready" && (
+      {linksStatus === "ready" && category === "clients" && (
         <>
-          <div className="filters">
-            <button
-              className={`fp ${f === "all" ? "on" : ""}`}
-              onClick={() => setF("all")}
-              type="button"
-            >
-              Tous
-            </button>
-            <button
-              className={`fp ${f === "ready" ? "on" : ""}`}
-              onClick={() => setF("ready")}
-              type="button"
-            >
-              Prêts
-            </button>
-            <button
-              className={`fp ${f === "rdv" ? "on" : ""}`}
-              onClick={() => setF("rdv")}
-              type="button"
-            >
-              RDV
-            </button>
-            <button
-              className={`fp ${f === "wait" ? "on" : ""}`}
-              onClick={() => setF("wait")}
-              type="button"
-            >
-              En attente
-            </button>
+          <div className="wp-client-search">
+            <input
+              type="search"
+              placeholder="Rechercher un client"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              autoComplete="off"
+            />
           </div>
-          {empty ? (
-            <div className="wp-empty" style={{ marginTop: 18 }}>
-              <p className="wp-empty-title">Aucun brief ici</p>
-              <p className="wp-empty-sub">
-                Envoyez un lien pour recevoir votre premier brief.
-              </p>
-            </div>
-          ) : shown.length === 0 ? (
-            <div className="wp-empty" style={{ marginTop: 18 }}>
-              <p className="wp-empty-title">Aucun brief ici</p>
-              <p className="wp-empty-sub">
-                Changez de filtre pour voir d’autres clients.
-              </p>
-            </div>
-          ) : (
-            <div className="blist" style={{ marginTop: 12 }}>
-              {shown.map((b) => (
-                <BriefCard key={b.id} b={b} onOpen={onOpen} />
-              ))}
-            </div>
-          )}
+          <div className="wp-client-filters">
+            {[
+              [CLIENT_FILTERS.cours, "En cours"],
+              [CLIENT_FILTERS.won, "Gagnés"],
+              [CLIENT_FILTERS.lost, "Perdus"],
+              [CLIENT_FILTERS.arch, "Archivés"],
+            ].map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                className={`fp ${clientFilter === key ? "on" : ""}`}
+                onClick={() => setClientFilter(key)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </>
       )}
+
+      {linksStatus === "ready" &&
+        (shown.length === 0 ? (
+          <div className="wp-empty" style={{ marginTop: 18 }}>
+            <p className="wp-empty-title">Rien pour le moment</p>
+            {category === "wait" && (
+              <button className="bigbtn" type="button" onClick={onSend}>
+                <Send size={18} /> Envoyer un lien
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="blist" style={{ marginTop: 12 }}>
+            {shown.map((b) => (
+              <BriefCard key={b.id} b={b} onOpen={onOpen} />
+            ))}
+          </div>
+        ))}
     </div>
   );
 }
 
-function Detail({ b, onBack, onPlanifier }) {
-  const view = buildBriefDetailView(b);
-  const [photoUrls, setPhotoUrls] = useState([]);
-
-  useEffect(() => {
-    let cancelled = false;
-    const paths = view?.detail?.photoPaths;
-    (async () => {
-      if (!paths?.length) {
-        setPhotoUrls([]);
-        return;
-      }
-      const urls = await getBriefPhotoSignedUrls(paths);
-      if (!cancelled) setPhotoUrls(urls);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [b?.id, b?.brief?.id]);
-
-  if (view?.waiting) {
-    return (
-      <div className="card-panel">
-        <button className="back no-print" onClick={onBack} type="button">
-          <ArrowLeft size={18} /> Mes briefs
-        </button>
-        <div className="dcard">
-          <div className="dlbl">Fiche brief</div>
-          <p className="bc-taste">
-            Le client n’a pas encore rempli son brief.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (view?.unavailable || !view?.detail) {
-    return (
-      <div className="card-panel">
-        <button className="back no-print" onClick={onBack} type="button">
-          <ArrowLeft size={18} /> Mes briefs
-        </button>
-        <div className="dcard">
-          <div className="dlbl">Fiche brief</div>
-          <p className="bc-taste">Brief indisponible.</p>
-        </div>
-      </div>
-    );
-  }
-
-  const d = view.detail;
-  const vigilance = deriveVigilance(b.brief);
-  const todos = deriveRdvTodos(b.brief);
-  const ctx = d.users.length ? d.users.join(" · ") : null;
-
-  const onExportPdf = () => {
-    printBriefPdf(b.name);
-  };
+function StudioScreen({ studio, onOpenSettings }) {
+  const contact = studio?.contactFirstName?.trim();
+  const zone = studio?.interventionZone?.trim();
+  const years =
+    studio?.yearsExperience != null && studio.yearsExperience > 0
+      ? `${studio.yearsExperience} ans d’expérience`
+      : null;
+  const specs = (studio?.specialties || []).filter(Boolean);
 
   return (
-    <div className="card-panel wp-brief-print">
-      <button className="back no-print" onClick={onBack} type="button">
-        <ArrowLeft size={18} /> Mes briefs
-      </button>
-
-      <div className="dhero">
-        <div className="who">{b.name}</div>
-        <div className="coord">
-          {(b.address || b.city) && (
-            <span>
-              <MapPin size={15} /> {[b.address, b.city].filter(Boolean).join(" · ")}
-            </span>
-          )}
-          {b.phone && (
-            <span>
-              <Phone size={15} /> {b.phone}
-              {ctx ? ` · ${ctx}` : ""}
-            </span>
-          )}
-          {!b.phone && ctx && (
-            <span>
-              <User size={15} /> {ctx}
-            </span>
-          )}
+    <div className="card-panel">
+      <div className="head-row">
+        <div className="h-title" style={{ fontSize: 26 }}>
+          Studio
         </div>
-        <div className="badge">
-          <Sparkles size={15} />{" "}
-          {b.status === "rdv" ? "RDV planifié" : "Brief prêt"}
-          {b.date ? ` — reçu le ${b.date}` : ""}
-        </div>
-        <div className="acts no-print">
-          <button className="prim" type="button" onClick={onPlanifier}>
-            <CalendarDays size={17} /> Planifier
-          </button>
-          {b.phone ? (
-            <a className="ghost" href={`tel:${b.phone.replace(/\s/g, "")}`}>
-              <Phone size={17} /> Appeler
-            </a>
-          ) : (
-            <button className="ghost" type="button" disabled>
-              <Phone size={17} /> Appeler
-            </button>
-          )}
+        <StudioAvatar studio={studio} onOpen={onOpenSettings} />
+      </div>
+      <div className="wp-studio-head">
+        <span className="wp-studio-logo">{studio?.initials || "?"}</span>
+        <div>
+          <div className="wp-studio-name">{studio?.name || "Mon studio"}</div>
+          <div className="wp-studio-sub">
+            {[contact, zone, years].filter(Boolean).join(" · ") ||
+              "Présentation et réglages"}
+          </div>
         </div>
       </div>
-
-      <div className="dcard lav print-block">
-        <div className="dlbl">
-          <Sparkles size={14} /> Profil jardin · goût déduit
-        </div>
-        <div className="lede">{d.lede}</div>
-        <div className="statrow">
-          {d.spec.map(([k, v]) => (
-            <div className="statpill" key={k}>
-              <div className="k">{k}</div>
-              <div className="v">{v}</div>
-            </div>
+      {studio?.presentation ? (
+        <p className="bc-taste" style={{ marginTop: 16, lineHeight: 1.55 }}>
+          {studio.presentation}
+        </p>
+      ) : null}
+      {specs.length > 0 ? (
+        <div className="chipwrap" style={{ marginTop: 12 }}>
+          {specs.map((s) => (
+            <span className="vchip" key={s}>
+              {s}
+            </span>
           ))}
         </div>
-      </div>
-
-      {d.prios.length > 0 && (
-        <div className="dcard print-block">
-          <div className="dlbl">Priorités du client</div>
-          <div className="prio">
-            {d.prios.map((p, i) => (
-              <div key={p}>
-                <span className="pnum">{i + 1}</span>
-                {p}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="dcard print-block">
-        <div className="dlbl">Végétaux souhaités</div>
-        {d.vegetaux.length > 0 ? (
-          <div className="chipwrap">
-            {d.vegetaux.map((v) => (
-              <span className="vchip" key={v}>
-                {v}
-              </span>
-            ))}
-          </div>
-        ) : (
-          <p className="bc-taste">Aucun végétaux sélectionné.</p>
-        )}
-        <div className="subh">Matériaux & couleurs</div>
-        {d.materiaux.length > 0 ? (
-          <div className="chipwrap">
-            {d.materiaux.map((m) => (
-              <span className="vchip" key={m}>
-                {m}
-              </span>
-            ))}
-          </div>
-        ) : (
-          <p className="bc-taste">Aucune matière sélectionnée.</p>
-        )}
-        {d.tastes.length > 0 && (
-          <>
-            <div className="subh">Ambiances</div>
-            <div className="chipwrap">
-              {d.tastes.map((t) => (
-                <span
-                  className="vchip"
-                  key={t}
-                  style={{ background: "#ECE6F5", color: "#7A67A6" }}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-
-      <div className="dcard no-print">
-        <div className="dlbl">
-          <Camera size={14} /> Photos du client
-        </div>
-        {photoUrls.length > 0 ? (
-          <div className="photos real">
-            {photoUrls.map((url, i) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img key={url} src={url} alt={`Photo ${i + 1}`} className="photo-img" />
-            ))}
-          </div>
-        ) : (
-          <p className="bc-taste">Aucune photo.</p>
-        )}
-      </div>
-
-      <div className="dcard no-print">
-        <div className="dlbl">
-          <Leaf size={14} /> Terrain & budget
-        </div>
-        <div className="facts">
-          {d.areaRange && (
-            <div className="row">
-              <span className="k">Surface à aménager</span>
-              <span className="v">{d.areaRange}</span>
-            </div>
-          )}
-          {d.timeline && (
-            <div className="row">
-              <span className="k">Échéance</span>
-              <span className="v">{d.timeline}</span>
-            </div>
-          )}
-          {d.utilities && (
-            <div className="row">
-              <span className="k">Eau & électricité</span>
-              <span className="v">{d.utilities}</span>
-            </div>
-          )}
-          <div className="row">
-            <span className="k">Budget</span>
-            <span className="v">{d.budget}</span>
-          </div>
-          {d.maintenanceTitle && (
-            <div className="row">
-              <span className="k">Entretien</span>
-              <span className="v">{d.maintenanceTitle}</span>
-            </div>
-          )}
-        </div>
-        {d.message.trim() ? (
-          <p className="wp-client-message">« {d.message.trim()} »</p>
-        ) : null}
-      </div>
-
-      {vigilance.length > 0 && (
-        <div className="dcard amber print-block">
-          <div className="dlbl">
-            <AlertTriangle size={14} /> Points de vigilance
-          </div>
-          <div className="vlist">
-            {vigilance.map((v, i) => (
-              <div key={i}>
-                › <span>{v}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {todos.length > 0 && (
-        <div className="dcard print-block">
-          <div className="dlbl">À aborder au premier RDV</div>
-          <div className="todo">
-            {todos.map((t) => (
-              <div key={t}>
-                <span className="chk" />
-                {t}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <button className="bigbtn no-print" onClick={onExportPdf} type="button">
-        <Download size={19} /> Exporter le brief (PDF)
+      ) : null}
+      <button
+        className="bigbtn"
+        type="button"
+        style={{ marginTop: 22 }}
+        onClick={onOpenSettings}
+      >
+        <SlidersHorizontal size={18} /> Réglages du studio
       </button>
+      <p className="bc-taste" style={{ marginTop: 14 }}>
+        Aperçu fiche Partenaires et abonnement : prochaines étapes.
+      </p>
     </div>
   );
 }
@@ -879,7 +799,12 @@ function Realisations({ studio, refreshKey, onOpen, onCreate, onOpenSettings }) 
                   <SafePhoto src={coverUrls[p.id]} alt="" />
                 </div>
                 <div className="wp-proj-meta">
-                  <div className="wp-proj-title">{p.title}</div>
+                  <div className="wp-proj-title">
+                    {p.title}
+                    {!p.isPublic ? (
+                      <span className="wp-proj-badge-private">Privée</span>
+                    ) : null}
+                  </div>
                   <div className="wp-proj-loc">
                     {p.location ? (
                       <>
@@ -1021,7 +946,17 @@ function RealisationDetail({
       </div>
 
       <div className="dhero" style={{ marginTop: 4 }}>
-        <div className="who">{project?.title}</div>
+        <div className="who">
+          {project?.title}
+          {!project?.isPublic ? (
+            <span className="wp-proj-badge-private">Privée</span>
+          ) : null}
+        </div>
+        {project?.style ? (
+          <div className="coord">
+            <span>{project.style}</span>
+          </div>
+        ) : null}
         {project?.location ? (
           <div className="coord">
             <span>
@@ -1029,6 +964,29 @@ function RealisationDetail({
             </span>
           </div>
         ) : null}
+        <div className="srow no-print" style={{ marginTop: 14, borderBottom: "none" }}>
+          <span className="rk" style={{ color: "#CDD9C9" }}>
+            Visible dans Partenaires
+          </span>
+          <span
+            className={`toggle ${project?.isPublic !== false ? "on" : ""}`}
+            onClick={async () => {
+              if (busy || !project?.id) return;
+              const next = project.isPublic === false;
+              setBusy(true);
+              const res = await updateProProject(project.id, { isPublic: next });
+              setBusy(false);
+              if (res.ok) {
+                onProjectChange?.({ ...project, ...res.project, isPublic: next });
+              } else {
+                setError(proProjectsErrorMessage(res.error));
+              }
+            }}
+            role="switch"
+            aria-checked={project?.isPublic !== false}
+            tabIndex={0}
+          />
+        </div>
         <div className="acts no-print">
           <button className="prim" type="button" onClick={onEdit} disabled={busy}>
             <Pencil size={17} /> Modifier
@@ -1229,6 +1187,8 @@ function RealisationForm({
   const [title, setTitle] = useState(project?.title || "");
   const [location, setLocation] = useState(project?.location || "");
   const [description, setDescription] = useState(project?.description || "");
+  const [style, setStyle] = useState(project?.style || "");
+  const [isPublic, setIsPublic] = useState(project?.isPublic !== false);
   const [pendingFiles, setPendingFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -1266,6 +1226,8 @@ function RealisationForm({
         title: trimmed,
         location,
         description,
+        style,
+        isPublic,
       });
       if (!upd.ok) {
         setLoading(false);
@@ -1278,6 +1240,8 @@ function RealisationForm({
         title: trimmed,
         location,
         description,
+        style,
+        isPublic,
       });
       if (!created.ok) {
         setLoading(false);
@@ -1376,6 +1340,43 @@ function RealisationForm({
         />
       </div>
 
+      <div className="label" style={{ marginTop: 4 }}>
+        Style · pour vous la suggérer au bon client
+      </div>
+      <div className="filters">
+        {PRO_REALISATION_STYLE_OPTIONS.map((s) => (
+          <button
+            key={s}
+            type="button"
+            className={`fp ${style === s ? "on" : ""}`}
+            onClick={() => setStyle(s)}
+            disabled={loading}
+          >
+            {s}
+          </button>
+        ))}
+      </div>
+
+      <div className="srow" style={{ marginTop: 16 }}>
+        <span className="rk">Visible dans Partenaires</span>
+        <span
+          className={`toggle ${isPublic ? "on" : ""}`}
+          onClick={() => !loading && setIsPublic((v) => !v)}
+          role="switch"
+          aria-checked={isPublic}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              if (!loading) setIsPublic((v) => !v);
+            }
+          }}
+        />
+      </div>
+      {!isPublic ? (
+        <p className="bc-taste">Badge « Privée » sur cette réalisation.</p>
+      ) : null}
+
       <div className="field">
         <label htmlFor="proj-photos">Photos</label>
         <input
@@ -1434,11 +1435,36 @@ function RealisationForm({
   );
 }
 
-function Agenda({ studio, refreshKey, onOpenSettings }) {
+function Agenda({ studio, refreshKey, onOpenSettings, onOpenBrief }) {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [retryTick, setRetryTick] = useState(0);
+
+  const addToCalendar = (a) => {
+    const ics = buildSingleAppointmentIcs({
+      id: a.id,
+      startsAt: a.startsAt,
+      durationMin: a.durationMin,
+      clientName: a.clientName,
+      studioName: studio?.name,
+      address: a.address,
+      notes: a.notes,
+    });
+    const safeName = String(a.clientName || "client")
+      .replace(/[^\w\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-")
+      .slice(0, 24);
+    downloadAppointmentIcs(`rdv-${safeName || "sevya"}.ics`, ics);
+  };
+
+  const openItinerary = (a) => {
+    const url = mapsItineraryUrl(a.address);
+    if (url && typeof window !== "undefined") {
+      window.location.href = url;
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -1522,22 +1548,48 @@ function Agenda({ studio, refreshKey, onOpenSettings }) {
             <div key={group.key} style={{ marginBottom: 18 }}>
               <div className="label">{group.label}</div>
               {group.items.map((a) => (
-                <div className="rdv" key={a.id}>
-                  <div className="when">
-                    <div className="d">{a.dayNum}</div>
-                    <div className="m">{a.monthShort}</div>
-                  </div>
-                  <div>
-                    <div className="who2">{a.clientName}</div>
-                    <div className="info">
-                      {a.timeLabel}
-                      {a.durationMin ? ` · ${a.durationMin} min` : ""}
+                <div className="wp-agenda-block" key={a.id}>
+                  <button
+                    type="button"
+                    className="wp-agenda-row"
+                    onClick={() => a.linkId && onOpenBrief?.(a.linkId)}
+                  >
+                    <div className="when">
+                      <div className="d">{a.dayNum}</div>
+                      <div className="m">{a.monthShort}</div>
                     </div>
-                    {a.notes ? (
-                      <div className="info" style={{ marginTop: 4 }}>
-                        {a.notes}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div className="who2">{a.clientName}</div>
+                      <div className="info">
+                        {a.timeLabel}
+                        {a.durationMin ? ` · ${a.durationMin} min` : ""}
                       </div>
+                      {a.address ? (
+                        <div className="info" style={{ marginTop: 4 }}>
+                          {a.address}
+                        </div>
+                      ) : null}
+                      {a.notes ? (
+                        <div className="info" style={{ marginTop: 4 }}>
+                          {a.notes}
+                        </div>
+                      ) : null}
+                    </div>
+                    {a.linkId ? (
+                      <ChevronRight size={20} color="#8B9088" aria-hidden />
                     ) : null}
+                  </button>
+                  <div className="wp-agenda-actions">
+                    <button type="button" onClick={() => addToCalendar(a)}>
+                      + Calendrier iPhone
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openItinerary(a)}
+                      disabled={!a.address}
+                    >
+                      Itinéraire
+                    </button>
                   </div>
                 </div>
               ))}
@@ -1561,6 +1613,13 @@ function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
   const [interventionZone, setInterventionZone] = useState(
     studio?.interventionZone || ""
   );
+  const [presentation, setPresentation] = useState(studio?.presentation || "");
+  const [yearsExperience, setYearsExperience] = useState(
+    studio?.yearsExperience != null ? String(studio.yearsExperience) : ""
+  );
+  const [specialtiesText, setSpecialtiesText] = useState(
+    (studio?.specialties || []).join(", ")
+  );
   const [color, setColor] = useState(studio?.color || "#2F5E3F");
   const [tog, setTog] = useState({ a: true, b: true, c: false });
   const [loading, setLoading] = useState(false);
@@ -1577,6 +1636,9 @@ function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
       initials,
       contactEmail,
       interventionZone,
+      presentation,
+      yearsExperience,
+      specialtiesText,
       color,
     });
     setLoading(false);
@@ -1644,7 +1706,43 @@ function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
             placeholder="Ex. Aix + 30 km"
           />
         </div>
+        <div className="field">
+          <label htmlFor="set-pres">Présentation</label>
+          <textarea
+            id="set-pres"
+            className="wp-textarea"
+            rows={3}
+            placeholder="3 lignes sur votre studio…"
+            value={presentation}
+            onChange={(e) => setPresentation(e.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="set-spec">Spécialités</label>
+          <input
+            id="set-spec"
+            type="text"
+            value={specialtiesText}
+            onChange={(e) => setSpecialtiesText(e.target.value)}
+            placeholder="Méditerranéen, piscines…"
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="set-years">Années d’expérience</label>
+          <input
+            id="set-years"
+            type="number"
+            min={0}
+            max={80}
+            value={yearsExperience}
+            onChange={(e) => setYearsExperience(e.target.value)}
+            placeholder="Ex. 12"
+          />
+        </div>
 
+        <div className="label" style={{ marginTop: 8 }}>
+          Lien client
+        </div>
         <div className="field">
           <label>Couleur du lien client</label>
           <div className="colorrow" style={{ marginTop: 6 }}>
@@ -1777,12 +1875,42 @@ function localDateTimeToIso(dateStr, timeStr) {
 }
 
 function PlanSheet({ studio, brief, onClose, onCreated }) {
-  const [date, setDate] = useState(defaultPlanDate);
-  const [time, setTime] = useState("10:00");
-  const [duration, setDuration] = useState("60");
+  const dayOptions = useMemo(() => nextPlanDayOptions(6), []);
+  const existing = isoToPlanDateTime(brief?.nextAppointmentAt);
+  const [date, setDate] = useState(
+    existing.date || dayOptions[0]?.date || defaultPlanDate()
+  );
+  const [time, setTime] = useState(
+    existing.time && PLAN_TIME_SLOTS.includes(existing.time)
+      ? existing.time
+      : "10:30"
+  );
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const { slots: clientSlots, note: clientDateNote } = clientAvailabilityFromBrief(
+    brief?.brief
+  );
+  const dispoLabel =
+    clientSlots.length > 0
+      ? clientSlots.join(" · ")
+      : "Non renseignées dans le brief";
+  const isMove = Boolean(brief?.primaryAppointmentId);
+
+  const openSmsConfirmation = (startsAt) => {
+    const body = buildRdvConfirmationSmsBody({
+      clientName: brief?.name,
+      studioName: studio?.name,
+      startsAt,
+      address: brief?.address,
+      city: brief?.city,
+    });
+    const href = rdvConfirmationSmsHref({ phone: brief?.phone, body });
+    if (href && typeof window !== "undefined") {
+      window.location.href = href;
+    }
+  };
 
   const handleSave = async () => {
     setError(null);
@@ -1793,13 +1921,19 @@ function PlanSheet({ studio, brief, onClose, onCreated }) {
     }
 
     setLoading(true);
-    const result = await createProAppointment({
-      studioId: studio?.id,
-      linkId: brief?.id,
-      startsAt,
-      durationMin: Number(duration) || 60,
-      notes,
-    });
+    const result = brief?.primaryAppointmentId
+      ? await updateProAppointment(brief.primaryAppointmentId, {
+          startsAt,
+          durationMin: RDV_DURATION_MIN,
+          notes,
+        })
+      : await createProAppointment({
+          studioId: studio?.id,
+          linkId: brief?.id,
+          startsAt,
+          durationMin: RDV_DURATION_MIN,
+          notes,
+        });
     setLoading(false);
 
     if (!result.ok) {
@@ -1808,48 +1942,66 @@ function PlanSheet({ studio, brief, onClose, onCreated }) {
     }
     onCreated?.(result.appointment);
     onClose?.();
+    openSmsConfirmation(startsAt);
   };
 
   return (
     <div className="overlay" onClick={onClose}>
       <div className="sheet" onClick={(e) => e.stopPropagation()}>
         <div className="grab" />
-        <h3>Planifier un RDV</h3>
+        <h3>{isMove ? "Déplacer le RDV" : "Planifier le RDV"}</h3>
         <p className="lead">
           {brief?.name
-            ? `Rendez-vous avec ${brief.name}`
-            : "Choisissez date et heure"}
+            ? `Avec ${brief.name}${brief?.city ? ` · ${brief.city}` : ""}`
+            : "Choisissez jour et heure"}
+        </p>
+        <p className="bc-taste" style={{ marginBottom: 14 }}>
+          Disponible pour le RDV :{" "}
+          <span style={{ color: "var(--ink)" }}>{dispoLabel}</span>
+          {clientDateNote ? (
+            <>
+              <br />
+              <span style={{ color: "var(--muted)" }}>{clientDateNote}</span>
+            </>
+          ) : null}
         </p>
 
-        <div className="field">
-          <label htmlFor="plan-date">Date</label>
-          <input
-            id="plan-date"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
+        <div className="label" style={{ marginTop: 0 }}>
+          Jour
         </div>
-        <div className="field">
-          <label htmlFor="plan-time">Heure</label>
-          <input
-            id="plan-time"
-            type="time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-          />
+        <div className="filters">
+          {dayOptions.map((d) => (
+            <button
+              key={d.key}
+              type="button"
+              className={`fp ${date === d.date ? "on" : ""}`}
+              onClick={() => setDate(d.date)}
+            >
+              {d.chipLabel}
+            </button>
+          ))}
         </div>
-        <div className="field">
-          <label htmlFor="plan-duration">Durée (minutes)</label>
-          <input
-            id="plan-duration"
-            type="number"
-            min={15}
-            step={15}
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-          />
+
+        <div className="label">Heure</div>
+        <div className="filters">
+          {PLAN_TIME_SLOTS.map((slot) => (
+            <button
+              key={slot}
+              type="button"
+              className={`fp ${time === slot ? "on" : ""}`}
+              onClick={() => setTime(slot)}
+            >
+              {slot.replace(":", " h ")}
+            </button>
+          ))}
         </div>
+
+        <p className="bc-taste" style={{ marginTop: 10 }}>
+          Durée 1 h. En enregistrant, Messages s&apos;ouvre avec la confirmation
+          déjà écrite pour{" "}
+          {brief?.name?.trim()?.split(/\s+/)[0] || "votre client"}.
+        </p>
+
         <div className="field">
           <label htmlFor="plan-notes">Notes (optionnel)</label>
           <input
@@ -1874,7 +2026,7 @@ function PlanSheet({ studio, brief, onClose, onCreated }) {
           className="bigbtn"
           type="button"
           onClick={handleSave}
-          disabled={loading}
+          disabled={loading || !date || !time}
         >
           <CalendarDays size={18} />
           {loading ? "Enregistrement…" : "Enregistrer le RDV"}
@@ -2164,7 +2316,10 @@ export default function WilderProV2() {
   const [items, setItems] = useState([]);
   const [linksStatus, setLinksStatus] = useState("idle"); // idle | loading | ready | error
   const [linksError, setLinksError] = useState(null);
-  const [tab, setTab] = useState("accueil");
+  const [tab, setTab] = useState("projets");
+  const [listCategory, setListCategory] = useState("ready");
+  const [detailBackTab, setDetailBackTab] = useState("clients");
+  const [notifsSeen, setNotifsSeen] = useState(false);
   const [active, setActive] = useState(null);
   const [sheet, setSheet] = useState(false);
   const [planSheet, setPlanSheet] = useState(false);
@@ -2227,10 +2382,14 @@ export default function WilderProV2() {
     boot();
   }, [boot]);
 
-  const open = (b) => {
+  const open = (b, backTab = "clients") => {
+    setDetailBackTab(backTab);
     setActive(b);
     setTab("detail");
   };
+
+  const notifEvents = buildProNotificationEvents(items);
+  const notifBadge = notifsSeen ? 0 : notifEvents.length;
 
   const onSignOut = async () => {
     await signOutCloud().catch(() => {});
@@ -2241,7 +2400,8 @@ export default function WilderProV2() {
     setLinksError(null);
     setActive(null);
     setActiveProject(null);
-    setTab("accueil");
+    setTab("projets");
+    setNotifsSeen(false);
     setPhase("auth");
   };
 
@@ -2278,51 +2438,93 @@ export default function WilderProV2() {
       <ProDesktopSidebar
         tab={tab}
         studio={studio}
-        onNavAccueil={() => setTab("accueil")}
-        onNavBriefs={() => setTab("briefs")}
+        onNavProjets={() => setTab("projets")}
         onNavAgenda={() => setTab("agenda")}
         onNavRealisations={() => {
           setActiveProject(null);
           setTab("realisations");
         }}
+        onNavStudio={() => setTab("studio")}
         onSendLink={() => setSheet(true)}
-        onOpenSettings={() => setSettingsSheet(true)}
       />
       <div className="phone">
         <div
           className={`screen${
-            tab === "briefs" || tab === "detail" ? " wp-desktop-narrow" : ""
+            tab === "clients" || tab === "detail" || tab === "notifs"
+              ? " wp-desktop-narrow"
+              : ""
           }${tab === "agenda" ? " wp-desktop-agenda" : ""}`}
         >
-          {tab === "accueil" && (
-            <Accueil
+          {tab === "projets" && (
+            <ProjetsHome
               studio={studio}
               items={items}
               linksStatus={linksStatus}
               linksError={linksError}
               onRetryLinks={() => loadLinks(studio?.id)}
               onSend={() => setSheet(true)}
-              onBriefs={() => setTab("briefs")}
-              onOpen={open}
+              onOpenList={(cat) => {
+                setListCategory(cat);
+                setTab("clients");
+              }}
+              onOpenNotifs={() => {
+                setNotifsSeen(true);
+                setTab("notifs");
+              }}
               onOpenSettings={() => setSettingsSheet(true)}
+              onOpen={(b) => open(b, "projets")}
+              notifCount={notifBadge}
             />
           )}
-          {tab === "briefs" && (
-            <Briefs
+          {tab === "notifs" && (
+            <NotifsScreen
               items={items}
-              studio={studio}
+              onBack={() => setTab("projets")}
+              onOpenItem={(id) => {
+                const b = items.find((i) => i.id === id);
+                if (b) open(b, "projets");
+              }}
+            />
+          )}
+          {tab === "clients" && (
+            <ClientList
+              category={listCategory}
+              items={items}
               linksStatus={linksStatus}
               linksError={linksError}
               onRetryLinks={() => loadLinks(studio?.id)}
-              onOpen={open}
+              onBack={() => setTab("projets")}
+              onOpen={(b) => open(b, "clients")}
+              onSend={() => setSheet(true)}
+            />
+          )}
+          {tab === "studio" && (
+            <StudioScreen
+              studio={studio}
               onOpenSettings={() => setSettingsSheet(true)}
             />
           )}
           {tab === "detail" && active && (
-            <Detail
+            <BriefDetailScreen
               b={active}
-              onBack={() => setTab("briefs")}
+              studio={studio}
+              onBack={() => setTab(detailBackTab)}
               onPlanifier={() => setPlanSheet(true)}
+              onRefresh={(next) => {
+                setActive(next);
+                setItems((prev) =>
+                  prev.map((i) => (i.id === next.id ? { ...i, ...next } : i))
+                );
+              }}
+              onOpenRealisation={(p) => {
+                setActiveProject(p);
+                setTab("realisation-detail");
+              }}
+              onDeleted={() => {
+                setItems((prev) => prev.filter((i) => i.id !== active?.id));
+                setActive(null);
+                setTab(detailBackTab);
+              }}
             />
           )}
           {tab === "agenda" && (
@@ -2330,6 +2532,10 @@ export default function WilderProV2() {
               studio={studio}
               refreshKey={agendaKey}
               onOpenSettings={() => setSettingsSheet(true)}
+              onOpenBrief={(linkId) => {
+                const b = items.find((i) => i.id === linkId);
+                if (b) open(b, "agenda");
+              }}
             />
           )}
           {tab === "realisations" && (
@@ -2389,37 +2595,19 @@ export default function WilderProV2() {
 
         <nav className="tabbar">
           <button
-            className={`tab ${tab === "accueil" ? "on" : ""}`}
-            onClick={() => setTab("accueil")}
+            className={`tab ${
+              tab === "projets" ||
+              tab === "clients" ||
+              tab === "detail" ||
+              tab === "notifs"
+                ? "on"
+                : ""
+            }`}
+            onClick={() => setTab("projets")}
             type="button"
           >
-            <Home size={22} /> Accueil
+            <LayoutGrid size={22} /> Projets
           </button>
-          <button
-            className={`tab ${tab === "briefs" || tab === "detail" ? "on" : ""}`}
-            onClick={() => setTab("briefs")}
-            type="button"
-          >
-            <FileText size={22} /> Briefs
-          </button>
-          <div className="fab-wrap">
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <button
-                className="fab"
-                onClick={() => setSheet(true)}
-                type="button"
-              >
-                <Plus size={26} />
-              </button>
-              <span className="fab-lbl">Nouveau</span>
-            </div>
-          </div>
           <button
             className={`tab ${tab === "agenda" ? "on" : ""}`}
             onClick={() => setTab("agenda")}
@@ -2442,6 +2630,13 @@ export default function WilderProV2() {
             type="button"
           >
             <Images size={22} /> Réalisations
+          </button>
+          <button
+            className={`tab ${tab === "studio" ? "on" : ""}`}
+            onClick={() => setTab("studio")}
+            type="button"
+          >
+            <SlidersHorizontal size={22} /> Studio
           </button>
         </nav>
 

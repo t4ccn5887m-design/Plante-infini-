@@ -464,3 +464,448 @@ html.atelier-theme .atelier-accueil-progress p {
   line-height: 1.45;
   color: var(--mute);
 }
+
+html.atelier-theme .atelier-accueil-empty {
+  border-radius: var(--atelier-radius-photo);
+  border: 1.5px solid var(--line);
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: stretch;
+  background: var(--card);
+}
+
+html.atelier-theme .atelier-idees-quiz-cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: var(--atelier-radius-card);
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  min-height: 44px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+}
+
+html.atelier-theme .atelier-idees-quiz-cta__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex-grow: 1;
+  color: var(--sage);
+}
+
+html.atelier-theme .atelier-idees-quiz-cta__chev {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  color: var(--sage);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+html.atelier-theme .atelier-accueil-empty__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  text-align: center;
+}
+
+/* ── Auth particulier (/, /connexion sans profil pro) ── */
+
+html.atelier-theme .atelier-auth.sv-page {
+  color: var(--ink);
+  background: var(--bg);
+}
+
+html.atelier-theme .atelier-auth .sv-main {
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+
+html.atelier-theme .atelier-auth .sv-page :global(a.sv-card .sv-card__icon) {
+  background: var(--bg);
+}
+
+html.atelier-theme .atelier-auth .sv-hint {
+  background: var(--bg) !important;
+  color: var(--mute) !important;
+  border: 1px solid var(--line);
+}
+
+@media (min-width: 900px) {
+  html.atelier-theme .atelier-auth.sv-page {
+    background: var(--bg);
+  }
+
+  html.atelier-theme .atelier-auth .sv-hero {
+    background: var(--card);
+    border: 1px solid var(--line);
+    box-shadow: none;
+    color: var(--ink);
+  }
+
+  html.atelier-theme .atelier-auth .sv-hero__sub {
+    color: var(--mute);
+  }
+}
+
+/* Puces brief (Step*) dans le dossier particulier */
+html.atelier-theme .garden-brief-steps .bf-section-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin-bottom: 8px;
+}
+
+html.atelier-theme .garden-brief-steps .bf-hint {
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--mute);
+}
+
+html.atelier-theme .garden-brief-steps .bf-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+html.atelier-theme .garden-brief-steps .bf-chip {
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line, #2a3a30);
+  background: var(--card, #17241c);
+  color: var(--ink, #f1ece2);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Mur / détail styles de jardin — photo seule, pas de bloc explicatif */
+html.atelier-theme .atelier-style-detail {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+html.atelier-theme .atelier-style-detail__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+html.atelier-theme .atelier-style-detail__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 26, 20, 0.35) 0%,
+    transparent 28%,
+    transparent 55%,
+    rgba(15, 26, 20, 0.92) 100%
+  );
+  pointer-events: none;
+}
+
+html.atelier-theme .atelier-style-detail__top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+}
+
+html.atelier-theme .atelier-style-detail__back {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 22px;
+  line-height: 1;
+  padding-bottom: 2px;
+}
+
+html.atelier-theme .atelier-style-detail__credit {
+  position: absolute;
+  left: 12px;
+  bottom: 96px;
+  z-index: 2;
+}
+
+html.atelier-theme .atelier-style-detail__footer {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  padding: 12px 18px max(18px, env(safe-area-inset-bottom));
+}
+
+html.atelier-theme .atelier-style-detail__footer .atelier-btn-primary,
+html.atelier-theme .atelier-style-detail__footer .atelier-btn-secondary {
+  width: 100%;
+}
+
+html.atelier-theme .atelier-style-detail__heart-on {
+  border-color: var(--clay);
+  color: var(--clay);
+}
+
+html.atelier-theme .garden-brief-steps .bf-chip.on {
+  border-color: var(--sage, #c9d6b8);
+  background: rgba(201, 214, 184, 0.18);
+  color: var(--sage, #c9d6b8);
+}
+
+/* ── Partenaires (bientôt) ── */
+
+html.atelier-theme .atelier-partners {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  padding: 24px 20px 16px;
+}
+
+html.atelier-theme .atelier-partners__inner {
+  max-width: 420px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  text-align: center;
+}
+
+html.atelier-theme .atelier-partners__pill {
+  align-self: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sage);
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+
+html.atelier-theme .atelier-partners__title {
+  margin: 0;
+  font-family: var(--font-title, Fraunces, serif);
+  font-size: clamp(1.5rem, 5vw, 1.85rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+html.atelier-theme .atelier-partners__lead {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--mute);
+}
+
+html.atelier-theme .atelier-partners__guest {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+
+html.atelier-theme .atelier-partners__guest-msg {
+  margin: 0;
+  font-size: 14px;
+  color: var(--mute);
+}
+
+html.atelier-theme .atelier-partners__signup {
+  text-decoration: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+html.atelier-theme .atelier-partners__notify-done {
+  opacity: 0.85;
+  cursor: default;
+}
+
+html.atelier-theme .atelier-partners__error {
+  margin: 0;
+  font-size: 13px;
+  color: var(--danger);
+}
+
+html.atelier-theme .atelier-partners__demo-link {
+  margin-top: 8px;
+  border: none;
+  background: transparent;
+  color: var(--sage);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+html.atelier-theme .atelier-partners-demo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--bg);
+}
+
+html.atelier-theme .atelier-partners-demo__banner {
+  flex-shrink: 0;
+  padding: 10px 16px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: var(--clay);
+}
+
+html.atelier-theme .atelier-partners-demo__scroll {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+}
+
+html.atelier-theme .atelier-partners-demo__hero {
+  position: relative;
+  height: 220px;
+}
+
+html.atelier-theme .atelier-partners-demo__hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+html.atelier-theme .atelier-partners-demo__hero-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 26, 20, 0.4), transparent 55%);
+}
+
+html.atelier-theme .atelier-partners-demo__back {
+  position: absolute;
+  top: 12px;
+  left: 12;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+html.atelier-theme .atelier-partners-demo__body {
+  padding: 20px 18px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+html.atelier-theme .atelier-partners-demo__name {
+  margin: 0;
+  font-family: var(--font-title, Fraunces, serif);
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--ink);
+}
+
+html.atelier-theme .atelier-partners-demo__tagline {
+  margin: 0;
+  font-size: 15px;
+  color: var(--sage);
+  font-weight: 600;
+}
+
+html.atelier-theme .atelier-partners-demo__intro {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--mute);
+}
+
+html.atelier-theme .atelier-partners-demo__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+html.atelier-theme .atelier-partners-demo__chip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+html.atelier-theme .atelier-partners-demo__fake-contact {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--mute);
+  font-style: italic;
+}
+
+html.atelier-theme .atelier-partners-demo__footer {
+  flex-shrink: 0;
+  padding: 12px 18px max(16px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+}
+
+html.atelier-theme .atelier-partners-demo__footer .atelier-btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+html.atelier-theme .atelier-partners-demo__soon {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mute);
+  text-align: center;
+}

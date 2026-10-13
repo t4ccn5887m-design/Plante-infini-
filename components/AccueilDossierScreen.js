@@ -4,8 +4,10 @@ import AtelierStepRow from "@/components/atelier/AtelierStepRow";
 import { getAllGardenStyles } from "@/lib/catalogueStyles";
 import { computeGardenDossierProgress } from "@/lib/gardenDossierProgress";
 import { readGardenDossierLocalFlags } from "@/lib/gardenDossierLocal";
+import { loadGardenBriefDetails } from "@/lib/gardenBriefDetails";
 import { DOSSIER_STEP_CARD } from "@/lib/gardenDossierStepCards";
 import { loadPremiumProfile } from "@/lib/premiumProfile";
+import { AT } from "@/lib/atelierCssVars";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
 const PLACEHOLDER_COLORS = ["#B9667F", "#6F8A5C", "#8C7AB0", "#C0652E", "#6A5896"];
@@ -29,7 +31,7 @@ function isCatalogueItem(discovery) {
 function CoupThumb({ item }) {
   const isScan = !isCatalogueItem(item.discovery);
   const badgeLabel = isScan ? "Scan" : "Idée";
-  const badgeColor = isScan ? "#4E7B52" : "#6A5896";
+  const badgeColor = isScan ? "var(--sage)" : "var(--clay)";
   const photo = item.photo;
   return (
     <div
@@ -38,8 +40,8 @@ function CoupThumb({ item }) {
         flexDirection: "column",
         borderRadius: 16,
         overflow: "hidden",
-        border: "1.5px solid #EEE9E0",
-        color: "#1F2A22",
+        border: `1.5px solid ${AT.line}`,
+        color: AT.ink,
         minWidth: 0,
       }}
     >
@@ -70,7 +72,7 @@ function CoupThumb({ item }) {
             fontWeight: 700,
             padding: "2px 6px",
             borderRadius: 999,
-            background: "#FFFFFF",
+            background: AT.card,
             color: badgeColor,
           }}
         >
@@ -100,14 +102,16 @@ export default function AccueilDossierScreen({
   accountMenu = null,
   onOpenDossier,
   onOpenCoupsDeCoeur,
-  onOpenAddSheet,
   onOpenIdees,
   onOpenAmbiances,
   onOpenTerrain,
   onOpenBudget,
   onContinueDossier,
   onOpenMot,
-  onScan,
+  onOpenQuotidien,
+  onOpenAEviter,
+  onOpenExistant,
+  onOpenEntretien,
   gardenRefreshTick = 0,
 }) {
   const displayName = loadPremiumProfile().displayName?.trim();
@@ -121,10 +125,11 @@ export default function AccueilDossierScreen({
         gardenItemCount: gardenItems.length,
         paysagisteMessage,
         ambianceComplete: localFlags.ambianceComplete,
-        terrainPhotosComplete: localFlags.terrainPhotosComplete,
+        terrainComplete: localFlags.terrainPhotosComplete && localFlags.terrainFieldsComplete,
         budgetComplete: localFlags.budgetComplete,
+        details: loadGardenBriefDetails(),
       }),
-    [gardenItems.length, paysagisteMessage, localFlags]
+    [gardenItems.length, paysagisteMessage, localFlags, gardenRefreshTick]
   );
 
   const recentItems = useMemo(() => gardenItems.slice(0, 3), [gardenItems]);
@@ -138,7 +143,7 @@ export default function AccueilDossierScreen({
   const progressPhrase =
     progress.percent >= 100
       ? "Votre dossier est complet, vous pouvez l'envoyer à votre paysagiste."
-      : `Encore ${progress.remainingCount} étape${progress.remainingCount > 1 ? "s" : ""} pour que votre paysagiste comprenne vraiment votre projet.`;
+      : `${progress.completedCount}/${progress.totalSteps} · Encore ${progress.remainingCount} étape${progress.remainingCount > 1 ? "s" : ""} pour que votre paysagiste comprenne vraiment votre projet.`;
 
   const handleStep = (stepId) => {
     if (stepId === "terrain") onOpenTerrain?.();
@@ -146,6 +151,10 @@ export default function AccueilDossierScreen({
     else if (stepId === "coups-de-coeur") onOpenIdees?.();
     else if (stepId === "budget") onOpenBudget?.();
     else if (stepId === "mot-paysagiste") onOpenMot?.();
+    else if (stepId === "quotidien") onOpenQuotidien?.();
+    else if (stepId === "a-eviter") onOpenAEviter?.();
+    else if (stepId === "existant") onOpenExistant?.();
+    else if (stepId === "entretien") onOpenEntretien?.();
   };
 
   if (loading) {
@@ -235,7 +244,7 @@ export default function AccueilDossierScreen({
               fontSize: 12,
               fontWeight: 700,
               letterSpacing: "1.2px",
-              color: "#5B6359",
+              color: AT.mute,
             }}
           >
             MES COUPS DE CŒUR · {gardenItems.length}
@@ -264,52 +273,9 @@ export default function AccueilDossierScreen({
         </div>
 
         {gardenItems.length === 0 ? (
-          <div
-            style={{
-              borderRadius: 18,
-              border: "1.5px solid #EEE9E0",
-              padding: "18px 16px",
-              display: "flex",
-              flexDirection: "column",
-              gap: 14,
-              alignItems: "stretch",
-            }}
-          >
-            <span style={{ fontSize: 16, fontWeight: 700, color: "#1F2A22", textAlign: "center" }}>
-              Votre jardin commence ici
-            </span>
-            <button
-              type="button"
-              onClick={onScan}
-              style={{
-                minHeight: 44,
-                borderRadius: 14,
-                background: "#2F5E3F",
-                color: "#fff",
-                border: "none",
-                fontSize: 14,
-                fontWeight: 700,
-                cursor: "pointer",
-                fontFamily: "inherit",
-              }}
-            >
-              Scanner une plante
-            </button>
-            <button
-              type="button"
-              onClick={onOpenIdees}
-              style={{
-                minHeight: 44,
-                borderRadius: 14,
-                background: "#FFFFFF",
-                color: "#2F5E3F",
-                border: "1.5px solid #EEE9E0",
-                fontSize: 14,
-                fontWeight: 700,
-                cursor: "pointer",
-                fontFamily: "inherit",
-              }}
-            >
+          <div className="atelier-accueil-empty">
+            <span className="atelier-accueil-empty__title">Votre jardin commence ici</span>
+            <button type="button" className="atelier-btn-secondary" onClick={onOpenIdees}>
               Piocher une idée
             </button>
           </div>

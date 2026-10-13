@@ -81,7 +81,7 @@ export function formatScanCharacteristics(discovery) {
   return "Plante scannée";
 }
 
-function ScanRow({ discovery, inGarden, toggling, onOpen, onToggle }) {
+function ScanRow({ discovery, inGarden, toggling, onOpen, onToggle, readOnly = false }) {
   const photo = getDiscoveryPhotoUrl(discovery);
   const subtitle = formatScanCharacteristics(discovery);
 
@@ -153,38 +153,40 @@ function ScanRow({ discovery, inGarden, toggling, onOpen, onToggle }) {
         </div>
       </button>
 
-      <button
-        type="button"
-        onClick={() => onToggle(discovery)}
-        disabled={toggling}
-        style={{
-          flex: "none",
-          height: 33,
-          padding: "0 12px",
-          borderRadius: 20,
-          fontSize: 11,
-          fontWeight: 600,
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 5,
-          cursor: toggling ? "wait" : "pointer",
-          fontFamily: "inherit",
-          border: inGarden ? "none" : `0.5px solid ${COLORS.borderStrong}`,
-          background: inGarden ? COLORS.greenTint : "#fff",
-          color: inGarden ? COLORS.greenInk : COLORS.ink,
-          opacity: toggling ? 0.65 : 1,
-        }}
-      >
-        {inGarden ? (
-          <>
-            <IconCheck /> Mon jardin
-          </>
-        ) : (
-          <>
-            <IconPlus /> Mon jardin
-          </>
-        )}
-      </button>
+      {!readOnly ? (
+        <button
+          type="button"
+          onClick={() => onToggle(discovery)}
+          disabled={toggling}
+          style={{
+            flex: "none",
+            height: 33,
+            padding: "0 12px",
+            borderRadius: 20,
+            fontSize: 11,
+            fontWeight: 600,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 5,
+            cursor: toggling ? "wait" : "pointer",
+            fontFamily: "inherit",
+            border: inGarden ? "none" : `0.5px solid ${COLORS.borderStrong}`,
+            background: inGarden ? COLORS.greenTint : "#fff",
+            color: inGarden ? COLORS.greenInk : COLORS.ink,
+            opacity: toggling ? 0.65 : 1,
+          }}
+        >
+          {inGarden ? (
+            <>
+              <IconCheck /> Mon jardin
+            </>
+          ) : (
+            <>
+              <IconPlus /> Mon jardin
+            </>
+          )}
+        </button>
+      ) : null}
     </div>
   );
 }
@@ -197,6 +199,7 @@ export default function MesScansScreen({
   onScan,
   onOpenScan,
   onRequireAccount,
+  readOnly = false,
 }) {
   const [scans, setScans] = useState(discoveriesProp);
   const [inGarden, setInGarden] = useState(() => new Set());
@@ -238,8 +241,11 @@ export default function MesScansScreen({
     return count;
   }, [scans, inGarden]);
 
-  const subtitle =
-    scans.length <= 1
+  const subtitle = readOnly
+    ? scans.length <= 1
+      ? `${scans.length} trouvaille archivée`
+      : `${scans.length} trouvailles archivées`
+    : scans.length <= 1
       ? `${scans.length} plante scannée · ${gardenCount} dans mon jardin`
       : `${scans.length} plantes scannées · ${gardenCount} dans mon jardin`;
 
@@ -305,36 +311,42 @@ export default function MesScansScreen({
             </button>
           ) : null}
           <div className="wilder-v2-title-page" style={{ fontSize: 21, letterSpacing: "-0.01em", lineHeight: 1.15 }}>
-            Mes scans
+            {readOnly ? "Mes anciennes trouvailles" : "Mes scans"}
           </div>
           <div style={{ fontSize: 12, color: COLORS.muted, marginTop: 4 }}>
             {loading ? "…" : subtitle}
           </div>
         </div>
 
-        <div
-          style={{
-            margin: "0 16px 18px",
-            background: COLORS.hint,
-            border: `0.5px solid ${COLORS.border}`,
-            borderRadius: 12,
-            padding: "11px 13px",
-            fontSize: 12,
-            color: COLORS.secondary,
-            lineHeight: 1.5,
-            display: "flex",
-            gap: 9,
-            alignItems: "flex-start",
-          }}
-        >
-          <span style={{ flex: "none", marginTop: 1, color: COLORS.greenInk }}>
-            <IconGrid />
-          </span>
-          <span>
-            Chaque plante scannée arrive ici, automatiquement. Ajoute à ton jardin celles que tu veux
-            retrouver dans ton brief.
-          </span>
-        </div>
+        {!readOnly ? (
+          <div
+            style={{
+              margin: "0 16px 18px",
+              background: COLORS.hint,
+              border: `0.5px solid ${COLORS.border}`,
+              borderRadius: 12,
+              padding: "11px 13px",
+              fontSize: 12,
+              color: COLORS.secondary,
+              lineHeight: 1.5,
+              display: "flex",
+              gap: 9,
+              alignItems: "flex-start",
+            }}
+          >
+            <span style={{ flex: "none", marginTop: 1, color: COLORS.greenInk }}>
+              <IconGrid />
+            </span>
+            <span>
+              Chaque plante scannée arrive ici, automatiquement. Ajoute à ton jardin celles que tu veux
+              retrouver dans ton brief.
+            </span>
+          </div>
+        ) : (
+          <p style={{ margin: "0 16px 14px", fontSize: 12, color: COLORS.muted, lineHeight: 1.5 }}>
+            Consultation seule — vos anciennes identifications photo sont conservées ici.
+          </p>
+        )}
 
         {error && (
           <p style={{ margin: "0 16px 12px", fontSize: 12, color: COLORS.error }}>
@@ -361,7 +373,7 @@ export default function MesScansScreen({
 
         {!loading && scans.length === 0 && (
           <p style={{ padding: "0 16px 24px", fontSize: 13, color: COLORS.muted, textAlign: "center" }}>
-            Aucun scan pour l&apos;instant. Lance ta première identification !
+            {readOnly ? "Aucune trouvaille archivée." : "Aucun scan pour l'instant. Lance ta première identification !"}
           </p>
         )}
 
@@ -375,35 +387,38 @@ export default function MesScansScreen({
                 toggling={togglingId === discovery.id}
                 onOpen={onOpenScan}
                 onToggle={handleToggle}
+                readOnly={readOnly}
               />
             ))}
           </div>
         )}
 
-        <div style={{ padding: "12px 16px 20px", marginTop: 6 }}>
-          <button
-            type="button"
-            onClick={onScan}
-            style={{
-              width: "100%",
-              height: 48,
-              background: COLORS.primary,
-              color: "#fff",
-              border: "none",
-              borderRadius: 13,
-              fontSize: 15,
-              fontWeight: 600,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-              fontFamily: "inherit",
-            }}
-          >
-            <IconCamera /> Scanner une plante
-          </button>
-        </div>
+        {!readOnly && onScan ? (
+          <div style={{ padding: "12px 16px 20px", marginTop: 6 }}>
+            <button
+              type="button"
+              onClick={onScan}
+              style={{
+                width: "100%",
+                height: 48,
+                background: COLORS.primary,
+                color: "#fff",
+                border: "none",
+                borderRadius: 13,
+                fontSize: 15,
+                fontWeight: 600,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                fontFamily: "inherit",
+              }}
+            >
+              <IconCamera /> Scanner une plante
+            </button>
+          </div>
+        ) : null}
     </>
   );
 }

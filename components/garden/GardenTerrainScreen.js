@@ -14,9 +14,10 @@ import {
 } from "@/lib/gardenTerrainPhotos";
 import GardenFlowScreen, { GardenBackButton, GardenPrimaryButton } from "@/components/garden/GardenFlowScreen";
 import { getGardenTerrainPhotoCountSync } from "@/lib/gardenTerrainPhotos";
+import { touchGardenDossierAfterLocalSave } from "@/lib/gardenDossierStore";
 
-const GREEN = "#2F5E3F";
-const MUTED = "#5B6359";
+const GREEN = "var(--sage)";
+const MUTED = "var(--mute)";
 
 function Chip({ label, active, onClick }) {
   return (
@@ -27,8 +28,8 @@ function Chip({ label, active, onClick }) {
         padding: "10px 14px",
         borderRadius: 999,
         border: active ? `2px solid ${GREEN}` : "1.5px solid #DDD6CB",
-        background: active ? "#E6F0E3" : "#FFFFFF",
-        color: active ? GREEN : "#1F2A22",
+        background: active ? "rgba(201, 214, 184, 0.18)" : "var(--card)",
+        color: active ? GREEN : "var(--ink)",
         fontSize: 14,
         fontWeight: 600,
         cursor: "pointer",
@@ -42,7 +43,7 @@ function Chip({ label, active, onClick }) {
 
 function SectionLabel({ children }) {
   return (
-    <div style={{ fontSize: 15, fontWeight: 700, color: "#1F2A22", marginTop: 8 }}>{children}</div>
+    <div style={{ fontSize: 15, fontWeight: 700, color: "var(--ink)", marginTop: 8 }}>{children}</div>
   );
 }
 
@@ -82,8 +83,10 @@ export default function GardenTerrainScreen({ onBack, onChanged, onValidated }) 
     fields.utilities !== savedFieldsOnMount.utilities;
 
   const photosChanged = photos.length !== baselinePhotoCount;
+  const fieldsComplete = Boolean(fields.areaRange && fields.timeline && fields.utilities);
   const canSubmit =
     photos.length >= 1 &&
+    fieldsComplete &&
     (!stepWasValidatedOnMount || fieldsDirty || photosChanged);
 
   const validateLabel =
@@ -95,6 +98,7 @@ export default function GardenTerrainScreen({ onBack, onChanged, onValidated }) 
     if (!canSubmit) return;
     saveGardenTerrainFields(fields);
     setGardenTerrainStepValidated(true);
+    touchGardenDossierAfterLocalSave();
     onChanged?.();
     onValidated?.();
   };
@@ -236,7 +240,7 @@ export default function GardenTerrainScreen({ onBack, onChanged, onValidated }) 
           </div>
         )}
 
-        <div style={{ borderTop: "1.5px solid #EEE9E0", paddingTop: 8, display: "flex", flexDirection: "column", gap: 8 }}>
+        <div style={{ borderTop: "1.5px solid var(--line)", paddingTop: 8, display: "flex", flexDirection: "column", gap: 8 }}>
           <span style={{ fontSize: 13, fontWeight: 700, color: MUTED, letterSpacing: "0.8px" }}>
             VOTRE TERRAIN EN BREF
           </span>
@@ -290,7 +294,7 @@ const actionBtnStyle = {
   minHeight: 46,
   borderRadius: 14,
   border: "1.5px solid #DDD6CB",
-  background: "#FFFFFF",
+  background: "var(--card)",
   fontSize: 15,
   fontWeight: 700,
   cursor: "pointer",

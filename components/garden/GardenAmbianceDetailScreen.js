@@ -8,10 +8,11 @@ import {
   loadGardenAmbianceChoice,
   saveGardenAmbianceChoice,
 } from "@/lib/gardenAmbianceChoice";
+import { touchGardenDossierAfterLocalSave } from "@/lib/gardenDossierStore";
 import GardenFlowScreen, { GardenBackButton, GardenPrimaryButton } from "@/components/garden/GardenFlowScreen";
 
-const GREEN = "#2F5E3F";
-const MUTED = "#5B6359";
+const GREEN = "var(--sage)";
+const MUTED = "var(--mute)";
 
 function TraitPill({ children, warm }) {
   return (
@@ -19,7 +20,7 @@ function TraitPill({ children, warm }) {
       style={{
         padding: "6px 12px",
         borderRadius: 999,
-        background: warm ? "#F6E7D8" : "#E6F0E3",
+        background: warm ? "#F6E7D8" : "rgba(201, 214, 184, 0.18)",
         color: warm ? "#8A4A22" : GREEN,
         fontSize: 13,
         fontWeight: 700,
@@ -60,7 +61,7 @@ export default function GardenAmbianceDetailScreen({
   const savedOnMount = loadGardenAmbianceChoice();
   const [pickThis, setPickThis] = useState(savedOnMount === ambianceName);
 
-  const canValidate = pickThis && savedOnMount !== ambianceName;
+  const canValidate = pickThis;
   const validateLabel =
     savedOnMount && savedOnMount !== ambianceName && pickThis
       ? "Enregistrer les modifications"
@@ -69,6 +70,7 @@ export default function GardenAmbianceDetailScreen({
   const handleValidate = () => {
     if (!canValidate) return;
     saveGardenAmbianceChoice(ambianceName);
+    touchGardenDossierAfterLocalSave();
     onValidated?.();
   };
 
@@ -101,7 +103,7 @@ export default function GardenAmbianceDetailScreen({
         }}
       >
         <GardenBackButton onBack={onBack} />
-        <div style={{ color: "#FFFFFF", display: "flex", flexDirection: "column", gap: 4 }}>
+        <div style={{ color: "var(--ink)", display: "flex", flexDirection: "column", gap: 4 }}>
           <h1 style={{ margin: 0, fontSize: 30, fontWeight: 700 }}>{ambianceName}</h1>
           <span style={{ fontSize: 15, color: "#F5E9DA" }}>{meta.subtitle}</span>
         </div>
@@ -113,12 +115,12 @@ export default function GardenAmbianceDetailScreen({
           onClick={() => setPickThis((v) => !v)}
           style={{
             borderRadius: 16,
-            border: pickThis ? `2px solid ${GREEN}` : "1.5px solid #EEE9E0",
-            background: pickThis ? "#E6F0E3" : "#FFFFFF",
+            border: pickThis ? `2px solid ${GREEN}` : "1.5px solid var(--line)",
+            background: pickThis ? "rgba(201, 214, 184, 0.18)" : "var(--card)",
             padding: "12px 14px",
             fontSize: 15,
             fontWeight: 700,
-            color: pickThis ? GREEN : "#1F2A22",
+            color: pickThis ? GREEN : "var(--ink)",
             cursor: "pointer",
             fontFamily: "inherit",
             textAlign: "left",
@@ -160,7 +162,7 @@ export default function GardenAmbianceDetailScreen({
                     flex: "0 0 128px",
                     borderRadius: 18,
                     overflow: "hidden",
-                    border: "1.5px solid #EEE9E0",
+                    border: "1.5px solid var(--line)",
                     display: "flex",
                     flexDirection: "column",
                   }}
@@ -177,7 +179,7 @@ export default function GardenAmbianceDetailScreen({
                       padding: "8px 10px 10px",
                       fontSize: 14,
                       fontWeight: 700,
-                      color: "#1F2A22",
+                      color: "var(--ink)",
                     }}
                   >
                     {p.nom}
@@ -207,7 +209,7 @@ export default function GardenAmbianceDetailScreen({
                     gap: 10,
                     padding: 8,
                     borderRadius: 16,
-                    border: "1.5px solid #EEE9E0",
+                    border: "1.5px solid var(--line)",
                   }}
                 >
                   <span
@@ -221,7 +223,7 @@ export default function GardenAmbianceDetailScreen({
                         : "#D8C9AE",
                     }}
                   />
-                  <span style={{ fontSize: 14, fontWeight: 700, color: "#1F2A22", lineHeight: 1.2 }}>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: "var(--ink)", lineHeight: 1.2 }}>
                     {m.nom}
                   </span>
                 </div>
