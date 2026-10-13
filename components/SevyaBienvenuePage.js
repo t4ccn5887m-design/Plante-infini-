@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
+import SevyaSceauLogo from "@/components/SevyaSceauLogo";
 import { ChevronRight, Leaf } from "lucide-react";
 import { WILDER_COLORS as C } from "@/lib/themes";
 
@@ -14,15 +15,6 @@ const CARD = {
 
 const HERO_GRADIENT =
   "linear-gradient(165deg, #5E8A64 0%, #2F5E3F 52%, #1E3A28 100%)";
-
-function SevyaLogo() {
-  return (
-    <div className="sv-logo" aria-label="Sevya">
-      <Leaf className="sv-logo__leaf" size={20} strokeWidth={2.2} aria-hidden />
-      <span className="sv-logo__text">sevya</span>
-    </div>
-  );
-}
 
 function ChoiceCard({ href, bg, ink, title, description, icon }) {
   return (
@@ -58,7 +50,7 @@ export default function SevyaBienvenuePage() {
       <div className="sv-page">
         <div className="sv-shell">
           <section className="sv-hero" aria-labelledby="sv-hero-title">
-            <SevyaLogo />
+            <SevyaSceauLogo size={96} />
             <h1 id="sv-hero-title" className="sv-hero__title">
               Vos envies, traduites en jardin.
             </h1>
@@ -161,24 +153,8 @@ export default function SevyaBienvenuePage() {
           box-shadow: 0 12px 40px -16px rgba(30, 58, 40, 0.45);
         }
 
-        .sv-hero :global(.sv-logo) {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
+        .sv-hero :global(.sv-sceau) {
           margin-bottom: 20px;
-        }
-
-        .sv-hero :global(.sv-logo__leaf) {
-          color: #c8e0c9;
-          flex-shrink: 0;
-        }
-
-        .sv-hero :global(.sv-logo__text) {
-          font-size: 1.35rem;
-          font-weight: 700;
-          letter-spacing: -0.02em;
-          text-transform: lowercase;
-          color: #fff;
         }
 
         .sv-hero__title {

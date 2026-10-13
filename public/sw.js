@@ -1,18 +1,22 @@
-const CACHE_NAME = "wilder-v4";
+const CACHE_NAME = "sevya-v5";
 const PRECACHE_URLS = [
-  "/manifest.json?v=20250605",
-  "/icon-192.png?v=20250605",
-  "/icon-512.png?v=20250605",
-  "/icon-180.png?v=20250605",
+  "/manifest.json?v=20261013",
+  "/icon-192.png?v=20261013",
+  "/icon-512.png?v=20261013",
+  "/apple-touch-icon.png?v=20261013",
 ];
 
 const BRANDING_PATHS = new Set([
   "/manifest.json",
+  "/favicon.svg",
   "/icon.svg",
   "/icon-192.png",
   "/icon-512.png",
+  "/icon-maskable-512.png",
   "/icon-180.png",
+  "/apple-touch-icon.png",
   "/favicon-32.png",
+  "/favicon-16.png",
   "/favicon.ico",
 ]);
 

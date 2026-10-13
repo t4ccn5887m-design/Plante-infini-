@@ -2,6 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import SevyaSceauLogo from "@/components/SevyaSceauLogo";
 import { Leaf } from "lucide-react";
 import { WILDER_COLORS as C } from "@/lib/themes";
 import { isPermanentAuthUser } from "@/lib/authUser";
@@ -35,15 +36,6 @@ const HERO_GRADIENT =
   "linear-gradient(165deg, #5E8A64 0%, #2F5E3F 52%, #1E3A28 100%)";
 
 const PRIMARY_GREEN = "#2F5E3F";
-
-function SevyaLogo() {
-  return (
-    <div className="sv-logo" aria-label="Sevya">
-      <Leaf className="sv-logo__leaf" size={20} strokeWidth={2.2} aria-hidden />
-      <span className="sv-logo__text">sevya</span>
-    </div>
-  );
-}
 
 function mapError(message) {
   if (!message) return "Une erreur est survenue. Réessayez.";
@@ -218,7 +210,7 @@ export default function ConnexionPage() {
       <div className="sv-page">
         <div className="sv-shell">
           <section className="sv-hero" aria-hidden="true">
-            <SevyaLogo />
+            <SevyaSceauLogo size={96} />
             <h1 className="sv-hero__title">
               Le jardin de vos envies, compris d&apos;avance.
             </h1>
@@ -732,23 +724,8 @@ export default function ConnexionPage() {
             box-shadow: 0 12px 40px -16px rgba(30, 58, 40, 0.45);
           }
 
-          .sv-logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+          .sv-hero :global(.sv-sceau) {
             margin-bottom: 24px;
-          }
-
-          .sv-logo :global(.sv-logo__leaf) {
-            color: #c8e0c9;
-          }
-
-          .sv-logo__text {
-            font-size: 1.35rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            text-transform: lowercase;
-            color: #fff;
           }
 
           .sv-hero__title {
