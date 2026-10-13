@@ -476,6 +476,43 @@ html.atelier-theme .atelier-accueil-empty {
   background: var(--card);
 }
 
+html.atelier-theme .atelier-idees-quiz-cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: var(--atelier-radius-card);
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  min-height: 44px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+}
+
+html.atelier-theme .atelier-idees-quiz-cta__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex-grow: 1;
+  color: var(--sage);
+}
+
+html.atelier-theme .atelier-idees-quiz-cta__chev {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  color: var(--sage);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 html.atelier-theme .atelier-accueil-empty__title {
   font-size: 16px;
   font-weight: 700;

@@ -8,7 +8,7 @@ import {
   VEGETAL_ENVIE_CHIPS,
 } from "@/lib/catalogueFamilles";
 
-const GREEN = "#2F5E3F";
+const GREEN = "var(--sage)";
 
 function FamilleIcon({ type, stroke }) {
   const ic = { stroke, strokeWidth: 1.8, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" };
@@ -206,7 +206,7 @@ export default function CatalogueFamillesScreen({
             width: 44,
             height: 44,
             borderRadius: 999,
-            background: "#F2EEE7",
+            background: "var(--card)",
             border: "none",
             display: "flex",
             alignItems: "center",
@@ -215,7 +215,7 @@ export default function CatalogueFamillesScreen({
             fontFamily: "inherit",
             fontSize: 26,
             lineHeight: 1,
-            color: "#1F2A22",
+            color: "var(--ink)",
             paddingBottom: 3,
           }}
         >
@@ -223,7 +223,7 @@ export default function CatalogueFamillesScreen({
         </button>
       </div>
 
-      <h1 style={{ margin: "0 0 2px", fontSize: 28, fontWeight: 700, color: "#1F2A22" }}>{data.title}</h1>
+      <h1 style={{ margin: "0 0 2px", fontSize: 28, fontWeight: 700, color: "var(--ink)" }}>{data.title}</h1>
       <p style={{ margin: "0 0 16px", fontSize: 15, color: "#5B6359" }}>{data.subtitle}</p>
 
       <label
@@ -235,7 +235,7 @@ export default function CatalogueFamillesScreen({
           minHeight: 48,
           padding: "0 15px",
           borderRadius: 16,
-          background: "#F2EEE7",
+          background: "var(--card)",
           marginBottom: 18,
           color: "#5B6359",
           fontSize: 14.5,
@@ -264,7 +264,7 @@ export default function CatalogueFamillesScreen({
             background: "transparent",
             fontFamily: "inherit",
             fontSize: 14.5,
-            color: "#1F2A22",
+            color: "var(--ink)",
             outline: "none",
             minWidth: 0,
           }}
@@ -296,7 +296,7 @@ export default function CatalogueFamillesScreen({
               cursor: "pointer",
               fontFamily: "inherit",
               textAlign: "left",
-              color: "#1F2A22",
+              color: "var(--ink)",
             }}
           >
             <span
@@ -337,7 +337,7 @@ export default function CatalogueFamillesScreen({
                   width: 46,
                   height: 46,
                   borderRadius: 15,
-                  background: "#FFFFFF",
+                  background: "var(--card)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -356,7 +356,7 @@ export default function CatalogueFamillesScreen({
 
       {data.showGrainLegend ? (
         <section style={{ marginTop: 22 }}>
-          <h2 style={{ margin: "0 0 10px", fontSize: 17, fontWeight: 700, color: "#1F2A22" }}>
+          <h2 style={{ margin: "0 0 10px", fontSize: 17, fontWeight: 700, color: "var(--ink)" }}>
             Taille des grains
           </h2>
           <p style={{ margin: 0, fontSize: 13, lineHeight: 1.45, color: "#5B6359" }}>
@@ -367,7 +367,7 @@ export default function CatalogueFamillesScreen({
 
       {data.showEnvies ? (
         <section style={{ marginTop: 22 }}>
-          <h2 style={{ margin: "0 0 10px", fontSize: 17, fontWeight: 700, color: "#1F2A22" }}>
+          <h2 style={{ margin: "0 0 10px", fontSize: 17, fontWeight: 700, color: "var(--ink)" }}>
             Ou selon vos envies
           </h2>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -381,11 +381,11 @@ export default function CatalogueFamillesScreen({
                   padding: "0 14px",
                   borderRadius: 999,
                   border: "1.5px solid #E4DED3",
-                  background: "#FFFFFF",
+                  background: "var(--card)",
                   fontFamily: "inherit",
                   fontSize: 14,
                   fontWeight: 600,
-                  color: "#1F2A22",
+                  color: "var(--ink)",
                   cursor: "pointer",
                 }}
               >

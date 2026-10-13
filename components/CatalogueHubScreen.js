@@ -201,11 +201,11 @@ export default function CatalogueHubScreen({
           minHeight: 44,
           border: "none",
           borderRadius: 12,
-          background: "#FFFFFF",
+          background: "var(--card)",
           fontFamily: "inherit",
           fontSize: 14,
           fontWeight: 700,
-          color: "#1F2A22",
+          color: "var(--ink)",
           boxShadow: "0 1px 3px rgba(31,42,34,0.12)",
           cursor: "pointer",
         }
@@ -217,7 +217,7 @@ export default function CatalogueHubScreen({
           fontFamily: "inherit",
           fontSize: 14,
           fontWeight: 600,
-          color: "#5B6359",
+          color: "var(--mute)",
           cursor: "pointer",
         };
 
@@ -229,8 +229,8 @@ export default function CatalogueHubScreen({
           padding: "0 14px",
           borderRadius: 999,
           border: "none",
-          background: "#1F2A22",
-          color: "#FFFFFF",
+          background: "var(--ink)",
+          color: "var(--card)",
           fontFamily: "inherit",
           fontSize: 13,
           fontWeight: 700,
@@ -242,9 +242,9 @@ export default function CatalogueHubScreen({
           minHeight: 38,
           padding: "0 14px",
           borderRadius: 999,
-          border: "1.5px solid #E4DED3",
-          background: "#FFFFFF",
-          color: "#4D554B",
+          border: "1.5px solid var(--line)",
+          background: "var(--card)",
+          color: "var(--mute)",
           fontFamily: "inherit",
           fontSize: 13,
           fontWeight: 600,
@@ -260,7 +260,7 @@ export default function CatalogueHubScreen({
           display: "flex",
           flexDirection: "column",
           gap: 14,
-          borderBottom: "1.5px solid #F2EEE7",
+          borderBottom: "1.5px solid var(--card)",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -272,7 +272,7 @@ export default function CatalogueHubScreen({
               width: 44,
               height: 44,
               borderRadius: 999,
-              background: "#F2EEE7",
+              background: "var(--card)",
               border: "none",
               display: "flex",
               alignItems: "center",
@@ -282,10 +282,10 @@ export default function CatalogueHubScreen({
             }}
           >
             <svg width={20} height={20} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="m15 18-6-6 6-6" stroke="#1F2A22" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
+              <path d="m15 18-6-6 6-6" stroke="var(--ink)" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: "#1F2A22" }}>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: "var(--ink)" }}>
             {amenagementUnivers === "Bordures"
               ? "Bordures"
               : tab === "mineral"
@@ -305,12 +305,12 @@ export default function CatalogueHubScreen({
             minHeight: 44,
             padding: "0 14px",
             borderRadius: 14,
-            background: "#F2EEE7",
+            background: "var(--card)",
           }}
         >
           <svg width={16} height={16} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <circle cx="11" cy="11" r="8" stroke="#5B6359" strokeWidth={2} />
-            <path d="m21 21-4.3-4.3" stroke="#5B6359" strokeWidth={2} strokeLinecap="round" />
+            <circle cx="11" cy="11" r="8" stroke="var(--mute)" strokeWidth={2} />
+            <path d="m21 21-4.3-4.3" stroke="var(--mute)" strokeWidth={2} strokeLinecap="round" />
           </svg>
           <input
             id="catalogue-hub-search"
@@ -325,7 +325,7 @@ export default function CatalogueHubScreen({
               background: "transparent",
               fontFamily: "inherit",
               fontSize: 14,
-              color: "#1F2A22",
+              color: "var(--ink)",
               outline: "none",
               minWidth: 0,
             }}
@@ -340,7 +340,7 @@ export default function CatalogueHubScreen({
               gap: 4,
               padding: 4,
               borderRadius: 16,
-              background: "#F2EEE7",
+              background: "var(--card)",
             }}
           >
             {TABS.map((row) => (
@@ -395,7 +395,7 @@ export default function CatalogueHubScreen({
           gap: 12,
         }}
       >
-        <span style={{ fontSize: 13, fontWeight: 600, color: "#5B6359" }}>{countLabel}</span>
+        <span style={{ fontSize: 13, fontWeight: 600, color: "var(--mute)" }}>{countLabel}</span>
 
         {error ? <p style={{ margin: 0, fontSize: 13, color: COLORS.error }}>{String(error)}</p> : null}
 
