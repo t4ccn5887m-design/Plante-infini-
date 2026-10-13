@@ -1603,6 +1603,24 @@
   font-size: 16px; font-weight: 600;
 }
 .wp .wp-brief-suivi-list button.on { border-color: var(--green); background: var(--mint-bg); color: var(--green); }
+.wp .wp-brief-suivi-list button {
+  display:flex; align-items:center; justify-content:space-between; gap:10px; text-align:left;
+}
+.wp .wp-brief-suivi-num { font-size:12px; font-weight:700; color:var(--muted); margin-right:8px; }
+.wp .wp-brief-suivi-mark { color:var(--green); font-size:14px; }
+.wp .wp-brief-suivi-list button.danger { color:#9B3B2E; border-color:#e8cfcb; }
+.wp .wp-brief-menu-panel .wp-brief-suivi-list button { justify-content:flex-start; gap:10px; }
+.wp .wp-brief-hero-actions {
+  position:absolute; top:12px; left:12px; right:12px; display:flex; justify-content:space-between; align-items:center; z-index:2;
+}
+.wp .wp-brief-hero-back { background:rgba(15,26,20,.45); color:#fff; border-radius:99px; padding:8px 12px; }
+.wp .wp-brief-menu-btn {
+  width:40px; height:40px; border-radius:50%; background:rgba(15,26,20,.45); color:#fff; display:grid; place-items:center;
+}
+.wp .wp-proj-badge-private {
+  font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  background:var(--line); color:var(--muted); padding:4px 8px; border-radius:99px; margin-left:6px;
+}
 .wp .wp-brief-suivi-panel .ghost {
   width: 100%; padding: 12px; border-radius: 14px; border: 1px solid var(--line); font-weight: 600;
 }

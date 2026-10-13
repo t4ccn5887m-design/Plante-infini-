@@ -3,11 +3,14 @@ import {
   AlertTriangle,
   ArrowLeft,
   Download,
+  ExternalLink,
   Mail,
   MapPin,
   MessageSquare,
+  MoreHorizontal,
   Phone,
   Sparkles,
+  Trash2,
 } from "lucide-react";
 import { BRIEF_AMBIANCE_IMAGES, BRIEF_CHOICE_IMAGES } from "@/lib/pro/briefAmbianceImages";
 import {
@@ -22,7 +25,10 @@ import { buildBriefDetailView } from "@/lib/pro/proStudioApi";
 import { resolveProBriefAnalysis } from "@/lib/pro/briefProAnalysis";
 import { printBriefPdf } from "@/lib/pro/briefDetailActions";
 import {
+  deleteProLink,
   getBriefPhotoSignedUrls,
+  proStudioErrorMessage,
+  updateProLink,
   updateProLinkMeta,
 } from "@/lib/pro/proStudioApi";
 import { listProProjects, getProjectPhotoSignedUrls } from "@/lib/pro/proProjectsApi";
@@ -71,6 +77,8 @@ function pickShowcaseProjects(projects, tasteIds) {
 }
 
 function BriefSuiviPanel({ b, onClose, onUpdated }) {
+  const [busy, setBusy] = useState(false);
+  const archived = Boolean(b.archivedAt);
   const stages = [
     ["done", PRO_LINK_STAGE_LABELS.done],
     ["proposal", PRO_LINK_STAGE_LABELS.proposal],
@@ -79,30 +87,177 @@ function BriefSuiviPanel({ b, onClose, onUpdated }) {
   ];
 
   const setStage = async (stage) => {
+    if (busy) return;
+    setBusy(true);
     const res = await updateProLinkMeta(b.id, { stage });
+    setBusy(false);
     if (res.ok) onUpdated({ ...b, stage });
-    onClose();
+  };
+
+  const toggleArchive = async () => {
+    if (busy) return;
+    setBusy(true);
+    const nextArchived = archived ? null : new Date().toISOString();
+    const res = await updateProLinkMeta(b.id, { archivedAt: nextArchived });
+    setBusy(false);
+    if (res.ok) {
+      onUpdated({ ...b, archivedAt: nextArchived });
+      onClose();
+    }
   };
 
   return (
     <div className="wp-brief-suivi">
       <div className="wp-brief-suivi-panel">
         <h2>Suivi du projet</h2>
-        <p className="sub">{b.name}</p>
+        <p className="sub">
+          {b.name}
+          {b.city ? ` · ${b.city}` : ""}
+        </p>
+        {b.hasAppointment && b.nextAppointmentAt ? (
+          <p className="bc-taste" style={{ marginTop: 6 }}>
+            RDV · {formatRdv(b.nextAppointmentAt)}
+          </p>
+        ) : null}
+        <div className="label" style={{ marginTop: 16, marginBottom: 8 }}>
+          Où en est ce projet ?
+        </div>
         <div className="wp-brief-suivi-list">
-          {stages.map(([key, label]) => (
+          {stages.map(([key, label], i) => (
             <button
               key={key}
               type="button"
               className={b.stage === key ? "on" : ""}
               onClick={() => setStage(key)}
+              disabled={busy}
             >
+              <span className="wp-brief-suivi-num">0{i + 1}</span>
               {label}
+              <span className="wp-brief-suivi-mark" aria-hidden>
+                {b.stage === key ? "●" : "○"}
+              </span>
             </button>
           ))}
         </div>
+        <p className="bc-taste" style={{ marginTop: 8 }}>
+          Trois clics, pas de devis ni de facture ici : Sevya s’arrête au premier
+          rendez-vous.
+        </p>
+        <button
+          type="button"
+          className="linebtn"
+          style={{ marginTop: 12 }}
+          onClick={toggleArchive}
+          disabled={busy}
+        >
+          {archived ? "Sortir des archives" : "Archiver le projet"}
+        </button>
         <button type="button" className="ghost" onClick={onClose}>
           Fermer
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function BriefClientMenu({ onEdit, onPreview, onDelete, onClose }) {
+  return (
+    <div className="wp-brief-suivi">
+      <div className="wp-brief-suivi-panel wp-brief-menu-panel">
+        <h2>Client</h2>
+        <div className="wp-brief-suivi-list">
+          <button type="button" onClick={onEdit}>
+            Modifier le client
+          </button>
+          <button type="button" onClick={onPreview}>
+            <ExternalLink size={16} /> Voir ce que reçoit le client
+          </button>
+          <button type="button" className="danger" onClick={onDelete}>
+            <Trash2 size={16} /> Supprimer le projet
+          </button>
+        </div>
+        <button type="button" className="ghost" onClick={onClose}>
+          Fermer
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function EditClientSheet({ b, onClose, onSaved }) {
+  const [name, setName] = useState(b?.name || "");
+  const [phone, setPhone] = useState(b?.phone || "");
+  const [address, setAddress] = useState(b?.address || "");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleSave = async () => {
+    setError(null);
+    setLoading(true);
+    const res = await updateProLink(b.id, {
+      clientName: name,
+      clientPhone: phone,
+      clientAddress: address,
+    });
+    setLoading(false);
+    if (!res.ok) {
+      setError(proStudioErrorMessage(res.error));
+      return;
+    }
+    onSaved?.({
+      ...b,
+      name: res.link.name,
+      phone: res.link.phone,
+      address: res.link.address,
+      city: res.link.city,
+    });
+    onClose();
+  };
+
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div className="sheet" onClick={(e) => e.stopPropagation()}>
+        <div className="grab" />
+        <h3>Modifier le client</h3>
+        <div className="field">
+          <label htmlFor="edit-name">Nom</label>
+          <input
+            id="edit-name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="edit-phone">Téléphone</label>
+          <input
+            id="edit-phone"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="edit-address">Commune / adresse du jardin</label>
+          <input
+            id="edit-address"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+          />
+        </div>
+        {error ? (
+          <p className="wp-empty-sub" style={{ color: "#B33A3A", marginBottom: 10 }}>
+            {error}
+          </p>
+        ) : null}
+        <button
+          type="button"
+          className="bigbtn"
+          onClick={handleSave}
+          disabled={loading}
+        >
+          {loading ? "Enregistrement…" : "Enregistrer"}
+        </button>
+        <button type="button" className="linebtn" onClick={onClose}>
+          Annuler
         </button>
       </div>
     </div>
@@ -116,6 +271,7 @@ export default function BriefDetailScreen({
   onPlanifier,
   onRefresh,
   onOpenRealisation,
+  onDeleted,
 }) {
   const view = buildBriefDetailView(b);
   const [photoUrls, setPhotoUrls] = useState([]);
@@ -125,6 +281,9 @@ export default function BriefDetailScreen({
   const [projectCovers, setProjectCovers] = useState({});
   const [local, setLocal] = useState(b);
   const [suiviOpen, setSuiviOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteBusy, setDeleteBusy] = useState(false);
 
   useEffect(() => {
     setLocal(b);
@@ -271,6 +430,37 @@ export default function BriefDetailScreen({
     onRefresh?.(next);
   };
 
+  const clientBriefUrl =
+    typeof window !== "undefined" && local?.token
+      ? `${window.location.origin}/b/${local.token}`
+      : local?.token
+        ? `/b/${local.token}`
+        : null;
+
+  const openClientPreview = () => {
+    if (!clientBriefUrl) return;
+    window.open(clientBriefUrl, "_blank", "noopener,noreferrer");
+    setMenuOpen(false);
+  };
+
+  const confirmDelete = async () => {
+    if (deleteBusy) return;
+    if (
+      !window.confirm("Supprimer définitivement ce projet ?")
+    ) {
+      return;
+    }
+    setDeleteBusy(true);
+    const res = await deleteProLink(local.id);
+    setDeleteBusy(false);
+    if (!res.ok) {
+      window.alert(proStudioErrorMessage(res.error));
+      return;
+    }
+    setMenuOpen(false);
+    onDeleted?.(local);
+  };
+
   const footer = (() => {
     if (local.status === "ready" && !local.hasAppointment) {
       return (
@@ -296,10 +486,13 @@ export default function BriefDetailScreen({
         </>
       );
     }
-    if (local.stage) {
+    if (local.stage || local.archivedAt) {
+      const label = local.archivedAt
+        ? "Archivé"
+        : PRO_LINK_STAGE_LABELS[local.stage] || local.stage;
       return (
         <button type="button" className="bf-btn ghost full" onClick={() => setSuiviOpen(true)}>
-          Suivi : {PRO_LINK_STAGE_LABELS[local.stage] || local.stage} ›
+          Suivi : {label} ›
         </button>
       );
     }
@@ -316,14 +509,34 @@ export default function BriefDetailScreen({
         <div className="wp-brief-detail-hero">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={photoUrls[0]} alt="" />
-          <button className="back no-print wp-brief-hero-back" onClick={onBack} type="button">
-            <ArrowLeft size={18} />
-          </button>
+          <div className="wp-brief-hero-actions no-print">
+            <button className="back wp-brief-hero-back" onClick={onBack} type="button">
+              <ArrowLeft size={18} />
+            </button>
+            <button
+              type="button"
+              className="wp-brief-menu-btn"
+              aria-label="Menu client"
+              onClick={() => setMenuOpen(true)}
+            >
+              <MoreHorizontal size={22} />
+            </button>
+          </div>
         </div>
       ) : (
-        <button className="back no-print" onClick={onBack} type="button">
-          <ArrowLeft size={18} /> Mes briefs
-        </button>
+        <div className="head-row no-print" style={{ marginBottom: 8 }}>
+          <button className="back" onClick={onBack} type="button">
+            <ArrowLeft size={18} /> Retour
+          </button>
+          <button
+            type="button"
+            className="wp-icon-btn"
+            aria-label="Menu client"
+            onClick={() => setMenuOpen(true)}
+          >
+            <MoreHorizontal size={20} />
+          </button>
+        </div>
       )}
 
       <div className={photoUrls[0] ? "wp-brief-detail-head overlap" : ""}>
@@ -663,6 +876,29 @@ export default function BriefDetailScreen({
           b={local}
           onClose={() => setSuiviOpen(false)}
           onUpdated={onStageUpdated}
+        />
+      ) : null}
+
+      {menuOpen ? (
+        <BriefClientMenu
+          onClose={() => setMenuOpen(false)}
+          onEdit={() => {
+            setMenuOpen(false);
+            setEditOpen(true);
+          }}
+          onPreview={openClientPreview}
+          onDelete={confirmDelete}
+        />
+      ) : null}
+
+      {editOpen ? (
+        <EditClientSheet
+          b={local}
+          onClose={() => setEditOpen(false)}
+          onSaved={(next) => {
+            setLocal(next);
+            onRefresh?.(next);
+          }}
         />
       ) : null}
     </div>
