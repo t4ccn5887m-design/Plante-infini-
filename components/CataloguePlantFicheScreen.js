@@ -14,9 +14,9 @@ import {
 
 function InfoCell({ label, value }) {
   return (
-    <div style={{ padding: "10px 12px", borderRadius: 14, background: "#FAF8F4" }}>
-      <div style={{ fontSize: 11, fontWeight: 700, color: "#6B7268" }}>{label}</div>
-      <div style={{ fontSize: 14, fontWeight: 700, color: "#1F2A22", marginTop: 2 }}>{value || "—"}</div>
+    <div style={{ padding: "10px 12px", borderRadius: 14, background: "var(--card)", border: "1px solid var(--line)" }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: "var(--mute)" }}>{label}</div>
+      <div style={{ fontSize: 14, fontWeight: 700, color: "var(--ink)", marginTop: 2 }}>{value || "—"}</div>
     </div>
   );
 }
@@ -98,7 +98,7 @@ export default function CataloguePlantFicheScreen({
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
-        background: "#FFFFFF",
+        background: "var(--bg)",
       }}
     >
       <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
@@ -147,7 +147,7 @@ export default function CataloguePlantFicheScreen({
               }}
             >
               <svg width={20} height={20} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="m15 18-6-6 6-6" stroke="#1F2A22" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
+                <path d="m15 18-6-6 6-6" stroke="var(--ink)" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
             <span
@@ -167,7 +167,7 @@ export default function CataloguePlantFicheScreen({
 
         <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 20 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700, color: "#1F2A22" }}>{plant.nom}</h1>
+            <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700, color: "var(--ink)" }}>{plant.nom}</h1>
             {plant.nom_latin ? (
               <span style={{ fontSize: 14, fontStyle: "italic", color: "#5B6359" }}>{plant.nom_latin}</span>
             ) : null}
@@ -278,7 +278,7 @@ export default function CataloguePlantFicheScreen({
         </div>
       </div>
 
-      <div style={{ padding: "12px 18px 18px", borderTop: "1.5px solid #EEE9E0" }}>
+      <div style={{ padding: "12px 18px 18px", borderTop: "1.5px solid var(--line)" }}>
         {inGarden ? (
           <button
             type="button"
@@ -321,7 +321,7 @@ export default function CataloguePlantFicheScreen({
               minHeight: 54,
               border: "none",
               borderRadius: 18,
-              background: "#2F5E3F",
+              background: "var(--sage)",
               color: "#FFFFFF",
               fontFamily: "inherit",
               fontSize: 17,

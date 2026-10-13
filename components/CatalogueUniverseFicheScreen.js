@@ -14,11 +14,11 @@ import {
 
 function InfoCell({ label, value, hint }) {
   return (
-    <div style={{ padding: "10px 12px", borderRadius: 14, background: "#FAF8F4" }}>
-      <div style={{ fontSize: 11, fontWeight: 700, color: "#6B7268" }}>{label}</div>
-      <div style={{ fontSize: 14, fontWeight: 700, color: "#1F2A22", marginTop: 2 }}>{value || "—"}</div>
+    <div style={{ padding: "10px 12px", borderRadius: 14, background: "var(--card)", border: "1px solid var(--line)" }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: "var(--mute)" }}>{label}</div>
+      <div style={{ fontSize: 14, fontWeight: 700, color: "var(--ink)", marginTop: 2 }}>{value || "—"}</div>
       {hint ? (
-        <div style={{ fontSize: 10, color: "#6B7268", marginTop: 4, lineHeight: 1.35 }}>{hint}</div>
+        <div style={{ fontSize: 10, color: "var(--mute)", marginTop: 4, lineHeight: 1.35 }}>{hint}</div>
       ) : null}
     </div>
   );
@@ -131,7 +131,7 @@ export default function CatalogueUniverseFicheScreen({
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
-        background: "#FFFFFF",
+        background: "var(--bg)",
       }}
     >
       <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
@@ -232,7 +232,7 @@ export default function CatalogueUniverseFicheScreen({
         <div style={{ padding: "0 16px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
           <div>
             <div style={{ fontSize: 12, color: "#5B6359", marginBottom: 4 }}>{item.categorie}</div>
-            <h1 style={{ margin: 0, fontSize: 26, fontWeight: 800, color: "#1F2A22" }}>{item.nom}</h1>
+            <h1 style={{ margin: 0, fontSize: 26, fontWeight: 800, color: "var(--ink)" }}>{item.nom}</h1>
           </div>
 
           <div
@@ -271,7 +271,7 @@ export default function CatalogueUniverseFicheScreen({
                     fontWeight: 600,
                     padding: "6px 12px",
                     borderRadius: 999,
-                    background: "#F2EEE7",
+                    background: "var(--card)",
                     color: "#4D554B",
                   }}
                 >
@@ -318,8 +318,8 @@ export default function CatalogueUniverseFicheScreen({
               minHeight: 52,
               borderRadius: 14,
               border: "none",
-              background: inGarden ? "#E8EDE3" : "#1F2A22",
-              color: inGarden ? "#1F2A22" : "#FFFFFF",
+              background: inGarden ? "#E8EDE3" : "var(--ink)",
+              color: inGarden ? "var(--ink)" : "#FFFFFF",
               fontSize: 15,
               fontWeight: 700,
               cursor: toggling ? "wait" : "pointer",
