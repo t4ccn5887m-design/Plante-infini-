@@ -2,9 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Camera,
   FileText,
-  Home,
+  LayoutGrid,
   CalendarDays,
   User,
+  Users,
   Phone,
   Send,
   Plus,
@@ -23,7 +24,22 @@ import {
   Trash2,
   Pencil,
   X,
+  Bell,
+  Heart,
+  SlidersHorizontal,
 } from "lucide-react";
+import { PARTNERS_LIVE } from "@/lib/partnersPreview";
+import {
+  bucketActivityHint,
+  bucketCounts,
+  buildProNotificationEvents,
+  CLIENT_FILTERS,
+  filterByListCategory,
+  filterMesClients,
+  formatAppointmentBlock,
+  formatTodayHeader,
+  pickNextAppointment,
+} from "@/lib/pro/proLinkBuckets";
 import {
   signInWithEmail,
   signOutCloud,
@@ -114,17 +130,21 @@ function StudioAvatar({ studio, onOpen }) {
 function ProDesktopSidebar({
   tab,
   studio,
-  onNavAccueil,
-  onNavBriefs,
+  onNavProjets,
   onNavAgenda,
   onNavRealisations,
+  onNavStudio,
   onSendLink,
-  onOpenSettings,
 }) {
   const realisationsOn =
     tab === "realisations" ||
     tab === "realisation-detail" ||
     tab === "realisation-form";
+  const projetsOn =
+    tab === "projets" ||
+    tab === "clients" ||
+    tab === "detail" ||
+    tab === "notifs";
 
   return (
     <aside className="wp-sidebar no-print" aria-label="Navigation principale">
@@ -146,21 +166,11 @@ function ProDesktopSidebar({
       <nav className="wp-sidebar-nav" aria-label="Sections">
         <button
           type="button"
-          className={`wp-sidebar-link${tab === "accueil" ? " on" : ""}`}
-          onClick={onNavAccueil}
+          className={`wp-sidebar-link${projetsOn ? " on" : ""}`}
+          onClick={onNavProjets}
         >
-          <Home size={20} aria-hidden />
-          Accueil
-        </button>
-        <button
-          type="button"
-          className={`wp-sidebar-link${
-            tab === "briefs" || tab === "detail" ? " on" : ""
-          }`}
-          onClick={onNavBriefs}
-        >
-          <FileText size={20} aria-hidden />
-          Briefs
+          <LayoutGrid size={20} aria-hidden />
+          Projets
         </button>
         <button
           type="button"
@@ -178,19 +188,23 @@ function ProDesktopSidebar({
           <Images size={20} aria-hidden />
           Réalisations
         </button>
+        <button
+          type="button"
+          className={`wp-sidebar-link${tab === "studio" ? " on" : ""}`}
+          onClick={onNavStudio}
+        >
+          <SlidersHorizontal size={20} aria-hidden />
+          Studio
+        </button>
       </nav>
 
-      <button
-        type="button"
-        className="wp-sidebar-footer"
-        onClick={onOpenSettings}
-      >
+      <button type="button" className="wp-sidebar-footer" onClick={onNavStudio}>
         <span className="wp-sidebar-footer-ava">{studio?.initials || "?"}</span>
         <span className="wp-sidebar-footer-text">
           <span className="wp-sidebar-footer-name">
             {studio?.name || "Mon studio"}
           </span>
-          <span className="wp-sidebar-footer-sub">Réglages du studio</span>
+          <span className="wp-sidebar-footer-sub">Studio</span>
         </span>
       </button>
     </aside>
@@ -246,41 +260,117 @@ function BriefCard({ b, onOpen }) {
   );
 }
 
-function Accueil({
+const LIST_META = {
+  demandes: {
+    title: "Demandes",
+    sub: "Ces particuliers ont choisi votre studio. Leur dossier est déjà rempli.",
+  },
+  ready: {
+    title: "Briefs prêts",
+    sub: "À lire avant le premier rendez-vous.",
+  },
+  wait: {
+    title: "En attente",
+    sub: "Liens envoyés, pas encore remplis.",
+  },
+  clients: {
+    title: "Mes clients",
+    sub: "",
+  },
+};
+
+function ProjetsHome({
   studio,
   items,
   linksStatus,
   linksError,
   onRetryLinks,
   onSend,
-  onBriefs,
-  onOpen,
+  onOpenList,
+  onOpenNotifs,
   onOpenSettings,
+  onOpen,
+  notifCount,
 }) {
-  const ready = items.filter((b) => b.status === "ready" || b.status === "rdv");
-  const waiting = items.filter((b) => b.status === "wait");
-  const empty = linksStatus === "ready" && items.length === 0;
+  const counts = bucketCounts(items);
+  const next = pickNextAppointment(items);
+  const rdvFmt = next ? formatAppointmentBlock(next.nextAppointmentAt) : null;
+  const firstName =
+    studio?.contactFirstName?.trim() ||
+    studio?.name?.trim()?.split(/\s+/)[0] ||
+    "Bonjour";
+
+  const buckets = [
+    ...(PARTNERS_LIVE
+      ? [
+          {
+            key: "demandes",
+            label: "Demandes",
+            icon: Heart,
+            color: "#DB7E44",
+            hot: counts.demandes > 0,
+          },
+        ]
+      : []),
+    {
+      key: "ready",
+      label: "Briefs prêts",
+      icon: FileText,
+      color: "#4E7B52",
+      hot: false,
+    },
+    {
+      key: "wait",
+      label: "En attente",
+      icon: Clock,
+      color: "#8B9088",
+      hot: false,
+    },
+    {
+      key: "clients",
+      label: "Mes clients",
+      icon: Users,
+      color: "#8B9088",
+      hot: false,
+    },
+  ];
 
   return (
     <div className="card-panel">
-      <div className="hero">
-        <StudioAvatar studio={studio} onOpen={onOpenSettings} />
-        <h1>Vos clients, compris d&apos;avance</h1>
-        <p>
-          Envoyez un lien, recevez un brief clair avant même le premier
-          rendez-vous.
-        </p>
+      <div className="wp-pro-top">
+        <div className="wp-pro-brand">
+          Sevya<span>PRO</span>
+        </div>
+        <div className="wp-pro-top-actions">
+          <button
+            type="button"
+            className="wp-icon-btn"
+            onClick={onOpenNotifs}
+            aria-label="Notifications"
+          >
+            <Bell size={19} strokeWidth={1.5} />
+            {notifCount > 0 && (
+              <span className="wp-notif-dot" aria-hidden>
+                {notifCount > 9 ? "9+" : notifCount}
+              </span>
+            )}
+          </button>
+          <StudioAvatar studio={studio} onOpen={onOpenSettings} />
+        </div>
       </div>
+
+      <div className="wp-pro-greet-k">{formatTodayHeader()}</div>
+      <div className="wp-pro-greet-h">Bonjour {firstName}.</div>
 
       {linksStatus === "loading" && (
         <p className="bc-taste" style={{ marginTop: 18 }}>
-          Chargement de vos briefs…
+          Chargement de vos projets…
         </p>
       )}
 
       {linksStatus === "error" && (
         <div className="wp-empty" style={{ marginTop: 8 }}>
-          <p className="wp-empty-title">Impossible de charger vos briefs</p>
+          <p className="wp-empty-title">Impossible de charger vos projets</p>
           <p className="wp-empty-sub">
             {linksError ||
               "Une erreur est survenue. Réessayez dans un instant."}
@@ -291,190 +381,258 @@ function Accueil({
         </div>
       )}
 
-      {empty && (
-        <div className="wp-empty">
-          <p className="wp-empty-title">Envoyez votre premier lien</p>
-          <p className="wp-empty-sub">
-            Votre client remplit son brief en 3 min — sans compte, sans app.
-          </p>
-          <button className="bigbtn" type="button" onClick={onSend}>
-            <Send size={18} /> Envoyer un lien
+      {linksStatus === "ready" && next && rdvFmt && (
+        <div className="wp-pro-next">
+          <div className="wp-pro-next-k">Prochain rendez-vous</div>
+          <button
+            type="button"
+            className="wp-pro-next-row"
+            onClick={() => onOpen(next)}
+          >
+            <div>
+              <div className="wp-pro-next-when">
+                {rdvFmt.line1} · {rdvFmt.line2}
+              </div>
+              <div className="wp-pro-next-who">
+                {next.name}{" "}
+                <span className="wp-pro-next-meta">· {next.city || next.address}</span>
+              </div>
+            </div>
+            <span className="wp-pro-next-link">Relire le brief ›</span>
           </button>
         </div>
       )}
 
-      {linksStatus === "ready" && items.length > 0 && (
-        <>
-          <div className="label">À traiter</div>
-          <div className="wp-accueil-actions">
-          <button className="pcard peach" onClick={onSend} type="button">
-            <span className="ic">
-              <Send size={22} color="#DB7E44" />
-            </span>
-            <span className="tx">
-              <div className="tt">Envoyer un lien</div>
-              <div className="ss">Préparer un nouveau client</div>
-            </span>
-            <ChevronRight className="chev" size={22} />
-          </button>
-          <button className="pcard mint" onClick={onBriefs} type="button">
-            <span className="ic">
-              <FileText size={22} color="#4E7B52" />
-            </span>
-            <span className="tx">
-              <div className="tt">Briefs prêts</div>
-              <div className="ss">
-                {ready.length === 0
-                  ? "Aucun pour l’instant"
-                  : `${ready.length} à consulter`}
-              </div>
-            </span>
-            <span className="count" style={{ color: "#4E7B52" }}>
-              {ready.length}
-            </span>
-          </button>
-          <button className="pcard lav" onClick={onBriefs} type="button">
-            <span className="ic">
-              <CalendarDays size={22} color="#7A67A6" />
-            </span>
-            <span className="tx">
-              <div className="tt">En attente</div>
-              <div className="ss">
-                {waiting.length === 0
-                  ? "Tous les liens sont remplis"
-                  : `${waiting.length} client${waiting.length > 1 ? "s" : ""}`}
-              </div>
-            </span>
-            <span className="count" style={{ color: "#7A67A6" }}>
-              {waiting.length}
-            </span>
-          </button>
-          </div>
+      <div className="wp-pro-send">
+        <button className="bigbtn" type="button" onClick={onSend}>
+          <Send size={18} /> Envoyer un lien à un client
+        </button>
+      </div>
 
-          {ready.length > 0 && (
-            <>
-              <div className="label">Derniers briefs</div>
-              <div className="blist wp-accueil-briefs">
-                {ready.slice(0, 3).map((b) => (
-                  <BriefCard key={b.id} b={b} onOpen={onOpen} />
-                ))}
-              </div>
-            </>
-          )}
-        </>
+      {linksStatus === "ready" && (
+        <div className="wp-bucket-grid">
+          {buckets.map(({ key, label, icon: Icon, color, hot }) => {
+            const n = counts[key] ?? 0;
+            return (
+              <button
+                key={key}
+                type="button"
+                className={`wp-bucket-card${hot ? " hot" : ""}`}
+                onClick={() => onOpenList(key)}
+              >
+                <div className="wp-bucket-top">
+                  <Icon size={22} color={color} strokeWidth={1.5} />
+                  <span className="wp-bucket-n">{n}</span>
+                </div>
+                <div>
+                  <div className="wp-bucket-title">{label}</div>
+                  <div
+                    className={`wp-bucket-sub${hot ? " hot" : ""}`}
+                  >
+                    {bucketActivityHint(items, key)}
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       )}
     </div>
   );
 }
 
-function Briefs({
+function NotifsScreen({ items, onBack, onOpenItem }) {
+  const events = buildProNotificationEvents(items);
+
+  return (
+    <div className="card-panel">
+      <button type="button" className="back" onClick={onBack}>
+        <ArrowLeft size={18} /> Projets
+      </button>
+      <div className="h-title" style={{ fontWeight: 300, marginTop: 4 }}>
+        Du nouveau
+      </div>
+      {events.length === 0 ? (
+        <div className="wp-empty" style={{ marginTop: 24 }}>
+          <p className="wp-empty-title">Rien pour le moment</p>
+          <p className="wp-empty-sub">
+            Les ouvertures de lien et briefs remplis apparaîtront ici.
+          </p>
+        </div>
+      ) : (
+        <div className="wp-notif-list">
+          {events.map((ev) => (
+            <button
+              key={ev.id}
+              type="button"
+              className="wp-notif-row"
+              onClick={() => onOpenItem(ev.itemId, ev.kind)}
+            >
+              <span className="wp-notif-body">
+                <span
+                  className={`wp-notif-pip${
+                    ev.kind === "opened" ? " open" : ""
+                  }`}
+                  aria-hidden
+                />
+                <span>
+                  <span className="wp-notif-text">{ev.title}</span>
+                  <span className="wp-notif-when">{ev.when}</span>
+                </span>
+              </span>
+              <ChevronRight size={18} color="#8B9088" />
+            </button>
+          ))}
+        </div>
+      )}
+      <p className="bc-taste" style={{ marginTop: 20 }}>
+        E-mail et notifications push : bientôt disponibles.
+      </p>
+    </div>
+  );
+}
+
+function ClientList({
+  category,
   items,
-  studio,
   linksStatus,
   linksError,
   onRetryLinks,
+  onBack,
   onOpen,
-  onOpenSettings,
+  onSend,
 }) {
-  const [f, setF] = useState("all");
-  const filtered = items.filter((b) => f === "all" || b.status === f);
-  const shown = [...filtered].sort((a, b) => {
+  const meta = LIST_META[category] || LIST_META.clients;
+  const [query, setQuery] = useState("");
+  const [clientFilter, setClientFilter] = useState(CLIENT_FILTERS.cours);
+
+  let shown = [];
+  if (category === "clients") {
+    shown = filterMesClients(items, { query, filter: clientFilter });
+  } else {
+    shown = filterByListCategory(items, category);
+  }
+  shown = [...shown].sort((a, b) => {
     const ua = isUrgentBrief(a.brief) ? 0 : 1;
     const ub = isUrgentBrief(b.brief) ? 0 : 1;
     return ua - ub;
   });
-  const empty = linksStatus === "ready" && items.length === 0;
 
   return (
     <div className="card-panel">
-      <div className="head-row">
-        <div>
-          <div className="h-title">Mes briefs</div>
-          <div className="h-sub">
-            {linksStatus === "loading"
-              ? "Chargement…"
-              : linksStatus === "error"
-                ? "Chargement interrompu"
-                : `${items.length} client${items.length !== 1 ? "s" : ""}`}
-          </div>
-        </div>
-        <StudioAvatar studio={studio} onOpen={onOpenSettings} />
+      <button type="button" className="back" onClick={onBack}>
+        <ArrowLeft size={18} /> Projets
+      </button>
+      <div className="h-title" style={{ fontWeight: 300, marginTop: 4 }}>
+        {meta.title}
       </div>
+      {meta.sub ? (
+        <p className="bc-taste" style={{ marginTop: 6 }}>
+          {meta.sub}
+        </p>
+      ) : null}
 
       {linksStatus === "loading" && (
         <p className="bc-taste" style={{ marginTop: 18 }}>
-          Chargement de vos briefs…
+          Chargement…
         </p>
       )}
 
       {linksStatus === "error" && (
         <div className="wp-empty" style={{ marginTop: 18 }}>
-          <p className="wp-empty-title">Impossible de charger vos briefs</p>
-          <p className="wp-empty-sub">
-            {linksError ||
-              "Une erreur est survenue. Réessayez dans un instant."}
-          </p>
+          <p className="wp-empty-title">Impossible de charger la liste</p>
+          <p className="wp-empty-sub">{linksError}</p>
           <button className="linebtn" type="button" onClick={onRetryLinks}>
             Réessayer
           </button>
         </div>
       )}
 
-      {linksStatus === "ready" && (
+      {linksStatus === "ready" && category === "clients" && (
         <>
-          <div className="filters">
-            <button
-              className={`fp ${f === "all" ? "on" : ""}`}
-              onClick={() => setF("all")}
-              type="button"
-            >
-              Tous
-            </button>
-            <button
-              className={`fp ${f === "ready" ? "on" : ""}`}
-              onClick={() => setF("ready")}
-              type="button"
-            >
-              Prêts
-            </button>
-            <button
-              className={`fp ${f === "rdv" ? "on" : ""}`}
-              onClick={() => setF("rdv")}
-              type="button"
-            >
-              RDV
-            </button>
-            <button
-              className={`fp ${f === "wait" ? "on" : ""}`}
-              onClick={() => setF("wait")}
-              type="button"
-            >
-              En attente
-            </button>
+          <div className="wp-client-search">
+            <input
+              type="search"
+              placeholder="Rechercher un client"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              autoComplete="off"
+            />
           </div>
-          {empty ? (
-            <div className="wp-empty" style={{ marginTop: 18 }}>
-              <p className="wp-empty-title">Aucun brief ici</p>
-              <p className="wp-empty-sub">
-                Envoyez un lien pour recevoir votre premier brief.
-              </p>
-            </div>
-          ) : shown.length === 0 ? (
-            <div className="wp-empty" style={{ marginTop: 18 }}>
-              <p className="wp-empty-title">Aucun brief ici</p>
-              <p className="wp-empty-sub">
-                Changez de filtre pour voir d’autres clients.
-              </p>
-            </div>
-          ) : (
-            <div className="blist" style={{ marginTop: 12 }}>
-              {shown.map((b) => (
-                <BriefCard key={b.id} b={b} onOpen={onOpen} />
-              ))}
-            </div>
-          )}
+          <div className="wp-client-filters">
+            {[
+              [CLIENT_FILTERS.cours, "En cours"],
+              [CLIENT_FILTERS.won, "Gagnés"],
+              [CLIENT_FILTERS.lost, "Perdus"],
+              [CLIENT_FILTERS.arch, "Archivés"],
+            ].map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                className={`fp ${clientFilter === key ? "on" : ""}`}
+                onClick={() => setClientFilter(key)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </>
       )}
+
+      {linksStatus === "ready" &&
+        (shown.length === 0 ? (
+          <div className="wp-empty" style={{ marginTop: 18 }}>
+            <p className="wp-empty-title">Rien pour le moment</p>
+            {category === "wait" && (
+              <button className="bigbtn" type="button" onClick={onSend}>
+                <Send size={18} /> Envoyer un lien
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="blist" style={{ marginTop: 12 }}>
+            {shown.map((b) => (
+              <BriefCard key={b.id} b={b} onOpen={onOpen} />
+            ))}
+          </div>
+        ))}
+    </div>
+  );
+}
+
+function StudioScreen({ studio, onOpenSettings }) {
+  const contact = studio?.contactFirstName?.trim();
+  const zone = studio?.interventionZone?.trim();
+
+  return (
+    <div className="card-panel">
+      <div className="head-row">
+        <div className="h-title" style={{ fontSize: 26 }}>
+          Studio
+        </div>
+        <StudioAvatar studio={studio} onOpen={onOpenSettings} />
+      </div>
+      <div className="wp-studio-head">
+        <span className="wp-studio-logo">{studio?.initials || "?"}</span>
+        <div>
+          <div className="wp-studio-name">{studio?.name || "Mon studio"}</div>
+          <div className="wp-studio-sub">
+            {[contact, zone].filter(Boolean).join(" · ") ||
+              "Présentation et réglages"}
+          </div>
+        </div>
+      </div>
+      <button
+        className="bigbtn"
+        type="button"
+        style={{ marginTop: 22 }}
+        onClick={onOpenSettings}
+      >
+        <SlidersHorizontal size={18} /> Réglages du studio
+      </button>
+      <p className="bc-taste" style={{ marginTop: 14 }}>
+        Fiche Partenaires, lien client et abonnement : prochaines étapes.
+      </p>
     </div>
   );
 }
@@ -1889,7 +2047,10 @@ export default function WilderProV2() {
   const [items, setItems] = useState([]);
   const [linksStatus, setLinksStatus] = useState("idle"); // idle | loading | ready | error
   const [linksError, setLinksError] = useState(null);
-  const [tab, setTab] = useState("accueil");
+  const [tab, setTab] = useState("projets");
+  const [listCategory, setListCategory] = useState("ready");
+  const [detailBackTab, setDetailBackTab] = useState("clients");
+  const [notifsSeen, setNotifsSeen] = useState(false);
   const [active, setActive] = useState(null);
   const [sheet, setSheet] = useState(false);
   const [planSheet, setPlanSheet] = useState(false);
@@ -1952,10 +2113,14 @@ export default function WilderProV2() {
     boot();
   }, [boot]);
 
-  const open = (b) => {
+  const open = (b, backTab = "clients") => {
+    setDetailBackTab(backTab);
     setActive(b);
     setTab("detail");
   };
+
+  const notifEvents = buildProNotificationEvents(items);
+  const notifBadge = notifsSeen ? 0 : notifEvents.length;
 
   const onSignOut = async () => {
     await signOutCloud().catch(() => {});
@@ -1966,7 +2131,8 @@ export default function WilderProV2() {
     setLinksError(null);
     setActive(null);
     setActiveProject(null);
-    setTab("accueil");
+    setTab("projets");
+    setNotifsSeen(false);
     setPhase("auth");
   };
 
@@ -2003,43 +2169,69 @@ export default function WilderProV2() {
       <ProDesktopSidebar
         tab={tab}
         studio={studio}
-        onNavAccueil={() => setTab("accueil")}
-        onNavBriefs={() => setTab("briefs")}
+        onNavProjets={() => setTab("projets")}
         onNavAgenda={() => setTab("agenda")}
         onNavRealisations={() => {
           setActiveProject(null);
           setTab("realisations");
         }}
+        onNavStudio={() => setTab("studio")}
         onSendLink={() => setSheet(true)}
-        onOpenSettings={() => setSettingsSheet(true)}
       />
       <div className="phone">
         <div
           className={`screen${
-            tab === "briefs" || tab === "detail" ? " wp-desktop-narrow" : ""
+            tab === "clients" || tab === "detail" || tab === "notifs"
+              ? " wp-desktop-narrow"
+              : ""
           }${tab === "agenda" ? " wp-desktop-agenda" : ""}`}
         >
-          {tab === "accueil" && (
-            <Accueil
+          {tab === "projets" && (
+            <ProjetsHome
               studio={studio}
               items={items}
               linksStatus={linksStatus}
               linksError={linksError}
               onRetryLinks={() => loadLinks(studio?.id)}
               onSend={() => setSheet(true)}
-              onBriefs={() => setTab("briefs")}
-              onOpen={open}
+              onOpenList={(cat) => {
+                setListCategory(cat);
+                setTab("clients");
+              }}
+              onOpenNotifs={() => {
+                setNotifsSeen(true);
+                setTab("notifs");
+              }}
               onOpenSettings={() => setSettingsSheet(true)}
+              onOpen={(b) => open(b, "projets")}
+              notifCount={notifBadge}
             />
           )}
-          {tab === "briefs" && (
-            <Briefs
+          {tab === "notifs" && (
+            <NotifsScreen
               items={items}
-              studio={studio}
+              onBack={() => setTab("projets")}
+              onOpenItem={(id) => {
+                const b = items.find((i) => i.id === id);
+                if (b) open(b, "projets");
+              }}
+            />
+          )}
+          {tab === "clients" && (
+            <ClientList
+              category={listCategory}
+              items={items}
               linksStatus={linksStatus}
               linksError={linksError}
               onRetryLinks={() => loadLinks(studio?.id)}
-              onOpen={open}
+              onBack={() => setTab("projets")}
+              onOpen={(b) => open(b, "clients")}
+              onSend={() => setSheet(true)}
+            />
+          )}
+          {tab === "studio" && (
+            <StudioScreen
+              studio={studio}
               onOpenSettings={() => setSettingsSheet(true)}
             />
           )}
@@ -2047,7 +2239,7 @@ export default function WilderProV2() {
             <BriefDetailScreen
               b={active}
               studio={studio}
-              onBack={() => setTab("briefs")}
+              onBack={() => setTab(detailBackTab)}
               onPlanifier={() => setPlanSheet(true)}
               onRefresh={(next) => {
                 setActive(next);
@@ -2125,37 +2317,19 @@ export default function WilderProV2() {
 
         <nav className="tabbar">
           <button
-            className={`tab ${tab === "accueil" ? "on" : ""}`}
-            onClick={() => setTab("accueil")}
+            className={`tab ${
+              tab === "projets" ||
+              tab === "clients" ||
+              tab === "detail" ||
+              tab === "notifs"
+                ? "on"
+                : ""
+            }`}
+            onClick={() => setTab("projets")}
             type="button"
           >
-            <Home size={22} /> Accueil
+            <LayoutGrid size={22} /> Projets
           </button>
-          <button
-            className={`tab ${tab === "briefs" || tab === "detail" ? "on" : ""}`}
-            onClick={() => setTab("briefs")}
-            type="button"
-          >
-            <FileText size={22} /> Briefs
-          </button>
-          <div className="fab-wrap">
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <button
-                className="fab"
-                onClick={() => setSheet(true)}
-                type="button"
-              >
-                <Plus size={26} />
-              </button>
-              <span className="fab-lbl">Nouveau</span>
-            </div>
-          </div>
           <button
             className={`tab ${tab === "agenda" ? "on" : ""}`}
             onClick={() => setTab("agenda")}
@@ -2178,6 +2352,13 @@ export default function WilderProV2() {
             type="button"
           >
             <Images size={22} /> Réalisations
+          </button>
+          <button
+            className={`tab ${tab === "studio" ? "on" : ""}`}
+            onClick={() => setTab("studio")}
+            type="button"
+          >
+            <SlidersHorizontal size={22} /> Studio
           </button>
         </nav>
 
