@@ -29,12 +29,11 @@ import {
   signOutCloud,
   signUpWithEmail,
 } from "@/lib/cloudSync";
+import BriefDetailScreen from "@/components/pro/BriefDetailScreen";
 import {
-  buildBriefDetailView,
   createProAppointment,
   createProLink,
   ensureProStudio,
-  getBriefPhotoSignedUrls,
   getProAuthUser,
   listProAppointments,
   listProLinksWithBriefs,
@@ -51,12 +50,7 @@ import {
   updateProProject,
   uploadProjectPhotos,
 } from "@/lib/pro/proProjectsApi";
-import {
-  deriveRdvTodos,
-  deriveVigilance,
-  isUrgentBrief,
-} from "@/lib/pro/briefDerive";
-import { printBriefPdf } from "@/lib/pro/briefDetailActions";
+import { isUrgentBrief } from "@/lib/pro/briefDerive";
 
 function readFileAsDataUrl(file) {
   return new Promise((resolve) => {
@@ -481,275 +475,6 @@ function Briefs({
           )}
         </>
       )}
-    </div>
-  );
-}
-
-function Detail({ b, onBack, onPlanifier }) {
-  const view = buildBriefDetailView(b);
-  const [photoUrls, setPhotoUrls] = useState([]);
-
-  useEffect(() => {
-    let cancelled = false;
-    const paths = view?.detail?.photoPaths;
-    (async () => {
-      if (!paths?.length) {
-        setPhotoUrls([]);
-        return;
-      }
-      const urls = await getBriefPhotoSignedUrls(paths);
-      if (!cancelled) setPhotoUrls(urls);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [b?.id, b?.brief?.id]);
-
-  if (view?.waiting) {
-    return (
-      <div className="card-panel">
-        <button className="back no-print" onClick={onBack} type="button">
-          <ArrowLeft size={18} /> Mes briefs
-        </button>
-        <div className="dcard">
-          <div className="dlbl">Fiche brief</div>
-          <p className="bc-taste">
-            Le client n’a pas encore rempli son brief.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (view?.unavailable || !view?.detail) {
-    return (
-      <div className="card-panel">
-        <button className="back no-print" onClick={onBack} type="button">
-          <ArrowLeft size={18} /> Mes briefs
-        </button>
-        <div className="dcard">
-          <div className="dlbl">Fiche brief</div>
-          <p className="bc-taste">Brief indisponible.</p>
-        </div>
-      </div>
-    );
-  }
-
-  const d = view.detail;
-  const vigilance = deriveVigilance(b.brief);
-  const todos = deriveRdvTodos(b.brief);
-  const ctx = d.users.length ? d.users.join(" · ") : null;
-
-  const onExportPdf = () => {
-    printBriefPdf(b.name);
-  };
-
-  return (
-    <div className="card-panel wp-brief-print">
-      <button className="back no-print" onClick={onBack} type="button">
-        <ArrowLeft size={18} /> Mes briefs
-      </button>
-
-      <div className="dhero">
-        <div className="who">{b.name}</div>
-        <div className="coord">
-          {(b.address || b.city) && (
-            <span>
-              <MapPin size={15} /> {[b.address, b.city].filter(Boolean).join(" · ")}
-            </span>
-          )}
-          {b.phone && (
-            <span>
-              <Phone size={15} /> {b.phone}
-              {ctx ? ` · ${ctx}` : ""}
-            </span>
-          )}
-          {!b.phone && ctx && (
-            <span>
-              <User size={15} /> {ctx}
-            </span>
-          )}
-        </div>
-        <div className="badge">
-          <Sparkles size={15} />{" "}
-          {b.status === "rdv" ? "RDV planifié" : "Brief prêt"}
-          {b.date ? ` — reçu le ${b.date}` : ""}
-        </div>
-        <div className="acts no-print">
-          <button className="prim" type="button" onClick={onPlanifier}>
-            <CalendarDays size={17} /> Planifier
-          </button>
-          {b.phone ? (
-            <a className="ghost" href={`tel:${b.phone.replace(/\s/g, "")}`}>
-              <Phone size={17} /> Appeler
-            </a>
-          ) : (
-            <button className="ghost" type="button" disabled>
-              <Phone size={17} /> Appeler
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="dcard lav print-block">
-        <div className="dlbl">
-          <Sparkles size={14} /> Profil jardin · goût déduit
-        </div>
-        <div className="lede">{d.lede}</div>
-        <div className="statrow">
-          {d.spec.map(([k, v]) => (
-            <div className="statpill" key={k}>
-              <div className="k">{k}</div>
-              <div className="v">{v}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {d.prios.length > 0 && (
-        <div className="dcard print-block">
-          <div className="dlbl">Priorités du client</div>
-          <div className="prio">
-            {d.prios.map((p, i) => (
-              <div key={p}>
-                <span className="pnum">{i + 1}</span>
-                {p}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="dcard print-block">
-        <div className="dlbl">Végétaux souhaités</div>
-        {d.vegetaux.length > 0 ? (
-          <div className="chipwrap">
-            {d.vegetaux.map((v) => (
-              <span className="vchip" key={v}>
-                {v}
-              </span>
-            ))}
-          </div>
-        ) : (
-          <p className="bc-taste">Aucun végétaux sélectionné.</p>
-        )}
-        <div className="subh">Matériaux & couleurs</div>
-        {d.materiaux.length > 0 ? (
-          <div className="chipwrap">
-            {d.materiaux.map((m) => (
-              <span className="vchip" key={m}>
-                {m}
-              </span>
-            ))}
-          </div>
-        ) : (
-          <p className="bc-taste">Aucune matière sélectionnée.</p>
-        )}
-        {d.tastes.length > 0 && (
-          <>
-            <div className="subh">Ambiances</div>
-            <div className="chipwrap">
-              {d.tastes.map((t) => (
-                <span
-                  className="vchip"
-                  key={t}
-                  style={{ background: "#ECE6F5", color: "#7A67A6" }}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-
-      <div className="dcard no-print">
-        <div className="dlbl">
-          <Camera size={14} /> Photos du client
-        </div>
-        {photoUrls.length > 0 ? (
-          <div className="photos real">
-            {photoUrls.map((url, i) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img key={url} src={url} alt={`Photo ${i + 1}`} className="photo-img" />
-            ))}
-          </div>
-        ) : (
-          <p className="bc-taste">Aucune photo.</p>
-        )}
-      </div>
-
-      <div className="dcard no-print">
-        <div className="dlbl">
-          <Leaf size={14} /> Terrain & budget
-        </div>
-        <div className="facts">
-          {d.areaRange && (
-            <div className="row">
-              <span className="k">Surface à aménager</span>
-              <span className="v">{d.areaRange}</span>
-            </div>
-          )}
-          {d.timeline && (
-            <div className="row">
-              <span className="k">Échéance</span>
-              <span className="v">{d.timeline}</span>
-            </div>
-          )}
-          {d.utilities && (
-            <div className="row">
-              <span className="k">Eau & électricité</span>
-              <span className="v">{d.utilities}</span>
-            </div>
-          )}
-          <div className="row">
-            <span className="k">Budget</span>
-            <span className="v">{d.budget}</span>
-          </div>
-          {d.maintenanceTitle && (
-            <div className="row">
-              <span className="k">Entretien</span>
-              <span className="v">{d.maintenanceTitle}</span>
-            </div>
-          )}
-        </div>
-        {d.message.trim() ? (
-          <p className="wp-client-message">« {d.message.trim()} »</p>
-        ) : null}
-      </div>
-
-      {vigilance.length > 0 && (
-        <div className="dcard amber print-block">
-          <div className="dlbl">
-            <AlertTriangle size={14} /> Points de vigilance
-          </div>
-          <div className="vlist">
-            {vigilance.map((v, i) => (
-              <div key={i}>
-                › <span>{v}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {todos.length > 0 && (
-        <div className="dcard print-block">
-          <div className="dlbl">À aborder au premier RDV</div>
-          <div className="todo">
-            {todos.map((t) => (
-              <div key={t}>
-                <span className="chk" />
-                {t}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <button className="bigbtn no-print" onClick={onExportPdf} type="button">
-        <Download size={19} /> Exporter le brief (PDF)
-      </button>
     </div>
   );
 }
@@ -2319,10 +2044,21 @@ export default function WilderProV2() {
             />
           )}
           {tab === "detail" && active && (
-            <Detail
+            <BriefDetailScreen
               b={active}
+              studio={studio}
               onBack={() => setTab("briefs")}
               onPlanifier={() => setPlanSheet(true)}
+              onRefresh={(next) => {
+                setActive(next);
+                setItems((prev) =>
+                  prev.map((i) => (i.id === next.id ? { ...i, ...next } : i))
+                );
+              }}
+              onOpenRealisation={(p) => {
+                setActiveProject(p);
+                setTab("realisation-detail");
+              }}
             />
           )}
           {tab === "agenda" && (
