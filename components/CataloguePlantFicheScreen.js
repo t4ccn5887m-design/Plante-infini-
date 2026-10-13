@@ -138,24 +138,26 @@ export default function CataloguePlantFicheScreen({
                 width: 44,
                 height: 44,
                 borderRadius: 999,
-                background: "#FFFFFF",
-                border: "none",
+                background: "var(--card)",
+                border: "1px solid var(--line)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
+                color: "var(--ink)",
               }}
             >
               <svg width={20} height={20} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="m15 18-6-6 6-6" stroke="var(--ink)" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
+                <path d="m15 18-6-6 6-6" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
             <span
               style={{
                 padding: "6px 12px",
                 borderRadius: 999,
-                background: "#FFFFFF",
-                color: "#6A5896",
+                background: "var(--card)",
+                border: "1px solid var(--line)",
+                color: "var(--clay)",
                 fontSize: 12,
                 fontWeight: 700,
               }}
@@ -169,7 +171,7 @@ export default function CataloguePlantFicheScreen({
           <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700, color: "var(--ink)" }}>{plant.nom}</h1>
             {plant.nom_latin ? (
-              <span style={{ fontSize: 14, fontStyle: "italic", color: "#5B6359" }}>{plant.nom_latin}</span>
+              <span className="atelier-latin" style={{ fontSize: 14 }}>{plant.nom_latin}</span>
             ) : null}
           </div>
 
@@ -287,10 +289,10 @@ export default function CataloguePlantFicheScreen({
             style={{
               width: "100%",
               minHeight: 54,
-              border: "1.5px solid #C0652E",
+              border: "1px solid var(--clay)",
               borderRadius: 18,
-              background: "#F6E7D8",
-              color: "#8A4A22",
+              background: "var(--card)",
+              color: "var(--clay)",
               fontFamily: "inherit",
               fontSize: 17,
               fontWeight: 700,
@@ -304,8 +306,8 @@ export default function CataloguePlantFicheScreen({
             <svg width={20} height={20} viewBox="0 0 24 24" aria-hidden="true">
               <path
                 d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
-                fill="#C0652E"
-                stroke="#C0652E"
+                fill="var(--clay)"
+                stroke="var(--clay)"
                 strokeWidth={2.2}
               />
             </svg>
@@ -322,7 +324,7 @@ export default function CataloguePlantFicheScreen({
               border: "none",
               borderRadius: 18,
               background: "var(--sage)",
-              color: "#FFFFFF",
+              color: "var(--bg)",
               fontFamily: "inherit",
               fontSize: 17,
               fontWeight: 700,
