@@ -1,0 +1,83 @@
+{
+ "vue-piscine": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  14
+ ],
+ "vue-pool-house": [
+  6,
+  8,
+  17,
+  21
+ ],
+ "vue-terrasse": [
+  2,
+  5,
+  11,
+  15
+ ],
+ "vue-pelouse-massifs": [
+  11,
+  14
+ ],
+ "vue-jardin-sec": [
+  0,
+  15
+ ],
+ "vue-maison-moderne": [
+  5,
+  13
+ ],
+ "vue-jardin-arriere": [
+  8
+ ],
+ "vue-allee": [
+  1,
+  8,
+  12,
+  13
+ ],
+ "vue-pelouse-terrasse": [
+  2,
+  5,
+  10
+ ],
+ "vue-jardin-anglais": [
+  0,
+  2,
+  3,
+  4,
+  5,
+  7,
+  8,
+  9,
+  12,
+  15
+ ],
+ "vue-jardin-devant": [
+  5,
+  10,
+  11,
+  15
+ ],
+ "vue-terrasse-bois": [
+  7
+ ],
+ "bord2-carre-sureleve": [
+  0,
+  4
+ ],
+ "bord2-massif-brique": [
+  8
+ ],
+ "bord2-bordure-buis": [
+  2,
+  12
+ ],
+ "bord2-bordure-gravier": [
+  13
+ ]
+}
