@@ -38,7 +38,8 @@ export default function GardenDossierConfirmScreen({
   const dossierComplete = complete && contactComplete;
   const pdfPrepareEnabled = complete && contactComplete;
 
-  const { analyzing, pdfPreparing, pdfReady, pdfError, shareFromPrepared } = useGardenDossierPdfPrepare(
+  const { analyzing, analysisError, pdfPreparing, pdfReady, pdfError, shareFromPrepared } =
+    useGardenDossierPdfPrepare(
     pdfPrepareEnabled,
     refreshTick,
     dossierComplete
@@ -119,6 +120,9 @@ export default function GardenDossierConfirmScreen({
           : `Votre dossier est complet à ${progress.percent} %.`}
       </p>
 
+      {analysisError ? (
+        <p style={{ margin: 0, fontSize: 13, color: "#C0652E", maxWidth: 320 }}>{analysisError}</p>
+      ) : null}
       {pdfError ? (
         <p style={{ margin: 0, fontSize: 13, color: "#b42318", maxWidth: 320 }}>{GARDEN_PDF_USER_ERROR}</p>
       ) : null}

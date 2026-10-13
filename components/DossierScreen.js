@@ -245,6 +245,7 @@ export default function DossierScreen({
   const {
     analyzing,
     gardenAnalysis,
+    analysisError,
     pdfPreparing,
     pdfReady,
     pdfError,
@@ -355,6 +356,23 @@ export default function DossierScreen({
           </span>
         </div>
       </div>
+
+      {dossierComplete && analysisError ? (
+        <div
+          role="alert"
+          style={{
+            borderRadius: 14,
+            padding: "12px 14px",
+            border: "1px solid var(--clay, #D9A47A)",
+            background: "var(--card, #17241C)",
+            color: "var(--clay, #D9A47A)",
+            fontSize: 14,
+            lineHeight: 1.45,
+          }}
+        >
+          {analysisError}
+        </div>
+      ) : null}
 
       {dossierComplete && gardenAnalysis?.profil ? (
         <div

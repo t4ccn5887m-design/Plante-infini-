@@ -1,19 +1,24 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { createClient } from "@supabase/supabase-js";
+import { ANTHROPIC_ANALYSIS_MODEL } from "@/lib/aiModel";
 import { isPermanentAuthUser } from "@/lib/authUser";
 import {
   checkGardenAnalysisRateLimit,
   recordGardenAnalysisRateLimit,
 } from "@/lib/gardenAnalysisRateLimit";
-import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
-export const config = { api: { bodyParser: { sizeLimit: "12mb" } } };
+export const config = {
+  maxDuration: 60,
+  api: { bodyParser: { sizeLimit: "12mb" } },
+};
 
 const SYSTEM = `Tu aides un particulier à préparer son premier rendez-vous avec un paysagiste. Le client LIRA ce texte dans un PDF.
 
 Tu renvoies UNIQUEMENT un objet JSON valide (sans markdown), avec cette forme exacte :
 {
   "profil": { "style": "1 phrase", "aime": "1 phrase", "priorites": ["3 ou 4 items courts"] },
-  "points": [ { "titre": "1 à 3 mots", "texte": "1 phrase", "ids": ["ids des coups de cœur concernés"] } ]
+  "points": [ { "titre": "1 à 3 mots", "texte": "1 phrase", "ids": ["ids des coups de cœur concernés"] } ],
+  "pistes": [ "2 ou 3 phrases courtes pour le paysagiste uniquement (orientations d'aménagement, jamais visibles par le client)" ]
 }
 
 Règles profil :
@@ -27,6 +32,10 @@ Règles points (0 à 5 entrées) :
 - Ton jamais culpabilisant, jamais « vous vous trompez ». Formulations ouvertes : « à voir ensemble », « votre paysagiste pourra vous proposer… ».
 - Chaque point doit référencer les ids des coups de cœur concernés dans "ids" (tableau, peut être vide si point général).
 - Si rien de pertinent : "points": [].
+
+Règles pistes (2 à 3 phrases, tableau "pistes") :
+- Réservé au paysagiste : orientations d'aménagement (zones, ombre, ambiance, familles de végétaux).
+- Ne jamais décrire un plan, des distances, un placement précis, ni chiffrer.
 
 INTERDIT : plan, placement, distances, quantités, prix chiffrés précis, affirmer qu'une plante est sans danger. N'invente rien hors des données fournies.`;
 
@@ -52,7 +61,14 @@ function validateOutput(data) {
         .filter((p) => p.titre && p.texte)
     : [];
 
-  return { profil: { style, aime, priorites }, points };
+  const pistes = Array.isArray(data.pistes)
+    ? data.pistes
+        .map((s) => String(s).trim())
+        .filter(Boolean)
+        .slice(0, 3)
+    : [];
+
+  return { profil: { style, aime, priorites }, points, pistes };
 }
 
 function extractJson(text) {
@@ -69,11 +85,38 @@ function extractJson(text) {
 
 async function resolveUser(req) {
   const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith("Bearer ") || !supabaseAdmin) return null;
+  if (!authHeader?.startsWith("Bearer ")) return null;
   const token = authHeader.slice(7);
-  const { data, error } = await supabaseAdmin.auth.getUser(token);
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error("[Sevya] garden-analysis: missing Supabase anon env");
+    return null;
+  }
+
+  const client = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+  });
+  const { data, error } = await client.auth.getUser(token);
   if (error || !isPermanentAuthUser(data?.user)) return null;
   return data.user;
+}
+
+async function callAnthropic(client, userContent) {
+  return client.messages.create({
+    model: ANTHROPIC_ANALYSIS_MODEL,
+    max_tokens: 2048,
+    system: SYSTEM,
+    messages: [{ role: "user", content: userContent }],
+  });
+}
+
+function isRetryableAnthropicError(error) {
+  const status = error?.status || error?.statusCode;
+  if (status === 429 || status === 529 || status >= 500) return true;
+  const msg = String(error?.message || "");
+  return /timeout|overloaded|rate/i.test(msg);
 }
 
 export default async function handler(req, res) {
@@ -94,7 +137,10 @@ export default async function handler(req, res) {
     }
 
     if (!process.env.ANTHROPIC_API_KEY) {
-      return res.status(500).json({ error: "Service indisponible." });
+      return res.status(503).json({
+        error: "unavailable",
+        message: "Analyse indisponible (configuration serveur).",
+      });
     }
 
     const body = req.body || {};
@@ -117,7 +163,7 @@ export default async function handler(req, res) {
       },
     ];
 
-    const photos = Array.isArray(body.terrainPhotos) ? body.terrainPhotos.slice(0, 3) : [];
+    const photos = Array.isArray(body.terrainPhotos) ? body.terrainPhotos.slice(0, 2) : [];
     for (const b64 of photos) {
       if (typeof b64 === "string" && b64.length > 100) {
         userContent.push({
@@ -128,24 +174,32 @@ export default async function handler(req, res) {
     }
 
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-    const response = await client.messages.create({
-      model: "claude-opus-4-6",
-      max_tokens: 2048,
-      system: SYSTEM,
-      messages: [{ role: "user", content: userContent }],
-    });
+    let response;
+    try {
+      response = await callAnthropic(client, userContent);
+    } catch (firstError) {
+      if (!isRetryableAnthropicError(firstError)) throw firstError;
+      console.warn("[Sevya] garden-analysis: retry after", firstError?.message || firstError);
+      response = await callAnthropic(client, userContent);
+    }
 
     const text = response.content?.map((i) => i.text || "").join("") || "";
     const parsed = validateOutput(extractJson(text));
     if (!parsed) {
       console.error("[Sevya] garden-analysis parse failed:", text.slice(0, 400));
-      return res.status(500).json({ error: "Réponse IA invalide." });
+      return res.status(502).json({
+        error: "invalid_response",
+        message: "Analyse indisponible, réessayez.",
+      });
     }
 
     recordGardenAnalysisRateLimit(user.id);
     return res.status(200).json(parsed);
   } catch (error) {
     console.error("[Sevya] garden-analysis:", error);
-    return res.status(500).json({ error: "Erreur serveur." });
+    return res.status(503).json({
+      error: "server_error",
+      message: "Analyse indisponible, réessayez.",
+    });
   }
 }
