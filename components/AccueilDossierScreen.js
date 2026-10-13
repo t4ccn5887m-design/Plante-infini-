@@ -100,14 +100,12 @@ export default function AccueilDossierScreen({
   accountMenu = null,
   onOpenDossier,
   onOpenCoupsDeCoeur,
-  onOpenAddSheet,
   onOpenIdees,
   onOpenAmbiances,
   onOpenTerrain,
   onOpenBudget,
   onContinueDossier,
   onOpenMot,
-  onScan,
   gardenRefreshTick = 0,
 }) {
   const displayName = loadPremiumProfile().displayName?.trim();
@@ -278,23 +276,6 @@ export default function AccueilDossierScreen({
             <span style={{ fontSize: 16, fontWeight: 700, color: "#1F2A22", textAlign: "center" }}>
               Votre jardin commence ici
             </span>
-            <button
-              type="button"
-              onClick={onScan}
-              style={{
-                minHeight: 44,
-                borderRadius: 14,
-                background: "#2F5E3F",
-                color: "#fff",
-                border: "none",
-                fontSize: 14,
-                fontWeight: 700,
-                cursor: "pointer",
-                fontFamily: "inherit",
-              }}
-            >
-              Scanner une plante
-            </button>
             <button
               type="button"
               onClick={onOpenIdees}

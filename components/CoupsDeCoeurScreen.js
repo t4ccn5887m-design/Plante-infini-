@@ -150,7 +150,6 @@ export default function CoupsDeCoeurScreen({
   scansCount = 0,
   onOpenItem,
   onOpenMesScans,
-  onScan,
   onOpenIdees,
   onGardenChange,
 }) {
@@ -260,23 +259,6 @@ export default function CoupsDeCoeurScreen({
           </span>
           <button
             type="button"
-            onClick={onScan}
-            style={{
-              minHeight: 44,
-              borderRadius: 14,
-              background: "#2F5E3F",
-              color: "#fff",
-              border: "none",
-              fontSize: 14,
-              fontWeight: 700,
-              cursor: "pointer",
-              fontFamily: "inherit",
-            }}
-          >
-            Scanner une plante
-          </button>
-          <button
-            type="button"
             onClick={onOpenIdees}
             style={{
               minHeight: 44,
@@ -340,26 +322,30 @@ export default function CoupsDeCoeurScreen({
         </>
       )}
 
-      <button
-        type="button"
-        onClick={onOpenMesScans}
-        style={{
-          alignSelf: "center",
-          marginTop: 8,
-          marginBottom: 4,
-          border: "none",
-          background: "transparent",
-          color: COLORS.active,
-          fontSize: 14,
-          fontWeight: 700,
-          cursor: "pointer",
-          fontFamily: "inherit",
-          minHeight: 44,
-          padding: "0 8px",
-        }}
-      >
-        Tous mes scans ({scansCount})
-      </button>
+      {scansCount > 0 && onOpenMesScans ? (
+        <button
+          type="button"
+          onClick={onOpenMesScans}
+          style={{
+            alignSelf: "center",
+            marginTop: 12,
+            marginBottom: 4,
+            border: "none",
+            background: "transparent",
+            color: "#8A9488",
+            fontSize: 12,
+            fontWeight: 600,
+            cursor: "pointer",
+            fontFamily: "inherit",
+            minHeight: 36,
+            padding: "0 8px",
+            textDecoration: "underline",
+            textUnderlineOffset: 3,
+          }}
+        >
+          Mes anciennes trouvailles
+        </button>
+      ) : null}
     </div>
   );
 }

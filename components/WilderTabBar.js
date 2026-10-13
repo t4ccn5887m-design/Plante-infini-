@@ -23,21 +23,6 @@ function IconIdees({ size = 22 }) {
   );
 }
 
-function IconPlus({ size = 24 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        d="M12 5v14M5 12h14"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2.4}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function IconCoups({ size = 22 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={ic}>
@@ -55,18 +40,18 @@ function IconDossier({ size = 22 }) {
   );
 }
 
-function TabButton({ active, onClick, label, children, fab = false }) {
-  if (fab) {
-    return (
-      <button type="button" onClick={onClick} aria-label="Ajouter à mon jardin" className="atelier-tabbar__fab-wrap">
-        <span className="atelier-tabbar__fab">
-          <IconPlus />
-        </span>
-        Ajouter
-      </button>
-    );
-  }
+function IconPartenaires({ size = 22 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={ic}>
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
 
+function TabButton({ active, onClick, label, children }) {
   return (
     <button
       type="button"
@@ -83,9 +68,9 @@ export default function WilderTabBar({
   activeNav = "accueil",
   onAccueil,
   onIdees,
-  onAdd,
   onCoupsDeCoeur,
   onDossier,
+  onPartenaires,
 }) {
   return (
     <nav
@@ -106,14 +91,16 @@ export default function WilderTabBar({
         <IconIdees />
       </TabButton>
 
-      <TabButton fab onClick={onAdd} />
-
-      <TabButton active={activeNav === "coups-de-coeur"} onClick={onCoupsDeCoeur} label="Coups de cœur">
+      <TabButton active={activeNav === "coups-de-coeur"} onClick={onCoupsDeCoeur} label="Cœurs">
         <IconCoups />
       </TabButton>
 
       <TabButton active={activeNav === "dossier"} onClick={onDossier} label="Dossier">
         <IconDossier />
+      </TabButton>
+
+      <TabButton active={activeNav === "partenaires"} onClick={onPartenaires} label="Partenaires">
+        <IconPartenaires />
       </TabButton>
     </nav>
   );
