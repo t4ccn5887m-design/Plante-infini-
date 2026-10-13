@@ -5,8 +5,6 @@ import { loadCatalogueStyleGardenState } from "@/lib/promoteCatalogueToGarden";
 import { getGardenStyleById } from "@/lib/catalogueStyles";
 import { toggleGardenStyleInGarden } from "@/lib/catalogueStyleGardenToggle";
 
-const GREEN = "#2F5E3F";
-
 export default function GardenStyleDetailScreen({
   styleId,
   t,
@@ -35,10 +33,10 @@ export default function GardenStyleDetailScreen({
     refresh();
   }, [refresh]);
 
-  if (!style) {
+  if (!style?.photo_url) {
     return (
-      <div style={{ padding: 24 }}>
-        <button type="button" onClick={onBack}>
+      <div style={{ padding: 24, background: "var(--bg)", color: "var(--ink)", flex: 1 }}>
+        <button type="button" className="atelier-btn-secondary" onClick={onBack}>
           Retour
         </button>
       </div>
@@ -69,68 +67,34 @@ export default function GardenStyleDetailScreen({
   };
 
   return (
-    <div
-      style={{
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        background: "#0f1410",
-      }}
-    >
-      <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
-        <div style={{ position: "relative", flexShrink: 0 }}>
-          <img
-            src={style.photo_url}
-            alt=""
-            style={{ width: "100%", maxHeight: "min(72vh, 720px)", objectFit: "cover", display: "block" }}
-          />
-          <div style={{ position: "absolute", top: 12, left: 12, zIndex: 2 }}>
-            <button
-              type="button"
-              onClick={onBack}
-              aria-label="Retour"
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: 999,
-                background: "rgba(255,255,255,0.92)",
-                border: "none",
-                cursor: "pointer",
-                fontSize: 22,
-              }}
-            >
-              ‹
-            </button>
-          </div>
-          {style.pastille ? (
-            <RealisationPastille label={style.pastille} style={{ top: 12, left: 64 }} />
-          ) : null}
-          {style.photo_auteur ? <CataloguePhotoCredit plant={style} onDark /> : null}
+    <div className="atelier-style-detail">
+      <img className="atelier-style-detail__photo" src={style.photo_url} alt="" />
+      <div className="atelier-style-detail__shade" aria-hidden="true" />
+      <div className="atelier-style-detail__top">
+        <button type="button" className="atelier-style-detail__back" onClick={onBack} aria-label="Retour">
+          ‹
+        </button>
+        {style.pastille ? (
+          <RealisationPastille label={style.pastille} style={{ position: "relative", top: 0, left: 0 }} />
+        ) : null}
+      </div>
+      {style.photo_auteur ? (
+        <div className="atelier-style-detail__credit">
+          <CataloguePhotoCredit plant={style} onDark />
         </div>
-
-        <div style={{ padding: "16px 18px 28px", background: "#FAF8F4", flexGrow: 1 }}>
-          {error ? <p style={{ margin: "0 0 12px", fontSize: 13, color: "#b42318" }}>{error}</p> : null}
-          <button
-            type="button"
-            disabled={toggling || !styleState}
-            onClick={handleToggle}
-            style={{
-              width: "100%",
-              minHeight: 54,
-              borderRadius: 18,
-              border: "none",
-              background: inGarden ? "#ECE6F5" : GREEN,
-              color: inGarden ? "#5E4C8C" : "#FFFFFF",
-              fontSize: 16,
-              fontWeight: 700,
-              cursor: toggling ? "wait" : "pointer",
-              fontFamily: "inherit",
-            }}
-          >
-            {inGarden ? "♥ Retiré de vos coups de cœur" : "♡ J'aime ce jardin"}
-          </button>
-        </div>
+      ) : null}
+      <div className="atelier-style-detail__footer">
+        {error ? (
+          <p style={{ margin: "0 0 10px", fontSize: 13, color: "var(--danger)", textAlign: "center" }}>{error}</p>
+        ) : null}
+        <button
+          type="button"
+          className={inGarden ? "atelier-btn-secondary atelier-style-detail__heart-on" : "atelier-btn-primary"}
+          disabled={toggling || !styleState}
+          onClick={handleToggle}
+        >
+          {inGarden ? "♥ Retirer de vos coups de cœur" : "♡ J'aime ce jardin"}
+        </button>
       </div>
     </div>
   );

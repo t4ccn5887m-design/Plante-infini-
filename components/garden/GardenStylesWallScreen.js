@@ -41,13 +41,13 @@ export default function GardenStylesWallScreen({ onBack, onOpenStyle }) {
             width: 44,
             height: 44,
             borderRadius: 999,
-            background: "#F2EEE7",
-            border: "none",
+            background: "var(--card)",
+            border: "1px solid var(--line)",
             cursor: "pointer",
             fontFamily: "inherit",
             fontSize: 26,
             lineHeight: 1,
-            color: "#1F2A22",
+            color: "var(--ink)",
             paddingBottom: 3,
           }}
         >
@@ -73,7 +73,7 @@ export default function GardenStylesWallScreen({ onBack, onOpenStyle }) {
               borderRadius: 18,
               overflow: "hidden",
               cursor: "pointer",
-              background: "#E4DDD2",
+              background: "var(--card)",
               aspectRatio: "3 / 4",
               position: "relative",
             }}
