@@ -20,6 +20,7 @@ import MesScansScreen from "@/components/MesScansScreen";
 import CoupsDeCoeurScreen from "@/components/CoupsDeCoeurScreen";
 import IdeesAccueilScreen from "@/components/IdeesAccueilScreen";
 import PartnersBientotScreen from "@/components/PartnersBientotScreen";
+import PartnersDemoScreen from "@/components/PartnersDemoScreen";
 import AncienneTrouvailleDetailScreen from "@/components/AncienneTrouvailleDetailScreen";
 import CatalogueHubScreen from "@/components/CatalogueHubScreen";
 import CatalogueFamillesScreen from "@/components/CatalogueFamillesScreen";
@@ -53,7 +54,14 @@ import { tryConsumeInstallGuideAutoShow } from "@/lib/installGuide";
 import { loadAlbums, loadDiscoveries } from "@/lib/discoveriesStorage";
 
 const THEME_KEY = "wilder-theme";
-const MAIN_SCREENS = new Set(["home", "coups-de-coeur", "catalogue", "brief", "partners"]);
+const MAIN_SCREENS = new Set([
+  "home",
+  "coups-de-coeur",
+  "catalogue",
+  "brief",
+  "partners",
+  "partners-demo",
+]);
 
 function resolveMainNav(screen) {
   if (screen === "home") return "accueil";
@@ -62,7 +70,7 @@ function resolveMainNav(screen) {
     return "coups-de-coeur";
   }
   if (screen === "catalogue") return "idees";
-  if (screen === "partners") return "partenaires";
+  if (screen === "partners" || screen === "partners-demo") return "partenaires";
   return "accueil";
 }
 
@@ -317,6 +325,15 @@ export default function Wilder() {
 
   const openPartners = useCallback(() => {
     setReturnScreen("partners");
+    setScreen("partners");
+  }, []);
+
+  const openPartnersDemo = useCallback(() => {
+    setReturnScreen("partners");
+    setScreen("partners-demo");
+  }, []);
+
+  const backFromPartnersDemo = useCallback(() => {
     setScreen("partners");
   }, []);
 
@@ -727,7 +744,10 @@ export default function Wilder() {
       );
     } else if (screen === "partners") {
       pageTitleContent = "Partenaires — Wilder";
-      mainContent = <PartnersBientotScreen />;
+      mainContent = <PartnersBientotScreen onOpenDemo={openPartnersDemo} />;
+    } else if (screen === "partners-demo") {
+      pageTitleContent = "Exemple partenaire — Wilder";
+      mainContent = <PartnersDemoScreen onBack={backFromPartnersDemo} />;
     } else if (screen === "catalogue") {
       const catalogueProps = {
         t,

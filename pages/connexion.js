@@ -90,11 +90,15 @@ export default function ConnexionPage() {
   const [resetSent, setResetSent] = useState(false);
 
   useEffect(() => {
-    setMode("signin");
+    if (router.isReady && router.query.mode === "signup" && !isPro) {
+      setMode("signup");
+    } else {
+      setMode("signin");
+    }
     setError("");
     setInfo("");
     setResetSent(false);
-  }, [isPro]);
+  }, [isPro, router.isReady, router.query.mode]);
 
   useEffect(() => {
     if (mode !== "signin") {
