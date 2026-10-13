@@ -162,6 +162,12 @@
 .wp .rdv .when .m { font-size:11px; font-weight:700; color:var(--green); text-transform:uppercase; margin-top:3px; }
 .wp .rdv .who2 { font-size:17px; font-weight:700; }
 .wp .rdv .info { font-size:13.5px; font-weight:500; color:var(--muted); margin-top:2px; }
+.wp .wp-agenda-block { margin-bottom:14px; }
+.wp .wp-agenda-row { display:flex; gap:14px; background:#fff; border:1.5px solid var(--line); border-radius:20px; padding:16px; width:100%; text-align:left; transition:transform .12s; }
+.wp .wp-agenda-row:active { transform:scale(.99); }
+.wp .wp-agenda-actions { display:flex; flex-wrap:wrap; gap:14px; padding:8px 4px 4px 70px; font-size:12.5px; font-weight:700; color:var(--green); }
+.wp .wp-agenda-actions button { color:var(--green); font-weight:700; font-size:12.5px; }
+.wp .wp-agenda-actions button:disabled { opacity:.45; }
 
 .wp .tabbar { position:fixed; left:50%; transform:translateX(-50%); bottom:14px; width:min(432px,92vw); background:#fff; border-radius:28px; box-shadow:0 10px 34px -12px rgba(0,0,0,.28); display:flex; align-items:flex-end; justify-content:space-around; padding:11px 4px 12px; z-index:30; }
 .wp .tab { display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--muted); font-size:10px; font-weight:600; flex:1; min-width:0; line-height:1.15; text-align:center; }

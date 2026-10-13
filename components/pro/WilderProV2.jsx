@@ -73,6 +73,11 @@ import {
   rdvConfirmationSmsHref,
 } from "@/lib/pro/appointmentSms";
 import {
+  buildSingleAppointmentIcs,
+  downloadAppointmentIcs,
+  mapsItineraryUrl,
+} from "@/lib/pro/appointmentIcs";
+import {
   clientAvailabilityFromBrief,
   isoToPlanDateTime,
   nextPlanDayOptions,
@@ -1329,11 +1334,36 @@ function RealisationForm({
   );
 }
 
-function Agenda({ studio, refreshKey, onOpenSettings }) {
+function Agenda({ studio, refreshKey, onOpenSettings, onOpenBrief }) {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [retryTick, setRetryTick] = useState(0);
+
+  const addToCalendar = (a) => {
+    const ics = buildSingleAppointmentIcs({
+      id: a.id,
+      startsAt: a.startsAt,
+      durationMin: a.durationMin,
+      clientName: a.clientName,
+      studioName: studio?.name,
+      address: a.address,
+      notes: a.notes,
+    });
+    const safeName = String(a.clientName || "client")
+      .replace(/[^\w\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-")
+      .slice(0, 24);
+    downloadAppointmentIcs(`rdv-${safeName || "sevya"}.ics`, ics);
+  };
+
+  const openItinerary = (a) => {
+    const url = mapsItineraryUrl(a.address);
+    if (url && typeof window !== "undefined") {
+      window.location.href = url;
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -1417,22 +1447,48 @@ function Agenda({ studio, refreshKey, onOpenSettings }) {
             <div key={group.key} style={{ marginBottom: 18 }}>
               <div className="label">{group.label}</div>
               {group.items.map((a) => (
-                <div className="rdv" key={a.id}>
-                  <div className="when">
-                    <div className="d">{a.dayNum}</div>
-                    <div className="m">{a.monthShort}</div>
-                  </div>
-                  <div>
-                    <div className="who2">{a.clientName}</div>
-                    <div className="info">
-                      {a.timeLabel}
-                      {a.durationMin ? ` · ${a.durationMin} min` : ""}
+                <div className="wp-agenda-block" key={a.id}>
+                  <button
+                    type="button"
+                    className="wp-agenda-row"
+                    onClick={() => a.linkId && onOpenBrief?.(a.linkId)}
+                  >
+                    <div className="when">
+                      <div className="d">{a.dayNum}</div>
+                      <div className="m">{a.monthShort}</div>
                     </div>
-                    {a.notes ? (
-                      <div className="info" style={{ marginTop: 4 }}>
-                        {a.notes}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div className="who2">{a.clientName}</div>
+                      <div className="info">
+                        {a.timeLabel}
+                        {a.durationMin ? ` · ${a.durationMin} min` : ""}
                       </div>
+                      {a.address ? (
+                        <div className="info" style={{ marginTop: 4 }}>
+                          {a.address}
+                        </div>
+                      ) : null}
+                      {a.notes ? (
+                        <div className="info" style={{ marginTop: 4 }}>
+                          {a.notes}
+                        </div>
+                      ) : null}
+                    </div>
+                    {a.linkId ? (
+                      <ChevronRight size={20} color="#8B9088" aria-hidden />
                     ) : null}
+                  </button>
+                  <div className="wp-agenda-actions">
+                    <button type="button" onClick={() => addToCalendar(a)}>
+                      + Calendrier iPhone
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openItinerary(a)}
+                      disabled={!a.address}
+                    >
+                      Itinéraire
+                    </button>
                   </div>
                 </div>
               ))}
@@ -2324,6 +2380,10 @@ export default function WilderProV2() {
               studio={studio}
               refreshKey={agendaKey}
               onOpenSettings={() => setSettingsSheet(true)}
+              onOpenBrief={(linkId) => {
+                const b = items.find((i) => i.id === linkId);
+                if (b) open(b, "agenda");
+              }}
             />
           )}
           {tab === "realisations" && (
