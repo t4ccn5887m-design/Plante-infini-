@@ -5,16 +5,13 @@ import { ChevronRight, Leaf } from "lucide-react";
 import { WILDER_COLORS as C } from "@/lib/themes";
 
 const CARD = {
-  mintBg: "#E6F0E3",
-  mintInk: "#4E7B52",
-  peachBg: "#F6E7D8",
-  peachInk: "#DB7E44",
-  lavBg: "#ECE6F5",
-  lavInk: "#7A67A6",
+  mintBg: "var(--card)",
+  mintInk: "var(--sage)",
+  peachBg: "var(--card)",
+  peachInk: "var(--clay)",
+  lavBg: "var(--bg)",
+  lavInk: "var(--mute)",
 };
-
-const HERO_GRADIENT =
-  "linear-gradient(165deg, #5E8A64 0%, #2F5E3F 52%, #1E3A28 100%)";
 
 function ChoiceCard({ href, bg, ink, title, description, icon }) {
   return (
@@ -47,7 +44,7 @@ export default function SevyaBienvenuePage() {
         <meta name="robots" content="noindex" />
       </Head>
 
-      <div className="sv-page">
+      <div className="sv-page atelier-auth">
         <div className="sv-shell">
           <section className="sv-hero" aria-labelledby="sv-hero-title">
             <SevyaSceauLogo size={96} />
@@ -148,9 +145,10 @@ export default function SevyaBienvenuePage() {
         .sv-hero {
           border-radius: 28px;
           padding: 28px 24px 32px;
-          background: ${HERO_GRADIENT};
-          color: #eef2ea;
-          box-shadow: 0 12px 40px -16px rgba(30, 58, 40, 0.45);
+          background: ${C.heroGradient};
+          color: var(--ink);
+          box-shadow: none;
+          border: 1px solid var(--line);
         }
 
         .sv-hero :global(.sv-sceau) {
@@ -170,7 +168,7 @@ export default function SevyaBienvenuePage() {
           font-size: 0.98rem;
           font-weight: 500;
           line-height: 1.45;
-          color: rgba(238, 242, 234, 0.88);
+          color: var(--mute);
           max-width: 36ch;
         }
 
@@ -215,7 +213,8 @@ export default function SevyaBienvenuePage() {
           color: var(--sv-card-ink);
           background: var(--sv-card-bg);
           transition: transform 0.12s ease, box-shadow 0.12s ease;
-          box-shadow: 0 2px 12px -4px rgba(30, 43, 35, 0.12);
+          box-shadow: none;
+          border: 1px solid var(--line);
         }
 
         .sv-page :global(a.sv-card:hover) {
@@ -238,7 +237,7 @@ export default function SevyaBienvenuePage() {
           display: grid;
           place-items: center;
           flex-shrink: 0;
-          background: #ffffff;
+          background: var(--bg);
         }
 
         .sv-page :global(a.sv-card .sv-card__body) {
@@ -288,7 +287,7 @@ export default function SevyaBienvenuePage() {
 
         @media (min-width: 900px) {
           .sv-page {
-            background: linear-gradient(180deg, #ddd8cc 0%, #d3cdbe 100%);
+            background: var(--bg);
           }
 
           .sv-shell {
@@ -323,7 +322,7 @@ export default function SevyaBienvenuePage() {
 
           .sv-main {
             flex: 1;
-            background: #ffffff;
+            background: var(--bg);
             border-radius: 30px;
             box-shadow: 0 6px 30px -20px rgba(0, 0, 0, 0.35);
             display: flex;

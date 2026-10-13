@@ -465,6 +465,64 @@ html.atelier-theme .atelier-accueil-progress p {
   color: var(--mute);
 }
 
+html.atelier-theme .atelier-accueil-empty {
+  border-radius: var(--atelier-radius-photo);
+  border: 1.5px solid var(--line);
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: stretch;
+  background: var(--card);
+}
+
+html.atelier-theme .atelier-accueil-empty__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  text-align: center;
+}
+
+/* ── Auth particulier (/, /connexion sans profil pro) ── */
+
+html.atelier-theme .atelier-auth.sv-page {
+  color: var(--ink);
+  background: var(--bg);
+}
+
+html.atelier-theme .atelier-auth .sv-main {
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+
+html.atelier-theme .atelier-auth .sv-page :global(a.sv-card .sv-card__icon) {
+  background: var(--bg);
+}
+
+html.atelier-theme .atelier-auth .sv-hint {
+  background: var(--bg) !important;
+  color: var(--mute) !important;
+  border: 1px solid var(--line);
+}
+
+@media (min-width: 900px) {
+  html.atelier-theme .atelier-auth.sv-page {
+    background: var(--bg);
+  }
+
+  html.atelier-theme .atelier-auth .sv-hero {
+    background: var(--card);
+    border: 1px solid var(--line);
+    box-shadow: none;
+    color: var(--ink);
+  }
+
+  html.atelier-theme .atelier-auth .sv-hero__sub {
+    color: var(--mute);
+  }
+}
+
 /* Puces brief (Step*) dans le dossier particulier */
 html.atelier-theme .garden-brief-steps .bf-section-label {
   font-size: 13px;

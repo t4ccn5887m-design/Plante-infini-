@@ -37,6 +37,35 @@ const HERO_GRADIENT =
 
 const PRIMARY_GREEN = "#2F5E3F";
 
+function authSurfaces(isPro) {
+  if (isPro) {
+    return {
+      pageBg: C.shellBg,
+      mainBg: "#ffffff",
+      tabOnBg: "#fff",
+      inputBg: "#fff",
+      btnPrimaryBg: PRIMARY_GREEN,
+      btnPrimaryColor: "#fff",
+      btnSecondaryBg: "#fff",
+      desktopPageBg: "linear-gradient(180deg, #ddd8cc 0%, #d3cdbe 100%)",
+      heroBg: HERO_GRADIENT,
+      focusRing: PRIMARY_GREEN,
+    };
+  }
+  return {
+    pageBg: "var(--bg)",
+    mainBg: "var(--card)",
+    tabOnBg: "var(--bg)",
+    inputBg: "var(--bg)",
+    btnPrimaryBg: "var(--ink)",
+    btnPrimaryColor: "var(--bg)",
+    btnSecondaryBg: "transparent",
+    desktopPageBg: "var(--bg)",
+    heroBg: C.heroGradient,
+    focusRing: "var(--sage)",
+  };
+}
+
 function mapError(message) {
   if (!message) return "Une erreur est survenue. Réessayez.";
   if (message === "cloud_unavailable") {
@@ -199,6 +228,7 @@ export default function ConnexionPage() {
   const emailLabel = isPro ? "E-MAIL PRO" : "E-MAIL";
   const emailId = "sv-connexion-email";
   const passwordId = "sv-connexion-password";
+  const surf = authSurfaces(isPro);
 
   return (
     <>
@@ -207,7 +237,7 @@ export default function ConnexionPage() {
         <meta name="robots" content="noindex" />
       </Head>
 
-      <div className="sv-page">
+      <div className={`sv-page${isPro ? "" : " atelier-auth atelier-connexion"}`}>
         <div className="sv-shell">
           <section className="sv-hero" aria-hidden="true">
             <SevyaSceauLogo size={96} />
@@ -409,7 +439,7 @@ export default function ConnexionPage() {
           min-height: 100dvh;
           font-family: var(--font-title), "Fraunces", Georgia, serif;
           color: ${C.ink};
-          background: ${C.shellBg};
+          background: ${surf.pageBg};
           -webkit-font-smoothing: antialiased;
         }
 
@@ -431,9 +461,10 @@ export default function ConnexionPage() {
 
         .sv-main {
           flex: 1;
-          background: #ffffff;
+          background: ${surf.mainBg};
           border-radius: 28px;
-          box-shadow: 0 6px 30px -20px rgba(0, 0, 0, 0.2);
+          box-shadow: ${isPro ? "0 6px 30px -20px rgba(0, 0, 0, 0.2)" : "none"};
+          border: ${isPro ? "none" : "1px solid var(--line)"};
           padding: 24px 20px 28px;
         }
 
@@ -455,7 +486,7 @@ export default function ConnexionPage() {
         }
 
         .sv-back:focus-visible {
-          outline: 2px solid ${PRIMARY_GREEN};
+          outline: 2px solid ${surf.focusRing};
           outline-offset: 2px;
           border-radius: 6px;
         }
@@ -513,9 +544,10 @@ export default function ConnexionPage() {
         }
 
         .sv-tab--on {
-          background: #fff;
+          background: ${surf.tabOnBg};
           color: ${C.ink};
-          box-shadow: 0 2px 8px rgba(30, 43, 35, 0.08);
+          box-shadow: ${isPro ? "0 2px 8px rgba(30, 43, 35, 0.08)" : "none"};
+          border: ${isPro ? "none" : "1px solid var(--line)"};
         }
 
         .sv-tab:disabled {
@@ -550,11 +582,11 @@ export default function ConnexionPage() {
           font-family: inherit;
           font-size: 1rem;
           color: ${C.ink};
-          background: #fff;
+          background: ${surf.inputBg};
         }
 
         .sv-field input:focus {
-          outline: 2px solid ${PRIMARY_GREEN};
+          outline: 2px solid ${surf.focusRing};
           outline-offset: 1px;
           border-color: transparent;
         }
@@ -588,8 +620,8 @@ export default function ConnexionPage() {
           margin-top: 4px;
           border: none;
           border-radius: 14px;
-          background: ${PRIMARY_GREEN};
-          color: #fff;
+          background: ${surf.btnPrimaryBg};
+          color: ${surf.btnPrimaryColor};
           font-family: inherit;
           font-size: 1rem;
           font-weight: 700;
@@ -634,7 +666,7 @@ export default function ConnexionPage() {
           min-height: 48px;
           border-radius: 14px;
           border: 1px solid ${C.borderStrong};
-          background: #fff;
+          background: ${surf.btnSecondaryBg};
           font-family: inherit;
           font-size: 0.98rem;
           font-weight: 700;
@@ -700,7 +732,7 @@ export default function ConnexionPage() {
 
         @media (min-width: 900px) {
           .sv-page {
-            background: linear-gradient(180deg, #ddd8cc 0%, #d3cdbe 100%);
+            background: ${surf.desktopPageBg};
           }
 
           .sv-shell {
@@ -719,9 +751,10 @@ export default function ConnexionPage() {
             flex: 1.05;
             border-radius: 30px;
             padding: 48px 40px;
-            background: ${HERO_GRADIENT};
-            color: #eef2ea;
-            box-shadow: 0 12px 40px -16px rgba(30, 58, 40, 0.45);
+            background: ${surf.heroBg};
+            color: ${isPro ? "#eef2ea" : "var(--ink)"};
+            box-shadow: ${isPro ? "0 12px 40px -16px rgba(30, 58, 40, 0.45)" : "none"};
+            border: ${isPro ? "none" : "1px solid var(--line)"};
           }
 
           .sv-hero :global(.sv-sceau) {
@@ -741,7 +774,7 @@ export default function ConnexionPage() {
             font-size: 1.05rem;
             font-weight: 500;
             line-height: 1.45;
-            color: rgba(238, 242, 234, 0.88);
+            color: ${isPro ? "rgba(238, 242, 234, 0.88)" : "var(--mute)"};
             max-width: 32ch;
           }
 
