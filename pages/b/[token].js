@@ -5,7 +5,9 @@ import ClientBriefFlow from "@/components/pro/ClientBriefFlow";
 import {
   clientBriefErrorMessage,
   loadProLinkByToken,
+  loadProLinkPreviewByToken,
 } from "@/lib/pro/clientBriefApi";
+import ClientBriefPreviewBanner from "@/components/pro/ClientBriefPreviewBanner";
 
 function BriefGateMessage({ title, body }) {
   return (
@@ -26,6 +28,8 @@ export default function ClientBriefPage() {
   const router = useRouter();
   const token =
     typeof router.query.token === "string" ? router.query.token.trim() : "";
+  const isPreview =
+    router.query.apercu === "1" || router.query.apercu === "true";
 
   const [phase, setPhase] = useState("loading"); // loading | ready | filled | error
   const [studio, setStudio] = useState(null);
@@ -46,7 +50,9 @@ export default function ClientBriefPage() {
       }
 
       setPhase("loading");
-      const result = await loadProLinkByToken(token);
+      const result = isPreview
+        ? await loadProLinkPreviewByToken(token)
+        : await loadProLinkByToken(token);
       if (cancelled) return;
 
       if (!result.ok) {
@@ -66,7 +72,7 @@ export default function ClientBriefPage() {
     return () => {
       cancelled = true;
     };
-  }, [router.isReady, token]);
+  }, [router.isReady, token, isPreview]);
 
   const titleStudio = studio?.name || "votre paysagiste";
 
@@ -99,9 +105,13 @@ export default function ClientBriefPage() {
     return (
       <>
         <Head>
-          <title>Brief déjà envoyé — {titleStudio}</title>
+          <title>
+            {isPreview ? "Aperçu brief envoyé" : "Brief déjà envoyé"} —{" "}
+            {titleStudio}
+          </title>
           <meta name="robots" content="noindex" />
         </Head>
+        {isPreview ? <ClientBriefPreviewBanner /> : null}
         <BriefGateMessage
           title="Brief déjà envoyé"
           body={`${studio.contactFirstName || "Votre paysagiste"} a déjà reçu votre brief. À bientôt au rendez-vous !`}
@@ -113,14 +123,16 @@ export default function ClientBriefPage() {
   return (
     <>
       <Head>
-        <title>Préparez votre RDV — {studio.name}</title>
+        <title>
+          {isPreview ? "Aperçu client" : "Préparez votre RDV"} — {studio.name}
+        </title>
         <meta
           name="description"
           content="Répondez en 3 min, sans compte ni téléchargement. Votre paysagiste reçoit un brief clair avant le premier rendez-vous."
         />
         <meta name="robots" content="noindex" />
       </Head>
-      <ClientBriefFlow token={token} studio={studio} />
+      <ClientBriefFlow token={token} studio={studio} preview={isPreview} />
     </>
   );
 }

@@ -430,16 +430,15 @@ export default function BriefDetailScreen({
     onRefresh?.(next);
   };
 
-  const clientBriefUrl =
-    typeof window !== "undefined" && local?.token
-      ? `${window.location.origin}/b/${local.token}`
-      : local?.token
-        ? `/b/${local.token}`
-        : null;
-
   const openClientPreview = () => {
-    if (!clientBriefUrl) return;
-    window.open(clientBriefUrl, "_blank", "noopener,noreferrer");
+    if (!local?.token) return;
+    const origin =
+      typeof window !== "undefined" && window.location?.origin
+        ? window.location.origin
+        : "";
+    const path = `/b/${local.token}?apercu=1`;
+    const url = origin ? `${origin}${path}` : path;
+    window.open(url, "_blank", "noopener,noreferrer");
     setMenuOpen(false);
   };
 

@@ -29,6 +29,7 @@ import {
   clientBriefErrorMessage,
   submitClientBrief,
 } from "@/lib/pro/clientBriefApi";
+import ClientBriefPreviewBanner from "@/components/pro/ClientBriefPreviewBanner";
 
 const QUESTION_STEPS = 9;
 const THANKS_STEP = 10;
@@ -530,6 +531,7 @@ function BudgetStep({
   onSubmit,
   submitting = false,
   submitError = null,
+  preview = false,
   ...shell
 }) {
   return (
@@ -539,11 +541,15 @@ function BudgetStep({
       title="Quel budget imaginez-vous ?"
       subtitle="Une fourchette, juste pour orienter votre paysagiste."
       badge="FACULTATIF"
-      skipLabel={submitting ? undefined : "Passer et envoyer"}
-      onSkip={submitting ? undefined : onSubmit}
-      nextLabel={submitting ? "Envoi…" : "Envoyer mon brief"}
-      onNext={onSubmit}
-      nextDisabled={submitting}
+      skipLabel={
+        preview || submitting ? undefined : "Passer et envoyer"
+      }
+      onSkip={preview || submitting ? undefined : onSubmit}
+      nextLabel={
+        preview ? "Aperçu pro" : submitting ? "Envoi…" : "Envoyer mon brief"
+      }
+      onNext={preview ? undefined : onSubmit}
+      nextDisabled={preview || submitting}
       hideNext={false}
     >
       <div className="bf-section-label">Fourchette budgétaire</div>
@@ -568,6 +574,11 @@ function BudgetStep({
           );
         })}
       </div>
+      {preview ? (
+        <p className="bc-taste" style={{ marginTop: 12 }}>
+          Aperçu pro : rien n&apos;est envoyé au studio.
+        </p>
+      ) : null}
       {submitError ? <p className="bf-submit-error">{submitError}</p> : null}
     </StepShell>
   );
@@ -617,7 +628,7 @@ function Thanks({ studio }) {
   );
 }
 
-export default function ClientBriefFlow({ token, studio }) {
+export default function ClientBriefFlow({ token, studio, preview = false }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState(EMPTY_ANSWERS);
   const [hydrated, setHydrated] = useState(false);
@@ -626,6 +637,10 @@ export default function ClientBriefFlow({ token, studio }) {
   const submittingRef = useRef(false);
 
   useEffect(() => {
+    if (preview) {
+      setHydrated(true);
+      return;
+    }
     try {
       const raw = localStorage.getItem(storageKey(token));
       if (raw) {
@@ -648,10 +663,10 @@ export default function ClientBriefFlow({ token, studio }) {
       /* ignore corrupt storage */
     }
     setHydrated(true);
-  }, [token]);
+  }, [token, preview]);
 
   useEffect(() => {
-    if (!hydrated) return;
+    if (preview || !hydrated) return;
     try {
       const safe = normalizeAnswers(answers);
       localStorage.setItem(
@@ -673,7 +688,7 @@ export default function ClientBriefFlow({ token, studio }) {
     } catch {
       /* quota — ignore */
     }
-  }, [answers, step, token, studio.name, hydrated]);
+  }, [answers, step, token, studio.name, hydrated, preview]);
 
   const go = useCallback((n) => setStep(n), []);
   const back = useCallback(() => setStep((s) => Math.max(0, s - 1)), []);
@@ -690,6 +705,7 @@ export default function ClientBriefFlow({ token, studio }) {
   }, []);
 
   const submit = useCallback(async () => {
+    if (preview) return;
     if (submittingRef.current) return;
     submittingRef.current = true;
     setSubmitting(true);
@@ -729,7 +745,7 @@ export default function ClientBriefFlow({ token, studio }) {
       submittingRef.current = false;
       setSubmitting(false);
     }
-  }, [answers, studio.name, token]);
+  }, [answers, studio.name, token, preview]);
 
   const shellBase = useMemo(
     () => ({
@@ -752,8 +768,9 @@ export default function ClientBriefFlow({ token, studio }) {
 
   return (
     <div className="wp wp-brief">
+      {preview ? <ClientBriefPreviewBanner /> : null}
       <div className="phone">
-        <div className="bf-screen">
+        <div className={`bf-screen${preview ? " bf-screen-preview" : ""}`}>
           {step === 0 && (
             <Welcome studio={studio} onStart={() => go(1)} />
           )}
@@ -853,6 +870,7 @@ export default function ClientBriefFlow({ token, studio }) {
               answers={answers}
               setAnswers={setAnswers}
               studio={studio}
+              preview={preview}
               onSubmit={submit}
               submitting={submitting}
               submitError={submitError}

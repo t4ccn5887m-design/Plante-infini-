@@ -626,6 +626,23 @@
   min-height:100vh;
   min-height:100dvh;
 }
+.wp .bf-preview-banner {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--peach-bg);
+  color: var(--peach);
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 10px 16px;
+  border-bottom: 1px solid #e8d4c4;
+}
+.wp .bf-screen-preview {
+  padding-top: 4px;
+}
+
 .wp .bf-loading {
   padding:48px 24px;
   text-align:center;
