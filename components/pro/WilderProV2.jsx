@@ -68,6 +68,7 @@ import {
   uploadProjectPhotos,
 } from "@/lib/pro/proProjectsApi";
 import { isUrgentBrief } from "@/lib/pro/briefDerive";
+import { PRO_REALISATION_STYLE_OPTIONS } from "@/lib/pro/realisationStyles";
 import {
   buildRdvConfirmationSmsBody,
   rdvConfirmationSmsHref,
@@ -620,6 +621,11 @@ function ClientList({
 function StudioScreen({ studio, onOpenSettings }) {
   const contact = studio?.contactFirstName?.trim();
   const zone = studio?.interventionZone?.trim();
+  const years =
+    studio?.yearsExperience != null && studio.yearsExperience > 0
+      ? `${studio.yearsExperience} ans d’expérience`
+      : null;
+  const specs = (studio?.specialties || []).filter(Boolean);
 
   return (
     <div className="card-panel">
@@ -634,11 +640,25 @@ function StudioScreen({ studio, onOpenSettings }) {
         <div>
           <div className="wp-studio-name">{studio?.name || "Mon studio"}</div>
           <div className="wp-studio-sub">
-            {[contact, zone].filter(Boolean).join(" · ") ||
+            {[contact, zone, years].filter(Boolean).join(" · ") ||
               "Présentation et réglages"}
           </div>
         </div>
       </div>
+      {studio?.presentation ? (
+        <p className="bc-taste" style={{ marginTop: 16, lineHeight: 1.55 }}>
+          {studio.presentation}
+        </p>
+      ) : null}
+      {specs.length > 0 ? (
+        <div className="chipwrap" style={{ marginTop: 12 }}>
+          {specs.map((s) => (
+            <span className="vchip" key={s}>
+              {s}
+            </span>
+          ))}
+        </div>
+      ) : null}
       <button
         className="bigbtn"
         type="button"
@@ -648,7 +668,7 @@ function StudioScreen({ studio, onOpenSettings }) {
         <SlidersHorizontal size={18} /> Réglages du studio
       </button>
       <p className="bc-taste" style={{ marginTop: 14 }}>
-        Fiche Partenaires, lien client et abonnement : prochaines étapes.
+        Aperçu fiche Partenaires et abonnement : prochaines étapes.
       </p>
     </div>
   );
@@ -779,7 +799,12 @@ function Realisations({ studio, refreshKey, onOpen, onCreate, onOpenSettings }) 
                   <SafePhoto src={coverUrls[p.id]} alt="" />
                 </div>
                 <div className="wp-proj-meta">
-                  <div className="wp-proj-title">{p.title}</div>
+                  <div className="wp-proj-title">
+                    {p.title}
+                    {!p.isPublic ? (
+                      <span className="wp-proj-badge-private">Privée</span>
+                    ) : null}
+                  </div>
                   <div className="wp-proj-loc">
                     {p.location ? (
                       <>
@@ -921,7 +946,17 @@ function RealisationDetail({
       </div>
 
       <div className="dhero" style={{ marginTop: 4 }}>
-        <div className="who">{project?.title}</div>
+        <div className="who">
+          {project?.title}
+          {!project?.isPublic ? (
+            <span className="wp-proj-badge-private">Privée</span>
+          ) : null}
+        </div>
+        {project?.style ? (
+          <div className="coord">
+            <span>{project.style}</span>
+          </div>
+        ) : null}
         {project?.location ? (
           <div className="coord">
             <span>
@@ -929,6 +964,29 @@ function RealisationDetail({
             </span>
           </div>
         ) : null}
+        <div className="srow no-print" style={{ marginTop: 14, borderBottom: "none" }}>
+          <span className="rk" style={{ color: "#CDD9C9" }}>
+            Visible dans Partenaires
+          </span>
+          <span
+            className={`toggle ${project?.isPublic !== false ? "on" : ""}`}
+            onClick={async () => {
+              if (busy || !project?.id) return;
+              const next = project.isPublic === false;
+              setBusy(true);
+              const res = await updateProProject(project.id, { isPublic: next });
+              setBusy(false);
+              if (res.ok) {
+                onProjectChange?.({ ...project, ...res.project, isPublic: next });
+              } else {
+                setError(proProjectsErrorMessage(res.error));
+              }
+            }}
+            role="switch"
+            aria-checked={project?.isPublic !== false}
+            tabIndex={0}
+          />
+        </div>
         <div className="acts no-print">
           <button className="prim" type="button" onClick={onEdit} disabled={busy}>
             <Pencil size={17} /> Modifier
@@ -1129,6 +1187,8 @@ function RealisationForm({
   const [title, setTitle] = useState(project?.title || "");
   const [location, setLocation] = useState(project?.location || "");
   const [description, setDescription] = useState(project?.description || "");
+  const [style, setStyle] = useState(project?.style || "");
+  const [isPublic, setIsPublic] = useState(project?.isPublic !== false);
   const [pendingFiles, setPendingFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -1166,6 +1226,8 @@ function RealisationForm({
         title: trimmed,
         location,
         description,
+        style,
+        isPublic,
       });
       if (!upd.ok) {
         setLoading(false);
@@ -1178,6 +1240,8 @@ function RealisationForm({
         title: trimmed,
         location,
         description,
+        style,
+        isPublic,
       });
       if (!created.ok) {
         setLoading(false);
@@ -1275,6 +1339,43 @@ function RealisationForm({
           disabled={loading}
         />
       </div>
+
+      <div className="label" style={{ marginTop: 4 }}>
+        Style · pour vous la suggérer au bon client
+      </div>
+      <div className="filters">
+        {PRO_REALISATION_STYLE_OPTIONS.map((s) => (
+          <button
+            key={s}
+            type="button"
+            className={`fp ${style === s ? "on" : ""}`}
+            onClick={() => setStyle(s)}
+            disabled={loading}
+          >
+            {s}
+          </button>
+        ))}
+      </div>
+
+      <div className="srow" style={{ marginTop: 16 }}>
+        <span className="rk">Visible dans Partenaires</span>
+        <span
+          className={`toggle ${isPublic ? "on" : ""}`}
+          onClick={() => !loading && setIsPublic((v) => !v)}
+          role="switch"
+          aria-checked={isPublic}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              if (!loading) setIsPublic((v) => !v);
+            }
+          }}
+        />
+      </div>
+      {!isPublic ? (
+        <p className="bc-taste">Badge « Privée » sur cette réalisation.</p>
+      ) : null}
 
       <div className="field">
         <label htmlFor="proj-photos">Photos</label>
@@ -1512,6 +1613,13 @@ function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
   const [interventionZone, setInterventionZone] = useState(
     studio?.interventionZone || ""
   );
+  const [presentation, setPresentation] = useState(studio?.presentation || "");
+  const [yearsExperience, setYearsExperience] = useState(
+    studio?.yearsExperience != null ? String(studio.yearsExperience) : ""
+  );
+  const [specialtiesText, setSpecialtiesText] = useState(
+    (studio?.specialties || []).join(", ")
+  );
   const [color, setColor] = useState(studio?.color || "#2F5E3F");
   const [tog, setTog] = useState({ a: true, b: true, c: false });
   const [loading, setLoading] = useState(false);
@@ -1528,6 +1636,9 @@ function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
       initials,
       contactEmail,
       interventionZone,
+      presentation,
+      yearsExperience,
+      specialtiesText,
       color,
     });
     setLoading(false);
@@ -1595,7 +1706,43 @@ function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
             placeholder="Ex. Aix + 30 km"
           />
         </div>
+        <div className="field">
+          <label htmlFor="set-pres">Présentation</label>
+          <textarea
+            id="set-pres"
+            className="wp-textarea"
+            rows={3}
+            placeholder="3 lignes sur votre studio…"
+            value={presentation}
+            onChange={(e) => setPresentation(e.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="set-spec">Spécialités</label>
+          <input
+            id="set-spec"
+            type="text"
+            value={specialtiesText}
+            onChange={(e) => setSpecialtiesText(e.target.value)}
+            placeholder="Méditerranéen, piscines…"
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="set-years">Années d’expérience</label>
+          <input
+            id="set-years"
+            type="number"
+            min={0}
+            max={80}
+            value={yearsExperience}
+            onChange={(e) => setYearsExperience(e.target.value)}
+            placeholder="Ex. 12"
+          />
+        </div>
 
+        <div className="label" style={{ marginTop: 8 }}>
+          Lien client
+        </div>
         <div className="field">
           <label>Couleur du lien client</label>
           <div className="colorrow" style={{ marginTop: 6 }}>
@@ -2372,6 +2519,11 @@ export default function WilderProV2() {
               onOpenRealisation={(p) => {
                 setActiveProject(p);
                 setTab("realisation-detail");
+              }}
+              onDeleted={() => {
+                setItems((prev) => prev.filter((i) => i.id !== active?.id));
+                setActive(null);
+                setTab(detailBackTab);
               }}
             />
           )}
