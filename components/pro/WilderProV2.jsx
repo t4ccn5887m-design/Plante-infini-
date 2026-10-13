@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Camera,
   FileText,
@@ -48,6 +48,7 @@ import {
 import BriefDetailScreen from "@/components/pro/BriefDetailScreen";
 import {
   createProAppointment,
+  updateProAppointment,
   createProLink,
   ensureProStudio,
   getProAuthUser,
@@ -67,6 +68,17 @@ import {
   uploadProjectPhotos,
 } from "@/lib/pro/proProjectsApi";
 import { isUrgentBrief } from "@/lib/pro/briefDerive";
+import {
+  buildRdvConfirmationSmsBody,
+  rdvConfirmationSmsHref,
+} from "@/lib/pro/appointmentSms";
+import {
+  clientAvailabilityFromBrief,
+  isoToPlanDateTime,
+  nextPlanDayOptions,
+  PLAN_TIME_SLOTS,
+  RDV_DURATION_MIN,
+} from "@/lib/pro/planRdvUi";
 
 function readFileAsDataUrl(file) {
   return new Promise((resolve) => {
@@ -1660,12 +1672,42 @@ function localDateTimeToIso(dateStr, timeStr) {
 }
 
 function PlanSheet({ studio, brief, onClose, onCreated }) {
-  const [date, setDate] = useState(defaultPlanDate);
-  const [time, setTime] = useState("10:00");
-  const [duration, setDuration] = useState("60");
+  const dayOptions = useMemo(() => nextPlanDayOptions(6), []);
+  const existing = isoToPlanDateTime(brief?.nextAppointmentAt);
+  const [date, setDate] = useState(
+    existing.date || dayOptions[0]?.date || defaultPlanDate()
+  );
+  const [time, setTime] = useState(
+    existing.time && PLAN_TIME_SLOTS.includes(existing.time)
+      ? existing.time
+      : "10:30"
+  );
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const { slots: clientSlots, note: clientDateNote } = clientAvailabilityFromBrief(
+    brief?.brief
+  );
+  const dispoLabel =
+    clientSlots.length > 0
+      ? clientSlots.join(" · ")
+      : "Non renseignées dans le brief";
+  const isMove = Boolean(brief?.primaryAppointmentId);
+
+  const openSmsConfirmation = (startsAt) => {
+    const body = buildRdvConfirmationSmsBody({
+      clientName: brief?.name,
+      studioName: studio?.name,
+      startsAt,
+      address: brief?.address,
+      city: brief?.city,
+    });
+    const href = rdvConfirmationSmsHref({ phone: brief?.phone, body });
+    if (href && typeof window !== "undefined") {
+      window.location.href = href;
+    }
+  };
 
   const handleSave = async () => {
     setError(null);
@@ -1676,13 +1718,19 @@ function PlanSheet({ studio, brief, onClose, onCreated }) {
     }
 
     setLoading(true);
-    const result = await createProAppointment({
-      studioId: studio?.id,
-      linkId: brief?.id,
-      startsAt,
-      durationMin: Number(duration) || 60,
-      notes,
-    });
+    const result = brief?.primaryAppointmentId
+      ? await updateProAppointment(brief.primaryAppointmentId, {
+          startsAt,
+          durationMin: RDV_DURATION_MIN,
+          notes,
+        })
+      : await createProAppointment({
+          studioId: studio?.id,
+          linkId: brief?.id,
+          startsAt,
+          durationMin: RDV_DURATION_MIN,
+          notes,
+        });
     setLoading(false);
 
     if (!result.ok) {
@@ -1691,48 +1739,66 @@ function PlanSheet({ studio, brief, onClose, onCreated }) {
     }
     onCreated?.(result.appointment);
     onClose?.();
+    openSmsConfirmation(startsAt);
   };
 
   return (
     <div className="overlay" onClick={onClose}>
       <div className="sheet" onClick={(e) => e.stopPropagation()}>
         <div className="grab" />
-        <h3>Planifier un RDV</h3>
+        <h3>{isMove ? "Déplacer le RDV" : "Planifier le RDV"}</h3>
         <p className="lead">
           {brief?.name
-            ? `Rendez-vous avec ${brief.name}`
-            : "Choisissez date et heure"}
+            ? `Avec ${brief.name}${brief?.city ? ` · ${brief.city}` : ""}`
+            : "Choisissez jour et heure"}
+        </p>
+        <p className="bc-taste" style={{ marginBottom: 14 }}>
+          Disponible pour le RDV :{" "}
+          <span style={{ color: "var(--ink)" }}>{dispoLabel}</span>
+          {clientDateNote ? (
+            <>
+              <br />
+              <span style={{ color: "var(--muted)" }}>{clientDateNote}</span>
+            </>
+          ) : null}
         </p>
 
-        <div className="field">
-          <label htmlFor="plan-date">Date</label>
-          <input
-            id="plan-date"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
+        <div className="label" style={{ marginTop: 0 }}>
+          Jour
         </div>
-        <div className="field">
-          <label htmlFor="plan-time">Heure</label>
-          <input
-            id="plan-time"
-            type="time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-          />
+        <div className="filters">
+          {dayOptions.map((d) => (
+            <button
+              key={d.key}
+              type="button"
+              className={`fp ${date === d.date ? "on" : ""}`}
+              onClick={() => setDate(d.date)}
+            >
+              {d.chipLabel}
+            </button>
+          ))}
         </div>
-        <div className="field">
-          <label htmlFor="plan-duration">Durée (minutes)</label>
-          <input
-            id="plan-duration"
-            type="number"
-            min={15}
-            step={15}
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-          />
+
+        <div className="label">Heure</div>
+        <div className="filters">
+          {PLAN_TIME_SLOTS.map((slot) => (
+            <button
+              key={slot}
+              type="button"
+              className={`fp ${time === slot ? "on" : ""}`}
+              onClick={() => setTime(slot)}
+            >
+              {slot.replace(":", " h ")}
+            </button>
+          ))}
         </div>
+
+        <p className="bc-taste" style={{ marginTop: 10 }}>
+          Durée 1 h. En enregistrant, Messages s&apos;ouvre avec la confirmation
+          déjà écrite pour{" "}
+          {brief?.name?.trim()?.split(/\s+/)[0] || "votre client"}.
+        </p>
+
         <div className="field">
           <label htmlFor="plan-notes">Notes (optionnel)</label>
           <input
@@ -1757,7 +1823,7 @@ function PlanSheet({ studio, brief, onClose, onCreated }) {
           className="bigbtn"
           type="button"
           onClick={handleSave}
-          disabled={loading}
+          disabled={loading || !date || !time}
         >
           <CalendarDays size={18} />
           {loading ? "Enregistrement…" : "Enregistrer le RDV"}
