@@ -8,6 +8,7 @@ import {
   loadGardenAmbianceChoice,
   saveGardenAmbianceChoice,
 } from "@/lib/gardenAmbianceChoice";
+import { touchGardenDossierAfterLocalSave } from "@/lib/gardenDossierStore";
 import GardenFlowScreen, { GardenBackButton, GardenPrimaryButton } from "@/components/garden/GardenFlowScreen";
 
 const GREEN = "#2F5E3F";
@@ -60,7 +61,7 @@ export default function GardenAmbianceDetailScreen({
   const savedOnMount = loadGardenAmbianceChoice();
   const [pickThis, setPickThis] = useState(savedOnMount === ambianceName);
 
-  const canValidate = pickThis && savedOnMount !== ambianceName;
+  const canValidate = pickThis;
   const validateLabel =
     savedOnMount && savedOnMount !== ambianceName && pickThis
       ? "Enregistrer les modifications"
@@ -69,6 +70,7 @@ export default function GardenAmbianceDetailScreen({
   const handleValidate = () => {
     if (!canValidate) return;
     saveGardenAmbianceChoice(ambianceName);
+    touchGardenDossierAfterLocalSave();
     onValidated?.();
   };
 

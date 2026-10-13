@@ -117,7 +117,7 @@ export default function GardenDossierConfirmScreen({
       <p style={{ margin: 0, fontSize: 15, lineHeight: 1.45, color: "#5B6359", maxWidth: 320 }}>
         {complete
           ? "Vous pouvez envoyer votre dossier à votre paysagiste."
-          : `Votre dossier est complet à ${progress.percent} %.`}
+          : `${progress.completedCount} étape${progress.completedCount > 1 ? "s" : ""} sur ${progress.totalSteps} · ${progress.percent} %`}
       </p>
 
       {analysisError ? (

@@ -32,6 +32,11 @@ import GardenAmbianceDetailScreen from "@/components/garden/GardenAmbianceDetail
 import GardenTerrainScreen from "@/components/garden/GardenTerrainScreen";
 import GardenBudgetScreen from "@/components/garden/GardenBudgetScreen";
 import GardenMotScreen from "@/components/garden/GardenMotScreen";
+import GardenDetailsStepScreen from "@/components/garden/GardenDetailsStepScreen";
+import StepQuotidien, { isQuotidienValid } from "@/components/brief/StepQuotidien";
+import StepAEviter, { isAEviterValid } from "@/components/brief/StepAEviter";
+import StepExistant, { isExistantValid } from "@/components/brief/StepExistant";
+import StepEntretien, { isEntretienValid } from "@/components/brief/StepEntretien";
 import GardenDossierConfirmScreen from "@/components/garden/GardenDossierConfirmScreen";
 import GardenStylesWallScreen from "@/components/garden/GardenStylesWallScreen";
 import GardenStyleDetailScreen from "@/components/garden/GardenStyleDetailScreen";
@@ -362,6 +367,14 @@ export default function Wilder() {
     [screen]
   );
 
+  const openGardenDetailsStep = useCallback(
+    (stepScreen, returnTo = "brief") => {
+      setGardenFlowReturn(returnTo ?? screen);
+      setScreen(stepScreen);
+    },
+    [screen]
+  );
+
   const openDossierStepById = useCallback(
     (stepId) => {
       if (stepId === "coups-de-coeur") {
@@ -380,8 +393,24 @@ export default function Wilder() {
         setScreen("garden-ambiances");
         return;
       }
+      if (stepId === "quotidien") {
+        setScreen("garden-quotidien");
+        return;
+      }
+      if (stepId === "a-eviter") {
+        setScreen("garden-a-eviter");
+        return;
+      }
       if (stepId === "terrain") {
         setScreen("garden-terrain");
+        return;
+      }
+      if (stepId === "existant") {
+        setScreen("garden-existant");
+        return;
+      }
+      if (stepId === "entretien") {
+        setScreen("garden-entretien");
         return;
       }
       if (stepId === "budget") {
@@ -464,6 +493,7 @@ export default function Wilder() {
         setDiscoveries(syncResult.discoveries);
       }
       logPersistenceBootState(session, syncResult.discoveries?.length ?? loadDiscoveries().length);
+      setHomeGardenRefreshTick((tick) => tick + 1);
     }
     await refreshGuestAccount();
     setFeatureGateOpen(false);
@@ -673,6 +703,10 @@ export default function Wilder() {
           onOpenTerrain={() => openGardenTerrain("home")}
           onOpenBudget={openGardenBudget}
           onOpenMot={() => openGardenMot("home")}
+          onOpenQuotidien={() => openGardenDetailsStep("garden-quotidien", "home")}
+          onOpenAEviter={() => openGardenDetailsStep("garden-a-eviter", "home")}
+          onOpenExistant={() => openGardenDetailsStep("garden-existant", "home")}
+          onOpenEntretien={() => openGardenDetailsStep("garden-entretien", "home")}
           onContinueDossier={openFirstIncompleteDossierStep}
           accountMenu={accueilDossierHome ? accountMenu : null}
           gardenRefreshTick={homeGardenRefreshTick}
@@ -787,6 +821,10 @@ export default function Wilder() {
           onOpenAmbiance={() => openGardenAmbiances("brief")}
           onOpenTerrain={() => openGardenTerrain("brief")}
           onOpenBudget={openGardenBudget}
+          onOpenQuotidien={() => openGardenDetailsStep("garden-quotidien", "brief")}
+          onOpenAEviter={() => openGardenDetailsStep("garden-a-eviter", "brief")}
+          onOpenExistant={() => openGardenDetailsStep("garden-existant", "brief")}
+          onOpenEntretien={() => openGardenDetailsStep("garden-entretien", "brief")}
           onOpenProfile={requestOpenProfile}
         />
       );
@@ -818,6 +856,10 @@ export default function Wilder() {
     screen === "garden-terrain" ||
     screen === "garden-budget" ||
     screen === "garden-mot" ||
+    screen === "garden-quotidien" ||
+    screen === "garden-a-eviter" ||
+    screen === "garden-existant" ||
+    screen === "garden-entretien" ||
     screen === "garden-dossier-confirm"
   ) {
     let title = "Mon dossier — Wilder";
@@ -863,6 +905,66 @@ export default function Wilder() {
           onBack={closeGardenFlow}
           onValidated={() => showDossierStepConfirm("mot-paysagiste")}
         />
+      );
+    } else if (screen === "garden-quotidien") {
+      title = "Votre quotidien — Wilder";
+      body = (
+        <GardenDetailsStepScreen
+          title="Qui va vivre ce jardin ?"
+          subtitle="Pour qu'il soit pensé pour vous, pas pour une photo."
+          onBack={closeGardenFlow}
+          valid={isQuotidienValid}
+          onValidated={() => showDossierStepConfirm("quotidien")}
+        >
+          {(details, onDetailsChange) => (
+            <StepQuotidien details={details} onDetailsChange={onDetailsChange} />
+          )}
+        </GardenDetailsStepScreen>
+      );
+    } else if (screen === "garden-a-eviter") {
+      title = "Ce que vous ne voulez pas — Wilder";
+      body = (
+        <GardenDetailsStepScreen
+          title="Ce que vous ne voulez pas"
+          subtitle="Aussi utile que ce que vous aimez."
+          onBack={closeGardenFlow}
+          valid={isAEviterValid}
+          onValidated={() => showDossierStepConfirm("a-eviter")}
+        >
+          {(details, onDetailsChange) => (
+            <StepAEviter details={details} onDetailsChange={onDetailsChange} />
+          )}
+        </GardenDetailsStepScreen>
+      );
+    } else if (screen === "garden-existant") {
+      title = "Ce qui existe déjà — Wilder";
+      body = (
+        <GardenDetailsStepScreen
+          title="Ce qui existe déjà"
+          subtitle="Si vous ne savez pas, votre paysagiste verra sur place."
+          onBack={closeGardenFlow}
+          valid={isExistantValid}
+          onValidated={() => showDossierStepConfirm("existant")}
+        >
+          {(details, onDetailsChange) => (
+            <StepExistant details={details} onDetailsChange={onDetailsChange} />
+          )}
+        </GardenDetailsStepScreen>
+      );
+    } else if (screen === "garden-entretien") {
+      title = "Entretien et calendrier — Wilder";
+      body = (
+        <GardenDetailsStepScreen
+          title="Entretien et calendrier"
+          subtitle="Un jardin se pense aussi pour le temps que vous avez."
+          onBack={closeGardenFlow}
+          valid={isEntretienValid}
+          onValidated={() => showDossierStepConfirm("entretien")}
+        >
+          {(details, onDetailsChange) => (
+            <StepEntretien details={details} onDetailsChange={onDetailsChange} />
+          )}
+        </GardenDetailsStepScreen>
       );
     } else if (screen === "garden-dossier-confirm" && dossierConfirmProgress) {
       title = "Dossier enregistré — Wilder";

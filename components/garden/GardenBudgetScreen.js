@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { BUDGETS } from "@/lib/pro/briefLabels";
 import { loadGardenBudgetChoice, saveGardenBudgetChoice } from "@/lib/gardenBudgetChoice";
+import { touchGardenDossierAfterLocalSave } from "@/lib/gardenDossierStore";
 import GardenFlowScreen, { GardenBackButton, GardenPrimaryButton } from "@/components/garden/GardenFlowScreen";
 
 const GREEN = "#2F5E3F";
@@ -14,13 +15,14 @@ export default function GardenBudgetScreen({ onBack, onValidated }) {
   const savedOnMount = loadGardenBudgetChoice();
   const [selected, setSelected] = useState(savedOnMount);
 
-  const canValidate = Boolean(selected) && selected !== savedOnMount;
+  const canValidate = Boolean(selected);
   const validateLabel =
     savedOnMount && selected !== savedOnMount ? "Enregistrer les modifications" : "Valider";
 
   const handleValidate = () => {
-    if (!selected || !canValidate) return;
+    if (!canValidate) return;
     saveGardenBudgetChoice(selected);
+    touchGardenDossierAfterLocalSave();
     onValidated?.();
   };
 

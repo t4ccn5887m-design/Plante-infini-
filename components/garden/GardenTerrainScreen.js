@@ -14,6 +14,7 @@ import {
 } from "@/lib/gardenTerrainPhotos";
 import GardenFlowScreen, { GardenBackButton, GardenPrimaryButton } from "@/components/garden/GardenFlowScreen";
 import { getGardenTerrainPhotoCountSync } from "@/lib/gardenTerrainPhotos";
+import { touchGardenDossierAfterLocalSave } from "@/lib/gardenDossierStore";
 
 const GREEN = "#2F5E3F";
 const MUTED = "#5B6359";
@@ -82,8 +83,10 @@ export default function GardenTerrainScreen({ onBack, onChanged, onValidated }) 
     fields.utilities !== savedFieldsOnMount.utilities;
 
   const photosChanged = photos.length !== baselinePhotoCount;
+  const fieldsComplete = Boolean(fields.areaRange && fields.timeline && fields.utilities);
   const canSubmit =
     photos.length >= 1 &&
+    fieldsComplete &&
     (!stepWasValidatedOnMount || fieldsDirty || photosChanged);
 
   const validateLabel =
@@ -95,6 +98,7 @@ export default function GardenTerrainScreen({ onBack, onChanged, onValidated }) 
     if (!canSubmit) return;
     saveGardenTerrainFields(fields);
     setGardenTerrainStepValidated(true);
+    touchGardenDossierAfterLocalSave();
     onChanged?.();
     onValidated?.();
   };

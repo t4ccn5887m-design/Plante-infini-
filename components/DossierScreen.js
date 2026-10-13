@@ -12,6 +12,8 @@ import { readGardenDossierLocalFlags } from "@/lib/gardenDossierLocal";
 import { loadGardenAmbianceChoice } from "@/lib/gardenAmbianceChoice";
 import { loadGardenBudgetChoice } from "@/lib/gardenBudgetChoice";
 import { loadGardenTerrainFields } from "@/lib/gardenTerrainFields";
+import { loadGardenBriefDetails } from "@/lib/gardenBriefDetails";
+import { dossierStepLabel } from "@/lib/gardenDossierProgress";
 import { loadGardenTerrainPhotoDataUrls } from "@/lib/gardenTerrainPhotos";
 import {
   areaRangeLabel,
@@ -179,6 +181,10 @@ export default function DossierScreen({
   onOpenAmbiance,
   onOpenTerrain,
   onOpenBudget,
+  onOpenQuotidien,
+  onOpenAEviter,
+  onOpenExistant,
+  onOpenEntretien,
   onOpenProfile,
 }) {
   const [loading, setLoading] = useState(true);
@@ -223,10 +229,19 @@ export default function DossierScreen({
         gardenItemCount: coupsItems.length,
         paysagisteMessage: intention,
         ambianceComplete: localFlags.ambianceComplete,
-        terrainPhotosComplete: localFlags.terrainPhotosComplete,
+        terrainComplete: localFlags.terrainPhotosComplete && localFlags.terrainFieldsComplete,
         budgetComplete: localFlags.budgetComplete,
+        details: loadGardenBriefDetails(),
       }),
-    [coupsItems.length, intention, localFlags.ambianceComplete, localFlags.budgetComplete, localFlags.terrainPhotosComplete]
+    [
+      coupsItems.length,
+      intention,
+      localFlags.ambianceComplete,
+      localFlags.budgetComplete,
+      localFlags.terrainPhotosComplete,
+      localFlags.terrainFieldsComplete,
+      refreshTick,
+    ]
   );
 
   const stepComplete = useCallback(
@@ -305,14 +320,19 @@ export default function DossierScreen({
 
   const motText = (intention || "").trim();
   const coupsComplete = stepComplete("coups-de-coeur");
-  const motComplete = stepComplete("mot-paysagiste");
   const ambianceComplete = stepComplete("ambiance");
+  const motComplete = stepComplete("mot-paysagiste");
+  const quotidienComplete = stepComplete("quotidien");
+  const eviterComplete = stepComplete("a-eviter");
   const terrainComplete = stepComplete("terrain");
+  const existantComplete = stepComplete("existant");
+  const entretienComplete = stepComplete("entretien");
   const budgetComplete = stepComplete("budget");
 
+  const terrainFields = loadGardenTerrainFields();
   const terrainSubtitle = terrainComplete
-    ? `${terrainPhotoCount} photo${terrainPhotoCount > 1 ? "s" : ""}`
-    : "Ajouter des photos";
+    ? `${terrainPhotoCount} photo${terrainPhotoCount > 1 ? "s" : ""} · ${areaRangeLabel(terrainFields.areaRange) || "Surface renseignée"}`
+    : "Photos et infos pratiques";
 
   return (
     <div
@@ -327,6 +347,11 @@ export default function DossierScreen({
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, color: "#1F2A22" }}>Mon dossier jardin</h1>
+        <p style={{ margin: 0, fontSize: 14, color: MUTED }}>
+          {loading
+            ? "…"
+            : `${progress.completedCount} étape${progress.completedCount > 1 ? "s" : ""} sur ${progress.totalSteps}`}
+        </p>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div
             style={{
@@ -481,6 +506,18 @@ export default function DossierScreen({
         ) : null}
       </button>
 
+      <RowLink
+        title="MON AMBIANCE"
+        labelColor="#5E4C8C"
+        subtitle={ambianceName || "À choisir"}
+        bg="#ECE6F5"
+        chevron="#6A5896"
+        onClick={onOpenAmbiance}
+        status={
+          <StepStatus complete={ambianceComplete} completeLabel="Fait" incompleteLabel="à choisir" />
+        }
+      />
+
       <button
         type="button"
         onClick={onOpenMot}
@@ -507,7 +544,7 @@ export default function DossierScreen({
               color: MUTED,
             }}
           >
-            MON MOT POUR LE PAYSAGISTE
+            MOT AU PAYSAGISTE
           </span>
           <StepStatus complete={motComplete} completeLabel="Fait" />
         </div>
@@ -517,15 +554,23 @@ export default function DossierScreen({
       </button>
 
       <RowLink
-        title="MON AMBIANCE"
-        labelColor="#5E4C8C"
-        subtitle={ambianceName || "À choisir"}
-        bg="#ECE6F5"
-        chevron="#6A5896"
-        onClick={onOpenAmbiance}
-        status={
-          <StepStatus complete={ambianceComplete} completeLabel="Fait" incompleteLabel="à choisir" />
-        }
+        title="VOTRE QUOTIDIEN"
+        labelColor="#4D554B"
+        subtitle={quotidienComplete ? "Renseigné" : dossierStepLabel("quotidien")}
+        bg="#FFFFFF"
+        chevron="#6B7268"
+        onClick={onOpenQuotidien}
+        status={<StepStatus complete={quotidienComplete} completeLabel="Fait" />}
+      />
+
+      <RowLink
+        title="CE QUE VOUS NE VOULEZ PAS"
+        labelColor="#4D554B"
+        subtitle={eviterComplete ? "Renseigné" : "Plusieurs choix possibles"}
+        bg="#FFFFFF"
+        chevron="#6B7268"
+        onClick={onOpenAEviter}
+        status={<StepStatus complete={eviterComplete} completeLabel="Fait" />}
       />
 
       <RowLink
@@ -536,6 +581,26 @@ export default function DossierScreen({
         chevron="#C0652E"
         onClick={onOpenTerrain}
         status={<StepStatus complete={terrainComplete} completeLabel="Fait" />}
+      />
+
+      <RowLink
+        title="CE QUI EXISTE DÉJÀ"
+        labelColor="#4D554B"
+        subtitle={existantComplete ? "Renseigné" : "Orientation, sol…"}
+        bg="#FFFFFF"
+        chevron="#6B7268"
+        onClick={onOpenExistant}
+        status={<StepStatus complete={existantComplete} completeLabel="Fait" />}
+      />
+
+      <RowLink
+        title="ENTRETIEN ET CALENDRIER"
+        labelColor="#4D554B"
+        subtitle={entretienComplete ? "Renseigné" : "Temps, calendrier, RDV"}
+        bg="#FFFFFF"
+        chevron="#6B7268"
+        onClick={onOpenEntretien}
+        status={<StepStatus complete={entretienComplete} completeLabel="Fait" />}
       />
 
       <RowLink

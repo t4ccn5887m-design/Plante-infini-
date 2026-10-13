@@ -4,6 +4,7 @@ import AtelierStepRow from "@/components/atelier/AtelierStepRow";
 import { getAllGardenStyles } from "@/lib/catalogueStyles";
 import { computeGardenDossierProgress } from "@/lib/gardenDossierProgress";
 import { readGardenDossierLocalFlags } from "@/lib/gardenDossierLocal";
+import { loadGardenBriefDetails } from "@/lib/gardenBriefDetails";
 import { DOSSIER_STEP_CARD } from "@/lib/gardenDossierStepCards";
 import { loadPremiumProfile } from "@/lib/premiumProfile";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
@@ -106,6 +107,10 @@ export default function AccueilDossierScreen({
   onOpenBudget,
   onContinueDossier,
   onOpenMot,
+  onOpenQuotidien,
+  onOpenAEviter,
+  onOpenExistant,
+  onOpenEntretien,
   gardenRefreshTick = 0,
 }) {
   const displayName = loadPremiumProfile().displayName?.trim();
@@ -119,10 +124,11 @@ export default function AccueilDossierScreen({
         gardenItemCount: gardenItems.length,
         paysagisteMessage,
         ambianceComplete: localFlags.ambianceComplete,
-        terrainPhotosComplete: localFlags.terrainPhotosComplete,
+        terrainComplete: localFlags.terrainPhotosComplete && localFlags.terrainFieldsComplete,
         budgetComplete: localFlags.budgetComplete,
+        details: loadGardenBriefDetails(),
       }),
-    [gardenItems.length, paysagisteMessage, localFlags]
+    [gardenItems.length, paysagisteMessage, localFlags, gardenRefreshTick]
   );
 
   const recentItems = useMemo(() => gardenItems.slice(0, 3), [gardenItems]);
@@ -144,6 +150,10 @@ export default function AccueilDossierScreen({
     else if (stepId === "coups-de-coeur") onOpenIdees?.();
     else if (stepId === "budget") onOpenBudget?.();
     else if (stepId === "mot-paysagiste") onOpenMot?.();
+    else if (stepId === "quotidien") onOpenQuotidien?.();
+    else if (stepId === "a-eviter") onOpenAEviter?.();
+    else if (stepId === "existant") onOpenExistant?.();
+    else if (stepId === "entretien") onOpenEntretien?.();
   };
 
   if (loading) {
