@@ -3,7 +3,7 @@ import { loadGardenIntention, saveGardenIntention } from "@/lib/gardenIntention"
 import { touchGardenDossierAfterLocalSave } from "@/lib/gardenDossierStore";
 import GardenFlowScreen, { GardenBackButton, GardenPrimaryButton } from "@/components/garden/GardenFlowScreen";
 
-const MUTED = "#5B6359";
+const MUTED = "var(--mute)";
 
 export default function GardenMotScreen({ onBack, onValidated }) {
   const saved = loadGardenIntention();
@@ -44,7 +44,7 @@ export default function GardenMotScreen({ onBack, onValidated }) {
             width: "100%",
             boxSizing: "border-box",
             borderRadius: 16,
-            border: "1.5px solid #EEE9E0",
+            border: "1.5px solid var(--line)",
             padding: "14px 16px",
             fontSize: 15,
             lineHeight: 1.45,

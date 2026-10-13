@@ -3,7 +3,7 @@ import { loadGardenBriefDetails, saveGardenBriefDetails } from "@/lib/gardenBrie
 import { touchGardenDossierAfterLocalSave } from "@/lib/gardenDossierStore";
 import GardenFlowScreen, { GardenBackButton, GardenPrimaryButton } from "@/components/garden/GardenFlowScreen";
 
-const MUTED = "#5B6359";
+const MUTED = "var(--mute)";
 
 export default function GardenDetailsStepScreen({
   title,

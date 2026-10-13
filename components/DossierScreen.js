@@ -28,8 +28,8 @@ import {
 } from "@/lib/clientContact";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
-const GREEN = "#2F5E3F";
-const MUTED = "#5B6359";
+const GREEN = "var(--sage)";
+const MUTED = "var(--mute)";
 
 function CheckIcon() {
   return (
@@ -121,7 +121,7 @@ function RowLink({ labelColor, title, subtitle, bg, chevron, onClick, status }) 
         display: "flex",
         alignItems: "center",
         gap: 12,
-        color: "#1F2A22",
+        color: "var(--ink)",
         minHeight: 44,
         border: "none",
         cursor: "pointer",
@@ -346,7 +346,7 @@ export default function DossierScreen({
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, color: "#1F2A22" }}>Mon dossier jardin</h1>
+        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, color: "var(--ink)" }}>Mon dossier jardin</h1>
         <p style={{ margin: 0, fontSize: 14, color: MUTED }}>
           {loading
             ? "…"
@@ -358,7 +358,7 @@ export default function DossierScreen({
               flexGrow: 1,
               height: 8,
               borderRadius: 999,
-              background: "#E6F0E3",
+              background: "rgba(201, 214, 184, 0.18)",
             }}
             role="progressbar"
             aria-valuenow={progress.percent}
@@ -423,11 +423,11 @@ export default function DossierScreen({
             </span>
             <span style={{ fontSize: 11, fontWeight: 600, color: MUTED }}>Déduit par Sevya de vos choix</span>
           </div>
-          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.45, color: "#1F2A22", fontWeight: 600 }}>
+          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.45, color: "var(--ink)", fontWeight: 600 }}>
             {gardenAnalysis.profil.style}
           </p>
           {gardenAnalysis.profil.priorites?.length ? (
-            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, lineHeight: 1.5, color: "#1F2A22" }}>
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, lineHeight: 1.5, color: "var(--ink)" }}>
               {gardenAnalysis.profil.priorites.map((p) => (
                 <li key={p} style={{ fontWeight: 700 }}>
                   {p}
@@ -444,11 +444,11 @@ export default function DossierScreen({
         style={{
           borderRadius: 18,
           padding: "14px 16px",
-          border: "1.5px solid #EEE9E0",
+          border: "1.5px solid var(--line)",
           display: "flex",
           flexDirection: "column",
           gap: 8,
-          background: "#FFFFFF",
+          background: "var(--card)",
           cursor: "pointer",
           fontFamily: "inherit",
           textAlign: "left",
@@ -479,7 +479,7 @@ export default function DossierScreen({
                 style={{
                   padding: "5px 11px",
                   borderRadius: 999,
-                  background: "#E6F0E3",
+                  background: "rgba(201, 214, 184, 0.18)",
                   color: GREEN,
                   fontSize: 13,
                   fontWeight: 700,
@@ -493,7 +493,7 @@ export default function DossierScreen({
                 style={{
                   padding: "5px 11px",
                   borderRadius: 999,
-                  background: "#E6F0E3",
+                  background: "rgba(201, 214, 184, 0.18)",
                   color: GREEN,
                   fontSize: 13,
                   fontWeight: 700,
@@ -524,11 +524,11 @@ export default function DossierScreen({
         style={{
           borderRadius: 18,
           padding: "14px 16px",
-          border: "1.5px solid #EEE9E0",
+          border: "1.5px solid var(--line)",
           display: "flex",
           flexDirection: "column",
           gap: 6,
-          background: "#FFFFFF",
+          background: "var(--card)",
           cursor: "pointer",
           fontFamily: "inherit",
           textAlign: "left",
@@ -555,9 +555,9 @@ export default function DossierScreen({
 
       <RowLink
         title="VOTRE QUOTIDIEN"
-        labelColor="#4D554B"
+        labelColor="var(--mute)"
         subtitle={quotidienComplete ? "Renseigné" : dossierStepLabel("quotidien")}
-        bg="#FFFFFF"
+        bg="var(--card)"
         chevron="#6B7268"
         onClick={onOpenQuotidien}
         status={<StepStatus complete={quotidienComplete} completeLabel="Fait" />}
@@ -565,9 +565,9 @@ export default function DossierScreen({
 
       <RowLink
         title="CE QUE VOUS NE VOULEZ PAS"
-        labelColor="#4D554B"
+        labelColor="var(--mute)"
         subtitle={eviterComplete ? "Renseigné" : "Plusieurs choix possibles"}
-        bg="#FFFFFF"
+        bg="var(--card)"
         chevron="#6B7268"
         onClick={onOpenAEviter}
         status={<StepStatus complete={eviterComplete} completeLabel="Fait" />}
@@ -585,9 +585,9 @@ export default function DossierScreen({
 
       <RowLink
         title="CE QUI EXISTE DÉJÀ"
-        labelColor="#4D554B"
+        labelColor="var(--mute)"
         subtitle={existantComplete ? "Renseigné" : "Orientation, sol…"}
-        bg="#FFFFFF"
+        bg="var(--card)"
         chevron="#6B7268"
         onClick={onOpenExistant}
         status={<StepStatus complete={existantComplete} completeLabel="Fait" />}
@@ -595,9 +595,9 @@ export default function DossierScreen({
 
       <RowLink
         title="ENTRETIEN ET CALENDRIER"
-        labelColor="#4D554B"
+        labelColor="var(--mute)"
         subtitle={entretienComplete ? "Renseigné" : "Temps, calendrier, RDV"}
-        bg="#FFFFFF"
+        bg="var(--card)"
         chevron="#6B7268"
         onClick={onOpenEntretien}
         status={<StepStatus complete={entretienComplete} completeLabel="Fait" />}
@@ -605,9 +605,9 @@ export default function DossierScreen({
 
       <RowLink
         title="MON BUDGET"
-        labelColor="#4D554B"
+        labelColor="var(--mute)"
         subtitle={budgetDisplayLabel(budgetId) || "À indiquer"}
-        bg="#F2EEE7"
+        bg="var(--card)"
         chevron="#6B7268"
         onClick={onOpenBudget}
         status={<StepStatus complete={budgetComplete} completeLabel="Fait" />}
@@ -617,7 +617,7 @@ export default function DossierScreen({
         title="MES COORDONNÉES"
         labelColor={MUTED}
         subtitle={contactComplete ? "Profil à jour" : "À compléter"}
-        bg="#FFFFFF"
+        bg="var(--card)"
         chevron="#6B7268"
         onClick={() => onOpenProfile?.("")}
         status={
@@ -659,8 +659,8 @@ export default function DossierScreen({
             flex: "1 1 0",
             minHeight: 50,
             borderRadius: 16,
-            background: GREEN,
-            color: "#FFFFFF",
+            background: "var(--ink)",
+            color: "var(--bg)",
             border: "none",
             fontSize: 15,
             fontWeight: 700,
@@ -686,7 +686,7 @@ export default function DossierScreen({
             borderRadius: 16,
             border: `1.5px solid ${GREEN}`,
             color: GREEN,
-            background: "#FFFFFF",
+            background: "var(--card)",
             fontSize: 15,
             fontWeight: 700,
             display: "flex",

@@ -5,7 +5,7 @@ import {
 import { loadGardenAmbianceChoice } from "@/lib/gardenAmbianceChoice";
 import { GardenBackButton } from "@/components/garden/GardenFlowScreen";
 
-const GREEN = "#2F5E3F";
+const GREEN = "var(--sage)";
 
 export default function GardenAmbianceListScreen({ onBack, onOpenAmbiance }) {
   const chosen = loadGardenAmbianceChoice();
@@ -14,9 +14,9 @@ export default function GardenAmbianceListScreen({ onBack, onOpenAmbiance }) {
     <div style={{ padding: "18px", display: "flex", flexDirection: "column", gap: 16 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <GardenBackButton onBack={onBack} />
-        <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: "#1F2A22" }}>Ambiances</h1>
+        <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: "var(--ink)" }}>Ambiances</h1>
       </div>
-      <p style={{ margin: 0, fontSize: 14, lineHeight: 1.45, color: "#5B6359" }}>
+      <p style={{ margin: 0, fontSize: 14, lineHeight: 1.45, color: "var(--mute)" }}>
         Choisissez l&apos;ambiance qui vous ressemble — une seule à la fois, modifiable à tout moment.
       </p>
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -29,11 +29,11 @@ export default function GardenAmbianceListScreen({ onBack, onOpenAmbiance }) {
               type="button"
               onClick={() => onOpenAmbiance(name)}
               style={{
-                border: isChosen ? `2px solid ${GREEN}` : "1.5px solid #EEE9E0",
+                border: isChosen ? `2px solid ${GREEN}` : "1.5px solid var(--line)",
                 borderRadius: 18,
                 padding: 0,
                 overflow: "hidden",
-                background: "#FFFFFF",
+                background: "var(--card)",
                 cursor: "pointer",
                 fontFamily: "inherit",
                 textAlign: "left",
@@ -48,7 +48,7 @@ export default function GardenAmbianceListScreen({ onBack, onOpenAmbiance }) {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "flex-end",
-                  color: "#FFFFFF",
+                  color: "var(--ink)",
                 }}
               >
                 <span style={{ fontSize: 18, fontWeight: 700 }}>{name}</span>
@@ -63,7 +63,7 @@ export default function GardenAmbianceListScreen({ onBack, onOpenAmbiance }) {
                     fontSize: 12,
                     fontWeight: 700,
                     color: GREEN,
-                    background: "#E6F0E3",
+                    background: "rgba(201, 214, 184, 0.18)",
                   }}
                 >
                   Mon ambiance actuelle

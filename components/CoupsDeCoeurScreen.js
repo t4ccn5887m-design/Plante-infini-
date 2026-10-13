@@ -36,9 +36,9 @@ function FilterPill({ active, children, onClick }) {
         minHeight: 36,
         padding: "0 14px",
         borderRadius: 999,
-        border: active ? "none" : "1.5px solid #E4DED3",
-        background: active ? "#1F2A22" : "#FFFFFF",
-        color: active ? "#FFFFFF" : "#4D554B",
+        background: active ? "var(--ink)" : "var(--card)",
+        color: active ? "var(--bg)" : "var(--mute)",
+        border: active ? "none" : "1.5px solid var(--line)",
         fontFamily: "inherit",
         fontSize: 13,
         fontWeight: active ? 700 : 600,
@@ -57,7 +57,7 @@ function CoupsCard({ item, removing, onOpen, onRemove }) {
       style={{
         borderRadius: 18,
         overflow: "hidden",
-        border: "1.5px solid #EEE9E0",
+        border: "1.5px solid var(--line)",
         display: "flex",
         flexDirection: "column",
         minWidth: 0,
@@ -100,7 +100,7 @@ function CoupsCard({ item, removing, onOpen, onRemove }) {
             height: 40,
             borderRadius: 999,
             border: "none",
-            background: "#FFFFFF",
+            background: "var(--card)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -124,7 +124,7 @@ function CoupsCard({ item, removing, onOpen, onRemove }) {
           cursor: "pointer",
           fontFamily: "inherit",
           textAlign: "left",
-          color: "#1F2A22",
+          color: "var(--ink)",
           width: "100%",
         }}
       >
@@ -139,7 +139,7 @@ function CoupsCard({ item, removing, onOpen, onRemove }) {
         >
           {item.nom}
         </span>
-        <span style={{ fontSize: 12, color: "#5B6359" }}>{item.originLabel}</span>
+        <span style={{ fontSize: 12, color: "var(--mute)" }}>{item.originLabel}</span>
       </button>
     </div>
   );
@@ -217,8 +217,8 @@ export default function CoupsDeCoeurScreen({
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, color: "#1F2A22" }}>Coups de cœur</h1>
-        <span style={{ fontSize: 14, color: "#5B6359" }}>Tout ce qui ira dans votre dossier.</span>
+        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, color: "var(--ink)" }}>Coups de cœur</h1>
+        <span style={{ fontSize: 14, color: "var(--mute)" }}>Tout ce qui ira dans votre dossier.</span>
       </div>
 
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -245,7 +245,7 @@ export default function CoupsDeCoeurScreen({
         <div
           style={{
             borderRadius: 18,
-            border: "1.5px solid #EEE9E0",
+            border: "1.5px solid var(--line)",
             padding: "22px 16px",
             display: "flex",
             flexDirection: "column",
@@ -254,7 +254,7 @@ export default function CoupsDeCoeurScreen({
             textAlign: "center",
           }}
         >
-          <span style={{ fontSize: 16, fontWeight: 700, color: "#1F2A22" }}>
+          <span style={{ fontSize: 16, fontWeight: 700, color: "var(--ink)" }}>
             Aucun coup de cœur pour l&apos;instant
           </span>
           <button
@@ -263,9 +263,9 @@ export default function CoupsDeCoeurScreen({
             style={{
               minHeight: 44,
               borderRadius: 14,
-              background: "#FFFFFF",
-              color: "#2F5E3F",
-              border: "1.5px solid #EEE9E0",
+              background: "var(--card)",
+              color: "var(--sage)",
+              border: "1.5px solid var(--line)",
               fontSize: 14,
               fontWeight: 700,
               cursor: "pointer",
@@ -297,7 +297,7 @@ export default function CoupsDeCoeurScreen({
 
           {styleItems.length > 0 ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 6 }}>
-              <h2 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: "#1F2A22" }}>
+              <h2 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: "var(--ink)" }}>
                 Jardins qui lui plaisent
               </h2>
               <div

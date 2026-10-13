@@ -4,8 +4,8 @@ import { loadGardenBudgetChoice, saveGardenBudgetChoice } from "@/lib/gardenBudg
 import { touchGardenDossierAfterLocalSave } from "@/lib/gardenDossierStore";
 import GardenFlowScreen, { GardenBackButton, GardenPrimaryButton } from "@/components/garden/GardenFlowScreen";
 
-const GREEN = "#2F5E3F";
-const MUTED = "#5B6359";
+const GREEN = "var(--sage)";
+const MUTED = "var(--mute)";
 
 const BUDGET_OPTIONS = BUDGETS.map((b) =>
   b.id === "unknown" ? { ...b, label: "Je ne sais pas encore" } : b
@@ -55,9 +55,9 @@ export default function GardenBudgetScreen({ onBack, onValidated }) {
                 style={{
                   minHeight: 56,
                   borderRadius: 18,
-                  border: active ? `2px solid ${GREEN}` : "1.5px solid #EEE9E0",
-                  background: active ? "#E6F0E3" : "#FFFFFF",
-                  color: active ? GREEN : "#1F2A22",
+                  border: active ? `2px solid ${GREEN}` : "1.5px solid var(--line)",
+                  background: active ? "rgba(201, 214, 184, 0.18)" : "var(--card)",
+                  color: active ? GREEN : "var(--ink)",
                   fontSize: 18,
                   fontWeight: 700,
                   cursor: "pointer",
