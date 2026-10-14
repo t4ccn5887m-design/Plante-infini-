@@ -27,7 +27,6 @@ import {
   X,
   Bell,
   Heart,
-  SlidersHorizontal,
 } from "lucide-react";
 import { PARTNERS_LIVE } from "@/lib/partnersPreview";
 import {
@@ -617,58 +616,103 @@ function ClientList({
   );
 }
 
-function StudioScreen({ studio, onOpenSettings }) {
+function studioPresentationSummary(studio) {
+  const p = studio?.presentation?.trim();
+  if (!p) return "—";
+  const lines = p.split(/\n/).filter((l) => l.trim());
+  if (lines.length >= 3) return "3 lignes";
+  if (lines.length === 2) return "2 lignes";
+  if (p.length > 22) return `${p.slice(0, 20)}…`;
+  return p;
+}
+
+function studioSpecialtiesSummary(studio) {
+  const specs = (studio?.specialties || []).filter(Boolean);
+  if (!specs.length) return "—";
+  if (specs.length <= 2) return specs.join(", ");
+  return `${specs.slice(0, 2).join(", ")}…`;
+}
+
+function studioExperienceSummary(studio) {
+  const y = studio?.yearsExperience;
+  if (y != null && y > 0) return `${y} ans`;
+  return "—";
+}
+
+function studioNotificationsSummary() {
+  return "E-mail · téléphone";
+}
+
+const STUDIO_SETTING_ROWS = [
+  { id: "presentation", label: "Présentation", summary: studioPresentationSummary },
+  { id: "zone", label: "Zone d’intervention", summary: (s) => s?.interventionZone?.trim() || "—" },
+  { id: "specialties", label: "Spécialités", summary: studioSpecialtiesSummary },
+  { id: "experience", label: "Expérience", summary: studioExperienceSummary },
+  { id: "notifications", label: "Notifications", summary: studioNotificationsSummary },
+  { id: "link", label: "Lien client", summary: () => "Aperçu et couleur" },
+  { id: "subscription", label: "Abonnement", summary: () => "Essai · 14 j restants" },
+];
+
+function StudioScreen({ studio, onOpenSetting, onSignOut }) {
   const contact = studio?.contactFirstName?.trim();
   const zone = studio?.interventionZone?.trim();
-  const years =
-    studio?.yearsExperience != null && studio.yearsExperience > 0
-      ? `${studio.yearsExperience} ans d’expérience`
-      : null;
-  const specs = (studio?.specialties || []).filter(Boolean);
+  const partnersCode =
+    studio?.partnersProfileCode ||
+    studio?.partnersSlug ||
+    studio?.partners_code ||
+    null;
 
   return (
-    <div className="card-panel">
-      <div className="head-row">
-        <div className="h-title" style={{ fontSize: 26 }}>
+    <div className="card-panel wp-studio-tab">
+      <div className="head-row wp-studio-tab__top">
+        <p className="label" style={{ margin: 0 }}>
           Studio
-        </div>
-        <StudioAvatar studio={studio} onOpen={onOpenSettings} />
+        </p>
+        <StudioAvatar studio={studio} onOpen={() => onOpenSetting?.(null)} />
       </div>
       <div className="wp-studio-head">
         <span className="wp-studio-logo">{studio?.initials || "?"}</span>
         <div>
           <div className="wp-studio-name">{studio?.name || "Mon studio"}</div>
           <div className="wp-studio-sub">
-            {[contact, zone, years].filter(Boolean).join(" · ") ||
-              "Présentation et réglages"}
+            {[contact, zone].filter(Boolean).join(" · ") || "Complétez votre profil"}
           </div>
         </div>
       </div>
-      {studio?.presentation ? (
-        <p className="bc-taste" style={{ marginTop: 16, lineHeight: 1.55 }}>
-          {studio.presentation}
-        </p>
-      ) : null}
-      {specs.length > 0 ? (
-        <div className="chipwrap" style={{ marginTop: 12 }}>
-          {specs.map((s) => (
-            <span className="vchip" key={s}>
-              {s}
+
+      {partnersCode ? (
+        <div className="wp-studio-partners">
+          <p className="label" style={{ marginTop: 18, marginBottom: 8 }}>
+            Ma fiche Partenaires
+          </p>
+          <button type="button" className="wp-studio-partners-card">
+            <span className="wp-studio-partners-cap">
+              Voir ma fiche publique ›
             </span>
-          ))}
+          </button>
         </div>
       ) : null}
-      <button
-        className="bigbtn"
-        type="button"
-        style={{ marginTop: 22 }}
-        onClick={onOpenSettings}
-      >
-        <SlidersHorizontal size={18} /> Réglages du studio
+
+      <div className="wp-studio-settings-list">
+        {STUDIO_SETTING_ROWS.map((row) => (
+          <button
+            key={row.id}
+            type="button"
+            className="wp-studio-settings-row"
+            onClick={() => onOpenSetting?.(row.id)}
+          >
+            <span className="wp-studio-settings-label">{row.label}</span>
+            <span className="wp-studio-settings-val">
+              {row.summary(studio)}
+              <ChevronRight size={16} aria-hidden />
+            </span>
+          </button>
+        ))}
+      </div>
+
+      <button type="button" className="linebtn wp-studio-signout" onClick={onSignOut}>
+        Se déconnecter
       </button>
-      <p className="bc-taste" style={{ marginTop: 14 }}>
-        Aperçu fiche Partenaires et abonnement : prochaines étapes.
-      </p>
     </div>
   );
 }
@@ -725,19 +769,42 @@ function Realisations({ studio, refreshKey, onOpen, onCreate, onOpenSettings }) 
 
   const empty = !loading && !error && items.length === 0;
 
+  const renderProjectCard = (p) => {
+    const styleLabel = p.style?.trim() || "";
+    const kicker = [styleLabel, p.location?.trim()].filter(Boolean).join(" · ");
+    return (
+      <button
+        key={p.id}
+        type="button"
+        className="wp-proj-card"
+        onClick={() => onOpen(p)}
+      >
+        <div className="wp-proj-thumb">
+          <SafePhoto src={coverUrls[p.id]} alt="" />
+          {!p.isPublic ? (
+            <span className="wp-proj-badge-private wp-proj-badge-corner">Privée</span>
+          ) : null}
+        </div>
+        <div className="wp-proj-meta">
+          {kicker ? <div className="wp-proj-kicker">{kicker}</div> : null}
+          <div className="wp-proj-title">{p.title}</div>
+        </div>
+      </button>
+    );
+  };
+
   return (
     <div className="card-panel">
       <div className="head-row">
         <div>
-          <div className="h-title">Réalisations</div>
+          <p className="label" style={{ margin: 0 }}>
+            Réalisations
+          </p>
+          <div className="h-title" style={{ marginTop: 6 }}>
+            Vos réalisations
+          </div>
           <div className="h-sub">
-            {loading
-              ? "Chargement…"
-              : error
-                ? "Chargement interrompu"
-                : empty
-                  ? "Aucun dossier"
-                  : `${items.length} réalisation${items.length > 1 ? "s" : ""}`}
+            À montrer au bon moment du rendez-vous.
           </div>
         </div>
         <StudioAvatar studio={studio} onOpen={onOpenSettings} />
@@ -763,61 +830,22 @@ function Realisations({ studio, refreshKey, onOpen, onCreate, onOpenSettings }) 
         </div>
       )}
 
-      {empty && (
-        <div className="wp-empty" style={{ marginTop: 18 }}>
-          <Images size={28} color="#4E7B52" />
-          <p className="wp-empty-title">Créez votre première réalisation</p>
-          <p className="wp-empty-sub">
-            Constituez un dossier photo pour montrer un jardin déjà réalisé.
-          </p>
-          <button className="bigbtn" type="button" onClick={onCreate}>
-            <Plus size={18} /> Nouvelle réalisation
-          </button>
-        </div>
+      {empty && !loading && !error && (
+        <p className="bc-taste" style={{ marginTop: 14 }}>
+          Constituez un dossier photo pour montrer un jardin déjà réalisé.
+        </p>
       )}
 
-      {!loading && !error && items.length > 0 && (
-        <>
-          <button
-            className="bigbtn"
-            type="button"
-            onClick={onCreate}
-            style={{ marginTop: 14, marginBottom: 4 }}
-          >
-            <Plus size={18} /> Nouvelle réalisation
+      {!loading && !error && (
+        <div className="wp-proj-grid">
+          {items.map((p) => renderProjectCard(p))}
+          <button type="button" className="wp-proj-card wp-proj-add" onClick={onCreate}>
+            <span className="wp-proj-add-plus" aria-hidden>
+              +
+            </span>
+            <span className="wp-proj-add-label">Nouvelle réalisation</span>
           </button>
-          <div className="wp-proj-grid">
-            {items.map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                className="wp-proj-card"
-                onClick={() => onOpen(p)}
-              >
-                <div className="wp-proj-thumb">
-                  <SafePhoto src={coverUrls[p.id]} alt="" />
-                </div>
-                <div className="wp-proj-meta">
-                  <div className="wp-proj-title">
-                    {p.title}
-                    {!p.isPublic ? (
-                      <span className="wp-proj-badge-private">Privée</span>
-                    ) : null}
-                  </div>
-                  <div className="wp-proj-loc">
-                    {p.location ? (
-                      <>
-                        <MapPin size={13} /> {p.location}
-                      </>
-                    ) : (
-                      "Sans lieu"
-                    )}
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </>
+        </div>
       )}
     </div>
   );
@@ -1600,7 +1628,24 @@ function Agenda({ studio, refreshKey, onOpenSettings, onOpenBrief }) {
   );
 }
 
-function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
+const SETTINGS_SECTION_TITLES = {
+  presentation: "Présentation",
+  zone: "Zone d’intervention",
+  specialties: "Spécialités",
+  experience: "Expérience",
+  notifications: "Notifications",
+  link: "Lien client",
+  subscription: "Abonnement",
+};
+
+function SettingsSheet({
+  studio,
+  authEmail,
+  section = null,
+  onClose,
+  onSaved,
+  onSignOut,
+}) {
   const [name, setName] = useState(studio?.name || "");
   const [contactFirstName, setContactFirstName] = useState(
     studio?.contactFirstName || ""
@@ -1650,13 +1695,32 @@ function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
     window.setTimeout(() => setSavedOk(false), 2000);
   };
 
+  const showAll = !section;
+  const showIdentity = showAll;
+  const showPresentation = showAll || section === "presentation";
+  const showZone = showAll || section === "zone";
+  const showSpecialties = showAll || section === "specialties";
+  const showExperience = showAll || section === "experience";
+  const showNotifications = showAll || section === "notifications";
+  const showLink = showAll || section === "link";
+  const showSubscription = showAll || section === "subscription";
+  const readOnlySection =
+    section === "notifications" || section === "subscription";
+  const sheetTitle = section
+    ? SETTINGS_SECTION_TITLES[section] || "Réglage"
+    : "Réglages";
+
   return (
     <div className="overlay" onClick={onClose}>
       <div className="sheet sheet-tall" onClick={(e) => e.stopPropagation()}>
         <div className="grab" />
-        <h3>Réglages</h3>
-        <p className="lead">Studio visible sur le lien client</p>
+        <h3>{sheetTitle}</h3>
+        {showAll ? (
+          <p className="lead">Studio visible sur le lien client</p>
+        ) : null}
 
+        {showIdentity ? (
+          <>
         <div className="field">
           <label htmlFor="set-name">Nom du studio</label>
           <input
@@ -1695,6 +1759,9 @@ function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
             placeholder={authEmail || "contact@studio.fr"}
           />
         </div>
+          </>
+        ) : null}
+        {showZone ? (
         <div className="field">
           <label htmlFor="set-zone">Zone d’intervention</label>
           <input
@@ -1702,9 +1769,11 @@ function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
             type="text"
             value={interventionZone}
             onChange={(e) => setInterventionZone(e.target.value)}
-            placeholder="Ex. Aix + 30 km"
+            placeholder="Ex. 13 · 83"
           />
         </div>
+        ) : null}
+        {showPresentation ? (
         <div className="field">
           <label htmlFor="set-pres">Présentation</label>
           <textarea
@@ -1716,6 +1785,8 @@ function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
             onChange={(e) => setPresentation(e.target.value)}
           />
         </div>
+        ) : null}
+        {showSpecialties ? (
         <div className="field">
           <label htmlFor="set-spec">Spécialités</label>
           <input
@@ -1726,6 +1797,8 @@ function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
             placeholder="Méditerranéen, piscines…"
           />
         </div>
+        ) : null}
+        {showExperience ? (
         <div className="field">
           <label htmlFor="set-years">Années d’expérience</label>
           <input
@@ -1738,10 +1811,15 @@ function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
             placeholder="Ex. 12"
           />
         </div>
+        ) : null}
 
+        {showLink ? (
+          <>
+        {showAll ? (
         <div className="label" style={{ marginTop: 8 }}>
           Lien client
         </div>
+        ) : null}
         <div className="field">
           <label>Couleur du lien client</label>
           <div className="colorrow" style={{ marginTop: 6 }}>
@@ -1764,7 +1842,10 @@ function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
             <div className="t">{name.trim() || "votre studio"}</div>
           </div>
         </div>
+          </>
+        ) : null}
 
+        {showNotifications ? (
         <div className="dcard" style={{ marginTop: 4 }}>
           <div className="dlbl">Notifications</div>
           <div className="srow">
@@ -1801,7 +1882,9 @@ function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
             Bientôt disponible.
           </p>
         </div>
+        ) : null}
 
+        {showSubscription ? (
         <div className="dcard">
           <div className="dlbl">Abonnement</div>
           <div className="plan">
@@ -1814,6 +1897,7 @@ function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
             </button>
           </div>
         </div>
+        ) : null}
 
         {error && (
           <p
@@ -1832,17 +1916,21 @@ function SettingsSheet({ studio, authEmail, onClose, onSaved, onSignOut }) {
           </p>
         )}
 
-        <button
-          className="bigbtn"
-          type="button"
-          onClick={handleSave}
-          disabled={loading}
-        >
-          {loading ? "Enregistrement…" : "Enregistrer"}
-        </button>
-        <button className="linebtn" type="button" onClick={onSignOut}>
-          Se déconnecter
-        </button>
+        {!readOnlySection ? (
+          <button
+            className="bigbtn"
+            type="button"
+            onClick={handleSave}
+            disabled={loading}
+          >
+            {loading ? "Enregistrement…" : "Enregistrer"}
+          </button>
+        ) : null}
+        {showAll ? (
+          <button className="linebtn" type="button" onClick={onSignOut}>
+            Se déconnecter
+          </button>
+        ) : null}
         <button className="linebtn" type="button" onClick={onClose}>
           Fermer
         </button>
@@ -2038,16 +2126,61 @@ function PlanSheet({ studio, brief, onClose, onCreated }) {
   );
 }
 
+const SEND_VIA_HELP = {
+  sms: "SMS : Messages s’ouvre avec le texte et le lien déjà écrits, vous n’avez qu’à envoyer.",
+  email:
+    "E-mail : votre messagerie s’ouvre avec le message et le lien déjà rédigés.",
+  qr: "QR code : montrez le code au client pour qu’il ouvre le questionnaire.",
+  copy: "Copier : le lien est copié dans le presse-papiers, à coller où vous voulez.",
+};
+
 function SendSheet({ studio, onClose, onCreated }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [sendVia, setSendVia] = useState("sms");
   const [createdUrl, setCreatedUrl] = useState(null);
+  const [createdToken, setCreatedToken] = useState(null);
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleCreate = async () => {
+  const linkMessage = (url) =>
+    `Bonjour,\n\nAvant notre rendez-vous, merci de répondre à ce court questionnaire (10 min, sans compte) :\n${url}\n\nÀ bientôt,\n${studio?.name || ""}`;
+
+  const smsBody = (url) =>
+    `Bonjour, préparez notre rendez-vous en 10 min : ${url}`;
+
+  const dispatchSend = (url, via) => {
+    const digits = phone.replace(/\s/g, "");
+    if (via === "sms") {
+      const q = digits ? `sms:${digits}?&body=` : "sms:?&body=";
+      window.location.href = `${q}${encodeURIComponent(smsBody(url))}`;
+      return;
+    }
+    if (via === "email") {
+      window.location.href = `mailto:?subject=${encodeURIComponent(
+        "Préparez notre rendez-vous jardin"
+      )}&body=${encodeURIComponent(linkMessage(url))}`;
+      return;
+    }
+    if (via === "copy") {
+      navigator.clipboard.writeText(url).then(
+        () => {
+          setCopied(true);
+          window.setTimeout(() => setCopied(false), 2000);
+        },
+        () => setError("Impossible de copier. Sélectionnez le lien manuellement.")
+      );
+      return;
+    }
+    if (via === "qr") {
+      const qr = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(url)}`;
+      window.open(qr, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const handleSend = async () => {
     setError(null);
     setLoading(true);
     const result = await createProLink(studio?.id, {
@@ -2060,33 +2193,29 @@ function SendSheet({ studio, onClose, onCreated }) {
       setError(proStudioErrorMessage(result.error));
       return;
     }
-    setCreatedUrl(result.link.url);
+    const url = result.link.url;
+    setCreatedUrl(url);
+    setCreatedToken(result.link.token);
     onCreated?.(result.link);
+    dispatchSend(url, sendVia);
   };
 
-  const copy = async () => {
-    if (!createdUrl) return;
-    try {
-      await navigator.clipboard.writeText(createdUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      setError("Impossible de copier. Sélectionnez le lien manuellement.");
-    }
+  const openClientPreview = () => {
+    if (!createdToken) return;
+    const origin =
+      typeof window !== "undefined" && window.location?.origin
+        ? window.location.origin
+        : "";
+    const path = `/b/${createdToken}?apercu=1`;
+    window.open(origin ? `${origin}${path}` : path, "_blank", "noopener,noreferrer");
   };
 
-  const smsHref = createdUrl
-    ? `sms:?&body=${encodeURIComponent(
-        `Bonjour, préparez notre rendez-vous en 3 min : ${createdUrl}`
-      )}`
-    : null;
-  const mailHref = createdUrl
-    ? `mailto:?subject=${encodeURIComponent(
-        "Préparez notre rendez-vous jardin"
-      )}&body=${encodeURIComponent(
-        `Bonjour,\n\nAvant notre rendez-vous, merci de répondre à ce court questionnaire (3 min, sans compte) :\n${createdUrl}\n\nÀ bientôt,\n${studio?.name || ""}`
-      )}`
-    : null;
+  const sendChannels = [
+    ["sms", "SMS"],
+    ["email", "E-mail"],
+    ["qr", "QR code"],
+    ["copy", "Copier"],
+  ];
 
   return (
     <div className="wp-send-full">
@@ -2102,14 +2231,15 @@ function SendSheet({ studio, onClose, onCreated }) {
         avant le RDV
       </h2>
       <p className="bc-taste" style={{ marginTop: 6 }}>
-        Votre client remplit son brief en quelques minutes, sans créer de compte.
+        Votre client remplit son brief en{" "}
+        <strong style={{ fontWeight: 600 }}>10 minutes</strong>, sans créer de compte.
       </p>
       <div style={{ marginTop: 16 }}>
         <div className="field">
           <label htmlFor="wp-client-name">Nom du client</label>
           <input
             id="wp-client-name"
-            placeholder="Ex. Famille Roux"
+            placeholder="Prénom Nom"
             value={name}
             onChange={(e) => setName(e.target.value)}
             disabled={Boolean(createdUrl) || loading}
@@ -2126,64 +2256,84 @@ function SendSheet({ studio, onClose, onCreated }) {
           />
         </div>
         <div className="field">
-          <label htmlFor="wp-client-addr">Adresse (facultatif)</label>
+          <label htmlFor="wp-client-addr">Commune du jardin</label>
           <input
             id="wp-client-addr"
-            placeholder="Ville, code postal…"
+            placeholder="Ex. : Aubagne"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             disabled={Boolean(createdUrl) || loading}
           />
         </div>
 
-        {createdUrl ? (
-          <>
-            <div className="linkbox">
-              <span className="u">{createdUrl.replace(/^https?:\/\//, "")}</span>
-              <button type="button" onClick={copy}>
-                {copied ? (
-                  <>
-                    <Check size={14} /> Copié
-                  </>
-                ) : (
-                  <>
-                    <Copy size={14} /> Copier
-                  </>
-                )}
-              </button>
-            </div>
-            <div className="sendrow">
-              <a href={smsHref}>SMS</a>
-              <a href={mailHref}>E-mail</a>
-              <button type="button" disabled title="Bientôt">
-                QR code
-              </button>
-            </div>
-            <div className="note">
-              Le brief revient <b>directement dans votre app</b>, avec le nom et
-              les coordonnées du client. Rien à ressaisir.
-            </div>
-            <button className="bigbtn" onClick={onClose} type="button">
-              <Send size={18} /> Terminé
-            </button>
-          </>
-        ) : (
-          <>
-            {error && (
-              <p className="wp-form-error" role="alert">
-                {error}
-              </p>
-            )}
+        <p className="label" style={{ marginTop: 20, marginBottom: 10 }}>
+          Envoyer par
+        </p>
+        <div className="wp-send-via" role="group" aria-label="Envoyer par">
+          {sendChannels.map(([id, label]) => (
             <button
-              className="bigbtn"
-              onClick={handleCreate}
+              key={id}
               type="button"
-              disabled={loading || !name.trim()}
+              className={`wp-send-via-pill${sendVia === id ? " on" : ""}`}
+              onClick={() => setSendVia(id)}
+              disabled={Boolean(createdUrl) || loading}
             >
-              <Send size={18} />
-              {loading ? "Création…" : "Créer le lien"}
+              {label}
             </button>
-          </>
+          ))}
+        </div>
+        <p className="wp-send-via-help">{SEND_VIA_HELP[sendVia]}</p>
+
+        {createdToken ? (
+          <button type="button" className="wp-send-preview-link" onClick={openClientPreview}>
+            Voir ce que reçoit le client ›
+          </button>
+        ) : (
+          <p className="wp-send-preview-hint">
+            Le lien « Voir ce que reçoit le client › » apparaît après envoi.
+          </p>
+        )}
+
+        {createdUrl ? (
+          <div className="linkbox" style={{ marginTop: 14 }}>
+            <span className="u">{createdUrl.replace(/^https?:\/\//, "")}</span>
+            <button type="button" onClick={() => dispatchSend(createdUrl, "copy")}>
+              {copied ? (
+                <>
+                  <Check size={14} /> Copié
+                </>
+              ) : (
+                <>
+                  <Copy size={14} /> Copier
+                </>
+              )}
+            </button>
+          </div>
+        ) : null}
+
+        {error ? (
+          <p className="wp-form-error" role="alert">
+            {error}
+          </p>
+        ) : null}
+
+        <p className="note" style={{ marginTop: 12 }}>
+          Le brief revient dans votre app, avec le nom et les coordonnées du client.
+        </p>
+
+        {createdUrl ? (
+          <button className="bigbtn" onClick={onClose} type="button" style={{ marginTop: 8 }}>
+            Terminé
+          </button>
+        ) : (
+          <button
+            className="bigbtn"
+            onClick={handleSend}
+            type="button"
+            disabled={loading || !name.trim()}
+          >
+            {loading ? "Envoi…" : "Envoyer le lien"}
+          </button>
         )}
       </div>
     </div>
@@ -2241,6 +2391,7 @@ export default function WilderProV2() {
   const [sheet, setSheet] = useState(false);
   const [planSheet, setPlanSheet] = useState(false);
   const [settingsSheet, setSettingsSheet] = useState(false);
+  const [settingsSection, setSettingsSection] = useState(null);
   const [agendaKey, setAgendaKey] = useState(0);
   const [realisationsKey, setRealisationsKey] = useState(0);
   const [activeProject, setActiveProject] = useState(null);
@@ -2322,6 +2473,11 @@ export default function WilderProV2() {
     setPhase("auth");
   };
 
+  const openSettings = (section = null) => {
+    setSettingsSection(section);
+    setSettingsSheet(true);
+  };
+
   if (phase === "boot") {
     return (
       <div className="wp">
@@ -2393,7 +2549,7 @@ export default function WilderProV2() {
                 setNotifsSeen(true);
                 setTab("notifs");
               }}
-              onOpenSettings={() => setSettingsSheet(true)}
+              onOpenSettings={() => openSettings(null)}
               onOpen={(b) => open(b, "projets")}
               notifCount={notifBadge}
             />
@@ -2423,7 +2579,8 @@ export default function WilderProV2() {
           {!sheet && tab === "studio" && (
             <StudioScreen
               studio={studio}
-              onOpenSettings={() => setSettingsSheet(true)}
+              onOpenSetting={openSettings}
+              onSignOut={onSignOut}
             />
           )}
           {!sheet && tab === "detail" && active && (
@@ -2453,7 +2610,7 @@ export default function WilderProV2() {
             <Agenda
               studio={studio}
               refreshKey={agendaKey}
-              onOpenSettings={() => setSettingsSheet(true)}
+              onOpenSettings={() => openSettings(null)}
               onOpenBrief={(linkId) => {
                 const b = items.find((i) => i.id === linkId);
                 if (b) open(b, "agenda");
@@ -2472,7 +2629,7 @@ export default function WilderProV2() {
                 setActiveProject(null);
                 setTab("realisation-form");
               }}
-              onOpenSettings={() => setSettingsSheet(true)}
+              onOpenSettings={() => openSettings(null)}
             />
           )}
           {!sheet && tab === "realisation-detail" && activeProject && (
@@ -2490,7 +2647,7 @@ export default function WilderProV2() {
                 setTab("realisations");
                 setRealisationsKey((k) => k + 1);
               }}
-              onOpenSettings={() => setSettingsSheet(true)}
+              onOpenSettings={() => openSettings(null)}
               onProjectChange={(next) => setActiveProject(next)}
             />
           )}
@@ -2510,7 +2667,7 @@ export default function WilderProV2() {
                 setRealisationsKey((k) => k + 1);
                 setTab("realisation-detail");
               }}
-              onOpenSettings={() => setSettingsSheet(true)}
+              onOpenSettings={() => openSettings(null)}
             />
           )}
         </div>
@@ -2584,10 +2741,15 @@ export default function WilderProV2() {
           <SettingsSheet
             studio={studio}
             authEmail={user?.email || ""}
-            onClose={() => setSettingsSheet(false)}
+            section={settingsSection}
+            onClose={() => {
+              setSettingsSheet(false);
+              setSettingsSection(null);
+            }}
             onSaved={(next) => setStudio(next)}
             onSignOut={async () => {
               setSettingsSheet(false);
+              setSettingsSection(null);
               await onSignOut();
             }}
           />
