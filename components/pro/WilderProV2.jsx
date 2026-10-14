@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/router";
 import {
   Camera,
   FileText,
@@ -40,17 +41,14 @@ import {
   formatTodayHeader,
   pickNextAppointment,
 } from "@/lib/pro/proLinkBuckets";
-import {
-  signInWithEmail,
-  signOutCloud,
-  signUpWithEmail,
-} from "@/lib/cloudSync";
+import { signOutCloud } from "@/lib/cloudSync";
 import BriefDetailScreen from "@/components/pro/BriefDetailScreen";
 import {
   createProAppointment,
   updateProAppointment,
   createProLink,
   ensureProStudio,
+  getBriefPhotoSignedUrls,
   getProAuthUser,
   listProAppointments,
   listProLinksWithBriefs,
@@ -229,51 +227,52 @@ function ProDesktopSidebar({
   );
 }
 
+function BriefListThumb({ paths }) {
+  const [src, setSrc] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    const path = paths?.[0];
+    if (!path) {
+      setSrc(null);
+      return undefined;
+    }
+    getBriefPhotoSignedUrls([path]).then((urls) => {
+      if (!cancelled && urls[0]) setSrc(urls[0]);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [paths]);
+
+  if (src) {
+    return <img className="bc-thumb" src={src} alt="" />;
+  }
+  return <div className="bc-thumb-ph" aria-hidden />;
+}
+
 function BriefCard({ b, onOpen }) {
   const s = ST[b.status] || ST.wait;
   const tap = b.status === "ready" || b.status === "rdv";
+  const sub =
+    tap && b.taste
+      ? b.taste
+      : b.linkStatus === "opened"
+        ? "Ouvert — pas encore rempli"
+        : b.taste || "Pas encore rempli";
   return (
     <button
       className={`bcard ${tap ? "tap" : "wait"}`}
       onClick={() => tap && onOpen(b)}
       type="button"
     >
-      <div className="bc-top">
-        <div>
-          <div className="bc-name">{b.name}</div>
-          <div className="bc-meta">
-            {[b.city, b.date].filter(Boolean).join(" · ") || "—"}
-          </div>
+      <BriefListThumb paths={b.brief?.photo_urls} />
+      <div className="bc-main">
+        <div className="bc-name">{b.name}</div>
+        <div className="bc-taste">
+          {[b.city, sub].filter(Boolean).join(" · ")}
         </div>
-        <span className={`status ${s.c}`}>{s.l}</span>
       </div>
-      <div className="bc-taste">{b.taste}</div>
-      {b.tags?.length > 0 && (
-        <div className="bc-tags">
-          {b.tags.map((t) => (
-            <span className="tg" key={t}>
-              {t}
-            </span>
-          ))}
-        </div>
-      )}
-      <div className="bc-foot">
-        {tap ? (
-          <>
-            <span className="bud">
-              {b.budget} <span>budget</span>
-            </span>
-            <ChevronRight size={20} color="#8B9088" />
-          </>
-        ) : (
-          <>
-            <span className="bc-meta">
-              {b.linkStatus === "opened" ? "Ouvert — pas encore rempli" : "Pas encore rempli"}
-            </span>
-            <span className="relance">Relancer</span>
-          </>
-        )}
-      </div>
+      <span className={`status ${s.c}`}>{s.l}</span>
     </button>
   );
 }
@@ -2090,13 +2089,22 @@ function SendSheet({ studio, onClose, onCreated }) {
     : null;
 
   return (
-    <div className="overlay" onClick={onClose}>
-      <div className="sheet" onClick={(e) => e.stopPropagation()}>
-        <div className="grab" />
-        <h3>Envoyer le lien à un client</h3>
-        <p className="lead">
-          Il remplit son brief en 3 min — sans compte, sans téléchargement.
-        </p>
+    <div className="wp-send-full">
+      <button type="button" className="back" onClick={onClose} aria-label="Fermer">
+        <X size={20} />
+      </button>
+      <p className="label" style={{ marginTop: 8, marginBottom: 0 }}>
+        Nouveau client
+      </p>
+      <h2 className="h-title" style={{ fontWeight: 300, marginTop: 8, lineHeight: 1.1 }}>
+        Envoyer un lien
+        <br />
+        avant le RDV
+      </h2>
+      <p className="bc-taste" style={{ marginTop: 6 }}>
+        Votre client remplit son brief en quelques minutes, sans créer de compte.
+      </p>
+      <div style={{ marginTop: 16 }}>
         <div className="field">
           <label htmlFor="wp-client-name">Nom du client</label>
           <input
@@ -2182,107 +2190,17 @@ function SendSheet({ studio, onClose, onCreated }) {
   );
 }
 
-function ProAuthGate({ onAuthenticated }) {
-  const [mode, setMode] = useState("signup");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const submit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    const fn = mode === "signup" ? signUpWithEmail : signInWithEmail;
-    const result =
-      mode === "signup"
-        ? await fn(email.trim(), password)
-        : await fn(email.trim(), password, { rememberMe: true });
-    setLoading(false);
-    if (!result.ok) {
-      setError(result.error || "Connexion impossible.");
-      return;
-    }
-    const check = await getProAuthUser();
-    if (!check.ok) {
-      setError(
-        "Compte créé — confirmez votre e-mail si demandé, puis reconnectez-vous."
-      );
-      return;
-    }
-    onAuthenticated?.(check.user);
-  };
+function ProAuthGate() {
+  const router = useRouter();
+  useEffect(() => {
+    router.replace("/connexion?profil=pro");
+  }, [router]);
 
   return (
     <div className="wp">
       <div className="phone">
         <div className="screen">
-          <div className="card-panel wp-auth">
-            <div className="hero">
-              <h1>Sevya Pro</h1>
-              <p>
-                Connectez-vous pour envoyer des liens et recevoir les briefs de
-                vos clients.
-              </p>
-            </div>
-            <div className="wp-auth-tabs">
-              <button
-                type="button"
-                className={mode === "signup" ? "on" : ""}
-                onClick={() => setMode("signup")}
-                disabled={loading}
-              >
-                Créer un compte
-              </button>
-              <button
-                type="button"
-                className={mode === "signin" ? "on" : ""}
-                onClick={() => setMode("signin")}
-                disabled={loading}
-              >
-                Se connecter
-              </button>
-            </div>
-            <form className="wp-auth-form" onSubmit={submit}>
-              <input
-                type="email"
-                placeholder="E-mail"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoComplete="email"
-                disabled={loading}
-              />
-              <input
-                type="password"
-                placeholder="Mot de passe"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                autoComplete={
-                  mode === "signup" ? "new-password" : "current-password"
-                }
-                disabled={loading}
-              />
-              <button className="bigbtn" type="submit" disabled={loading}>
-                {loading
-                  ? "Patientez…"
-                  : mode === "signup"
-                    ? "Créer mon compte pro"
-                    : "Entrer"}
-              </button>
-            </form>
-            {error && (
-              <p className="wp-form-error" role="alert">
-                {error}
-              </p>
-            )}
-            <p className="wp-auth-note">
-              Même compte que l’app particulier — un studio pro lui est
-              rattaché automatiquement.
-            </p>
-          </div>
+          <div className="bf-loading">Redirection…</div>
         </div>
       </div>
     </div>
@@ -2424,11 +2342,7 @@ export default function WilderProV2() {
 
   if (phase === "auth") {
     return (
-      <ProAuthGate
-        onAuthenticated={() => {
-          boot();
-        }}
-      />
+      <ProAuthGate />
     );
   }
 
@@ -2454,7 +2368,16 @@ export default function WilderProV2() {
               : ""
           }${tab === "agenda" ? " wp-desktop-agenda" : ""}`}
         >
-          {tab === "projets" && (
+          {sheet && (
+            <SendSheet
+              studio={studio}
+              onClose={() => setSheet(false)}
+              onCreated={async () => {
+                await loadLinks(studio?.id);
+              }}
+            />
+          )}
+          {!sheet && tab === "projets" && (
             <ProjetsHome
               studio={studio}
               items={items}
@@ -2475,7 +2398,7 @@ export default function WilderProV2() {
               notifCount={notifBadge}
             />
           )}
-          {tab === "notifs" && (
+          {!sheet && tab === "notifs" && (
             <NotifsScreen
               items={items}
               onBack={() => setTab("projets")}
@@ -2485,7 +2408,7 @@ export default function WilderProV2() {
               }}
             />
           )}
-          {tab === "clients" && (
+          {!sheet && tab === "clients" && (
             <ClientList
               category={listCategory}
               items={items}
@@ -2497,13 +2420,13 @@ export default function WilderProV2() {
               onSend={() => setSheet(true)}
             />
           )}
-          {tab === "studio" && (
+          {!sheet && tab === "studio" && (
             <StudioScreen
               studio={studio}
               onOpenSettings={() => setSettingsSheet(true)}
             />
           )}
-          {tab === "detail" && active && (
+          {!sheet && tab === "detail" && active && (
             <BriefDetailScreen
               b={active}
               studio={studio}
@@ -2526,7 +2449,7 @@ export default function WilderProV2() {
               }}
             />
           )}
-          {tab === "agenda" && (
+          {!sheet && tab === "agenda" && (
             <Agenda
               studio={studio}
               refreshKey={agendaKey}
@@ -2537,7 +2460,7 @@ export default function WilderProV2() {
               }}
             />
           )}
-          {tab === "realisations" && (
+          {!sheet && tab === "realisations" && (
             <Realisations
               studio={studio}
               refreshKey={realisationsKey}
@@ -2552,7 +2475,7 @@ export default function WilderProV2() {
               onOpenSettings={() => setSettingsSheet(true)}
             />
           )}
-          {tab === "realisation-detail" && activeProject && (
+          {!sheet && tab === "realisation-detail" && activeProject && (
             <RealisationDetail
               project={activeProject}
               studio={studio}
@@ -2571,7 +2494,7 @@ export default function WilderProV2() {
               onProjectChange={(next) => setActiveProject(next)}
             />
           )}
-          {tab === "realisation-form" && (
+          {!sheet && tab === "realisation-form" && (
             <RealisationForm
               studio={studio}
               project={activeProject}
@@ -2592,61 +2515,53 @@ export default function WilderProV2() {
           )}
         </div>
 
-        <nav className="tabbar">
-          <button
-            className={`tab ${
-              tab === "projets" ||
-              tab === "clients" ||
-              tab === "detail" ||
-              tab === "notifs"
-                ? "on"
-                : ""
-            }`}
-            onClick={() => setTab("projets")}
-            type="button"
-          >
-            <LayoutGrid size={22} /> Projets
-          </button>
-          <button
-            className={`tab ${tab === "agenda" ? "on" : ""}`}
-            onClick={() => setTab("agenda")}
-            type="button"
-          >
-            <CalendarDays size={22} /> Agenda
-          </button>
-          <button
-            className={`tab ${
-              tab === "realisations" ||
-              tab === "realisation-detail" ||
-              tab === "realisation-form"
-                ? "on"
-                : ""
-            }`}
-            onClick={() => {
-              setActiveProject(null);
-              setTab("realisations");
-            }}
-            type="button"
-          >
-            <Images size={22} /> Réalisations
-          </button>
-          <button
-            className={`tab ${tab === "studio" ? "on" : ""}`}
-            onClick={() => setTab("studio")}
-            type="button"
-          >
-            <SlidersHorizontal size={22} /> Studio
-          </button>
-        </nav>
-
-        {sheet && (
-          <SendSheet
-            studio={studio}
-            onClose={() => setSheet(false)}
-            onCreated={async () => {
-              await loadLinks(studio?.id);
-            }}
-          />
+        {!sheet && (
+          <nav className="tabbar" aria-label="Navigation principale">
+            <button
+              className={`tab ${
+                tab === "projets" ||
+                tab === "clients" ||
+                tab === "detail" ||
+                tab === "notifs"
+                  ? "on"
+                  : ""
+              }`}
+              onClick={() => setTab("projets")}
+              type="button"
+            >
+              Projets
+            </button>
+            <button
+              className={`tab ${tab === "agenda" ? "on" : ""}`}
+              onClick={() => setTab("agenda")}
+              type="button"
+            >
+              Agenda
+            </button>
+            <button
+              className={`tab ${
+                tab === "realisations" ||
+                tab === "realisation-detail" ||
+                tab === "realisation-form"
+                  ? "on"
+                  : ""
+              }`}
+              onClick={() => {
+                setActiveProject(null);
+                setTab("realisations");
+              }}
+              type="button"
+            >
+              Réalisations
+            </button>
+            <button
+              className={`tab ${tab === "studio" ? "on" : ""}`}
+              onClick={() => setTab("studio")}
+              type="button"
+            >
+              Studio
+            </button>
+          </nav>
         )}
         {planSheet && active && (
           <PlanSheet
