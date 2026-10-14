@@ -912,6 +912,10 @@ html.atelier-theme .sv-hero-block--auth {
   height: 250px;
 }
 
+html.atelier-theme .sv-hero-block--auth-pro {
+  height: min(300px, 38vh);
+}
+
 html.atelier-theme .sv-hero-block__img {
   width: 100%;
   height: 100%;

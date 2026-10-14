@@ -180,7 +180,11 @@ export default function ConnexionPage() {
       </Head>
 
       <div className={`sv-discovery ${isPro ? "sv-pro-auth" : "sv-part-auth"}`}>
-        <div className="sv-hero-block sv-hero-block--auth fade">
+        <div
+          className={`sv-hero-block sv-hero-block--auth fade${
+            isPro ? " sv-hero-block--auth-pro" : ""
+          }`}
+        >
           <img className="sv-hero-block__img" src={heroSrc} alt="" />
           <SevyaTopBar
             overlay
@@ -190,17 +194,17 @@ export default function ConnexionPage() {
         </div>
 
         {isPro ? (
-          <div className="sv-auth-body">
+          <div className="sv-auth-body sv-auth-body--pro">
             <p className="atelier-label">Espace paysagiste</p>
-            <h1 className="sv-auth-title">Briefs clients, rendez-vous, réalisations.</h1>
+            <h1 className="sv-auth-title">
+              Comprendre votre client
+              <br />
+              avant de le rencontrer.
+            </h1>
             <p className="sv-auth-lead">
-              Connectez-vous pour accéder à votre studio Sevya Pro.
+              Envoyez un lien avant le premier rendez-vous. Arrivez avec les bonnes idées
+              d&apos;aménagement.
             </p>
-            <div className="sv-auth-or">
-              <i aria-hidden="true" />
-              ou
-              <i aria-hidden="true" />
-            </div>
             <form className="sv-auth-form" onSubmit={(e) => handleSubmit(e, "signin")} noValidate>
               <div className="sv-field">
                 <label htmlFor={emailId}>E-mail professionnel</label>

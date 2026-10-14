@@ -48,7 +48,10 @@ function isClientBriefPath(pathname) {
 export default function App({ Component, pageProps }) {
   const router = useRouter();
   const isClientBrief = isClientBriefPath(router.pathname);
-  const atelier = isAtelierAppRoute(router.pathname);
+  const atelier = isAtelierAppRoute(
+    router.pathname,
+    router.isReady ? router.query : undefined
+  );
 
   useEffect(() => {
     if (isClientBrief) return;
