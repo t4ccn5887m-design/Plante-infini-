@@ -87,7 +87,7 @@ function applyTheme(theme) {
 
 function getAccountInitials(email) {
   const trimmed = String(email || "").trim();
-  if (!trimmed) return "W";
+  if (!trimmed) return "";
   const local = trimmed.split("@")[0] || "";
   const parts = local.split(/[._-]+/).filter(Boolean);
   if (parts.length >= 2) {
@@ -635,7 +635,7 @@ export default function Wilder() {
   }, []);
 
   const slogan = t("slogan");
-  const pageTitle = `Wilder — ${slogan}`;
+  const pageTitle = `Sevya — ${slogan}`;
 
   const featureGateOverlay = (
     <FeatureGateModal

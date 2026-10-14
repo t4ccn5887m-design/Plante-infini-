@@ -172,11 +172,13 @@ export default function IdeesAccueilScreen({
         </div>
       ) : null}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <h1 style={{ margin: 0, fontSize: 28, fontWeight: 400, color: COLORS.ink, fontFamily: "var(--font-title)" }}>
-          Idées
+      <div className="atelier-page-head">
+        <h1>
+          Composer
+          <br />
+          votre jardin
         </h1>
-        <span style={{ fontSize: 15, color: COLORS.muted }}>Composez le jardin qui vous ressemble</span>
+        <p className="sub">200 végétaux, paillages, bordures et réalisations.</p>
       </div>
 
       <label

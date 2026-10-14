@@ -58,7 +58,7 @@ html.atelier-theme .wilder-v2-shell h1,
 html.atelier-theme .wilder-v2-shell h2,
 html.atelier-theme .wilder-v2-shell h3 {
   font-family: var(--font-title, "Fraunces", Georgia, serif);
-  font-weight: 400;
+  font-weight: 300;
   letter-spacing: -0.02em;
 }
 
@@ -162,6 +162,29 @@ html.atelier-theme .wilder-v2-main-layout-content {
   background: var(--bg);
 }
 
+/* Plein écran — pas de carte centrée (maquette 30) */
+html.atelier-theme .wilder-v2-shell.wilder-v2-main-layout {
+  min-height: 100dvh;
+  padding: 0 !important;
+  background: var(--bg) !important;
+  justify-content: stretch !important;
+}
+
+html.atelier-theme .wilder-v2-main-layout-card {
+  width: 100% !important;
+  max-width: none !important;
+  border-radius: 0 !important;
+  border: none !important;
+  min-height: 100dvh !important;
+  align-self: stretch !important;
+  background: var(--bg) !important;
+  box-shadow: none !important;
+}
+
+html.atelier-theme .wilder-v2-main-layout-account {
+  display: none;
+}
+
 /* PWA standalone — pas de flash blanc */
 @media (display-mode: standalone) {
   html.atelier-theme {
@@ -171,20 +194,6 @@ html.atelier-theme .wilder-v2-main-layout-content {
   html.atelier-theme body {
     padding: 0;
     background: var(--bg);
-  }
-
-  html.atelier-theme .wilder-v2-shell {
-    min-height: 100dvh !important;
-    padding: 0 !important;
-    background: var(--bg) !important;
-    justify-content: stretch !important;
-  }
-
-  html.atelier-theme .wilder-v2-main-layout-card {
-    border-radius: 0 !important;
-    border: none !important;
-    max-width: none !important;
-    min-height: 100dvh !important;
   }
 }
 
@@ -204,8 +213,7 @@ html.atelier-theme .atelier-tabbar .atelier-tabbar__item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
-  gap: 3px;
+  justify-content: center;
   min-height: 44px;
   border: none;
   background: transparent;
@@ -214,45 +222,16 @@ html.atelier-theme .atelier-tabbar .atelier-tabbar__item {
   font-size: 10.5px;
   font-weight: 600;
   color: var(--mute);
-  padding: 0;
+  padding: 12px 0;
 }
 
 html.atelier-theme .atelier-tabbar .atelier-tabbar__item.is-active {
   color: var(--ink);
-  font-weight: 700;
+  font-weight: 600;
 }
 
-html.atelier-theme .atelier-tabbar .atelier-tabbar__fab-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--sage);
-  padding: 0;
-}
-
-html.atelier-theme .atelier-tabbar .atelier-tabbar__fab {
-  width: 46px;
-  height: 46px;
-  border-radius: 16px;
-  background: var(--sage);
-  color: var(--bg);
-  margin-top: -22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  box-shadow: none;
-}
-
-html.atelier-theme .atelier-tabbar .atelier-tabbar__fab svg path {
-  stroke: var(--bg);
+html.atelier-theme .atelier-tabbar .atelier-tabbar__item svg {
+  display: none;
 }
 
 /* ── Cartes catégorie Idées ── */
@@ -908,4 +887,519 @@ html.atelier-theme .atelier-partners-demo__soon {
   font-weight: 600;
   color: var(--mute);
   text-align: center;
+}
+
+/* ── Découverte / auth (maquette 31) ── */
+
+html.atelier-theme .sv-discovery {
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body, Inter, sans-serif);
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+
+html.atelier-theme .sv-hero-block {
+  position: relative;
+  overflow: hidden;
+}
+
+html.atelier-theme .sv-hero-block--choix {
+  height: min(52vh, 440px);
+}
+
+html.atelier-theme .sv-hero-block--auth {
+  height: 250px;
+}
+
+html.atelier-theme .sv-hero-block__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+html.atelier-theme .sv-hero-block.fade::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 26, 20, 0.5),
+    rgba(15, 26, 20, 0) 25%,
+    rgba(15, 26, 20, 0.2) 55%,
+    var(--bg)
+  );
+  pointer-events: none;
+}
+
+html.atelier-theme .sevya-topbar {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+  padding: max(12px, env(safe-area-inset-top)) 16px 12px;
+}
+
+html.atelier-theme .sevya-topbar--overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+html.atelier-theme .sevya-topbar__back {
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 40px;
+}
+
+html.atelier-theme .sevya-topbar__brand {
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 500;
+  font-size: 21px;
+  color: var(--ink);
+  text-align: center;
+}
+
+html.atelier-theme .sevya-topbar__pro {
+  font-family: var(--font-body, Inter, sans-serif);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--sage);
+  margin-left: 4px;
+}
+
+html.atelier-theme .sevya-topbar__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  justify-self: end;
+}
+
+html.atelier-theme .sevya-topbar__spacer {
+  width: 40px;
+  height: 40px;
+}
+
+html.atelier-theme .sevya-topbar__right {
+  justify-self: end;
+}
+
+html.atelier-theme .sv-choix__headline {
+  position: relative;
+  margin-top: -80px;
+  padding: 0 20px;
+  z-index: 1;
+}
+
+html.atelier-theme .sv-display-title {
+  margin: 0;
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 300;
+  font-size: 34px;
+  line-height: 1.08;
+  color: var(--ink);
+}
+
+html.atelier-theme .sv-choix__list {
+  margin: 24px 20px 0;
+  border-top: 1px solid var(--line);
+}
+
+html.atelier-theme .sv-choix__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+html.atelier-theme .sv-choix__row-title {
+  display: block;
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 400;
+  font-size: 21px;
+  line-height: 1.2;
+}
+
+html.atelier-theme .sv-choix__row-desc {
+  display: block;
+  margin-top: 4px;
+  font-size: 12.5px;
+  color: var(--mute);
+  font-family: var(--font-body, Inter, sans-serif);
+}
+
+html.atelier-theme .sv-choix__chev {
+  color: var(--sage);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+html.atelier-theme .sv-choix__footnote {
+  margin: 28px 20px 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--mute);
+  text-align: center;
+}
+
+html.atelier-theme .sv-auth-intro,
+html.atelier-theme .sv-auth-body {
+  position: relative;
+  margin-top: -30px;
+  padding: 0 20px;
+  z-index: 1;
+}
+
+html.atelier-theme .sv-auth-title {
+  margin: 8px 0 6px;
+  padding: 0;
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 300;
+  font-size: clamp(26px, 6vw, 32px);
+  line-height: 1.12;
+}
+
+html.atelier-theme .sv-auth-lead {
+  margin: 0;
+  color: var(--mute);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+html.atelier-theme .sv-guest-cta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 16px 20px 0;
+  padding: 16px;
+  border: 1px solid var(--sage);
+  border-radius: 18px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  width: calc(100% - 40px);
+}
+
+html.atelier-theme .sv-guest-cta__title {
+  display: block;
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 400;
+  font-size: 18px;
+}
+
+html.atelier-theme .sv-guest-cta__sub {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--mute);
+}
+
+html.atelier-theme .sv-auth-or {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 20px 14px;
+  color: var(--mute);
+  font-size: 12px;
+}
+
+html.atelier-theme .sv-auth-or i {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  font-style: normal;
+}
+
+html.atelier-theme .sv-auth-form {
+  padding: 0 20px 30px;
+}
+
+html.atelier-theme .sv-field {
+  margin: 0 0 12px;
+}
+
+html.atelier-theme .sv-field label {
+  display: block;
+  font-size: 10.5px;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin-bottom: 6px;
+}
+
+html.atelier-theme .sv-field input {
+  width: 100%;
+  min-height: 50px;
+  border-radius: 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  padding: 13px 14px;
+  font: 15px var(--font-body, Inter, sans-serif);
+  outline: none;
+}
+
+html.atelier-theme .sv-field input:focus {
+  border-color: var(--sage);
+}
+
+html.atelier-theme .sv-auth-forgot {
+  border: none;
+  background: none;
+  padding: 4px 0 12px;
+  font-size: 13px;
+  color: var(--sage);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+html.atelier-theme .sv-auth-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 6px;
+}
+
+html.atelier-theme .sv-btn-fill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  border-radius: 99px;
+  border: none;
+  background: var(--ink);
+  color: var(--bg);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  font-family: inherit;
+  width: 100%;
+}
+
+html.atelier-theme .sv-btn-outline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  font-family: inherit;
+  width: 100%;
+}
+
+html.atelier-theme .sv-auth-status {
+  margin: 12px 20px 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+html.atelier-theme .sv-auth-status--ok {
+  background: rgba(201, 214, 184, 0.15);
+  color: var(--sage);
+}
+
+html.atelier-theme .sv-auth-status--err {
+  background: rgba(224, 122, 106, 0.12);
+  color: var(--danger);
+}
+
+/* ── Accueil jardin (maquette 30 jardin) ── */
+
+html.atelier-theme .atelier-jardin-accueil {
+  flex: 1;
+  overflow: auto;
+  padding-bottom: 8px;
+}
+
+html.atelier-theme .atelier-jardin-loading {
+  padding: 24px;
+  text-align: center;
+  color: var(--mute);
+  font-size: 14px;
+}
+
+html.atelier-theme .atelier-jardin-hero {
+  position: relative;
+  margin: 14px 14px 0;
+  height: 320px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+html.atelier-theme .atelier-jardin-hero__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+html.atelier-theme .atelier-jardin-hero__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 26, 20, 0) 35%, rgba(15, 26, 20, 0.88));
+  pointer-events: none;
+}
+
+html.atelier-theme .atelier-jardin-hero__cap {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  z-index: 2;
+}
+
+html.atelier-theme .atelier-jardin-hero__title {
+  margin: 8px 0 14px;
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 300;
+  font-size: 29px;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+html.atelier-theme .atelier-jardin-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 99px;
+  border: none;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+html.atelier-theme .atelier-jardin-progress {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin: 20px 20px 0;
+}
+
+html.atelier-theme .atelier-jardin-progress__text {
+  margin: 0;
+  font-size: 13px;
+  color: var(--mute);
+  line-height: 1.45;
+  font-family: var(--font-body, Inter, sans-serif);
+}
+
+html.atelier-theme .atelier-jardin-progress__text b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+html.atelier-theme .atelier-lines {
+  margin: 16px 20px 0;
+  border-top: 1px solid var(--line);
+}
+
+html.atelier-theme .atelier-step-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14.5px;
+  width: 100%;
+  background: transparent;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  color: var(--ink);
+  font-family: var(--font-body, Inter, sans-serif);
+  text-align: left;
+  cursor: pointer;
+}
+
+html.atelier-theme .atelier-step-row--btn {
+  cursor: pointer;
+}
+
+html.atelier-theme .atelier-step-row__num {
+  font-style: normal;
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 400;
+  font-size: 12.5px;
+  color: var(--mute);
+  margin-right: 8px;
+}
+
+html.atelier-theme .atelier-step-row__title {
+  flex: 1;
+}
+
+html.atelier-theme .atelier-step-row__status {
+  font-style: normal;
+  font-size: 12px;
+  color: var(--sage);
+  flex-shrink: 0;
+}
+
+html.atelier-theme .atelier-step-row__status.is-todo {
+  color: var(--clay);
+}
+
+html.atelier-theme .atelier-page-head {
+  padding: 0 20px;
+}
+
+html.atelier-theme .atelier-page-head .k {
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 400;
+  font-size: 22px;
+  font-weight: 300;
+}
+
+html.atelier-theme .atelier-page-head h1 {
+  margin: 0;
+  font-weight: 300;
+  font-size: clamp(28px, 7vw, 34px);
+  line-height: 1.08;
+}
+
+html.atelier-theme .atelier-page-head .sub {
+  margin: 8px 0 0;
+  color: var(--mute);
+  font-size: 14px;
+  line-height: 1.45;
+  font-family: var(--font-body, Inter, sans-serif);
 }

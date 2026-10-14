@@ -51,14 +51,13 @@ function IconPartenaires({ size = 22 }) {
   );
 }
 
-function TabButton({ active, onClick, label, children }) {
+function TabButton({ active, onClick, label }) {
   return (
     <button
       type="button"
       onClick={onClick}
       className={`atelier-tabbar__item${active ? " is-active" : ""}`}
     >
-      {children}
       {label}
     </button>
   );
@@ -83,25 +82,11 @@ export default function WilderTabBar({
         boxSizing: "border-box",
       }}
     >
-      <TabButton active={activeNav === "accueil"} onClick={onAccueil} label="Accueil">
-        <IconAccueil />
-      </TabButton>
-
-      <TabButton active={activeNav === "idees"} onClick={onIdees} label="Idées">
-        <IconIdees />
-      </TabButton>
-
-      <TabButton active={activeNav === "coups-de-coeur"} onClick={onCoupsDeCoeur} label="Cœurs">
-        <IconCoups />
-      </TabButton>
-
-      <TabButton active={activeNav === "dossier"} onClick={onDossier} label="Dossier">
-        <IconDossier />
-      </TabButton>
-
-      <TabButton active={activeNav === "partenaires"} onClick={onPartenaires} label="Partenaires">
-        <IconPartenaires />
-      </TabButton>
+      <TabButton active={activeNav === "accueil"} onClick={onAccueil} label="Accueil" />
+      <TabButton active={activeNav === "idees"} onClick={onIdees} label="Idées" />
+      <TabButton active={activeNav === "coups-de-coeur"} onClick={onCoupsDeCoeur} label="Cœurs" />
+      <TabButton active={activeNav === "dossier"} onClick={onDossier} label="Dossier" />
+      <TabButton active={activeNav === "partenaires"} onClick={onPartenaires} label="Partenaires" />
     </nav>
   );
 }
