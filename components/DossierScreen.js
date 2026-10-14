@@ -329,56 +329,53 @@ export default function DossierScreen({
   const entretienComplete = stepComplete("entretien");
   const budgetComplete = stepComplete("budget");
 
+  const nextStep = progress.remainingSteps[0];
+  const progressTitle =
+    progress.percent >= 100 ? "Dossier prêt." : progress.percent >= 60 ? "Presque prêt." : "C'est parti.";
+  const progressSub = nextStep
+    ? `Il reste ${dossierStepLabel(nextStep.id).toLowerCase()}.`
+    : "Vous pouvez l'envoyer.";
+
+  const dossierLines = [
+    {
+      id: "coups-de-coeur",
+      label: "Coups de cœur",
+      onOpen: onOpenCoupsDeCoeur,
+      hint: coupsComplete ? `${coupsItems.length} ajouté${coupsItems.length > 1 ? "s" : ""}` : null,
+    },
+    { id: "ambiance", label: "Ambiance", onOpen: onOpenAmbiance, hint: ambianceComplete ? ambianceName : null },
+    { id: "mot-paysagiste", label: "Mot au paysagiste", onOpen: onOpenMot, hint: motComplete ? "Renseigné" : null },
+    { id: "quotidien", label: "Votre quotidien", onOpen: onOpenQuotidien, hint: quotidienComplete ? "Fait" : null },
+    { id: "a-eviter", label: "Ce que vous ne voulez pas", onOpen: onOpenAEviter, hint: eviterComplete ? "Fait" : null },
+    {
+      id: "terrain",
+      label: "Mon terrain",
+      onOpen: onOpenTerrain,
+      hint: terrainComplete ? `${terrainPhotoCount} photo${terrainPhotoCount > 1 ? "s" : ""}` : null,
+    },
+    { id: "existant", label: "Ce qui existe déjà", onOpen: onOpenExistant, hint: existantComplete ? "Fait" : null },
+    { id: "entretien", label: "Entretien et calendrier", onOpen: onOpenEntretien, hint: entretienComplete ? "Fait" : null },
+    { id: "budget", label: "Budget", onOpen: onOpenBudget, hint: budgetComplete ? budgetDisplayLabel(budgetId) : null },
+  ];
+
   const terrainFields = loadGardenTerrainFields();
   const terrainSubtitle = terrainComplete
     ? `${terrainPhotoCount} photo${terrainPhotoCount > 1 ? "s" : ""} · ${areaRangeLabel(terrainFields.areaRange) || "Surface renseignée"}`
     : "Photos et infos pratiques";
 
   return (
-    <div
-      style={{
-        flex: 1,
-        overflow: "auto",
-        padding: "18px 18px 8px",
-        display: "flex",
-        flexDirection: "column",
-        gap: 12,
-      }}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, color: "var(--ink)" }}>Mon dossier jardin</h1>
-        <p style={{ margin: 0, fontSize: 14, color: MUTED }}>
-          {loading
-            ? "…"
-            : `${progress.completedCount} étape${progress.completedCount > 1 ? "s" : ""} sur ${progress.totalSteps}`}
-        </p>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div
-            style={{
-              flexGrow: 1,
-              height: 8,
-              borderRadius: 999,
-              background: "rgba(201, 214, 184, 0.18)",
-            }}
-            role="progressbar"
-            aria-valuenow={progress.percent}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label="Progression du dossier"
-          >
-            <div
-              style={{
-                width: loading ? "0%" : `${progress.percent}%`,
-                height: 8,
-                borderRadius: 999,
-                background: GREEN,
-                transition: "width 0.25s ease",
-              }}
-            />
-          </div>
-          <span style={{ fontSize: 13, fontWeight: 700, color: GREEN, flexShrink: 0 }}>
-            {loading ? "…" : `${progress.percent} %`}
-          </span>
+    <div className="atelier-dossier">
+      <div className="atelier-dossier__head">
+        <span className="atelier-label">Mon dossier</span>
+      </div>
+
+      <div className="atelier-dossier__progress">
+        <div className="atelier-dossier__ring" aria-hidden="true">
+          <span>{loading ? "…" : `${progress.percent}%`}</span>
+        </div>
+        <div className="atelier-dossier__progress-text">
+          <div className="atelier-dossier__progress-title">{loading ? "…" : progressTitle}</div>
+          <div className="atelier-dossier__progress-sub">{loading ? "…" : progressSub}</div>
         </div>
       </div>
 
@@ -404,7 +401,8 @@ export default function DossierScreen({
           style={{
             borderRadius: 18,
             padding: "14px 16px",
-            background: "#ECE6F5",
+            background: "var(--card)",
+            border: "1px solid var(--line)",
             display: "flex",
             flexDirection: "column",
             gap: 8,
@@ -438,196 +436,39 @@ export default function DossierScreen({
         </div>
       ) : null}
 
-      <button
-        type="button"
-        onClick={onOpenCoupsDeCoeur}
-        style={{
-          borderRadius: 18,
-          padding: "14px 16px",
-          border: "1.5px solid var(--line)",
-          display: "flex",
-          flexDirection: "column",
-          gap: 8,
-          background: "var(--card)",
-          cursor: "pointer",
-          fontFamily: "inherit",
-          textAlign: "left",
-          width: "100%",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
-          <span
-            style={{
-              fontSize: 12,
-              fontWeight: 700,
-              letterSpacing: "1.1px",
-              color: MUTED,
-            }}
-          >
-            MES COUPS DE CŒUR
-          </span>
-          <StepStatus
-            complete={coupsComplete}
-            completeLabel={`${coupsItems.length} ajouté${coupsItems.length > 1 ? "s" : ""}`}
-          />
-        </div>
-        {visiblePills.length > 0 ? (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-            {visiblePills.map((name, index) => (
-              <span
-                key={`${name}-${index}`}
-                style={{
-                  padding: "5px 11px",
-                  borderRadius: 999,
-                  background: "rgba(201, 214, 184, 0.18)",
-                  color: GREEN,
-                  fontSize: 13,
-                  fontWeight: 700,
-                }}
-              >
-                {name}
-              </span>
-            ))}
-            {extraCount > 0 ? (
-              <span
-                style={{
-                  padding: "5px 11px",
-                  borderRadius: 999,
-                  background: "rgba(201, 214, 184, 0.18)",
-                  color: GREEN,
-                  fontSize: 13,
-                  fontWeight: 700,
-                }}
-              >
-                +{extraCount}
-              </span>
-            ) : null}
-          </div>
-        ) : null}
-      </button>
+      <div className="atelier-dossier__lines">
+        {dossierLines.map((line, index) => {
+          const done = stepComplete(line.id);
+          return (
+            <button key={line.id} type="button" className="atelier-dossier__line" onClick={line.onOpen}>
+              <em>{String(index + 1).padStart(2, "0")}</em>
+              <span>{line.label}</span>
+              <i className={done ? "done" : "todo"}>{done ? line.hint || "Fait" : "À faire →"}</i>
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          className="atelier-dossier__line"
+          onClick={() => onOpenProfile?.("")}
+        >
+          <em>—</em>
+          <span>Mes coordonnées</span>
+          <i className={contactComplete ? "done" : "todo"}>
+            {contactComplete ? "Fait" : "À faire →"}
+          </i>
+        </button>
+      </div>
 
-      <RowLink
-        title="MON AMBIANCE"
-        labelColor="#5E4C8C"
-        subtitle={ambianceName || "À choisir"}
-        bg="#ECE6F5"
-        chevron="#6A5896"
-        onClick={onOpenAmbiance}
-        status={
-          <StepStatus complete={ambianceComplete} completeLabel="Fait" incompleteLabel="à choisir" />
-        }
-      />
-
-      <button
-        type="button"
-        onClick={onOpenMot}
-        style={{
-          borderRadius: 18,
-          padding: "14px 16px",
-          border: "1.5px solid var(--line)",
-          display: "flex",
-          flexDirection: "column",
-          gap: 6,
-          background: "var(--card)",
-          cursor: "pointer",
-          fontFamily: "inherit",
-          textAlign: "left",
-          width: "100%",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
-          <span
-            style={{
-              fontSize: 12,
-              fontWeight: 700,
-              letterSpacing: "1.1px",
-              color: MUTED,
-            }}
-          >
-            MOT AU PAYSAGISTE
-          </span>
-          <StepStatus complete={motComplete} completeLabel="Fait" />
-        </div>
-        <p style={{ margin: 0, fontSize: 14, lineHeight: 1.4, color: "#3B4339" }}>
-          {motText ? `« ${motText} »` : "À écrire"}
-        </p>
-      </button>
-
-      <RowLink
-        title="VOTRE QUOTIDIEN"
-        labelColor="var(--mute)"
-        subtitle={quotidienComplete ? "Renseigné" : dossierStepLabel("quotidien")}
-        bg="var(--card)"
-        chevron="#6B7268"
-        onClick={onOpenQuotidien}
-        status={<StepStatus complete={quotidienComplete} completeLabel="Fait" />}
-      />
-
-      <RowLink
-        title="CE QUE VOUS NE VOULEZ PAS"
-        labelColor="var(--mute)"
-        subtitle={eviterComplete ? "Renseigné" : "Plusieurs choix possibles"}
-        bg="var(--card)"
-        chevron="#6B7268"
-        onClick={onOpenAEviter}
-        status={<StepStatus complete={eviterComplete} completeLabel="Fait" />}
-      />
-
-      <RowLink
-        title="MON TERRAIN"
-        labelColor="#8A4A22"
-        subtitle={terrainSubtitle}
-        bg="#F6E7D8"
-        chevron="#C0652E"
-        onClick={onOpenTerrain}
-        status={<StepStatus complete={terrainComplete} completeLabel="Fait" />}
-      />
-
-      <RowLink
-        title="CE QUI EXISTE DÉJÀ"
-        labelColor="var(--mute)"
-        subtitle={existantComplete ? "Renseigné" : "Orientation, sol…"}
-        bg="var(--card)"
-        chevron="#6B7268"
-        onClick={onOpenExistant}
-        status={<StepStatus complete={existantComplete} completeLabel="Fait" />}
-      />
-
-      <RowLink
-        title="ENTRETIEN ET CALENDRIER"
-        labelColor="var(--mute)"
-        subtitle={entretienComplete ? "Renseigné" : "Temps, calendrier, RDV"}
-        bg="var(--card)"
-        chevron="#6B7268"
-        onClick={onOpenEntretien}
-        status={<StepStatus complete={entretienComplete} completeLabel="Fait" />}
-      />
-
-      <RowLink
-        title="MON BUDGET"
-        labelColor="var(--mute)"
-        subtitle={budgetDisplayLabel(budgetId) || "À indiquer"}
-        bg="var(--card)"
-        chevron="#6B7268"
-        onClick={onOpenBudget}
-        status={<StepStatus complete={budgetComplete} completeLabel="Fait" />}
-      />
-
-      <RowLink
-        title="MES COORDONNÉES"
-        labelColor={MUTED}
-        subtitle={contactComplete ? "Profil à jour" : "À compléter"}
-        bg="var(--card)"
-        chevron="#6B7268"
-        onClick={() => onOpenProfile?.("")}
-        status={
-          <StepStatus
-            complete={contactComplete}
-            completeLabel="Fait"
-            incompleteLabel="À compléter"
-          />
-        }
-      />
+      {nextStep ? (
+        <button
+          type="button"
+          className="atelier-btn-fill atelier-dossier__cta"
+          onClick={() => dossierLines.find((l) => l.id === nextStep.id)?.onOpen?.()}
+        >
+          Compléter {dossierStepLabel(nextStep.id).toLowerCase()}
+        </button>
+      ) : null}
 
       {!canExport && !loading ? (
         <p style={{ margin: 0, fontSize: 13, color: MUTED, lineHeight: 1.45, textAlign: "center" }}>
