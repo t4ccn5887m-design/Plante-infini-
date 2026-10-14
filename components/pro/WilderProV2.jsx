@@ -22,6 +22,7 @@ import {
   Copy,
   Check,
   Images,
+  SlidersHorizontal,
   Trash2,
   Pencil,
   X,
