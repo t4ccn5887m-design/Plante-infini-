@@ -65,6 +65,7 @@ import {
   uploadProjectPhotos,
 } from "@/lib/pro/proProjectsApi";
 import { isUrgentBrief } from "@/lib/pro/briefDerive";
+import { PRO_BRIEF_FALLBACK_PHOTO } from "@/lib/sevyaDemoRenders";
 import { PRO_REALISATION_STYLE_OPTIONS } from "@/lib/pro/realisationStyles";
 import {
   buildRdvConfirmationSmsBody,
@@ -246,7 +247,7 @@ function BriefListThumb({ paths }) {
   if (src) {
     return <img className="bc-thumb" src={src} alt="" />;
   }
-  return <div className="bc-thumb-ph" aria-hidden />;
+  return <img className="bc-thumb" src={PRO_BRIEF_FALLBACK_PHOTO} alt="" />;
 }
 
 function BriefCard({ b, onOpen }) {

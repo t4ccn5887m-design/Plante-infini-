@@ -1,8 +1,9 @@
 import { PARTNERS_DEMO_STUDIO } from "@/lib/partners";
+import { SEVYA_DEMO_RENDU_3D } from "@/lib/sevyaDemoRenders";
 
 export default function PartnersDemoScreen({ onBack }) {
   const studio = PARTNERS_DEMO_STUDIO;
-  const heroPhoto = "/catalogue/realisations/styles_realisations-4.webp";
+  const heroPhoto = SEVYA_DEMO_RENDU_3D;
 
   return (
     <div className="atelier-partners-demo">
