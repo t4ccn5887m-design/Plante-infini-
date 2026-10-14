@@ -42,7 +42,7 @@ export default function MineralGrainSizePicker({ value, onChange }) {
                 flexDirection: "column",
                 alignItems: "center",
                 gap: 4,
-                background: "#FFFFFF",
+                background: "var(--card)",
                 cursor: "pointer",
                 fontFamily: "inherit",
               }}

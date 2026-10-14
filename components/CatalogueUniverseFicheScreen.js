@@ -12,21 +12,13 @@ import {
   toggleCatalogueItemInGarden,
 } from "@/lib/catalogueGardenToggle";
 
-function InfoCell({ label, value, hint }) {
-  return (
-    <div style={{ padding: "10px 12px", borderRadius: 14, background: "var(--card)", border: "1px solid var(--line)" }}>
-      <div style={{ fontSize: 11, fontWeight: 700, color: "var(--mute)" }}>{label}</div>
-      <div style={{ fontSize: 14, fontWeight: 700, color: "var(--ink)", marginTop: 2 }}>{value || "—"}</div>
-      {hint ? (
-        <div style={{ fontSize: 10, color: "var(--mute)", marginTop: 4, lineHeight: 1.35 }}>{hint}</div>
-      ) : null}
-    </div>
-  );
-}
-
 function resolveItem(universe, id) {
   if (universe === "mineral") return getCatalogueMineralById(id);
   return getCatalogueAmenagementById(id);
+}
+
+function universeKindLabel(universe) {
+  return universe === "mineral" ? "Paillage" : "Bordure";
 }
 
 export default function CatalogueUniverseFicheScreen({
@@ -74,9 +66,9 @@ export default function CatalogueUniverseFicheScreen({
 
   if (!item) {
     return (
-      <div style={{ padding: 24, fontSize: 14, color: "#5B6359" }}>
+      <div style={{ padding: 24, fontSize: 14, color: "var(--mute)" }}>
         Élément introuvable.
-        <button type="button" onClick={onBack} style={{ display: "block", marginTop: 12 }}>
+        <button type="button" className="atelier-btn-secondary" onClick={onBack} style={{ display: "block", marginTop: 12 }}>
           Retour
         </button>
       </div>
@@ -86,7 +78,6 @@ export default function CatalogueUniverseFicheScreen({
   const inGarden =
     gardenState && isCatalogueItemInGarden(gardenUniverse, item.id, gardenState);
 
-  const usagesLabel = (item.usages || []).join(", ") || "—";
   const photoGallery =
     item.photo_gallery?.length > 0
       ? item.photo_gallery
@@ -98,6 +89,10 @@ export default function CatalogueUniverseFicheScreen({
   const isRealisationPhoto = String(item.photo_source || "")
     .toLowerCase()
     .includes("realisation");
+
+  const poseLabel =
+    (item.usages && item.usages[0]) || item.aspect || "—";
+  const catLine = `${universeKindLabel(universe)} · ${(item.categorie || "").toUpperCase()}`;
 
   const handleToggle = async () => {
     if (toggling || !gardenState) return;
@@ -125,37 +120,21 @@ export default function CatalogueUniverseFicheScreen({
   };
 
   return (
-    <div
-      style={{
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        background: "var(--bg)",
-      }}
-    >
+    <div className="atelier-fiche">
       <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
         <div
           style={{
-            height: 280,
+            height: 400,
             flexShrink: 0,
             position: "relative",
             padding: 16,
             boxSizing: "border-box",
           }}
         >
-          <div style={{ position: "absolute", inset: 0 }}>
+          <div style={{ position: "absolute", inset: 0, margin: 0 }}>
             {showGalleryCarousel ? (
               <div
-                style={{
-                  display: "flex",
-                  height: "100%",
-                  overflowX: "auto",
-                  scrollSnapType: "x mandatory",
-                  gap: 6,
-                  padding: "0 4px",
-                  boxSizing: "border-box",
-                }}
+                className="atelier-fiche__gallery-scroll"
                 onScroll={(e) => {
                   const el = e.currentTarget;
                   const w = el.clientWidth || 1;
@@ -166,23 +145,8 @@ export default function CatalogueUniverseFicheScreen({
                 }}
               >
                 {photoGallery.map((url) => (
-                  <div
-                    key={url}
-                    style={{
-                      flex: "0 0 calc(100% - 8px)",
-                      height: "100%",
-                      scrollSnapAlign: "center",
-                      position: "relative",
-                      borderRadius: 12,
-                      overflow: "hidden",
-                      background: "#E4DDD2",
-                    }}
-                  >
-                    <img
-                      src={url}
-                      alt=""
-                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                    />
+                  <div key={url} className="atelier-fiche__gallery-slide">
+                    <img src={url} alt="" />
                     {isRealisationPhoto ? <RealisationPastille /> : null}
                   </div>
                 ))}
@@ -192,7 +156,7 @@ export default function CatalogueUniverseFicheScreen({
                 <CatalogueUniverseVisual
                   photo_url={activePhotoUrl}
                   universe={universe === "mineral" ? "mineral" : "amenagements"}
-                  height={280}
+                  height={400}
                   photoFit={isRealisationPhoto ? "cover" : photoFit}
                   photoDetouree={item.photo_detouree}
                 />
@@ -207,94 +171,48 @@ export default function CatalogueUniverseFicheScreen({
               zIndex: 1,
               display: "flex",
               alignItems: "center",
-              justifyContent: "space-between",
             }}
           >
             <button
               type="button"
               onClick={onBack}
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 999,
-                border: "none",
-                background: "rgba(255,255,255,0.92)",
-                cursor: "pointer",
-                fontSize: 18,
-              }}
               aria-label="Retour"
+              className="atelier-fiche__back"
             >
-              ←
+              <svg width={20} height={20} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="m15 18-6-6 6-6" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </button>
           </div>
         </div>
 
-        <div style={{ padding: "0 16px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
-          <div>
-            <div style={{ fontSize: 12, color: "#5B6359", marginBottom: 4 }}>{item.categorie}</div>
-            <h1 style={{ margin: 0, fontSize: 26, fontWeight: 800, color: "var(--ink)" }}>{item.nom}</h1>
-          </div>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 8,
-            }}
-          >
-            <InfoCell label="Aspect" value={item.aspect} />
-            <InfoCell label="Entretien" value={item.entretien} />
-            <InfoCell
-              label="Budget indicatif"
-              value={item.budget}
-              hint="Budget indicatif, à affiner avec votre paysagiste."
-            />
-            <InfoCell label="Usages" value={usagesLabel} />
-          </div>
+        <div className="atelier-fiche__panel">
+          <p className="atelier-label atelier-fiche__cat">{catLine}</p>
+          <h1 className="atelier-fiche__name">{item.nom}</h1>
 
           {item.pourquoi_on_laime ? (
-            <section>
-              <h2 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 800 }}>Pourquoi on l&apos;aime</h2>
-              <p style={{ margin: 0, fontSize: 14, lineHeight: 1.55, color: "#3D4540" }}>
-                {item.pourquoi_on_laime}
-              </p>
-            </section>
+            <p className="atelier-fiche__phrase">{item.pourquoi_on_laime}</p>
           ) : null}
 
-          {item.ambiances?.length ? (
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              {item.ambiances.map((tag) => (
-                <span
-                  key={tag}
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 600,
-                    padding: "6px 12px",
-                    borderRadius: 999,
-                    background: "var(--card)",
-                    color: "#4D554B",
-                  }}
-                >
-                  {tag}
-                </span>
-              ))}
+          <div className="atelier-fiche__spec">
+            <div>
+              <span>Budget</span>
+              <b>{item.budget || "—"}</b>
             </div>
-          ) : null}
+            <div>
+              <span>Entretien</span>
+              <b>{item.entretien || "—"}</b>
+            </div>
+            <div>
+              <span>Pose</span>
+              <b>{poseLabel}</b>
+            </div>
+          </div>
 
-          {item.a_savoir ? (
-            <div
-              style={{
-                padding: 14,
-                borderRadius: 14,
-                background: "#FFF8ED",
-                border: "1px solid #F0E4D0",
-                fontSize: 13,
-                lineHeight: 1.5,
-                color: "#5B4A3A",
-              }}
-            >
-              <strong>À savoir — </strong>
-              {item.a_savoir}
+          {item.a_savoir?.trim() ? (
+            <div className="atelier-fiche__savoir">
+              <span className="atelier-label">À savoir</span>
+              <p>{item.a_savoir}</p>
             </div>
           ) : null}
 
@@ -308,27 +226,19 @@ export default function CatalogueUniverseFicheScreen({
             />
           ) : null}
 
-          {error ? <p style={{ margin: 0, fontSize: 13, color: "#b00020" }}>{error}</p> : null}
-
-          <button
-            type="button"
-            disabled={toggling || !gardenState}
-            onClick={handleToggle}
-            style={{
-              minHeight: 52,
-              borderRadius: 14,
-              border: "none",
-              background: inGarden ? "var(--card)" : "var(--ink)",
-              color: inGarden ? "var(--clay)" : "var(--bg)",
-              border: inGarden ? "1px solid var(--clay)" : "none",
-              fontSize: 15,
-              fontWeight: 700,
-              cursor: toggling ? "wait" : "pointer",
-            }}
-          >
-            {inGarden ? "Retirer de mes coups de cœur" : "Ajouter à mes coups de cœur"}
-          </button>
+          {error ? <p style={{ margin: 0, fontSize: 13, color: "var(--clay)" }}>{String(error)}</p> : null}
         </div>
+      </div>
+
+      <div className="atelier-fiche__foot">
+        <button
+          type="button"
+          className={inGarden ? "atelier-btn-secondary" : "atelier-btn-secondary atelier-fiche__heart-outline"}
+          disabled={toggling || !gardenState}
+          onClick={handleToggle}
+        >
+          {inGarden ? "Retirer de mes coups de cœur" : "Ajouter à mes coups de cœur"}
+        </button>
       </div>
     </div>
   );
