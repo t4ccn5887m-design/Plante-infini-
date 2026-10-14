@@ -2219,8 +2219,7 @@ function ProAuthGate({ onAuthenticated }) {
         <div className="screen">
           <div className="card-panel wp-auth">
             <div className="hero">
-              <div className="ava">WP</div>
-              <h1>Wilder Pro</h1>
+              <h1>Sevya Pro</h1>
               <p>
                 Connectez-vous pour envoyer des liens et recevoir les briefs de
                 vos clients.

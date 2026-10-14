@@ -1,10 +1,8 @@
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import SevyaSceauLogo from "@/components/SevyaSceauLogo";
-import { Leaf } from "lucide-react";
-import { WILDER_COLORS as C } from "@/lib/themes";
+import SevyaTopBar from "@/components/SevyaTopBar";
+import { ATELIER_HERO_PART, ATELIER_HERO_PRO_LOGIN } from "@/lib/atelierHeroImages";
 import { isPermanentAuthUser } from "@/lib/authUser";
 import {
   completeAuthSession,
@@ -23,47 +21,6 @@ import { supabase } from "@/lib/supabase";
 function getAuthEmailRedirectUrl(isProProfile) {
   if (typeof window === "undefined") return undefined;
   return `${window.location.origin}${isProProfile ? "/pro" : "/jardin"}`;
-}
-
-const CARD = {
-  mintBg: "#E6F0E3",
-  mintInk: "#4E7B52",
-  peachBg: "#F6E7D8",
-  peachInk: "#DB7E44",
-};
-
-const HERO_GRADIENT =
-  "linear-gradient(165deg, #5E8A64 0%, #2F5E3F 52%, #1E3A28 100%)";
-
-const PRIMARY_GREEN = "#2F5E3F";
-
-function authSurfaces(isPro) {
-  if (isPro) {
-    return {
-      pageBg: C.shellBg,
-      mainBg: "#ffffff",
-      tabOnBg: "#fff",
-      inputBg: "#fff",
-      btnPrimaryBg: PRIMARY_GREEN,
-      btnPrimaryColor: "#fff",
-      btnSecondaryBg: "#fff",
-      desktopPageBg: "linear-gradient(180deg, #ddd8cc 0%, #d3cdbe 100%)",
-      heroBg: HERO_GRADIENT,
-      focusRing: PRIMARY_GREEN,
-    };
-  }
-  return {
-    pageBg: "var(--bg)",
-    mainBg: "var(--card)",
-    tabOnBg: "var(--bg)",
-    inputBg: "var(--bg)",
-    btnPrimaryBg: "var(--ink)",
-    btnPrimaryColor: "var(--bg)",
-    btnSecondaryBg: "transparent",
-    desktopPageBg: "var(--bg)",
-    heroBg: C.heroGradient,
-    focusRing: "var(--sage)",
-  };
 }
 
 function mapError(message) {
@@ -113,17 +70,18 @@ export default function ConnexionPage() {
     await completeAuthSession().catch(() => {});
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e, modeOverride) => {
+    e?.preventDefault?.();
+    const authMode = modeOverride || mode;
     setLoading(true);
     setError("");
     setInfo("");
     setResetSent(false);
 
     const trimmedEmail = email.trim();
-    const fn = mode === "signup" ? signUpWithEmail : signInWithEmail;
+    const fn = authMode === "signup" ? signUpWithEmail : signInWithEmail;
     const result =
-      mode === "signup"
+      authMode === "signup"
         ? await fn(trimmedEmail, password)
         : await fn(trimmedEmail, password, { rememberMe: true });
 
@@ -142,7 +100,7 @@ export default function ConnexionPage() {
       }
     } else {
       const session = await getCloudSession();
-      if (mode === "signup" && !isPermanentAuthUser(session?.user)) {
+      if (authMode === "signup" && !isPermanentAuthUser(session?.user)) {
         setLoading(false);
         setInfo("Vérifiez votre boîte mail pour confirmer votre compte.");
         return;
@@ -190,608 +148,189 @@ export default function ConnexionPage() {
     setResetSent(true);
   };
 
-  const handleMagicLink = async (e) => {
-    e.preventDefault();
-    if (!supabase) {
-      setError(mapError("cloud_unavailable"));
-      return;
-    }
-    const trimmed = email.trim();
-    if (!trimmed) {
-      setError("Indiquez votre adresse e-mail pour recevoir le lien.");
-      return;
-    }
-    setLoading(true);
-    setError("");
-    setInfo("");
-    setResetSent(false);
-    const { error: otpError } = await supabase.auth.signInWithOtp({
-      email: trimmed,
-      options: {
-        emailRedirectTo: getAuthEmailRedirectUrl(false),
-      },
-    });
-    setLoading(false);
-    if (otpError) {
-      setError(mapError(otpError.message));
-      return;
-    }
-    setInfo("Vérifiez votre boîte mail : un lien de connexion vous a été envoyé.");
-  };
-
-  const signupTabLabel = isPro ? "Créer mon studio" : "Créer un compte";
-  const primaryLabel =
-    mode === "signup"
-      ? isPro
-        ? "Créer mon studio"
-        : "Créer mon compte"
-      : isPro
-        ? "Accéder à mon espace pro"
-        : "Se connecter";
-
-  const emailLabel = isPro ? "E-MAIL PRO" : "E-MAIL";
   const emailId = "sv-connexion-email";
   const passwordId = "sv-connexion-password";
-  const surf = authSurfaces(isPro);
+  const heroSrc = isPro ? ATELIER_HERO_PRO_LOGIN : ATELIER_HERO_PART;
+
+  const statusBlock = (
+    <>
+      {resetSent ? (
+        <p className="sv-auth-status sv-auth-status--ok" role="status">
+          Un e-mail de réinitialisation a été envoyé à votre adresse.
+        </p>
+      ) : null}
+      {info ? (
+        <p className="sv-auth-status sv-auth-status--ok" role="status">
+          {info}
+        </p>
+      ) : null}
+      {error ? (
+        <p className="sv-auth-status sv-auth-status--err" role="alert">
+          {error}
+        </p>
+      ) : null}
+    </>
+  );
 
   return (
     <>
       <Head>
-        <title>{isPro ? "Espace pro" : "Connexion"} — Sevya</title>
+        <title>{isPro ? "Espace pro" : "Votre jardin"} — Sevya</title>
         <meta name="robots" content="noindex" />
       </Head>
 
-      <div className={`sv-page${isPro ? "" : " atelier-auth atelier-connexion"}`}>
-        <div className="sv-shell">
-          <section className="sv-hero" aria-hidden="true">
-            <SevyaSceauLogo size={96} />
-            <h1 className="sv-hero__title">
-              Le jardin de vos envies, compris d&apos;avance.
-            </h1>
-            <p className="sv-hero__sub">
-              Les particuliers rassemblent leurs idées, les paysagistes arrivent
-              préparés au premier rendez-vous.
+      <div className={`sv-discovery ${isPro ? "sv-pro-auth" : "sv-part-auth"}`}>
+        <div className="sv-hero-block sv-hero-block--auth fade">
+          <img className="sv-hero-block__img" src={heroSrc} alt="" />
+          <SevyaTopBar
+            overlay
+            backHref="/"
+            titlePro={isPro}
+          />
+        </div>
+
+        {isPro ? (
+          <div className="sv-auth-body">
+            <p className="atelier-label">Espace paysagiste</p>
+            <h1 className="sv-auth-title">Briefs clients, rendez-vous, réalisations.</h1>
+            <p className="sv-auth-lead">
+              Connectez-vous pour accéder à votre studio Sevya Pro.
             </p>
-          </section>
-
-          <section className="sv-main" aria-labelledby="sv-connexion-heading">
-            <div className="sv-main__inner">
-              <Link href="/" className="sv-back">
-                ← Retour
-              </Link>
-
-              <div
-                className="sv-pill"
-                style={{
-                  background: isPro ? CARD.peachBg : CARD.mintBg,
-                  color: isPro ? CARD.peachInk : CARD.mintInk,
-                }}
-              >
-                {isPro ? (
-                  <>
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden
-                    >
-                      <path d="M3 21h18" />
-                      <path d="M5 21V7l8-4v18" />
-                      <path d="M19 21V11l-6-4" />
-                    </svg>
-                    Espace paysagiste
-                  </>
-                ) : (
-                  <>
-                    <Leaf size={18} strokeWidth={2} aria-hidden />
-                    Espace particulier
-                  </>
-                )}
+            <div className="sv-auth-or">
+              <i aria-hidden="true" />
+              ou
+              <i aria-hidden="true" />
+            </div>
+            <form className="sv-auth-form" onSubmit={(e) => handleSubmit(e, "signin")} noValidate>
+              <div className="sv-field">
+                <label htmlFor={emailId}>E-mail professionnel</label>
+                <input
+                  id={emailId}
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={loading}
+                />
               </div>
-
-              <h1 id="sv-connexion-heading" className="sv-title">
-                {isPro
-                  ? "Vos clients, compris d'avance"
-                  : "Votre jardin vous attend"}
+              <div className="sv-field">
+                <label htmlFor={passwordId}>Mot de passe</label>
+                <input
+                  id={passwordId}
+                  type="password"
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  disabled={loading}
+                />
+              </div>
+              <button type="button" className="sv-auth-forgot" onClick={handleForgotPassword} disabled={loading}>
+                Mot de passe oublié ?
+              </button>
+              <div className="sv-auth-actions">
+                <button type="submit" className="sv-btn-fill" disabled={loading}>
+                  {loading ? "Patientez…" : "Se connecter"}
+                </button>
+                <button
+                  type="button"
+                  className="sv-btn-outline"
+                  disabled={loading}
+                  onClick={(e) => handleSubmit(e, "signup")}
+                >
+                  Créer mon compte
+                </button>
+              </div>
+            </form>
+            {statusBlock}
+          </div>
+        ) : (
+          <>
+            <div className="sv-auth-intro">
+              <p className="atelier-label">Votre jardin</p>
+              <h1 className="sv-auth-title">
+                Rassemblez vos envies,
+                <br />
+                on s&apos;occupe du reste.
               </h1>
-              <p className="sv-subtitle">
-                {isPro
-                  ? "Accédez à vos briefs, vos liens envoyés et votre agenda."
-                  : "Retrouvez vos envies, vos scans et votre brief."}
-              </p>
-
-              <div className="sv-tabs" role="tablist" aria-label="Mode de connexion">
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={mode === "signin"}
-                  className={`sv-tab${mode === "signin" ? " sv-tab--on" : ""}`}
-                  onClick={() => setMode("signin")}
-                  disabled={loading}
-                >
-                  Se connecter
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={mode === "signup"}
-                  className={`sv-tab${mode === "signup" ? " sv-tab--on" : ""}`}
-                  onClick={() => setMode("signup")}
-                  disabled={loading}
-                >
-                  {signupTabLabel}
-                </button>
-              </div>
-
-              <form className="sv-form" onSubmit={handleSubmit} noValidate>
-                <div className="sv-field">
-                  <label htmlFor={emailId}>{emailLabel}</label>
-                  <input
-                    id={emailId}
-                    type="email"
-                    name="email"
-                    autoComplete="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={loading}
-                  />
-                </div>
-                <div className="sv-field">
-                  <label htmlFor={passwordId}>MOT DE PASSE</label>
-                  <input
-                    id={passwordId}
-                    type="password"
-                    name="password"
-                    autoComplete={
-                      mode === "signup" ? "new-password" : "current-password"
-                    }
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    disabled={loading}
-                  />
-                </div>
-
-                {mode === "signin" && (
-                  <button
-                    type="button"
-                    className="sv-forgot"
-                    onClick={handleForgotPassword}
-                    disabled={loading}
-                  >
-                    Mot de passe oublié ?
-                  </button>
-                )}
-
-                <button type="submit" className="sv-btn-primary" disabled={loading}>
-                  {loading ? "Patientez…" : primaryLabel}
-                </button>
-              </form>
-
-              {!isPro && (
-                <>
-                  <div className="sv-or">
-                    <span>ou</span>
-                  </div>
-                  <button
-                    type="button"
-                    className="sv-btn-secondary"
-                    onClick={handleMagicLink}
-                    disabled={loading}
-                  >
-                    Recevoir un lien par e-mail
-                  </button>
-                </>
-              )}
-
-              {isPro && (
-                <aside
-                  className="sv-pro-hint"
-                  style={{ background: CARD.peachBg, color: CARD.peachInk }}
-                >
-                  <p>
-                    Envoyez un lien à vos clients, recevez leur brief avant le
-                    premier rendez-vous.
-                  </p>
-                </aside>
-              )}
-
-              {resetSent && (
-                <p className="sv-info" role="status">
-                  Un e-mail de réinitialisation a été envoyé à votre adresse.
-                </p>
-              )}
-              {info && (
-                <p className="sv-info" role="status">
-                  {info}
-                </p>
-              )}
-              {error && (
-                <p className="sv-error" role="alert">
-                  {error}
-                </p>
-              )}
-
-              <p className="sv-switch">
-                {isPro ? (
-                  <>
-                    Vous êtes un particulier ?{" "}
-                    <Link href="/connexion?profil=particulier">Espace jardin</Link>
-                  </>
-                ) : (
-                  <>
-                    Vous êtes paysagiste ?{" "}
-                    <Link href="/connexion?profil=pro">Espace pro</Link>
-                  </>
-                )}
+              <p className="sv-auth-lead">
+                Découvrez sans compte, ou créez le vôtre tout de suite. Dans les deux cas, ce que vous faites est
+                gardé.
               </p>
             </div>
-          </section>
-        </div>
+
+            <button
+              type="button"
+              className="sv-guest-cta"
+              onClick={() => router.push("/jardin")}
+              disabled={loading}
+            >
+              <span>
+                <span className="sv-guest-cta__title">Découvrir sans compte</span>
+                <span className="sv-guest-cta__sub">Idées, coups de cœur, dossier · tout est gardé</span>
+              </span>
+              <span className="sv-choix__chev" aria-hidden="true">
+                ›
+              </span>
+            </button>
+
+            <div className="sv-auth-or">
+              <i aria-hidden="true" />
+              ou
+              <i aria-hidden="true" />
+            </div>
+
+            <form className="sv-auth-form" onSubmit={(e) => handleSubmit(e, "signin")} noValidate>
+              <div className="sv-field">
+                <label htmlFor={emailId}>E-mail</label>
+                <input
+                  id={emailId}
+                  type="email"
+                  autoComplete="email"
+                  placeholder="vous@mail.fr"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+              </div>
+              <div className="sv-field">
+                <label htmlFor={passwordId}>Mot de passe</label>
+                <input
+                  id={passwordId}
+                  type="password"
+                  autoComplete="current-password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  disabled={loading}
+                />
+              </div>
+              <button type="button" className="sv-auth-forgot" onClick={handleForgotPassword} disabled={loading}>
+                Mot de passe oublié ?
+              </button>
+              <div className="sv-auth-actions">
+                <button type="submit" className="sv-btn-fill" disabled={loading}>
+                  {loading ? "Patientez…" : "Se connecter"}
+                </button>
+                <button
+                  type="button"
+                  className="sv-btn-outline"
+                  disabled={loading}
+                  onClick={(e) => handleSubmit(e, "signup")}
+                >
+                  Créer mon compte
+                </button>
+              </div>
+            </form>
+            {statusBlock}
+          </>
+        )}
       </div>
-
-      <style jsx>{`
-        .sv-page {
-          min-height: 100vh;
-          min-height: 100dvh;
-          font-family: var(--font-title), "Fraunces", Georgia, serif;
-          color: ${C.ink};
-          background: ${surf.pageBg};
-          -webkit-font-smoothing: antialiased;
-        }
-
-        .sv-shell {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-          max-width: 1120px;
-          margin: 0 auto;
-          padding: max(16px, env(safe-area-inset-top))
-            max(16px, env(safe-area-inset-right))
-            max(24px, env(safe-area-inset-bottom))
-            max(16px, env(safe-area-inset-left));
-        }
-
-        .sv-hero {
-          display: none;
-        }
-
-        .sv-main {
-          flex: 1;
-          background: ${surf.mainBg};
-          border-radius: 28px;
-          box-shadow: ${isPro ? "0 6px 30px -20px rgba(0, 0, 0, 0.2)" : "none"};
-          border: ${isPro ? "none" : "1px solid var(--line)"};
-          padding: 24px 20px 28px;
-        }
-
-        .sv-main__inner {
-          width: 100%;
-          max-width: 480px;
-          margin: 0 auto;
-        }
-
-        .sv-back {
-          display: inline-block;
-          font-size: 0.9375rem;
-          font-weight: 600;
-          color: ${C.secondary};
-          text-decoration: none;
-          margin-bottom: 20px;
-          min-height: 44px;
-          line-height: 44px;
-        }
-
-        .sv-back:focus-visible {
-          outline: 2px solid ${surf.focusRing};
-          outline-offset: 2px;
-          border-radius: 6px;
-        }
-
-        .sv-pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 8px 14px;
-          border-radius: 999px;
-          font-size: 0.8125rem;
-          font-weight: 700;
-          letter-spacing: 0.04em;
-          text-transform: uppercase;
-          margin-bottom: 16px;
-        }
-
-        .sv-title {
-          font-size: clamp(1.5rem, 4.5vw, 1.85rem);
-          font-weight: 700;
-          letter-spacing: -0.02em;
-          line-height: 1.15;
-        }
-
-        .sv-subtitle {
-          margin-top: 10px;
-          font-size: 0.98rem;
-          font-weight: 500;
-          color: ${C.muted};
-          line-height: 1.45;
-          max-width: 36ch;
-        }
-
-        .sv-tabs {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 8px;
-          margin: 24px 0 20px;
-          padding: 4px;
-          background: ${C.hint};
-          border-radius: 14px;
-        }
-
-        .sv-tab {
-          min-height: 44px;
-          border: none;
-          border-radius: 11px;
-          font-family: inherit;
-          font-size: 0.875rem;
-          font-weight: 700;
-          color: ${C.secondary};
-          background: transparent;
-          cursor: pointer;
-          transition: background 0.15s ease, color 0.15s ease;
-        }
-
-        .sv-tab--on {
-          background: ${surf.tabOnBg};
-          color: ${C.ink};
-          box-shadow: ${isPro ? "0 2px 8px rgba(30, 43, 35, 0.08)" : "none"};
-          border: ${isPro ? "none" : "1px solid var(--line)"};
-        }
-
-        .sv-tab:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-        .sv-form {
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
-        }
-
-        .sv-field {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
-
-        .sv-field label {
-          font-size: 0.6875rem;
-          font-weight: 700;
-          letter-spacing: 0.12em;
-          color: ${C.secondary};
-        }
-
-        .sv-field input {
-          min-height: 48px;
-          padding: 12px 14px;
-          border-radius: 14px;
-          border: 1px solid ${C.borderStrong};
-          font-family: inherit;
-          font-size: 1rem;
-          color: ${C.ink};
-          background: ${surf.inputBg};
-        }
-
-        .sv-field input:focus {
-          outline: 2px solid ${surf.focusRing};
-          outline-offset: 1px;
-          border-color: transparent;
-        }
-
-        .sv-field input:disabled {
-          opacity: 0.65;
-        }
-
-        .sv-forgot {
-          align-self: flex-start;
-          border: none;
-          background: none;
-          padding: 8px 0;
-          min-height: 44px;
-          font-family: inherit;
-          font-size: 0.875rem;
-          font-weight: 600;
-          color: ${C.greenInk};
-          cursor: pointer;
-          text-decoration: underline;
-          text-underline-offset: 3px;
-        }
-
-        .sv-forgot:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-        .sv-btn-primary {
-          min-height: 48px;
-          margin-top: 4px;
-          border: none;
-          border-radius: 14px;
-          background: ${surf.btnPrimaryBg};
-          color: ${surf.btnPrimaryColor};
-          font-family: inherit;
-          font-size: 1rem;
-          font-weight: 700;
-          cursor: pointer;
-          transition: transform 0.12s ease, opacity 0.12s ease;
-        }
-
-        .sv-btn-primary:hover:not(:disabled) {
-          opacity: 0.94;
-        }
-
-        .sv-btn-primary:active:not(:disabled) {
-          transform: scale(0.985);
-        }
-
-        .sv-btn-primary:disabled {
-          opacity: 0.65;
-          cursor: not-allowed;
-        }
-
-        .sv-or {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin: 22px 0 16px;
-          color: ${C.muted};
-          font-size: 0.8125rem;
-          font-weight: 600;
-          text-transform: lowercase;
-        }
-
-        .sv-or::before,
-        .sv-or::after {
-          content: "";
-          flex: 1;
-          height: 1px;
-          background: ${C.border};
-        }
-
-        .sv-btn-secondary {
-          width: 100%;
-          min-height: 48px;
-          border-radius: 14px;
-          border: 1px solid ${C.borderStrong};
-          background: ${surf.btnSecondaryBg};
-          font-family: inherit;
-          font-size: 0.98rem;
-          font-weight: 700;
-          color: ${C.ink};
-          cursor: pointer;
-        }
-
-        .sv-btn-secondary:disabled {
-          opacity: 0.65;
-          cursor: not-allowed;
-        }
-
-        .sv-pro-hint {
-          margin-top: 20px;
-          padding: 16px 18px;
-          border-radius: 18px;
-          font-size: 0.9375rem;
-          font-weight: 500;
-          line-height: 1.45;
-        }
-
-        .sv-pro-hint p {
-          margin: 0;
-        }
-
-        .sv-info {
-          margin-top: 16px;
-          padding: 12px 14px;
-          border-radius: 12px;
-          background: ${C.greenTint};
-          color: ${C.greenInk};
-          font-size: 0.9375rem;
-          font-weight: 500;
-          line-height: 1.4;
-        }
-
-        .sv-error {
-          margin-top: 16px;
-          padding: 12px 14px;
-          border-radius: 12px;
-          background: #fdeeee;
-          color: ${C.error};
-          font-size: 0.9375rem;
-          font-weight: 500;
-          line-height: 1.4;
-        }
-
-        .sv-switch {
-          margin-top: 28px;
-          text-align: center;
-          font-size: 0.9375rem;
-          font-weight: 500;
-          color: ${C.secondary};
-          line-height: 1.5;
-        }
-
-        .sv-switch :global(a) {
-          color: ${C.greenInk};
-          font-weight: 700;
-          text-decoration: underline;
-          text-underline-offset: 3px;
-        }
-
-        @media (min-width: 900px) {
-          .sv-page {
-            background: ${surf.desktopPageBg};
-          }
-
-          .sv-shell {
-            flex-direction: row;
-            align-items: stretch;
-            gap: 20px;
-            min-height: calc(100vh - 48px);
-            min-height: calc(100dvh - 48px);
-            padding: 24px;
-          }
-
-          .sv-hero {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            flex: 1.05;
-            border-radius: 30px;
-            padding: 48px 40px;
-            background: ${surf.heroBg};
-            color: ${isPro ? "#eef2ea" : "var(--ink)"};
-            box-shadow: ${isPro ? "0 12px 40px -16px rgba(30, 58, 40, 0.45)" : "none"};
-            border: ${isPro ? "none" : "1px solid var(--line)"};
-          }
-
-          .sv-hero :global(.sv-sceau) {
-            margin-bottom: 24px;
-          }
-
-          .sv-hero__title {
-            font-size: clamp(2rem, 3.2vw, 2.65rem);
-            font-weight: 700;
-            line-height: 1.12;
-            letter-spacing: -0.02em;
-            max-width: 14ch;
-          }
-
-          .sv-hero__sub {
-            margin-top: 18px;
-            font-size: 1.05rem;
-            font-weight: 500;
-            line-height: 1.45;
-            color: ${isPro ? "rgba(238, 242, 234, 0.88)" : "var(--mute)"};
-            max-width: 32ch;
-          }
-
-          .sv-main {
-            flex: 1;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 28px;
-          }
-        }
-      `}</style>
     </>
   );
 }
