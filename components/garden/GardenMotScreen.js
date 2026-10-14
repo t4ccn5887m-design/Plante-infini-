@@ -41,21 +41,11 @@ export default function GardenMotScreen({ onBack, onValidated }) {
           subtitle="Ce que vous voulez y faire, ce qui compte pour vous."
         />
         <textarea
+          className="bf-textarea"
           value={text}
           onChange={(e) => setText(e.target.value)}
           rows={6}
           placeholder="Ce que vous voulez qu'il retienne…"
-          style={{
-            width: "100%",
-            boxSizing: "border-box",
-            borderRadius: 16,
-            border: "1.5px solid var(--line)",
-            padding: "14px 16px",
-            fontSize: 15,
-            lineHeight: 1.45,
-            fontFamily: "inherit",
-            resize: "vertical",
-          }}
         />
       </div>
     </GardenFlowScreen>

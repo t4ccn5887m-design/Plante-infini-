@@ -32,6 +32,7 @@ import {
   updateProLinkMeta,
 } from "@/lib/pro/proStudioApi";
 import { listProProjects, getProjectPhotoSignedUrls } from "@/lib/pro/proProjectsApi";
+import { PRO_BRIEF_FALLBACK_PHOTO } from "@/lib/sevyaDemoRenders";
 import { labelsOf, plantLabel, tasteLabel } from "@/lib/pro/briefLabels";
 
 function formatRdv(iso) {
@@ -507,12 +508,14 @@ export default function BriefDetailScreen({
     );
   })();
 
+  const heroPhoto = photoUrls[0] || PRO_BRIEF_FALLBACK_PHOTO;
+
   return (
     <div className="card-panel wp-brief-print wp-brief-detail">
-      {photoUrls[0] ? (
+      {heroPhoto ? (
         <div className="wp-brief-detail-hero">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={photoUrls[0]} alt="" />
+          <img src={heroPhoto} alt="" />
           <div className="wp-brief-hero-actions no-print">
             <button className="back wp-brief-hero-back" onClick={onBack} type="button">
               <ArrowLeft size={18} />
@@ -543,7 +546,7 @@ export default function BriefDetailScreen({
         </div>
       )}
 
-      <div className={photoUrls[0] ? "wp-brief-detail-head overlap" : ""}>
+      <div className={heroPhoto ? "wp-brief-detail-head overlap" : ""}>
         <div className="k">Brief · {local.date || "reçu"}</div>
         <h1 className="wp-brief-client-name">{local.name}</h1>
         {local.city ? <p className="wp-brief-client-city">{local.city}</p> : null}

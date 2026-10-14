@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import CataloguePhotoCredit from "@/components/catalogue/CataloguePhotoCredit";
-import RealisationPastille from "@/components/catalogue/RealisationPastille";
 import { loadCatalogueStyleGardenState } from "@/lib/promoteCatalogueToGarden";
 import { getGardenStyleById } from "@/lib/catalogueStyles";
 import { toggleGardenStyleInGarden } from "@/lib/catalogueStyleGardenToggle";
@@ -66,6 +65,8 @@ export default function GardenStyleDetailScreen({
     }
   };
 
+  const tagLabel = style.pastille?.trim() || "Réalisation";
+
   return (
     <div className="atelier-style-detail">
       <img className="atelier-style-detail__photo" src={style.photo_url} alt="" />
@@ -74,9 +75,6 @@ export default function GardenStyleDetailScreen({
         <button type="button" className="atelier-style-detail__back" onClick={onBack} aria-label="Retour">
           ‹
         </button>
-        {style.pastille ? (
-          <RealisationPastille label={style.pastille} style={{ position: "relative", top: 0, left: 0 }} />
-        ) : null}
       </div>
       {style.photo_auteur ? (
         <div className="atelier-style-detail__credit">
@@ -85,14 +83,18 @@ export default function GardenStyleDetailScreen({
       ) : null}
       <div className="atelier-style-detail__footer">
         {error ? (
-          <p style={{ margin: "0 0 10px", fontSize: 13, color: "var(--danger)", textAlign: "center" }}>{error}</p>
+          <p className="atelier-style-detail__error" role="alert">
+            {error}
+          </p>
         ) : null}
+        <span className="atelier-style-detail__tag">{tagLabel}</span>
+        <h2 className="atelier-style-detail__headline">Un jardin qui vous inspire ?</h2>
         <button
           type="button"
           className={
             inGarden
-              ? "atelier-btn-secondary atelier-style-detail__heart-on"
-              : "atelier-btn-fill atelier-style-detail__heart-btn"
+              ? "atelier-btn-secondary atelier-style-detail__heart-btn atelier-style-detail__heart-on"
+              : "atelier-btn-primary atelier-style-detail__heart-btn"
           }
           disabled={toggling || !styleState}
           onClick={handleToggle}

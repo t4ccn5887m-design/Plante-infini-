@@ -1,13 +1,16 @@
-import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { isPermanentAuthUser } from "@/lib/authUser";
 import { getCloudSession, subscribeToAuthSession } from "@/lib/cloudSync";
 import { PARTNERS_LIVE } from "@/lib/partners";
 import { readPartnersNotify, savePartnersNotifyPreference } from "@/lib/partnersNotify";
 
-const HERO = "/catalogue/realisations/styles_realisations-7.webp";
+import { SEVYA_DEMO_RENDU_3D } from "@/lib/sevyaDemoRenders";
+
+const HERO = SEVYA_DEMO_RENDU_3D;
 
 export default function PartnersBientotScreen({ onOpenDemo }) {
+  const router = useRouter();
   const [user, setUser] = useState(null);
   const [notifyOn, setNotifyOn] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -73,7 +76,7 @@ export default function PartnersBientotScreen({ onOpenDemo }) {
       {permanent ? (
         <button
           type="button"
-          className={notifyOn ? "atelier-btn-secondary atelier-partners__notify-done" : "atelier-btn-fill"}
+          className={notifyOn ? "atelier-btn-outline atelier-partners__notify-done" : "atelier-btn-fill"}
           disabled={notifyOn || saving}
           onClick={handleNotify}
         >
@@ -82,9 +85,13 @@ export default function PartnersBientotScreen({ onOpenDemo }) {
       ) : (
         <div className="atelier-partners__guest">
           <p className="atelier-partners__guest-msg">Créez votre compte pour être prévenu</p>
-          <Link href="/connexion?profil=particulier&mode=signup" className="atelier-btn-fill atelier-partners__signup">
+          <button
+            type="button"
+            className="atelier-btn-outline atelier-partners__signup"
+            onClick={() => router.push("/connexion?profil=particulier&mode=signup")}
+          >
             Créer un compte
-          </Link>
+          </button>
         </div>
       )}
 

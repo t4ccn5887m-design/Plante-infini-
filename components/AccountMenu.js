@@ -186,9 +186,9 @@ export default function AccountMenu({
           height: 44,
           fontSize: 15,
           borderRadius: 999,
-          background: "#E6F0E3",
-          color: "#2F5E3F",
-          border: "none",
+          background: "var(--card, #17241C)",
+          color: "var(--ink, #F1ECE2)",
+          border: "1px solid var(--line, #2A3A30)",
           boxShadow: "none",
         }
       : {
