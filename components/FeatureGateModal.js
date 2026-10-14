@@ -33,9 +33,9 @@ export default function FeatureGateModal({
   };
 
   return createPortal(
-    <div className="modal-overlay signup-prompt-modal-overlay" onClick={handleClose}>
+    <div className="modal-overlay signup-prompt-modal-overlay atelier-feature-gate-overlay" onClick={handleClose}>
       <div
-        className="modal-sheet signup-prompt-modal feature-gate-modal"
+        className="modal-sheet signup-prompt-modal feature-gate-modal atelier-feature-gate-modal"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -66,6 +66,7 @@ export default function FeatureGateModal({
             )}
             <PremiumAuthStep
               t={t}
+              variant="atelier"
               titleKey="signup_prompt.auth_title"
               subtitleKey="signup_prompt.auth_subtitle"
               onComplete={handleAuthComplete}

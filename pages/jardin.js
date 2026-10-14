@@ -691,7 +691,7 @@ export default function Wilder() {
     return (
       <>
         <Head>
-          <title>Wilder</title>
+          <title>Sevya</title>
           <meta name="description" content={slogan} />
         </Head>
         <div className="app-boot-loading" role="status" aria-live="polite" aria-label={t("auth.loading")}>
@@ -731,7 +731,7 @@ export default function Wilder() {
         />
       );
     } else if (screen === "coups-de-coeur") {
-      pageTitleContent = "Coups de cœur — Wilder";
+      pageTitleContent = "Coups de cœur — Sevya";
       mainContent = (
         <CoupsDeCoeurScreen
           refreshTick={homeGardenRefreshTick}
@@ -743,34 +743,34 @@ export default function Wilder() {
         />
       );
     } else if (screen === "partners") {
-      pageTitleContent = "Partenaires — Wilder";
+      pageTitleContent = "Partenaires — Sevya";
       mainContent = <PartnersBientotScreen onOpenDemo={openPartnersDemo} />;
     } else if (screen === "partners-demo") {
-      pageTitleContent = "Exemple partenaire — Wilder";
+      pageTitleContent = "Exemple partenaire — Sevya";
       mainContent = <PartnersDemoScreen onBack={backFromPartnersDemo} />;
     } else if (screen === "catalogue") {
       const catalogueProps = {
         t,
-        canAddToGarden: !isGuest,
+        canAddToGarden: true,
         onGardenChange: () => setHomeGardenRefreshTick((tick) => tick + 1),
         onRequireAccount: openRequireAccount,
       };
 
       if (catalogueView === "idees") {
-        pageTitleContent = `${t("idees_jardins.title")} — Wilder`;
+        pageTitleContent = `${t("idees_jardins.title")} — Sevya`;
         mainContent = <IdeesJardinsScreen {...catalogueProps} onBack={backToCatalogueHall} />;
       } else if (catalogueView === "styles-wall") {
-        pageTitleContent = "Styles de jardin — Wilder";
+        pageTitleContent = "Styles de jardin — Sevya";
         mainContent = (
           <GardenStylesWallScreen onBack={backToCatalogueHall} onOpenStyle={openGardenStyleDetail} />
         );
       } else if (catalogueView === "style-detail" && gardenStyleId) {
-        pageTitleContent = "Style de jardin — Wilder";
+        pageTitleContent = "Style de jardin — Sevya";
         mainContent = (
           <GardenStyleDetailScreen
             styleId={gardenStyleId}
             t={t}
-            canAddToGarden={!isGuest}
+            canAddToGarden
             onRequireAccount={openRequireAccount}
             onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
             onBack={() => {
@@ -789,7 +789,7 @@ export default function Wilder() {
         catalogueFamiliesUniverse &&
         ["vegetal", "mineral", "bordures"].includes(catalogueFamiliesUniverse)
       ) {
-        pageTitleContent = "Catalogue — Wilder";
+        pageTitleContent = "Catalogue — Sevya";
         mainContent = (
           <CatalogueFamillesScreen
             universe={catalogueFamiliesUniverse}
@@ -798,7 +798,7 @@ export default function Wilder() {
           />
         );
       } else if (catalogueView === "vegetal" || catalogueView === "mineral" || catalogueView === "deco") {
-        pageTitleContent = "Catalogue — Wilder";
+        pageTitleContent = "Catalogue — Sevya";
         mainContent = (
           <CatalogueHubScreen
             {...catalogueProps}
@@ -811,11 +811,11 @@ export default function Wilder() {
           />
         );
       } else {
-        pageTitleContent = "Idées — Wilder";
+        pageTitleContent = "Idées — Sevya";
         mainContent = (
           <IdeesAccueilScreen
             t={t}
-            canAddToGarden={!isGuest}
+            canAddToGarden
             onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
             onRequireAccount={openRequireAccount}
             onOpenCatalogueTab={openCatalogueTab}
@@ -831,7 +831,7 @@ export default function Wilder() {
         );
       }
     } else if (screen === "brief") {
-      pageTitleContent = "Mon dossier jardin — Wilder";
+      pageTitleContent = "Mon dossier jardin — Sevya";
       mainContent = (
         <DossierScreen
           t={t}
@@ -882,10 +882,10 @@ export default function Wilder() {
     screen === "garden-entretien" ||
     screen === "garden-dossier-confirm"
   ) {
-    let title = "Mon dossier — Wilder";
+    let title = "Mon dossier — Sevya";
     let body = null;
     if (screen === "garden-ambiances") {
-      title = "Ambiances — Wilder";
+      title = "Ambiances — Sevya";
       body = (
         <GardenAmbianceListScreen
           onBack={closeGardenFlow}
@@ -893,7 +893,7 @@ export default function Wilder() {
         />
       );
     } else if (screen === "garden-ambiance-detail" && gardenAmbianceName) {
-      title = `${gardenAmbianceName} — Wilder`;
+      title = `${gardenAmbianceName} — Sevya`;
       body = (
         <GardenAmbianceDetailScreen
           ambianceName={gardenAmbianceName}
@@ -902,7 +902,7 @@ export default function Wilder() {
         />
       );
     } else if (screen === "garden-terrain") {
-      title = "Mon terrain — Wilder";
+      title = "Mon terrain — Sevya";
       body = (
         <GardenTerrainScreen
           onBack={closeGardenFlow}
@@ -911,7 +911,7 @@ export default function Wilder() {
         />
       );
     } else if (screen === "garden-budget") {
-      title = "Mon budget — Wilder";
+      title = "Mon budget — Sevya";
       body = (
         <GardenBudgetScreen
           onBack={closeGardenFlow}
@@ -919,7 +919,7 @@ export default function Wilder() {
         />
       );
     } else if (screen === "garden-mot") {
-      title = "Mot pour le paysagiste — Wilder";
+      title = "Mot pour le paysagiste — Sevya";
       body = (
         <GardenMotScreen
           onBack={closeGardenFlow}
@@ -927,10 +927,17 @@ export default function Wilder() {
         />
       );
     } else if (screen === "garden-quotidien") {
-      title = "Votre quotidien — Wilder";
+      title = "Votre quotidien — Sevya";
       body = (
         <GardenDetailsStepScreen
-          title="Qui va vivre ce jardin ?"
+          kicker="Étape 4 · Votre quotidien"
+          title={
+            <>
+              Qui va vivre
+              <br />
+              ce jardin ?
+            </>
+          }
           subtitle="Pour qu'il soit pensé pour vous, pas pour une photo."
           onBack={closeGardenFlow}
           valid={isQuotidienValid}
@@ -942,11 +949,18 @@ export default function Wilder() {
         </GardenDetailsStepScreen>
       );
     } else if (screen === "garden-a-eviter") {
-      title = "Ce que vous ne voulez pas — Wilder";
+      title = "Ce que vous ne voulez pas — Sevya";
       body = (
         <GardenDetailsStepScreen
-          title="Ce que vous ne voulez pas"
-          subtitle="Aussi utile que ce que vous aimez."
+          kicker="Étape 5 · À éviter"
+          title={
+            <>
+              Ce que vous
+              <br />
+              ne voulez pas.
+            </>
+          }
+          subtitle="Aussi utile que ce que vous aimez. Plusieurs choix possibles."
           onBack={closeGardenFlow}
           valid={isAEviterValid}
           onValidated={() => showDossierStepConfirm("a-eviter")}
@@ -957,11 +971,18 @@ export default function Wilder() {
         </GardenDetailsStepScreen>
       );
     } else if (screen === "garden-existant") {
-      title = "Ce qui existe déjà — Wilder";
+      title = "Ce qui existe déjà — Sevya";
       body = (
         <GardenDetailsStepScreen
-          title="Ce qui existe déjà"
-          subtitle="Si vous ne savez pas, votre paysagiste verra sur place."
+          kicker="Étape 7 · L'existant"
+          title={
+            <>
+              Ce qui existe
+              <br />
+              déjà.
+            </>
+          }
+          subtitle="Si vous ne savez pas, aucun souci : votre paysagiste verra sur place."
           onBack={closeGardenFlow}
           valid={isExistantValid}
           onValidated={() => showDossierStepConfirm("existant")}
@@ -972,10 +993,17 @@ export default function Wilder() {
         </GardenDetailsStepScreen>
       );
     } else if (screen === "garden-entretien") {
-      title = "Entretien et calendrier — Wilder";
+      title = "Entretien et calendrier — Sevya";
       body = (
         <GardenDetailsStepScreen
-          title="Entretien et calendrier"
+          kicker="Étape 8 · Entretien et calendrier"
+          title={
+            <>
+              Et après
+              <br />
+              les travaux ?
+            </>
+          }
           subtitle="Un jardin se pense aussi pour le temps que vous avez."
           onBack={closeGardenFlow}
           valid={isEntretienValid}
@@ -987,7 +1015,7 @@ export default function Wilder() {
         </GardenDetailsStepScreen>
       );
     } else if (screen === "garden-dossier-confirm" && dossierConfirmProgress) {
-      title = "Dossier enregistré — Wilder";
+      title = "Dossier enregistré — Sevya";
       const nextStepId = nextIncompleteStepId(dossierConfirmProgress, lastValidatedStepId);
       body = (
         <GardenDossierConfirmScreen
@@ -1000,7 +1028,7 @@ export default function Wilder() {
         />
       );
     } else if (screen === "garden-ambiance-detail") {
-      title = "Ambiances — Wilder";
+      title = "Ambiances — Sevya";
       body = (
         <GardenAmbianceListScreen
           onBack={closeGardenFlow}
@@ -1034,7 +1062,7 @@ export default function Wilder() {
     return (
       <>
         <Head>
-          <title>{t("palette.title")} — Wilder</title>
+          <title>{t("palette.title")} — Sevya</title>
         </Head>
         <PaletteListScreen
           t={t}
@@ -1052,7 +1080,7 @@ export default function Wilder() {
     return (
       <>
         <Head>
-          <title>{t("palette.zone.title")} — Wilder</title>
+          <title>{t("palette.zone.title")} — Sevya</title>
         </Head>
         <PaletteDetailScreen
           t={t}
@@ -1069,7 +1097,7 @@ export default function Wilder() {
     return (
       <>
         <Head>
-          <title>Mes anciennes trouvailles — Wilder</title>
+          <title>Mes anciennes trouvailles — Sevya</title>
         </Head>
         <WilderMainLayout
           className="screen-enter-fast"
@@ -1094,7 +1122,7 @@ export default function Wilder() {
     return (
       <>
         <Head>
-          <title>{archivedDiscovery.nom} — Wilder</title>
+          <title>{archivedDiscovery.nom} — Sevya</title>
         </Head>
         <WilderMainLayout
           className="screen-enter-fast"
@@ -1113,8 +1141,8 @@ export default function Wilder() {
   if (screen === "catalogue-fiche" && catalogueFiche?.id) {
     const ficheTitle =
       catalogueFiche.universe === "vegetal"
-        ? "Fiche plante — Wilder"
-        : "Fiche catalogue — Wilder";
+        ? "Fiche plante — Sevya"
+        : "Fiche catalogue — Sevya";
     return (
       <>
         <Head>
@@ -1126,7 +1154,7 @@ export default function Wilder() {
               plantId={catalogueFiche.id}
               t={t}
               onBack={leaveCatalogueFiche}
-              canAddToGarden={!isGuest}
+              canAddToGarden
               onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
               onRequireAccount={openRequireAccount}
             />
@@ -1136,7 +1164,7 @@ export default function Wilder() {
               itemId={catalogueFiche.id}
               t={t}
               onBack={leaveCatalogueFiche}
-              canAddToGarden={!isGuest}
+              canAddToGarden
               onGardenChange={() => setHomeGardenRefreshTick((tick) => tick + 1)}
               onRequireAccount={openRequireAccount}
             />
