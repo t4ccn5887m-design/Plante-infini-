@@ -3,25 +3,27 @@
    Aucun sélecteur hors .wp : la v2 particulier n'est pas impactée. */
 .wp * { box-sizing:border-box; margin:0; padding:0; font-family:var(--font-title),'Quicksand',system-ui,sans-serif; }
 .wp {
-  --bg:#D9D3C6; --panel:#FFFFFF; --ink:#233026; --muted:#8B9088; --line:#EFEDE6;
-  --green:#2F5E3F; --green-d:#244a31;
-  --hero1:#41604A; --hero2:#1F2F1D;
-  --peach-bg:#F6E7D8; --peach:#DB7E44;
-  --mint-bg:#E6F0E3; --mint:#4E7B52;
-  --lav-bg:#ECE6F5; --lav:#7A67A6;
-  --amber-bg:#F8ECD8; --amber:#B47327;
+  --bg:#0F1A14; --panel:#17241C; --ink:#F1ECE2; --muted:#A9B3A6; --line:#2A3A30;
+  --green:#C9D6B8; --green-d:#A9B896;
+  --hero1:#17241C; --hero2:#0F1A14;
+  --peach-bg:#17241C; --peach:#D9A47A;
+  --mint-bg:#17241C; --mint:#C9D6B8;
+  --lav-bg:#17241C; --lav:#D9A47A;
+  --amber-bg:#17241C; --amber:#D9A47A;
+  --sage:#C9D6B8; --clay:#D9A47A;
   color:var(--ink); -webkit-font-smoothing:antialiased;
-  background:linear-gradient(180deg,#DDD8CC,#D3CDBE);
+  background:var(--bg);
   min-height:100vh;
+  font-family:var(--font-body,'Inter',system-ui,sans-serif);
 }
 .wp button { cursor:pointer; border:none; background:none; color:inherit; font-family:inherit; }
 
-.wp .phone { max-width:460px; margin:0 auto; min-height:100vh; position:relative; }
-.wp .screen { padding:12px 0 132px; min-height:100vh; }
-.wp .card-panel { background:var(--panel); border-radius:30px; margin:8px; padding:22px 18px 20px; box-shadow:0 6px 30px -20px rgba(0,0,0,.35); }
+.wp .phone { max-width:none; margin:0; min-height:100vh; position:relative; width:100%; }
+.wp .screen { padding:0 0 132px; min-height:100vh; }
+.wp .card-panel { background:var(--bg); border-radius:0; margin:0; padding:22px 18px 20px; box-shadow:none; border:none; }
 
 .wp .head-row { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
-.wp .h-title { font-size:30px; font-weight:700; letter-spacing:-.01em; }
+.wp .h-title { font-size:30px; font-weight:300; letter-spacing:-.01em; font-family:var(--font-title,'Fraunces',serif); }
 .wp .h-sub { color:var(--muted); font-size:15px; font-weight:500; margin-top:2px; }
 .wp .ava { width:46px; height:46px; border-radius:50%; background:var(--mint-bg); color:var(--green); display:grid; place-items:center; font-weight:700; font-size:16px; flex-shrink:0; }
 .wp .ava-btn { border:none; cursor:pointer; font-family:inherit; padding:0; }
@@ -30,7 +32,7 @@
 
 .wp .hero { border-radius:26px; padding:24px 22px 26px; color:#EEF2EA; background:linear-gradient(150deg,var(--hero1),var(--hero2)); position:relative; overflow:hidden; }
 .wp .hero .ava { position:absolute; top:20px; right:20px; background:rgba(255,255,255,.14); color:#fff; }
-.wp .hero h1 { font-size:29px; font-weight:700; line-height:1.12; letter-spacing:-.015em; max-width:11ch; }
+.wp .hero h1 { font-size:29px; font-weight:300; line-height:1.12; letter-spacing:-.015em; max-width:11ch; font-family:var(--font-title,'Fraunces',serif); }
 .wp .hero p { margin-top:12px; font-size:15px; font-weight:500; color:#D3DECF; max-width:30ch; line-height:1.4; }
 
 .wp .label { font-size:13px; font-weight:700; letter-spacing:.14em; color:var(--muted); text-transform:uppercase; margin:24px 4px 12px; }

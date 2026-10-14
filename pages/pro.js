@@ -5,10 +5,10 @@ export default function ProPage() {
   return (
     <>
       <Head>
-        <title>Wilder Pro</title>
+        <title>Sevya Pro</title>
         <meta
           name="description"
-          content="Wilder Pro — briefs clients pour paysagistes"
+          content="Sevya Pro — briefs clients pour paysagistes"
         />
         <meta name="robots" content="noindex" />
       </Head>
