@@ -725,7 +725,7 @@ export default function Wilder() {
           onOpenExistant={() => openGardenDetailsStep("garden-existant", "home")}
           onOpenEntretien={() => openGardenDetailsStep("garden-entretien", "home")}
           onContinueDossier={openFirstIncompleteDossierStep}
-          accountMenu={accueilDossierHome ? accountMenu : null}
+          accountMenu={accueilDossierHome && !isGuest ? accountMenu : null}
           gardenRefreshTick={homeGardenRefreshTick}
           homeTab={homeTab}
         />
