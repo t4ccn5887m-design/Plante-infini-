@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { loadGardenIntention, saveGardenIntention } from "@/lib/gardenIntention";
 import { touchGardenDossierAfterLocalSave } from "@/lib/gardenDossierStore";
-import GardenFlowScreen, { GardenBackButton, GardenPrimaryButton } from "@/components/garden/GardenFlowScreen";
+import GardenFlowScreen, { GardenPrimaryButton, GardenStepHeader } from "@/components/garden/GardenFlowScreen";
 
 const MUTED = "var(--mute)";
 
@@ -27,14 +27,19 @@ export default function GardenMotScreen({ onBack, onValidated }) {
         </GardenPrimaryButton>
       }
     >
-      <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 16 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <GardenBackButton onBack={onBack} />
-          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Mot pour le paysagiste</h1>
-        </div>
-        <p style={{ margin: 0, fontSize: 14, lineHeight: 1.45, color: MUTED }}>
-          Quelques mots pour aider votre paysagiste à comprendre votre projet.
-        </p>
+      <div style={{ padding: "0 18px 18px", display: "flex", flexDirection: "column", gap: 16 }}>
+        <GardenStepHeader
+          onBack={onBack}
+          kicker="Étape 3 · Mot au paysagiste"
+          title={
+            <>
+              En quelques mots,
+              <br />
+              votre jardin idéal ?
+            </>
+          }
+          subtitle="Ce que vous voulez y faire, ce qui compte pour vous."
+        />
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}

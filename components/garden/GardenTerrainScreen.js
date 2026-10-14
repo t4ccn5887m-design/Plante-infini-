@@ -12,7 +12,7 @@ import {
   listGardenTerrainPhotos,
   removeGardenTerrainPhoto,
 } from "@/lib/gardenTerrainPhotos";
-import GardenFlowScreen, { GardenBackButton, GardenPrimaryButton } from "@/components/garden/GardenFlowScreen";
+import GardenFlowScreen, { GardenPrimaryButton, GardenStepHeader } from "@/components/garden/GardenFlowScreen";
 import { getGardenTerrainPhotoCountSync } from "@/lib/gardenTerrainPhotos";
 import { touchGardenDossierAfterLocalSave } from "@/lib/gardenDossierStore";
 
@@ -133,16 +133,19 @@ export default function GardenTerrainScreen({ onBack, onChanged, onValidated }) 
         </GardenPrimaryButton>
       }
     >
-      <div style={{ padding: "18px", display: "flex", flexDirection: "column", gap: 16 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <GardenBackButton onBack={onBack} />
-          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Mon terrain</h1>
-        </div>
-
-        <p style={{ margin: 0, fontSize: 14, lineHeight: 1.45, color: MUTED }}>
-          Photos de votre terrain (1 à {GARDEN_TERRAIN_MAX_PHOTOS}), puis quelques infos facultatives — les
-          mêmes questions que pour un brief par lien.
-        </p>
+      <div style={{ padding: "0 18px 18px", display: "flex", flexDirection: "column", gap: 16 }}>
+        <GardenStepHeader
+          onBack={onBack}
+          kicker="Étape 6 · Terrain"
+          title={
+            <>
+              Montrez-nous
+              <br />
+              votre jardin.
+            </>
+          }
+          subtitle="2 ou 3 photos suffisent, de loin si possible."
+        />
 
         <div style={{ display: "flex", gap: 8 }}>
           <button

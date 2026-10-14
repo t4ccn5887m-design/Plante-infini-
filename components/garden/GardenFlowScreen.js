@@ -1,5 +1,20 @@
 /** En-tête retour commun aux écrans dossier (ambiance, terrain, budget). */
 
+/** En-tête étape dossier — libellé centré puis titre Fraunces 300 en dessous. */
+export function GardenStepHeader({ kicker, title, subtitle, onBack, backLabel = "Retour" }) {
+  return (
+    <header className="atelier-garden-step">
+      <div className="atelier-garden-step__top">
+        <GardenBackButton onBack={onBack} label={backLabel} />
+        <span className="atelier-garden-step__kicker">{kicker}</span>
+        <span className="atelier-garden-step__spacer" aria-hidden="true" />
+      </div>
+      <h1 className="atelier-garden-step__title">{title}</h1>
+      {subtitle ? <p className="atelier-garden-step__sub">{subtitle}</p> : null}
+    </header>
+  );
+}
+
 export function GardenBackButton({ onBack, label = "Retour" }) {
   return (
     <button
@@ -34,7 +49,6 @@ export function GardenBackButton({ onBack, label = "Retour" }) {
 }
 
 export function GardenPrimaryButton({ children, disabled, onClick }) {
-  const GREEN = "var(--sage)";
   return (
     <button
       type="button"
@@ -43,12 +57,12 @@ export function GardenPrimaryButton({ children, disabled, onClick }) {
       style={{
         width: "100%",
         minHeight: 54,
-        borderRadius: 18,
         border: "none",
         background: disabled ? "var(--line)" : "var(--ink)",
         color: "var(--bg)",
-        fontSize: 17,
-        fontWeight: 700,
+        fontSize: 15,
+        fontWeight: 600,
+        borderRadius: 999,
         cursor: disabled ? "default" : "pointer",
         fontFamily: "inherit",
         opacity: disabled ? 0.85 : 1,
