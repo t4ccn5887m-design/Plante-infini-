@@ -269,6 +269,20 @@
 .wp .wp-send-full .h-title { margin-top:18px; font-weight:300; }
 .wp .wp-send-full .field input { background:var(--card); border:1px solid var(--line); border-radius:14px; }
 .wp .wp-send-full .field input:focus { border-color:var(--sage); background:var(--card); }
+.wp .wp-send-via { display:flex; flex-wrap:wrap; gap:8px; }
+.wp .wp-send-via-pill {
+  flex:1; min-width:calc(50% - 8px);
+  border:1px solid var(--line); border-radius:99px; padding:11px 12px;
+  font-size:13px; font-weight:600; color:var(--ink); background:var(--card);
+}
+.wp .wp-send-via-pill.on { background:var(--ink); color:var(--bg); border-color:var(--ink); }
+.wp .wp-send-via-pill:disabled { opacity:.55; }
+.wp .wp-send-via-help { font-size:13px; line-height:1.45; color:var(--muted); margin-top:12px; }
+.wp .wp-send-preview-link {
+  margin-top:10px; border:none; background:none; padding:0;
+  font-size:13px; font-weight:600; color:var(--sage); text-decoration:none;
+}
+.wp .wp-send-preview-hint { font-size:12px; color:var(--muted); margin-top:10px; line-height:1.4; }
 .wp .sheet.sheet-tall { max-height:94vh; }
 .wp .sheet .grab { width:40px; height:5px; border-radius:3px; background:var(--line); margin:0 auto 16px; }
 .wp .sheet h3 { font-size:22px; font-weight:700; letter-spacing:-.01em; }

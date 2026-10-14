@@ -2126,16 +2126,61 @@ function PlanSheet({ studio, brief, onClose, onCreated }) {
   );
 }
 
+const SEND_VIA_HELP = {
+  sms: "SMS : Messages s’ouvre avec le texte et le lien déjà écrits, vous n’avez qu’à envoyer.",
+  email:
+    "E-mail : votre messagerie s’ouvre avec le message et le lien déjà rédigés.",
+  qr: "QR code : montrez le code au client pour qu’il ouvre le questionnaire.",
+  copy: "Copier : le lien est copié dans le presse-papiers, à coller où vous voulez.",
+};
+
 function SendSheet({ studio, onClose, onCreated }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [sendVia, setSendVia] = useState("sms");
   const [createdUrl, setCreatedUrl] = useState(null);
+  const [createdToken, setCreatedToken] = useState(null);
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleCreate = async () => {
+  const linkMessage = (url) =>
+    `Bonjour,\n\nAvant notre rendez-vous, merci de répondre à ce court questionnaire (10 min, sans compte) :\n${url}\n\nÀ bientôt,\n${studio?.name || ""}`;
+
+  const smsBody = (url) =>
+    `Bonjour, préparez notre rendez-vous en 10 min : ${url}`;
+
+  const dispatchSend = (url, via) => {
+    const digits = phone.replace(/\s/g, "");
+    if (via === "sms") {
+      const q = digits ? `sms:${digits}?&body=` : "sms:?&body=";
+      window.location.href = `${q}${encodeURIComponent(smsBody(url))}`;
+      return;
+    }
+    if (via === "email") {
+      window.location.href = `mailto:?subject=${encodeURIComponent(
+        "Préparez notre rendez-vous jardin"
+      )}&body=${encodeURIComponent(linkMessage(url))}`;
+      return;
+    }
+    if (via === "copy") {
+      navigator.clipboard.writeText(url).then(
+        () => {
+          setCopied(true);
+          window.setTimeout(() => setCopied(false), 2000);
+        },
+        () => setError("Impossible de copier. Sélectionnez le lien manuellement.")
+      );
+      return;
+    }
+    if (via === "qr") {
+      const qr = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(url)}`;
+      window.open(qr, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const handleSend = async () => {
     setError(null);
     setLoading(true);
     const result = await createProLink(studio?.id, {
@@ -2148,33 +2193,29 @@ function SendSheet({ studio, onClose, onCreated }) {
       setError(proStudioErrorMessage(result.error));
       return;
     }
-    setCreatedUrl(result.link.url);
+    const url = result.link.url;
+    setCreatedUrl(url);
+    setCreatedToken(result.link.token);
     onCreated?.(result.link);
+    dispatchSend(url, sendVia);
   };
 
-  const copy = async () => {
-    if (!createdUrl) return;
-    try {
-      await navigator.clipboard.writeText(createdUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      setError("Impossible de copier. Sélectionnez le lien manuellement.");
-    }
+  const openClientPreview = () => {
+    if (!createdToken) return;
+    const origin =
+      typeof window !== "undefined" && window.location?.origin
+        ? window.location.origin
+        : "";
+    const path = `/b/${createdToken}?apercu=1`;
+    window.open(origin ? `${origin}${path}` : path, "_blank", "noopener,noreferrer");
   };
 
-  const smsHref = createdUrl
-    ? `sms:?&body=${encodeURIComponent(
-        `Bonjour, préparez notre rendez-vous en 3 min : ${createdUrl}`
-      )}`
-    : null;
-  const mailHref = createdUrl
-    ? `mailto:?subject=${encodeURIComponent(
-        "Préparez notre rendez-vous jardin"
-      )}&body=${encodeURIComponent(
-        `Bonjour,\n\nAvant notre rendez-vous, merci de répondre à ce court questionnaire (3 min, sans compte) :\n${createdUrl}\n\nÀ bientôt,\n${studio?.name || ""}`
-      )}`
-    : null;
+  const sendChannels = [
+    ["sms", "SMS"],
+    ["email", "E-mail"],
+    ["qr", "QR code"],
+    ["copy", "Copier"],
+  ];
 
   return (
     <div className="wp-send-full">
@@ -2190,14 +2231,15 @@ function SendSheet({ studio, onClose, onCreated }) {
         avant le RDV
       </h2>
       <p className="bc-taste" style={{ marginTop: 6 }}>
-        Votre client remplit son brief en quelques minutes, sans créer de compte.
+        Votre client remplit son brief en{" "}
+        <strong style={{ fontWeight: 600 }}>10 minutes</strong>, sans créer de compte.
       </p>
       <div style={{ marginTop: 16 }}>
         <div className="field">
           <label htmlFor="wp-client-name">Nom du client</label>
           <input
             id="wp-client-name"
-            placeholder="Ex. Famille Roux"
+            placeholder="Prénom Nom"
             value={name}
             onChange={(e) => setName(e.target.value)}
             disabled={Boolean(createdUrl) || loading}
@@ -2214,64 +2256,84 @@ function SendSheet({ studio, onClose, onCreated }) {
           />
         </div>
         <div className="field">
-          <label htmlFor="wp-client-addr">Adresse (facultatif)</label>
+          <label htmlFor="wp-client-addr">Commune du jardin</label>
           <input
             id="wp-client-addr"
-            placeholder="Ville, code postal…"
+            placeholder="Ex. : Aubagne"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             disabled={Boolean(createdUrl) || loading}
           />
         </div>
 
-        {createdUrl ? (
-          <>
-            <div className="linkbox">
-              <span className="u">{createdUrl.replace(/^https?:\/\//, "")}</span>
-              <button type="button" onClick={copy}>
-                {copied ? (
-                  <>
-                    <Check size={14} /> Copié
-                  </>
-                ) : (
-                  <>
-                    <Copy size={14} /> Copier
-                  </>
-                )}
-              </button>
-            </div>
-            <div className="sendrow">
-              <a href={smsHref}>SMS</a>
-              <a href={mailHref}>E-mail</a>
-              <button type="button" disabled title="Bientôt">
-                QR code
-              </button>
-            </div>
-            <div className="note">
-              Le brief revient <b>directement dans votre app</b>, avec le nom et
-              les coordonnées du client. Rien à ressaisir.
-            </div>
-            <button className="bigbtn" onClick={onClose} type="button">
-              <Send size={18} /> Terminé
-            </button>
-          </>
-        ) : (
-          <>
-            {error && (
-              <p className="wp-form-error" role="alert">
-                {error}
-              </p>
-            )}
+        <p className="label" style={{ marginTop: 20, marginBottom: 10 }}>
+          Envoyer par
+        </p>
+        <div className="wp-send-via" role="group" aria-label="Envoyer par">
+          {sendChannels.map(([id, label]) => (
             <button
-              className="bigbtn"
-              onClick={handleCreate}
+              key={id}
               type="button"
-              disabled={loading || !name.trim()}
+              className={`wp-send-via-pill${sendVia === id ? " on" : ""}`}
+              onClick={() => setSendVia(id)}
+              disabled={Boolean(createdUrl) || loading}
             >
-              <Send size={18} />
-              {loading ? "Création…" : "Créer le lien"}
+              {label}
             </button>
-          </>
+          ))}
+        </div>
+        <p className="wp-send-via-help">{SEND_VIA_HELP[sendVia]}</p>
+
+        {createdToken ? (
+          <button type="button" className="wp-send-preview-link" onClick={openClientPreview}>
+            Voir ce que reçoit le client ›
+          </button>
+        ) : (
+          <p className="wp-send-preview-hint">
+            Le lien « Voir ce que reçoit le client › » apparaît après envoi.
+          </p>
+        )}
+
+        {createdUrl ? (
+          <div className="linkbox" style={{ marginTop: 14 }}>
+            <span className="u">{createdUrl.replace(/^https?:\/\//, "")}</span>
+            <button type="button" onClick={() => dispatchSend(createdUrl, "copy")}>
+              {copied ? (
+                <>
+                  <Check size={14} /> Copié
+                </>
+              ) : (
+                <>
+                  <Copy size={14} /> Copier
+                </>
+              )}
+            </button>
+          </div>
+        ) : null}
+
+        {error ? (
+          <p className="wp-form-error" role="alert">
+            {error}
+          </p>
+        ) : null}
+
+        <p className="note" style={{ marginTop: 12 }}>
+          Le brief revient dans votre app, avec le nom et les coordonnées du client.
+        </p>
+
+        {createdUrl ? (
+          <button className="bigbtn" onClick={onClose} type="button" style={{ marginTop: 8 }}>
+            Terminé
+          </button>
+        ) : (
+          <button
+            className="bigbtn"
+            onClick={handleSend}
+            type="button"
+            disabled={loading || !name.trim()}
+          >
+            {loading ? "Envoi…" : "Envoyer le lien"}
+          </button>
         )}
       </div>
     </div>
