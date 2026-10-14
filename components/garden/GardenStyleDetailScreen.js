@@ -89,7 +89,11 @@ export default function GardenStyleDetailScreen({
         ) : null}
         <button
           type="button"
-          className={inGarden ? "atelier-btn-secondary atelier-style-detail__heart-on" : "atelier-btn-primary"}
+          className={
+            inGarden
+              ? "atelier-btn-secondary atelier-style-detail__heart-on"
+              : "atelier-btn-fill atelier-style-detail__heart-btn"
+          }
           disabled={toggling || !styleState}
           onClick={handleToggle}
         >

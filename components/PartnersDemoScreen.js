@@ -1,9 +1,8 @@
 import { PARTNERS_DEMO_STUDIO } from "@/lib/partners";
-import { CATALOGUE_HALL_IMAGES } from "@/lib/themes";
 
 export default function PartnersDemoScreen({ onBack }) {
   const studio = PARTNERS_DEMO_STUDIO;
-  const heroPhoto = CATALOGUE_HALL_IMAGES.idees;
+  const heroPhoto = "/catalogue/realisations/styles_realisations-4.webp";
 
   return (
     <div className="atelier-partners-demo">

@@ -1407,3 +1407,381 @@ html.atelier-theme .atelier-page-head .sub {
   line-height: 1.45;
   font-family: var(--font-body, Inter, sans-serif);
 }
+
+/* ── Modales compte (feature gate) ── */
+html.atelier-theme .atelier-feature-gate-overlay {
+  background: rgba(0, 0, 0, 0.55) !important;
+}
+html.atelier-theme .atelier-feature-gate-modal {
+  background: var(--card) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 24px !important;
+}
+html.atelier-theme .atelier-feature-gate-modal .feature-gate-modal-message {
+  color: var(--ink);
+  font-family: var(--font-body, Inter, sans-serif);
+}
+html.atelier-theme .atelier-feature-gate-modal .signup-prompt-modal-cta,
+html.atelier-theme .atelier-feature-gate-modal .btn-primary {
+  background: var(--ink) !important;
+  color: var(--bg) !important;
+  border-radius: 999px !important;
+  border: none !important;
+}
+html.atelier-theme .atelier-feature-gate-auth .premium-auth-title {
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 300;
+  color: var(--ink);
+}
+html.atelier-theme .atelier-feature-gate-auth .premium-auth-input {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  border-radius: 14px;
+}
+html.atelier-theme .atelier-feature-gate-auth .premium-auth-tabs button.active {
+  background: var(--sage);
+  color: var(--bg);
+}
+
+/* Style détail plein écran */
+html.atelier-theme .wilder-v2-main-layout-content:has(.atelier-style-detail) {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 !important;
+  overflow: hidden;
+}
+html.atelier-theme .atelier-style-detail {
+  flex: 1;
+  min-height: min(100dvh, 100%);
+}
+
+html.atelier-theme .atelier-famille-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Étapes dossier */
+html.atelier-theme .atelier-garden-step__top {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  padding: 12px 18px 0;
+}
+html.atelier-theme .atelier-garden-step__kicker {
+  text-align: center;
+  font-size: 10.5px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+html.atelier-theme .atelier-garden-step__title {
+  margin: 18px 20px 0;
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 300;
+  font-size: clamp(28px, 7vw, 32px);
+  line-height: 1.08;
+  color: var(--ink);
+}
+html.atelier-theme .atelier-garden-step__sub {
+  margin: 6px 20px 0;
+  color: var(--mute);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+html.atelier-theme .atelier-amb-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+}
+html.atelier-theme .atelier-amb-card {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+  min-height: 120px;
+  padding: 0;
+  cursor: pointer;
+  background: var(--card);
+  text-align: left;
+  font-family: inherit;
+  color: var(--ink);
+}
+html.atelier-theme .atelier-amb-card--on {
+  border-color: var(--sage);
+}
+html.atelier-theme .atelier-amb-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+html.atelier-theme .atelier-amb-card__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 26, 20, 0.1), rgba(15, 26, 20, 0.88));
+}
+html.atelier-theme .atelier-amb-card__cap {
+  position: relative;
+  z-index: 1;
+  padding: 72px 14px 14px;
+}
+html.atelier-theme .atelier-amb-card__cap b {
+  display: block;
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 400;
+  font-size: 18px;
+}
+html.atelier-theme .atelier-amb-card__cap span {
+  font-size: 12px;
+  color: var(--sage);
+}
+
+html.atelier-theme .atelier-budget-lines {
+  border-top: 1px solid var(--line);
+  margin: 0 18px;
+}
+html.atelier-theme .atelier-budget-opt {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 15px 0;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 400;
+  font-size: 17px;
+  cursor: pointer;
+  text-align: left;
+}
+html.atelier-theme .atelier-budget-opt__dot {
+  width: 21px;
+  height: 21px;
+  border-radius: 99px;
+  border: 1.5px solid var(--line);
+  flex-shrink: 0;
+}
+html.atelier-theme .atelier-budget-opt.on .atelier-budget-opt__dot {
+  background: var(--sage);
+  border-color: var(--sage);
+}
+
+/* Dossier */
+html.atelier-theme .atelier-dossier {
+  flex: 1;
+  overflow: auto;
+  padding: 18px 18px 12px;
+}
+html.atelier-theme .atelier-dossier__progress {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-top: 20px;
+}
+html.atelier-theme .atelier-dossier__ring {
+  width: 58px;
+  height: 58px;
+  border-radius: 99px;
+  border: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+html.atelier-theme .atelier-dossier__ring span {
+  width: 48px;
+  height: 48px;
+  border-radius: 99px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 500;
+  font-size: 14px;
+}
+html.atelier-theme .atelier-dossier__progress-title {
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 300;
+  font-size: 25px;
+  line-height: 1.15;
+}
+html.atelier-theme .atelier-dossier__progress-sub {
+  font-size: 12.5px;
+  color: var(--mute);
+  margin-top: 4px;
+}
+html.atelier-theme .atelier-dossier__lines {
+  margin-top: 20px;
+  border-top: 1px solid var(--line);
+}
+html.atelier-theme .atelier-dossier__line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 0;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font-size: 14.5px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+html.atelier-theme .atelier-dossier__line em {
+  font-style: normal;
+  font-family: var(--font-title, Fraunces, serif);
+  font-size: 12.5px;
+  color: var(--mute);
+  min-width: 28px;
+}
+html.atelier-theme .atelier-dossier__line span {
+  flex: 1;
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 400;
+}
+html.atelier-theme .atelier-dossier__line i {
+  font-style: normal;
+  font-size: 12px;
+}
+html.atelier-theme .atelier-dossier__line i.done {
+  color: var(--sage);
+}
+html.atelier-theme .atelier-dossier__line i.todo {
+  color: var(--clay);
+}
+html.atelier-theme .atelier-dossier__cta {
+  margin-top: 18px;
+  width: 100%;
+}
+
+/* Fiche catalogue */
+html.atelier-theme .atelier-fiche {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+html.atelier-theme .atelier-fiche__panel {
+  margin-top: -28px;
+  position: relative;
+  background: var(--bg);
+  border-radius: 28px 28px 0 0;
+  padding: 20px 18px;
+}
+html.atelier-theme .atelier-fiche__name {
+  margin: 6px 0 0;
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 300;
+  font-size: 34px;
+  line-height: 1.05;
+}
+html.atelier-theme .atelier-fiche__spec {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin-top: 14px;
+}
+html.atelier-theme .atelier-fiche__spec div {
+  padding: 11px 0;
+  font-size: 10px;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+html.atelier-theme .atelier-fiche__spec div + div {
+  padding-left: 11px;
+  border-left: 1px solid var(--line);
+}
+html.atelier-theme .atelier-fiche__spec b {
+  display: block;
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 400;
+  font-size: 16px;
+  color: var(--ink);
+  letter-spacing: 0;
+  text-transform: none;
+  margin-top: 3px;
+}
+html.atelier-theme .atelier-fiche__phrase {
+  margin: 14px 0 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--mute);
+}
+html.atelier-theme .atelier-fiche__savoir p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--mute);
+}
+
+/* Partenaires v2 */
+html.atelier-theme .atelier-partners-v2 {
+  flex: 1;
+  padding: 0 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+html.atelier-theme .atelier-partners-v2__hero {
+  position: relative;
+  height: 300px;
+  margin: 0 14px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+html.atelier-theme .atelier-partners-v2__hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+html.atelier-theme .atelier-partners-v2__hero-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 26, 20, 0.2), rgba(15, 26, 20, 0.88));
+}
+html.atelier-theme .atelier-partners-v2__hero-cap {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  z-index: 1;
+}
+html.atelier-theme .atelier-partners-v2__hero-title {
+  margin: 8px 0 0;
+  font-family: var(--font-title, Fraunces, serif);
+  font-weight: 300;
+  font-size: 27px;
+  line-height: 1.12;
+}
+html.atelier-theme .atelier-partners-v2__lead {
+  margin: 0 20px;
+  color: var(--mute);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+html.atelier-theme .atelier-partners-v2 .atelier-btn-fill,
+html.atelier-theme .atelier-partners-v2 .atelier-btn-outline,
+html.atelier-theme .atelier-partners-v2 .atelier-partners__guest {
+  margin: 0 20px;
+}
+html.atelier-theme .atelier-partners-v2__preview {
+  width: calc(100% - 40px);
+  margin: 0 20px;
+}
