@@ -769,19 +769,42 @@ function Realisations({ studio, refreshKey, onOpen, onCreate, onOpenSettings }) 
 
   const empty = !loading && !error && items.length === 0;
 
+  const renderProjectCard = (p) => {
+    const styleLabel = p.style?.trim() || "";
+    const kicker = [styleLabel, p.location?.trim()].filter(Boolean).join(" · ");
+    return (
+      <button
+        key={p.id}
+        type="button"
+        className="wp-proj-card"
+        onClick={() => onOpen(p)}
+      >
+        <div className="wp-proj-thumb">
+          <SafePhoto src={coverUrls[p.id]} alt="" />
+          {!p.isPublic ? (
+            <span className="wp-proj-badge-private wp-proj-badge-corner">Privée</span>
+          ) : null}
+        </div>
+        <div className="wp-proj-meta">
+          {kicker ? <div className="wp-proj-kicker">{kicker}</div> : null}
+          <div className="wp-proj-title">{p.title}</div>
+        </div>
+      </button>
+    );
+  };
+
   return (
     <div className="card-panel">
       <div className="head-row">
         <div>
-          <div className="h-title">Réalisations</div>
+          <p className="label" style={{ margin: 0 }}>
+            Réalisations
+          </p>
+          <div className="h-title" style={{ marginTop: 6 }}>
+            Vos réalisations
+          </div>
           <div className="h-sub">
-            {loading
-              ? "Chargement…"
-              : error
-                ? "Chargement interrompu"
-                : empty
-                  ? "Aucun dossier"
-                  : `${items.length} réalisation${items.length > 1 ? "s" : ""}`}
+            À montrer au bon moment du rendez-vous.
           </div>
         </div>
         <StudioAvatar studio={studio} onOpen={onOpenSettings} />
@@ -807,61 +830,22 @@ function Realisations({ studio, refreshKey, onOpen, onCreate, onOpenSettings }) 
         </div>
       )}
 
-      {empty && (
-        <div className="wp-empty" style={{ marginTop: 18 }}>
-          <Images size={28} color="#4E7B52" />
-          <p className="wp-empty-title">Créez votre première réalisation</p>
-          <p className="wp-empty-sub">
-            Constituez un dossier photo pour montrer un jardin déjà réalisé.
-          </p>
-          <button className="bigbtn" type="button" onClick={onCreate}>
-            <Plus size={18} /> Nouvelle réalisation
-          </button>
-        </div>
+      {empty && !loading && !error && (
+        <p className="bc-taste" style={{ marginTop: 14 }}>
+          Constituez un dossier photo pour montrer un jardin déjà réalisé.
+        </p>
       )}
 
-      {!loading && !error && items.length > 0 && (
-        <>
-          <button
-            className="bigbtn"
-            type="button"
-            onClick={onCreate}
-            style={{ marginTop: 14, marginBottom: 4 }}
-          >
-            <Plus size={18} /> Nouvelle réalisation
+      {!loading && !error && (
+        <div className="wp-proj-grid">
+          {items.map((p) => renderProjectCard(p))}
+          <button type="button" className="wp-proj-card wp-proj-add" onClick={onCreate}>
+            <span className="wp-proj-add-plus" aria-hidden>
+              +
+            </span>
+            <span className="wp-proj-add-label">Nouvelle réalisation</span>
           </button>
-          <div className="wp-proj-grid">
-            {items.map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                className="wp-proj-card"
-                onClick={() => onOpen(p)}
-              >
-                <div className="wp-proj-thumb">
-                  <SafePhoto src={coverUrls[p.id]} alt="" />
-                </div>
-                <div className="wp-proj-meta">
-                  <div className="wp-proj-title">
-                    {p.title}
-                    {!p.isPublic ? (
-                      <span className="wp-proj-badge-private">Privée</span>
-                    ) : null}
-                  </div>
-                  <div className="wp-proj-loc">
-                    {p.location ? (
-                      <>
-                        <MapPin size={13} /> {p.location}
-                      </>
-                    ) : (
-                      "Sans lieu"
-                    )}
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </>
+        </div>
       )}
     </div>
   );

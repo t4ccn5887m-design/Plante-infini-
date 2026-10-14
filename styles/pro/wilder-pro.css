@@ -416,6 +416,7 @@
   display:block;
   position:relative;
 }
+.wp .wp-proj-card.wp-proj-add { overflow:visible; }
 .wp .wp-proj-card:active { transform:scale(.985); }
 .wp .wp-proj-thumb {
   aspect-ratio:1;
@@ -449,9 +450,18 @@
   padding:0;
   pointer-events:none;
 }
+.wp .wp-proj-kicker {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:rgba(241,236,226,.75);
+  margin-bottom:3px;
+  line-height:1.2;
+}
 .wp .wp-proj-title {
   font-size:14.5px;
-  font-weight:400;
+  font-weight:300;
   font-family:var(--font-title,'Fraunces',serif);
   color:var(--ink);
   line-height:1.25;
@@ -460,15 +470,20 @@
   -webkit-box-orient:vertical;
   overflow:hidden;
 }
-.wp .wp-proj-loc {
-  margin-top:2px;
-  font-size:10.5px;
-  font-weight:500;
-  color:var(--sage);
-  letter-spacing:.02em;
-  display:flex;
-  align-items:center;
-  gap:4px;
+.wp .wp-proj-badge-corner {
+  position:absolute; top:8px; left:8px; z-index:3; margin:0;
+}
+.wp .wp-proj-add {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:8px; min-height:100%; aspect-ratio:1;
+  border:1.5px dashed var(--line); background:transparent;
+  border-radius:18px; padding:16px;
+}
+.wp .wp-proj-add-plus {
+  font-size:32px; font-weight:300; line-height:1; color:var(--ink);
+}
+.wp .wp-proj-add-label {
+  font-size:13px; font-weight:500; color:var(--muted); text-align:center; line-height:1.3;
 }
 .wp .wp-proj-gallery {
   display:grid;
