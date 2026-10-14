@@ -235,8 +235,33 @@
 
 .wp .wp-studio-head { display:flex; gap:14px; align-items:center; margin-top:8px; }
 .wp .wp-studio-logo { width:60px; height:60px; border-radius:18px; background:var(--mint-bg); color:var(--green); display:grid; place-items:center; font-size:22px; font-weight:600; font-family:var(--font-title),'Fraunces',serif; flex-shrink:0; }
-.wp .wp-studio-name { font-size:23px; font-weight:600; font-family:var(--font-title),'Fraunces',serif; }
-.wp .wp-studio-sub { font-size:12px; font-weight:500; color:var(--muted); margin-top:2px; }
+.wp .wp-studio-name { font-size:26px; font-weight:300; font-family:var(--font-title,'Fraunces',serif); letter-spacing:-.02em; }
+.wp .wp-studio-sub { font-size:13px; font-weight:500; color:var(--muted); margin-top:4px; }
+.wp .wp-studio-tab__top { align-items:center; margin-bottom:4px; }
+.wp .wp-studio-tab__top .label { font-size:11px; letter-spacing:.12em; }
+.wp .wp-studio-settings-list { margin-top:22px; border-top:1px solid var(--line); }
+.wp .wp-studio-settings-row {
+  width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:15px 2px; border:none; border-bottom:1px solid var(--line); background:transparent;
+  text-align:left; font-size:15px; font-weight:500;
+}
+.wp .wp-studio-settings-row:active { opacity:.85; }
+.wp .wp-studio-settings-label { color:var(--ink); }
+.wp .wp-studio-settings-val {
+  display:inline-flex; align-items:center; gap:4px; font-size:13px; color:var(--muted);
+  max-width:55%; text-align:right; line-height:1.25;
+}
+.wp .wp-studio-signout { width:100%; margin-top:28px; border-radius:99px; padding:14px; font-weight:600; }
+.wp .wp-studio-partners-card {
+  width:100%; border:none; border-radius:18px; overflow:hidden; min-height:120px;
+  background:var(--card) center/cover no-repeat;
+  text-align:left; padding:0; position:relative;
+}
+.wp .wp-studio-partners-cap {
+  display:block; padding:14px 16px; margin-top:72px;
+  background:linear-gradient(180deg,transparent,rgba(15,26,20,.85));
+  font-size:15px; font-weight:500; color:var(--ink);
+}
 
 .wp .overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); backdrop-filter:blur(2px); z-index:50; display:flex; align-items:flex-end; justify-content:center; animation:wp-fade .2s; }
 .wp .sheet { background:var(--card); color:var(--ink); width:min(460px,100%); border-radius:28px 28px 0 0; padding:24px 20px calc(24px + env(safe-area-inset-bottom)); animation:wp-up .24s cubic-bezier(.2,.8,.2,1); max-height:92vh; overflow:auto; border:1px solid var(--line); border-bottom:none; }
