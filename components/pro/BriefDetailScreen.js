@@ -405,9 +405,14 @@ export default function BriefDetailScreen({
   const itinerary = mapsUrl(local.address, local.city);
   const phoneHref = local.phone ? `tel:${local.phone.replace(/\s/g, "")}` : null;
   const smsLink = smsHref(local.phone, local.name, studio?.name);
-  const clientEmail = local.clientEmail || local.email || "";
+  const clientEmail =
+    local.clientEmail ||
+    local.email ||
+    normalizedDetails?.contact?.email ||
+    normalizedDetails?.coordinates?.email ||
+    "";
   const mailHref = clientEmail
-    ? `mailto:${encodeURIComponent(clientEmail)}?subject=${encodeURIComponent(`Votre jardin — ${studio?.name || "Sevya"}`)}`
+    ? `mailto:${clientEmail}?subject=${encodeURIComponent(`Votre jardin — ${studio?.name || "Sevya"}`)}`
     : null;
 
   const dispo =
@@ -591,7 +596,7 @@ export default function BriefDetailScreen({
             <div className="prio">
               {(profil.priorites || profil.prios).map((p, i) => (
                 <div key={p}>
-                  <span className="pnum">{i + 1}</span>
+                  <span className="pnum">{String(i + 1).padStart(2, "0")}</span>
                   {p}
                 </div>
               ))}

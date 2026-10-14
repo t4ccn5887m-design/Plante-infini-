@@ -104,9 +104,15 @@
 .wp .statpill .k { font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--lav); }
 .wp .statpill .v { font-size:16px; font-weight:700; margin-top:2px; color:var(--ink); }
 
-.wp .prio { display:flex; flex-direction:column; gap:9px; }
-.wp .prio div { display:flex; align-items:center; gap:12px; font-size:16px; font-weight:600; }
-.wp .pnum { width:28px; height:28px; border-radius:10px; background:var(--lav-bg); color:var(--lav); font-size:14px; font-weight:700; display:grid; place-items:center; flex-shrink:0; }
+.wp .prio { display:flex; flex-direction:column; gap:10px; }
+.wp .prio div { display:flex; align-items:baseline; gap:10px; font-size:15px; font-weight:500; line-height:1.35; }
+.wp .pnum {
+  flex-shrink:0; min-width:22px;
+  font-size:12px; font-weight:500; letter-spacing:.04em;
+  color:var(--muted); font-variant-numeric:tabular-nums;
+  background:none; border-radius:0;
+}
+.wp .wp-brief-detail .prio div { font-weight:500; }
 
 .wp .chipwrap { display:flex; flex-wrap:wrap; gap:8px; }
 .wp .vchip { font-size:14px; font-weight:600; padding:8px 14px; border-radius:16px; background:var(--mint-bg); color:var(--green); }
@@ -1565,7 +1571,7 @@
 }
 
 /* —— Fiche brief pro (BLOC 4) —— */
-.wp .wp-brief-detail { padding-bottom: 100px; margin-top: 0; padding-top: 0; overflow: hidden; }
+.wp .wp-brief-detail { padding-bottom: 168px; margin-top: 0; padding-top: 0; overflow: hidden; }
 .wp .wp-brief-detail-hero { position: relative; height: 220px; margin: -22px -18px 0; }
 .wp .wp-brief-detail-hero img { width: 100%; height: 100%; object-fit: cover; }
 .wp .wp-brief-hero-back {
@@ -1626,10 +1632,19 @@
 .wp .wp-brief-real-card span { font-size: 10.5px; color: var(--muted); margin-top: 4px; display: block; line-height: 1.2; }
 .wp .wp-brief-lead { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
 .wp .wp-brief-detail-foot {
-  position: fixed; left: 50%; transform: translateX(-50%); bottom: 72px;
-  width: min(460px, calc(100% - 16px)); padding: 12px 14px 14px;
-  background: linear-gradient(180deg, rgba(15,26,20,0), var(--bg) 28%);
-  border-top: 1px solid var(--line); z-index: 30;
+  position: fixed; left: 50%; transform: translateX(-50%); bottom: 78px;
+  width: min(460px, calc(100% - 24px)); padding: 28px 14px 12px;
+  background: linear-gradient(180deg, rgba(15,26,20,0) 0%, var(--bg) 42%);
+  border-top: none; z-index: 35; pointer-events: none;
+}
+.wp .wp-brief-detail-foot .bf-btn,
+.wp .wp-brief-detail-foot .wp-brief-foot-meta,
+.wp .wp-brief-detail-foot .wp-brief-foot-row { pointer-events: auto; }
+.wp .wp-brief-detail-foot .bf-btn.primary {
+  background: var(--ink); color: var(--bg); font-weight: 600;
+}
+.wp .wp-brief-detail-foot .bf-btn.ghost {
+  border: 1px solid var(--line); border-radius: 16px; color: var(--ink);
 }
 .wp .wp-brief-foot-meta { font-size: 13px; color: var(--green); margin-bottom: 10px; }
 .wp .wp-brief-foot-row { display: flex; gap: 10px; }
