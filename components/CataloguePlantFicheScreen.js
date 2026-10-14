@@ -92,19 +92,11 @@ export default function CataloguePlantFicheScreen({
   };
 
   return (
-    <div
-      style={{
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        background: "var(--bg)",
-      }}
-    >
+    <div className="atelier-fiche">
       <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
         <div
           style={{
-            height: 280,
+            height: 400,
             flexShrink: 0,
             position: "relative",
             padding: 16,
@@ -167,45 +159,32 @@ export default function CataloguePlantFicheScreen({
           </div>
         </div>
 
-        <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 20 }}>
+        <div className="atelier-fiche__panel">
+          <p className="atelier-label atelier-fiche__cat">{plant.categorie}</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700, color: "var(--ink)" }}>{plant.nom}</h1>
+            <h1 className="atelier-fiche__name">{plant.nom}</h1>
             {plant.nom_latin ? (
               <span className="atelier-latin" style={{ fontSize: 14 }}>{plant.nom_latin}</span>
             ) : null}
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-              gap: 8,
-            }}
-          >
-            <InfoCell label="EXPOSITION" value={plant.exposition} />
-            <InfoCell label="ENTRETIEN" value={plant.entretien} />
-            <InfoCell label="ARROSAGE" value={plant.arrosage} />
-            <InfoCell label="RÉSISTE AU FROID" value={coldLabel} />
-            <InfoCell label="TAILLE ADULTE" value={plant.hauteur_adulte || plant.taille_adulte} />
-            <InfoCell label="FLORAISON" value={plant.floraison || "—"} />
+          <div className="atelier-fiche__spec">
+            <div>
+              <span>Soleil</span>
+              <b>{plant.exposition || "—"}</b>
+            </div>
+            <div>
+              <span>Eau</span>
+              <b>{plant.arrosage || "—"}</b>
+            </div>
+            <div>
+              <span>Froid</span>
+              <b>{coldLabel}</b>
+            </div>
           </div>
 
           {plant.pourquoi_on_laime ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <span
-                style={{
-                  fontSize: 12,
-                  fontWeight: 700,
-                  letterSpacing: "1.2px",
-                  color: "#5B6359",
-                }}
-              >
-                POURQUOI ON L&apos;AIME
-              </span>
-              <p style={{ margin: 0, fontSize: 15, lineHeight: 1.5, color: "#3B4339" }}>
-                {plant.pourquoi_on_laime}
-              </p>
-            </div>
+            <p className="atelier-fiche__phrase">{plant.pourquoi_on_laime}</p>
           ) : null}
 
           {plant.ambiances?.length ? (
@@ -241,38 +220,9 @@ export default function CataloguePlantFicheScreen({
           ) : null}
 
           {plant.a_savoir?.trim() ? (
-            <div
-              style={{
-                borderRadius: 18,
-                padding: "14px 16px",
-                background: "#FDF2E6",
-                border: "1.5px solid #F1D9C0",
-                display: "flex",
-                gap: 10,
-                alignItems: "flex-start",
-              }}
-            >
-              <svg
-                width={18}
-                height={18}
-                viewBox="0 0 24 24"
-                fill="none"
-                aria-hidden="true"
-                style={{ flexShrink: 0, marginTop: 2 }}
-              >
-                <path
-                  d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"
-                  stroke="#A4501F"
-                  strokeWidth={2.2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path d="M12 9v4" stroke="#A4501F" strokeWidth={2.2} strokeLinecap="round" />
-                <path d="M12 17h.01" stroke="#A4501F" strokeWidth={2.2} strokeLinecap="round" />
-              </svg>
-              <p style={{ margin: 0, fontSize: 14, lineHeight: 1.45, color: "#4A2A14" }}>
-                <strong>À savoir :</strong> {plant.a_savoir}
-              </p>
+            <div className="atelier-fiche__savoir">
+              <span className="atelier-label">À savoir</span>
+              <p>{plant.a_savoir}</p>
             </div>
           ) : null}
 

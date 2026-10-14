@@ -3,6 +3,7 @@
  */
 
 import { useMemo, useState } from "react";
+import IdeesCategoryCard from "@/components/atelier/IdeesCategoryCard";
 import {
   getCatalogueFamillesScreenData,
   VEGETAL_ENVIE_CHIPS,
@@ -223,7 +224,17 @@ export default function CatalogueFamillesScreen({
         </button>
       </div>
 
-      <h1 style={{ margin: "0 0 2px", fontSize: 28, fontWeight: 700, color: "var(--ink)" }}>{data.title}</h1>
+      <h1
+        style={{
+          margin: "0 0 2px",
+          fontSize: 28,
+          fontWeight: 300,
+          fontFamily: "var(--font-title, Fraunces, serif)",
+          color: "var(--ink)",
+        }}
+      >
+        {data.title}
+      </h1>
       <p style={{ margin: "0 0 16px", fontSize: 15, color: "#5B6359" }}>{data.subtitle}</p>
 
       <label
@@ -271,86 +282,20 @@ export default function CatalogueFamillesScreen({
         />
       </label>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+      <div className="atelier-famille-grid">
         {data.tiles.map((tile) => (
-          <button
+          <IdeesCategoryCard
             key={tile.categorie}
-            type="button"
+            title={tile.title}
+            count={tile.count}
+            photoUrl={tile.coverUrl}
             onClick={() =>
               onOpenHub?.(data.hubTab || universe, {
                 ...data.hubFilters,
                 categorie: tile.categorie,
               })
             }
-            style={{
-              position: "relative",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              gap: 16,
-              minHeight: 158,
-              padding: 15,
-              borderRadius: 24,
-              background: tile.bg,
-              border: "none",
-              cursor: "pointer",
-              fontFamily: "inherit",
-              textAlign: "left",
-              color: "var(--ink)",
-            }}
-          >
-            <span
-              style={{
-                position: "absolute",
-                top: 15,
-                right: 14,
-                fontSize: 12,
-                fontWeight: 700,
-                color: "#5B6359",
-                background: "rgba(255,255,255,0.7)",
-                padding: "3px 9px",
-                borderRadius: 999,
-              }}
-            >
-              {tile.count}
-            </span>
-            {tile.swatches?.length ? (
-              <span style={{ display: "flex", alignItems: "center" }}>
-                {tile.swatches.map((color) => (
-                  <span
-                    key={color}
-                    style={{
-                      width: 26,
-                      height: 26,
-                      borderRadius: 999,
-                      background: color,
-                      border: "2.5px solid #fff",
-                      marginRight: -7,
-                      boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
-                    }}
-                  />
-                ))}
-              </span>
-            ) : (
-              <span
-                style={{
-                  width: 46,
-                  height: 46,
-                  borderRadius: 15,
-                  background: "var(--card)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <FamilleIcon type={tile.icon} stroke={tile.ink} />
-              </span>
-            )}
-            <span style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              <span style={{ fontSize: 17, fontWeight: 700, lineHeight: 1.2 }}>{tile.title}</span>
-              <span style={{ fontSize: 12.5, lineHeight: 1.35, color: tile.ink }}>{tile.phrase}</span>
-            </span>
-          </button>
+          />
         ))}
       </div>
 

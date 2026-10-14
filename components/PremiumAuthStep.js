@@ -15,6 +15,7 @@ export default function PremiumAuthStep({
   variant = "default",
 }) {
   const isWilder = variant === "wilder";
+  const isAtelier = variant === "atelier";
   const [mode, setMode] = useState(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -89,7 +90,11 @@ export default function PremiumAuthStep({
   const submitLabel = mode === "signup" ? t("cloud.sign_up") : t("cloud.sign_in");
 
   return (
-    <div className={`premium-auth-step${isWilder ? " wilder-auth-step" : ""}`}>
+    <div
+      className={`premium-auth-step${isWilder ? " wilder-auth-step" : ""}${
+        isAtelier ? " atelier-feature-gate-auth" : ""
+      }`}
+    >
       <h2 className="premium-auth-title">{t(displayTitleKey)}</h2>
       <p className="premium-auth-subtitle">{t(displaySubtitleKey)}</p>
 
@@ -157,7 +162,13 @@ export default function PremiumAuthStep({
         )}
         <button
           type="submit"
-          className={isWilder ? "wilder-account-btn-primary" : "premium-auth-submit"}
+          className={
+            isAtelier
+              ? "atelier-btn-fill"
+              : isWilder
+                ? "wilder-account-btn-primary"
+                : "premium-auth-submit"
+          }
           disabled={loading}
         >
           {loading ? t("auth.loading") : submitLabel}

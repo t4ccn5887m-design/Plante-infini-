@@ -2,10 +2,7 @@ import { useState } from "react";
 import { BUDGETS } from "@/lib/pro/briefLabels";
 import { loadGardenBudgetChoice, saveGardenBudgetChoice } from "@/lib/gardenBudgetChoice";
 import { touchGardenDossierAfterLocalSave } from "@/lib/gardenDossierStore";
-import GardenFlowScreen, { GardenBackButton, GardenPrimaryButton } from "@/components/garden/GardenFlowScreen";
-
-const GREEN = "var(--sage)";
-const MUTED = "var(--mute)";
+import GardenFlowScreen, { GardenPrimaryButton, GardenStepHeader } from "@/components/garden/GardenFlowScreen";
 
 const BUDGET_OPTIONS = BUDGETS.map((b) =>
   b.id === "unknown" ? { ...b, label: "Je ne sais pas encore" } : b
@@ -34,47 +31,36 @@ export default function GardenBudgetScreen({ onBack, onValidated }) {
         </GardenPrimaryButton>
       }
     >
-      <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 16 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <GardenBackButton onBack={onBack} />
-          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Mon budget</h1>
-        </div>
+      <div style={{ padding: "0 18px 18px", display: "flex", flexDirection: "column", gap: 16 }}>
+        <GardenStepHeader
+          onBack={onBack}
+          kicker="Étape 9 · Budget"
+          title={
+            <>
+              Quel budget
+              <br />
+              imaginez-vous ?
+            </>
+          }
+          subtitle="Une fourchette, juste pour orienter votre paysagiste."
+        />
 
-        <p style={{ margin: 0, fontSize: 14, lineHeight: 1.45, color: MUTED }}>
-          Fourchette budgétaire — une indication pour votre paysagiste, pas un engagement.
-        </p>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        <div className="atelier-budget-lines">
           {BUDGET_OPTIONS.map((b) => {
             const active = selected === b.id;
             return (
               <button
                 key={b.id}
                 type="button"
+                className={`atelier-budget-opt${active ? " on" : ""}`}
                 onClick={() => setSelected(b.id)}
-                style={{
-                  minHeight: 56,
-                  borderRadius: 18,
-                  border: active ? `2px solid ${GREEN}` : "1.5px solid var(--line)",
-                  background: active ? "rgba(201, 214, 184, 0.18)" : "var(--card)",
-                  color: active ? GREEN : "var(--ink)",
-                  fontSize: 18,
-                  fontWeight: 700,
-                  cursor: "pointer",
-                  fontFamily: "inherit",
-                  textAlign: "center",
-                  padding: "12px 16px",
-                }}
               >
-                {b.label}
+                <span>{b.label}</span>
+                <span className="atelier-budget-opt__dot" aria-hidden="true" />
               </button>
             );
           })}
         </div>
-
-        <p style={{ margin: 0, fontSize: 13, color: MUTED, textAlign: "center", lineHeight: 1.45 }}>
-          C&apos;est une indication pour votre paysagiste, pas un engagement.
-        </p>
       </div>
     </GardenFlowScreen>
   );
