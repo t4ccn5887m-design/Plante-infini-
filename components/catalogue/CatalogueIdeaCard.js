@@ -73,8 +73,8 @@ export default function CatalogueIdeaCard({
       style={{
         borderRadius,
         overflow: "hidden",
-        border: `1.5px solid ${AT.line}`,
-        background: AT.card,
+        border: "none",
+        background: "transparent",
         display: "flex",
         flexDirection: "column",
       }}
@@ -134,7 +134,8 @@ export default function CatalogueIdeaCard({
         <span
           style={{
             fontSize: titleSize,
-            fontWeight: 700,
+            fontWeight: 300,
+            fontFamily: "var(--font-title, Fraunces, serif)",
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
