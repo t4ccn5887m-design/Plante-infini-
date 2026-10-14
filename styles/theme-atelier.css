@@ -135,6 +135,36 @@ html.atelier-theme .wilder-v2-shell select {
   border: 1px solid var(--line);
   color: var(--ink);
   border-radius: 14px;
+  font-family: inherit;
+}
+
+html.atelier-theme .garden-brief-steps .bf-textarea,
+html.atelier-theme .garden-brief-steps textarea,
+html.atelier-theme .garden-brief-steps input:not([type="checkbox"]):not([type="radio"]) {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 15px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--ink);
+  background: var(--card);
+  resize: vertical;
+  min-height: 110px;
+  box-sizing: border-box;
+}
+html.atelier-theme .garden-brief-steps .bf-textarea:focus,
+html.atelier-theme .garden-brief-steps textarea:focus,
+html.atelier-theme .garden-brief-steps input:focus {
+  outline: none;
+  border-color: var(--sage);
+}
+html.atelier-theme .garden-brief-steps .bf-textarea::placeholder,
+html.atelier-theme .garden-brief-steps textarea::placeholder,
+html.atelier-theme .garden-brief-steps input::placeholder {
+  font-family: inherit;
+  color: var(--mute);
 }
 
 html.atelier-theme .wilder-v2-shell input:focus-visible,
@@ -1721,9 +1751,44 @@ html.atelier-theme .atelier-dossier__line i.done {
 html.atelier-theme .atelier-dossier__line i.todo {
   color: var(--clay);
 }
+html.atelier-theme .atelier-btn-fill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 54px;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 99px;
+  background: var(--ink);
+  color: var(--bg);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+html.atelier-theme .atelier-btn-fill:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+html.atelier-theme .atelier-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 54px;
+  padding: 13px 20px;
+  border-radius: 99px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
 html.atelier-theme .atelier-dossier__cta {
   margin-top: 18px;
-  width: 100%;
 }
 
 /* Fiche catalogue */
