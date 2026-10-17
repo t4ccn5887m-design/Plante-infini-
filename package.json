@@ -15,8 +15,7 @@
     "next": "14.2.35",
     "pdfmake": "^0.3.11",
     "react": "^18",
-    "react-dom": "^18",
-    "stripe": "^17.7.0"
+    "react-dom": "^18"
   },
   "devDependencies": {
     "png-to-ico": "^2.1.8",
