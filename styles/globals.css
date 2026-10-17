@@ -16186,3 +16186,15 @@ button.theme-grid-card:active {
 .admin-chart-labels span span {
   margin-left: 0.4rem;
 }
+
+.admin-badge-inactive {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: #f3dcc4;
+  color: #8a4b1c;
+  font-size: 0.68rem;
+  font-weight: 600;
+  vertical-align: middle;
+}

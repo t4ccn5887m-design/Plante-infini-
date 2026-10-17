@@ -10,6 +10,13 @@ function formatDate(iso) {
   return new Date(iso).toLocaleDateString("fr-FR", { day: "2-digit", month: "short" });
 }
 
+function formatDelay(hours) {
+  if (hours == null || !Number.isFinite(hours)) return "—";
+  if (hours < 1) return "< 1 h";
+  if (hours < 48) return `${Math.round(hours)} h`;
+  return `${Math.round(hours / 24)} j`;
+}
+
 function LinksChart({ series }) {
   const data = series?.length ? series : [];
   const width = 320;
@@ -196,6 +203,12 @@ function AdminDashboard({ onLogout }) {
               <StatCard label="Ouverts" value={`${L.openRate} %`} sub={`${formatNum(L.opened)} liens`} />
               <StatCard label="Remplis" value={`${L.fillRate} %`} sub={`${formatNum(L.filled)} briefs · ${formatNum(L.filled7)} sur 7 j`} />
               <StatCard label="RDV planifiés" value={formatNum(L.appointments)} />
+              <StatCard label="Délai de réponse" value={formatDelay(L.medianResponseHours)} sub="médian, envoi → brief rempli" />
+              <StatCard
+                label="Chantiers"
+                value={`${formatNum(L.won)} gagné${L.won > 1 ? "s" : ""}`}
+                sub={`${formatNum(L.lost)} perdu${L.lost > 1 ? "s" : ""} · ${formatNum(L.proposal)} proposition${L.proposal > 1 ? "s" : ""} en cours`}
+              />
             </div>
           </section>
 
@@ -206,6 +219,13 @@ function AdminDashboard({ onLogout }) {
 
           <section className="admin-section" aria-label="Paysagistes">
             <h2>Paysagistes ({formatNum(stats.studios?.length)})</h2>
+            {stats.inactiveStudios > 0 && (
+              <p className="admin-notice">
+                {stats.inactiveStudios === 1
+                  ? "1 paysagiste n'a envoyé aucun lien depuis 7 jours : appelle-le."
+                  : `${stats.inactiveStudios} paysagistes n'ont envoyé aucun lien depuis 7 jours : appelle-les.`}
+              </p>
+            )}
             {stats.studios?.length ? (
               <div className="admin-table-wrap">
                 <table className="admin-table">
@@ -216,6 +236,8 @@ function AdminDashboard({ onLogout }) {
                       <th>Ouverts</th>
                       <th>Remplis</th>
                       <th>RDV</th>
+                      <th>Gagnés</th>
+                      <th>Délai</th>
                       <th>Dernier lien</th>
                       <th>Inscrit</th>
                     </tr>
@@ -225,12 +247,15 @@ function AdminDashboard({ onLogout }) {
                       <tr key={s.id}>
                         <td>
                           <strong>{s.name}</strong>
+                          {s.inactive && <span className="admin-badge-inactive">inactif 7 j</span>}
                           <span className="admin-table-sub">{[s.contact, s.email].filter(Boolean).join(" · ")}</span>
                         </td>
                         <td>{s.sent}</td>
                         <td>{s.opened}</td>
                         <td>{s.filled}</td>
                         <td>{s.appointments}</td>
+                        <td>{s.won}</td>
+                        <td>{formatDelay(s.medianResponseHours)}</td>
                         <td>{formatDate(s.lastLinkAt)}</td>
                         <td>{formatDate(s.createdAt)}</td>
                       </tr>
