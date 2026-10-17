@@ -1,0 +1,940 @@
+[
+ {
+  "id": "bordure-corten-courbe",
+  "univers": "Bordures",
+  "nom": "Bordure en acier corten courbe",
+  "categorie": "Métal",
+  "aspect": "Acier rouille cintré, lignes souples",
+  "entretien": "Aucun",
+  "budget": "€€",
+  "usages": [
+   "Massif",
+   "pelouse",
+   "gravier"
+  ],
+  "ambiances": [
+   "Contemporain",
+   "Naturel"
+  ],
+  "pourquoi_on_laime": "Des courbes nettes qui dessinent le jardin comme un trait de crayon.",
+  "a_savoir": "Coupe et cintrage sur mesure : prévoir un peu de délai.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "bordure-pierre-de-taille",
+  "univers": "Bordures",
+  "nom": "Bordure en pierre de taille",
+  "categorie": "Pierre",
+  "aspect": "Blocs calcaires équarris",
+  "entretien": "Aucun",
+  "budget": "€€€",
+  "usages": [
+   "Allée",
+   "massif",
+   "terrasse"
+  ],
+  "ambiances": [
+   "Méditerranéen",
+   "Contemporain"
+  ],
+  "pourquoi_on_laime": "Une finition noble et massive, qui ne bouge pas.",
+  "a_savoir": "Lourde à poser : nécessite une fondation béton.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "bordure-bois-cintre",
+  "univers": "Bordures",
+  "nom": "Bordure en bois cintré",
+  "categorie": "Bois et osier",
+  "aspect": "Lames de bois souple pliées en courbe",
+  "entretien": "Moyen",
+  "budget": "€",
+  "usages": [
+   "Massif",
+   "potager",
+   "allée"
+  ],
+  "ambiances": [
+   "Naturel",
+   "Champêtre"
+  ],
+  "pourquoi_on_laime": "Douce et naturelle, elle épouse toutes les formes.",
+  "a_savoir": "Durée de vie limitée (5 à 10 ans selon l'essence).",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "pergola-fer-forge",
+  "univers": "Aménagements",
+  "nom": "Pergola en fer forgé",
+  "categorie": "Pergolas et ombrages",
+  "aspect": "Arceaux métalliques fins et ouvragés",
+  "entretien": "Faible",
+  "budget": "€€€",
+  "usages": [
+   "Terrasse",
+   "allée",
+   "coin repas"
+  ],
+  "ambiances": [
+   "Méditerranéen",
+   "Champêtre"
+  ],
+  "pourquoi_on_laime": "Une silhouette élégante qui disparaît sous les grimpantes.",
+  "a_savoir": "Un traitement antirouille à refaire de temps en temps.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "ombriere-canisse",
+  "univers": "Aménagements",
+  "nom": "Ombrière en canisse",
+  "categorie": "Pergolas et ombrages",
+  "aspect": "Roseaux tressés sur structure légère",
+  "entretien": "Moyen",
+  "budget": "€",
+  "usages": [
+   "Terrasse",
+   "coin repas",
+   "parking"
+  ],
+  "ambiances": [
+   "Méditerranéen",
+   "Champêtre",
+   "Naturel"
+  ],
+  "pourquoi_on_laime": "L'ombre filtrée et douce des étés provençaux.",
+  "a_savoir": "À remplacer tous les quelques ans ; sensible au mistral.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "toile-tendue",
+  "univers": "Aménagements",
+  "nom": "Toile tendue / store banne",
+  "categorie": "Pergolas et ombrages",
+  "aspect": "Toile technique claire",
+  "entretien": "Faible",
+  "budget": "€€",
+  "usages": [
+   "Terrasse",
+   "coin repas"
+  ],
+  "ambiances": [
+   "Contemporain",
+   "Méditerranéen"
+  ],
+  "pourquoi_on_laime": "De l'ombre à la demande, repliable en hiver.",
+  "a_savoir": "À démonter ou replier en cas de vent fort.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "pergola-vegetalisee",
+  "univers": "Aménagements",
+  "nom": "Pergola végétalisée",
+  "categorie": "Pergolas et ombrages",
+  "aspect": "Structure couverte de glycine ou de vigne",
+  "entretien": "Moyen",
+  "budget": "€€",
+  "usages": [
+   "Terrasse",
+   "allée",
+   "coin repas"
+  ],
+  "ambiances": [
+   "Méditerranéen",
+   "Champêtre",
+   "Naturel"
+  ],
+  "pourquoi_on_laime": "Une ombre vivante, parfumée au printemps, fraîche en été.",
+  "a_savoir": "Il faut 2 à 3 saisons pour que la couverture soit dense.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "piscine-naturelle",
+  "univers": "Aménagements",
+  "nom": "Piscine naturelle / baignade biologique",
+  "categorie": "Bassins et eau",
+  "aspect": "Bassin planté, eau filtrée par les plantes",
+  "entretien": "Moyen",
+  "budget": "€€€",
+  "usages": [
+   "Baignade",
+   "bassin d'agrément"
+  ],
+  "ambiances": [
+   "Naturel",
+   "Zen"
+  ],
+  "pourquoi_on_laime": "Se baigner sans chlore, entouré de plantes et de vie.",
+  "a_savoir": "Grande surface nécessaire : environ un tiers dédié à la zone de filtration.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "couloir-de-nage",
+  "univers": "Aménagements",
+  "nom": "Couloir de nage",
+  "categorie": "Bassins et eau",
+  "aspect": "Bassin long et étroit",
+  "entretien": "Moyen",
+  "budget": "€€€",
+  "usages": [
+   "Baignade",
+   "sport"
+  ],
+  "ambiances": [
+   "Contemporain"
+  ],
+  "pourquoi_on_laime": "Une piscine sportive et graphique, idéale sur terrain étroit.",
+  "a_savoir": "Soumis aux mêmes démarches qu'une piscine classique.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "douche-de-jardin",
+  "univers": "Aménagements",
+  "nom": "Douche de jardin",
+  "categorie": "Bassins et eau",
+  "aspect": "Colonne en inox, bois ou pierre",
+  "entretien": "Faible",
+  "budget": "€€",
+  "usages": [
+   "Plage de piscine",
+   "coin baignade"
+  ],
+  "ambiances": [
+   "Contemporain",
+   "Méditerranéen"
+  ],
+  "pourquoi_on_laime": "Le petit plaisir d'été qui fait la différence autour de la piscine.",
+  "a_savoir": "Prévoir l'arrivée d'eau et l'évacuation.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "rigole-canal",
+  "univers": "Aménagements",
+  "nom": "Rigole d'eau / canal",
+  "categorie": "Bassins et eau",
+  "aspect": "Filet d'eau linéaire en pierre ou métal",
+  "entretien": "Moyen",
+  "budget": "€€€",
+  "usages": [
+   "Allée",
+   "terrasse",
+   "jardin d'agrément"
+  ],
+  "ambiances": [
+   "Méditerranéen",
+   "Contemporain",
+   "Zen"
+  ],
+  "pourquoi_on_laime": "Le murmure de l'eau qui guide le regard, à l'andalouse.",
+  "a_savoir": "Pompe et entretien de l'eau à prévoir.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "bassin-corten",
+  "univers": "Aménagements",
+  "nom": "Bassin en corten",
+  "categorie": "Bassins et eau",
+  "aspect": "Bac métallique rouille, bords nets",
+  "entretien": "Faible",
+  "budget": "€€",
+  "usages": [
+   "Terrasse",
+   "patio",
+   "massif"
+  ],
+  "ambiances": [
+   "Contemporain"
+  ],
+  "pourquoi_on_laime": "Un miroir d'eau compact et très architectural.",
+  "a_savoir": "Le corten peut tacher un dallage clair au début.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "eclairage-contre-plongee",
+  "univers": "Aménagements",
+  "nom": "Mise en lumière des arbres",
+  "categorie": "Éclairage",
+  "aspect": "Projecteurs au pied des arbres, vers le haut",
+  "entretien": "Faible",
+  "budget": "€€",
+  "usages": [
+   "Arbre remarquable",
+   "façade",
+   "massif"
+  ],
+  "ambiances": [
+   "Contemporain",
+   "Méditerranéen",
+   "Zen"
+  ],
+  "pourquoi_on_laime": "Le jardin prend une autre dimension la nuit.",
+  "a_savoir": "Choisir une lumière chaude pour ne pas gêner la faune.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "led-sous-marches",
+  "univers": "Aménagements",
+  "nom": "Rubans LED sous marches",
+  "categorie": "Éclairage",
+  "aspect": "Lumière rasante intégrée",
+  "entretien": "Très faible",
+  "budget": "€€",
+  "usages": [
+   "Escalier",
+   "banquette",
+   "bord de terrasse"
+  ],
+  "ambiances": [
+   "Contemporain"
+  ],
+  "pourquoi_on_laime": "Une lumière invisible qui sécurise et sublime les volumes.",
+  "a_savoir": "Doit être prévu avant la pose des marches.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "lanternes-photophores",
+  "univers": "Aménagements",
+  "nom": "Lanternes et photophores",
+  "categorie": "Éclairage",
+  "aspect": "Lumières d'ambiance posées ou suspendues",
+  "entretien": "Faible",
+  "budget": "€",
+  "usages": [
+   "Terrasse",
+   "table",
+   "allée"
+  ],
+  "ambiances": [
+   "Champêtre",
+   "Méditerranéen"
+  ],
+  "pourquoi_on_laime": "Une ambiance chaleureuse pour les soirées d'été.",
+  "a_savoir": "Éclairage d'ambiance, pas d'éclairage de sécurité.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "banquette-maconnee",
+  "univers": "Aménagements",
+  "nom": "Banquette maçonnée",
+  "categorie": "Mobilier",
+  "aspect": "Assise intégrée, enduite ou en pierre",
+  "entretien": "Très faible",
+  "budget": "€€",
+  "usages": [
+   "Terrasse",
+   "coin feu",
+   "bord de bassin"
+  ],
+  "ambiances": [
+   "Méditerranéen",
+   "Contemporain"
+  ],
+  "pourquoi_on_laime": "Une assise qui fait partie de l'architecture du jardin.",
+  "a_savoir": "Ajouter des coussins d'extérieur pour le confort.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "grande-tablee",
+  "univers": "Aménagements",
+  "nom": "Table de ferme / grande tablée",
+  "categorie": "Mobilier",
+  "aspect": "Grande table en bois massif",
+  "entretien": "Moyen",
+  "budget": "€€",
+  "usages": [
+   "Coin repas",
+   "pergola"
+  ],
+  "ambiances": [
+   "Champêtre",
+   "Méditerranéen"
+  ],
+  "pourquoi_on_laime": "Le cœur des repas d'été en famille ou entre amis.",
+  "a_savoir": "Bois à huiler chaque printemps.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "daybed",
+  "univers": "Aménagements",
+  "nom": "Daybed / lit de jardin",
+  "categorie": "Mobilier",
+  "aspect": "Lit d'extérieur avec ou sans baldaquin",
+  "entretien": "Faible",
+  "budget": "€€€",
+  "usages": [
+   "Plage de piscine",
+   "coin détente"
+  ],
+  "ambiances": [
+   "Contemporain",
+   "Méditerranéen",
+   "Exotique"
+  ],
+  "pourquoi_on_laime": "L'esprit hôtel de luxe, à la maison.",
+  "a_savoir": "Rentrer ou couvrir les coussins en hiver.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "foyer-creuse",
+  "univers": "Aménagements",
+  "nom": "Foyer creusé (fire pit)",
+  "categorie": "Mobilier",
+  "aspect": "Foyer encastré entouré d'assises",
+  "entretien": "Faible",
+  "budget": "€€",
+  "usages": [
+   "Coin feu",
+   "soirée"
+  ],
+  "ambiances": [
+   "Contemporain",
+   "Naturel"
+  ],
+  "pourquoi_on_laime": "Un lieu de rassemblement magique les soirs de mi-saison.",
+  "a_savoir": "Vérifier les règles locales sur les feux (risque incendie).",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "four-a-pizza",
+  "univers": "Aménagements",
+  "nom": "Four à pizza",
+  "categorie": "Mobilier",
+  "aspect": "Four maçonné ou en terre cuite",
+  "entretien": "Faible",
+  "budget": "€€",
+  "usages": [
+   "Cuisine d'été",
+   "coin repas"
+  ],
+  "ambiances": [
+   "Méditerranéen",
+   "Champêtre"
+  ],
+  "pourquoi_on_laime": "Des soirées pizza qui rassemblent tout le monde.",
+  "a_savoir": "Prévoir une dalle et un emplacement abrité du vent.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "barbecue-maconne",
+  "univers": "Aménagements",
+  "nom": "Plancha / barbecue maçonné",
+  "categorie": "Mobilier",
+  "aspect": "Plan de cuisson intégré en maçonnerie",
+  "entretien": "Faible",
+  "budget": "€€",
+  "usages": [
+   "Cuisine d'été",
+   "terrasse"
+  ],
+  "ambiances": [
+   "Méditerranéen",
+   "Contemporain"
+  ],
+  "pourquoi_on_laime": "La cuisine se déplace dehors tout l'été.",
+  "a_savoir": "Prévoir une arrivée de gaz ou d'électricité si plancha.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "bacs-beton-fibre",
+  "univers": "Aménagements",
+  "nom": "Bacs en béton fibré",
+  "categorie": "Bacs et jardinières",
+  "aspect": "Grands volumes gris, lignes épurées",
+  "entretien": "Très faible",
+  "budget": "€€",
+  "usages": [
+   "Terrasse",
+   "entrée",
+   "toit-terrasse"
+  ],
+  "ambiances": [
+   "Contemporain",
+   "Zen"
+  ],
+  "pourquoi_on_laime": "Des volumes architecturaux plus légers que le béton classique.",
+  "a_savoir": "Prévoir un drainage au fond.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "jarres-amphores",
+  "univers": "Aménagements",
+  "nom": "Jarres et amphores anciennes",
+  "categorie": "Bacs et jardinières",
+  "aspect": "Terre cuite patinée, grandes formes",
+  "entretien": "Très faible",
+  "budget": "€€€",
+  "usages": [
+   "Massif",
+   "entrée",
+   "point focal"
+  ],
+  "ambiances": [
+   "Méditerranéen",
+   "Champêtre"
+  ],
+  "pourquoi_on_laime": "Une pièce chargée d'histoire qui signe un jardin du Sud.",
+  "a_savoir": "Les pièces anciennes sont fragiles au gel.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "bacs-maconnes",
+  "univers": "Aménagements",
+  "nom": "Bacs maçonnés enduits",
+  "categorie": "Bacs et jardinières",
+  "aspect": "Jardinières intégrées au bâti",
+  "entretien": "Très faible",
+  "budget": "€€",
+  "usages": [
+   "Terrasse",
+   "bordure de piscine",
+   "potager surélevé"
+  ],
+  "ambiances": [
+   "Méditerranéen",
+   "Contemporain"
+  ],
+  "pourquoi_on_laime": "Des plantations intégrées à l'architecture, sans pots qui traînent.",
+  "a_savoir": "Étanchéité et drainage à soigner à la construction.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "persiennes-aluminium",
+  "univers": "Aménagements",
+  "nom": "Persiennes / claustra en aluminium",
+  "categorie": "Clôtures et brise-vue",
+  "aspect": "Lames orientables thermolaquées",
+  "entretien": "Très faible",
+  "budget": "€€€",
+  "usages": [
+   "Clôture",
+   "brise-vue",
+   "pool house"
+  ],
+  "ambiances": [
+   "Contemporain"
+  ],
+  "pourquoi_on_laime": "Intimité totale sans entretien, avec la lumière qui filtre.",
+  "a_savoir": "Coût élevé au mètre linéaire.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "haie-seche",
+  "univers": "Aménagements",
+  "nom": "Haie sèche / fagots",
+  "categorie": "Clôtures et brise-vue",
+  "aspect": "Branchages empilés entre piquets",
+  "entretien": "Moyen",
+  "budget": "€",
+  "usages": [
+   "Fond de jardin",
+   "limite naturelle"
+  ],
+  "ambiances": [
+   "Naturel",
+   "Champêtre"
+  ],
+  "pourquoi_on_laime": "Une limite naturelle qui abrite insectes et petits animaux.",
+  "a_savoir": "Se tasse avec le temps : à recharger régulièrement.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "mur-vegetalise",
+  "univers": "Aménagements",
+  "nom": "Mur végétalisé",
+  "categorie": "Clôtures et brise-vue",
+  "aspect": "Paroi plantée verticale",
+  "entretien": "Moyen",
+  "budget": "€€€",
+  "usages": [
+   "Mur aveugle",
+   "patio",
+   "terrasse"
+  ],
+  "ambiances": [
+   "Contemporain",
+   "Exotique"
+  ],
+  "pourquoi_on_laime": "Un tableau vivant qui transforme un mur sans charme.",
+  "a_savoir": "Arrosage automatique indispensable.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "cloture-fer-forge",
+  "univers": "Aménagements",
+  "nom": "Clôture en fer forgé",
+  "categorie": "Clôtures et brise-vue",
+  "aspect": "Grilles et barreaudages travaillés",
+  "entretien": "Faible",
+  "budget": "€€€",
+  "usages": [
+   "Clôture",
+   "portail",
+   "entrée"
+  ],
+  "ambiances": [
+   "Méditerranéen",
+   "Champêtre"
+  ],
+  "pourquoi_on_laime": "Le charme des bastides et des maisons de maître.",
+  "a_savoir": "Un traitement antirouille de temps en temps.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "pool-house",
+  "univers": "Aménagements",
+  "nom": "Pool house",
+  "categorie": "Structures",
+  "aspect": "Petit bâtiment ouvert près de la piscine",
+  "entretien": "Faible",
+  "budget": "€€€",
+  "usages": [
+   "Plage de piscine",
+   "cuisine d'été"
+  ],
+  "ambiances": [
+   "Contemporain",
+   "Méditerranéen"
+  ],
+  "pourquoi_on_laime": "Un lieu de vie à part entière autour de la piscine.",
+  "a_savoir": "Peut nécessiter une déclaration préalable ou un permis.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "carport-bois",
+  "univers": "Aménagements",
+  "nom": "Carport bois",
+  "categorie": "Structures",
+  "aspect": "Abri voiture ouvert",
+  "entretien": "Moyen",
+  "budget": "€€",
+  "usages": [
+   "Stationnement",
+   "entrée"
+  ],
+  "ambiances": [
+   "Naturel",
+   "Contemporain"
+  ],
+  "pourquoi_on_laime": "Protège la voiture tout en restant léger visuellement.",
+  "a_savoir": "Démarches d'urbanisme à vérifier selon la surface.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "serre-de-jardin",
+  "univers": "Aménagements",
+  "nom": "Serre de jardin",
+  "categorie": "Structures",
+  "aspect": "Structure vitrée métal ou bois",
+  "entretien": "Moyen",
+  "budget": "€€",
+  "usages": [
+   "Potager",
+   "semis",
+   "hivernage"
+  ],
+  "ambiances": [
+   "Champêtre",
+   "Naturel"
+  ],
+  "pourquoi_on_laime": "Pour semer tôt, protéger les plantes fragiles et jardiner l'hiver.",
+  "a_savoir": "Aération indispensable en été.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "poulailler-design",
+  "univers": "Aménagements",
+  "nom": "Poulailler design",
+  "categorie": "Structures",
+  "aspect": "Petit abri en bois avec enclos",
+  "entretien": "Moyen",
+  "budget": "€€",
+  "usages": [
+   "Potager",
+   "fond de jardin"
+  ],
+  "ambiances": [
+   "Champêtre",
+   "Naturel"
+  ],
+  "pourquoi_on_laime": "Des œufs frais et un vrai lien avec le jardin.",
+  "a_savoir": "Nettoyage régulier et protection contre les prédateurs.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "cabane-enfant",
+  "univers": "Aménagements",
+  "nom": "Cabane enfant",
+  "categorie": "Structures",
+  "aspect": "Cabane en bois au sol ou perchée",
+  "entretien": "Moyen",
+  "budget": "€€",
+  "usages": [
+   "Aire de jeux",
+   "fond de jardin"
+  ],
+  "ambiances": [
+   "Naturel",
+   "Champêtre"
+  ],
+  "pourquoi_on_laime": "Le coin secret des enfants, qui grandit avec eux.",
+  "a_savoir": "Vérifier les normes de sécurité pour les cabanes en hauteur.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ },
+ {
+  "id": "terrain-petanque",
+  "univers": "Aménagements",
+  "nom": "Terrain de pétanque",
+  "categorie": "Structures",
+  "aspect": "Aire plane en stabilisé, bordée",
+  "entretien": "Faible",
+  "budget": "€",
+  "usages": [
+   "Jeux",
+   "coin convivial"
+  ],
+  "ambiances": [
+   "Méditerranéen",
+   "Champêtre"
+  ],
+  "pourquoi_on_laime": "L'incontournable des après-midis provençaux.",
+  "a_savoir": "Prévoir au moins 3 × 12 m pour jouer confortablement.",
+  "photo_url": "",
+  "photo_source": "",
+  "photo_auteur": "",
+  "photo_licence": "",
+  "photo_licence_url": "",
+  "photo_lien": "",
+  "photo_detouree": "non",
+  "masque": true
+ }
+]
