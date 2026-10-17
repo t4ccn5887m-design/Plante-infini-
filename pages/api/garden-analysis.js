@@ -2,10 +2,6 @@ import Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@supabase/supabase-js";
 import { ANTHROPIC_ANALYSIS_MODEL } from "@/lib/aiModel";
 import { isPermanentAuthUser } from "@/lib/authUser";
-import {
-  checkGardenAnalysisRateLimit,
-  recordGardenAnalysisRateLimit,
-} from "@/lib/gardenAnalysisRateLimit";
 
 export const config = {
   maxDuration: 60,
@@ -95,12 +91,13 @@ async function resolveUser(req) {
     return null;
   }
 
-  const client = createClient(supabaseUrl, supabaseAnonKey, {
+  const db = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: `Bearer ${token}` } },
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   });
-  const { data, error } = await client.auth.getUser(token);
+  const { data, error } = await db.auth.getUser(token);
   if (error || !isPermanentAuthUser(data?.user)) return null;
-  return data.user;
+  return { user: data.user, db };
 }
 
 async function callAnthropic(client, userContent) {
@@ -123,13 +120,23 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
 
   try {
-    const user = await resolveUser(req);
-    if (!user) {
+    const resolved = await resolveUser(req);
+    if (!resolved) {
       return res.status(401).json({ error: "Connexion requise pour l'analyse du dossier." });
     }
+    const { db } = resolved;
 
-    const rate = checkGardenAnalysisRateLimit(user.id);
-    if (!rate.ok) {
+    const { data: allowed, error: quotaError } = await db.rpc("consume_ai_quota", {
+      p_limit: 10,
+    });
+    if (quotaError) {
+      console.error("[Sevya] garden-analysis quota:", quotaError);
+      return res.status(503).json({
+        error: "unavailable",
+        message: "Analyse indisponible, réessayez.",
+      });
+    }
+    if (allowed !== true) {
       return res.status(429).json({
         error: "rate_limit",
         message: "Limite atteinte : 10 analyses par jour. Réessayez demain.",
@@ -193,7 +200,6 @@ export default async function handler(req, res) {
       });
     }
 
-    recordGardenAnalysisRateLimit(user.id);
     return res.status(200).json(parsed);
   } catch (error) {
     console.error("[Sevya] garden-analysis:", error);
