@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import AppErrorBoundary from "@/components/AppErrorBoundary";
 import InstallGuideModalHost from "@/components/InstallGuideModalHost";
 import { flushPendingSync } from "@/lib/cloudSync";
+import { migratePersistedAuthSession } from "@/lib/authSessionBoot";
 import { isAtelierAppRoute } from "@/lib/atelierRoute";
 
 const fraunces = Fraunces({
@@ -52,6 +53,10 @@ export default function App({ Component, pageProps }) {
     router.pathname,
     router.isReady ? router.query : undefined
   );
+
+  useEffect(() => {
+    migratePersistedAuthSession();
+  }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle("atelier-theme", atelier);

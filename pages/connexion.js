@@ -16,11 +16,16 @@ import {
   proStudioErrorMessage,
 } from "@/lib/pro/proStudioApi";
 import { supabase } from "@/lib/supabase";
+import { redirectIfAuthenticated } from "@/lib/authSessionBoot";
 
 /** URL de retour e-mail auth — toujours basée sur l’origine courante (local / preview / prod). */
 function getAuthEmailRedirectUrl(isProProfile) {
   if (typeof window === "undefined") return undefined;
-  return `${window.location.origin}${isProProfile ? "/pro" : "/jardin"}`;
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL;
+  const origin = fromEnv
+    ? String(fromEnv).replace(/\/$/, "")
+    : window.location.origin;
+  return `${origin}${isProProfile ? "/pro" : "/jardin"}`;
 }
 
 function mapError(message) {
@@ -62,6 +67,11 @@ export default function ConnexionPage() {
       setResetSent(false);
     }
   }, [mode]);
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    redirectIfAuthenticated({ profile: isPro ? "pro" : "particulier" });
+  }, [router.isReady, isPro]);
 
   const redirectTarget = isPro ? "/pro" : "/jardin";
 

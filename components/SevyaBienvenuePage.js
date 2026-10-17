@@ -1,7 +1,9 @@
 import Head from "next/head";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import SevyaTopBar from "@/components/SevyaTopBar";
 import { ATELIER_HERO_CHOIX } from "@/lib/atelierHeroImages";
+import { redirectIfAuthenticated } from "@/lib/authSessionBoot";
 
 const ROWS = [
   {
@@ -17,6 +19,24 @@ const ROWS = [
 ];
 
 export default function SevyaBienvenuePage() {
+  const [booting, setBooting] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    redirectIfAuthenticated({ profile: "particulier" }).finally(() => {
+      if (!cancelled) setBooting(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (booting) {
+    return (
+      <div className="sv-discovery sv-choix" style={{ minHeight: "100dvh" }} aria-busy="true" />
+    );
+  }
+
   return (
     <>
       <Head>

@@ -1,9 +1,10 @@
 {
-  "id": "/?app=sevya",
+  "id": "https://www.sevya.app/?app=sevya",
   "name": "Sevya",
   "short_name": "Sevya",
   "description": "Le jardin de vos envies, compris d'avance.",
   "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0F1A14",
   "theme_color": "#0F1A14",
