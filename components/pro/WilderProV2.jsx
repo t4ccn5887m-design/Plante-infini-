@@ -646,6 +646,11 @@ function studioNotificationsSummary() {
 }
 
 const STUDIO_SETTING_ROWS = [
+  {
+    id: "identity",
+    label: "Nom du studio",
+    summary: (s) => s?.name?.trim() || "—",
+  },
   { id: "presentation", label: "Présentation", summary: studioPresentationSummary },
   { id: "zone", label: "Zone d’intervention", summary: (s) => s?.interventionZone?.trim() || "—" },
   { id: "specialties", label: "Spécialités", summary: studioSpecialtiesSummary },
@@ -672,15 +677,20 @@ function StudioScreen({ studio, onOpenSetting, onSignOut }) {
         </p>
         <StudioAvatar studio={studio} onOpen={() => onOpenSetting?.(null)} />
       </div>
-      <div className="wp-studio-head">
+      <button
+        type="button"
+        className="wp-studio-head wp-studio-head--link"
+        onClick={() => onOpenSetting?.("identity")}
+      >
         <span className="wp-studio-logo">{studio?.initials || "?"}</span>
-        <div>
+        <div className="wp-studio-head-text">
           <div className="wp-studio-name">{studio?.name || "Mon studio"}</div>
           <div className="wp-studio-sub">
             {[contact, zone].filter(Boolean).join(" · ") || "Complétez votre profil"}
           </div>
         </div>
-      </div>
+        <ChevronRight size={18} className="wp-studio-head-chev" aria-hidden />
+      </button>
 
       {partnersCode ? (
         <div className="wp-studio-partners">
@@ -1631,6 +1641,7 @@ function Agenda({ studio, refreshKey, onOpenSettings, onOpenBrief }) {
 }
 
 const SETTINGS_SECTION_TITLES = {
+  identity: "Identité du studio",
   presentation: "Présentation",
   zone: "Zone d’intervention",
   specialties: "Spécialités",
@@ -1698,7 +1709,7 @@ function SettingsSheet({
   };
 
   const showAll = !section;
-  const showIdentity = showAll;
+  const showIdentity = showAll || section === "identity";
   const showPresentation = showAll || section === "presentation";
   const showZone = showAll || section === "zone";
   const showSpecialties = showAll || section === "specialties";

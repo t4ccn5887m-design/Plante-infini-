@@ -234,6 +234,13 @@
 .wp .wp-client-filters { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 6px; }
 
 .wp .wp-studio-head { display:flex; gap:14px; align-items:center; margin-top:8px; }
+.wp .wp-studio-head--link {
+  width:100%; border:none; background:transparent; text-align:left; font-family:inherit; color:inherit;
+  padding:8px 0; cursor:pointer;
+}
+.wp .wp-studio-head--link:active { opacity:.85; }
+.wp .wp-studio-head-text { flex:1; min-width:0; }
+.wp .wp-studio-head-chev { flex-shrink:0; color:var(--muted); }
 .wp .wp-studio-logo { width:60px; height:60px; border-radius:18px; background:var(--mint-bg); color:var(--green); display:grid; place-items:center; font-size:22px; font-weight:600; font-family:var(--font-title),'Fraunces',serif; flex-shrink:0; }
 .wp .wp-studio-name { font-size:26px; font-weight:300; font-family:var(--font-title,'Fraunces',serif); letter-spacing:-.02em; }
 .wp .wp-studio-sub { font-size:13px; font-weight:500; color:var(--muted); margin-top:4px; }
