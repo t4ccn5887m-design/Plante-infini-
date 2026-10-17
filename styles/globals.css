@@ -1456,6 +1456,70 @@ video {
   transform: scale(0.98);
 }
 
+.wilder-account-menu-item--danger {
+  color: #9b6560;
+  font-size: 0.8rem;
+}
+
+.wilder-delete-account-lead {
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: #4c554a;
+}
+
+.wilder-delete-account-error {
+  margin: 0 0 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  background: #f8e8e4;
+  color: #9b3b2e;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.wilder-account-btn-danger {
+  display: block;
+  width: 100%;
+  margin-top: 0.35rem;
+  min-height: 3rem;
+  border: none;
+  border-radius: 13px;
+  padding: 13px 24px;
+  background: #9b3b2e;
+  color: #ffffff;
+  font-family: var(--font-body, "Nunito Sans", system-ui, sans-serif);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.wilder-account-btn-danger:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.wilder-account-btn-outline {
+  display: block;
+  width: 100%;
+  margin-top: 0.65rem;
+  min-height: 3rem;
+  border: 0.5px solid #cbc6b8;
+  border-radius: 13px;
+  padding: 13px 24px;
+  background: transparent;
+  color: #1e2b23;
+  font-family: var(--font-body, "Nunito Sans", system-ui, sans-serif);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.wilder-account-btn-outline:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .wilder-home-brand {
   display: flex;
   align-items: center;

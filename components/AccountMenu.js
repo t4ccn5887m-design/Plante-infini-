@@ -8,6 +8,7 @@ import {
   loadClientContact,
   saveClientContact,
 } from "@/lib/clientContact";
+import DeleteAccountSheet from "@/components/DeleteAccountSheet";
 import { shareWilderApp } from "@/lib/share";
 import { WILDER_COLORS as COLORS } from "@/lib/themes";
 
@@ -71,6 +72,7 @@ export default function AccountMenu({
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileError, setProfileError] = useState(null);
+  const [deleteAccountOpen, setDeleteAccountOpen] = useState(false);
   const wrapRef = useRef(null);
 
   const closeMenu = useCallback(() => setOpen(false), []);
@@ -233,6 +235,17 @@ export default function AccountMenu({
                 >
                   {t("account_menu.sign_out")}
                 </button>
+                <button
+                  type="button"
+                  className="wilder-account-menu-item wilder-account-menu-item--muted wilder-account-menu-item--danger"
+                  role="menuitem"
+                  onClick={() => {
+                    closeMenu();
+                    setDeleteAccountOpen(true);
+                  }}
+                >
+                  Supprimer mon compte
+                </button>
                 <div className="wilder-account-menu-separator" aria-hidden="true" />
               </>
             ) : (
@@ -296,6 +309,8 @@ export default function AccountMenu({
           </div>,
           document.body
         )}
+
+      <DeleteAccountSheet open={deleteAccountOpen} onClose={() => setDeleteAccountOpen(false)} />
 
       {profileOpen &&
         createPortal(
