@@ -15284,7 +15284,7 @@ button.theme-grid-card:active {
   background: linear-gradient(165deg, #0f2419 0%, #1b3d2f 45%, #142e22 100%);
   color: #1b3d2f;
   padding: calc(1rem + env(safe-area-inset-top)) 1rem calc(1.5rem + env(safe-area-inset-bottom));
-  font-family: var(--font-display, system-ui, sans-serif);
+  font-family: var(--font-body, Inter, system-ui, sans-serif);
 }
 
 .admin-login {

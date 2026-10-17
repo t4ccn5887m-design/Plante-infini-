@@ -14,30 +14,36 @@ function LinksChart({ series }) {
   const data = series?.length ? series : [];
   const width = 320;
   const height = 140;
-  const padX = 8;
-  const padY = 12;
+  const padX = 6;
+  const padY = 10;
   const max = Math.max(1, ...data.map((d) => Math.max(d.sent, d.filled)));
   const innerW = width - padX * 2;
   const innerH = height - padY * 2;
-  const x = (i) => padX + (data.length <= 1 ? innerW / 2 : (i / (data.length - 1)) * innerW);
-  const y = (v) => padY + innerH - (v / max) * innerH;
-  const line = (key) => data.map((d, i) => `${x(i)},${y(d[key])}`).join(" ");
+  const slot = data.length ? innerW / data.length : innerW;
+  const barW = Math.max(2, slot * 0.38);
+  const h = (v) => (v / max) * innerH;
 
   return (
     <div className="admin-chart">
       <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Liens envoyés et briefs remplis par jour">
-        {[0, 0.5, 1].map((t) => {
-          const yy = padY + innerH * (1 - t);
+        <line x1={padX} x2={width - padX} y1={padY + innerH} y2={padY + innerH} stroke="rgba(27,61,47,0.15)" strokeWidth="1" />
+        {data.map((d, i) => {
+          const x0 = padX + i * slot + slot * 0.1;
           return (
-            <line key={t} x1={padX} x2={width - padX} y1={yy} y2={yy} stroke="rgba(27,61,47,0.08)" strokeWidth="1" />
+            <g key={d.date}>
+              {d.sent > 0 && (
+                <rect x={x0} y={padY + innerH - h(d.sent)} width={barW} height={h(d.sent)} rx="1.5" fill="#9db89a">
+                  <title>{`${d.date} : ${d.sent} envoyé(s)`}</title>
+                </rect>
+              )}
+              {d.filled > 0 && (
+                <rect x={x0 + barW + 1} y={padY + innerH - h(d.filled)} width={barW} height={h(d.filled)} rx="1.5" fill="#1b3d2f">
+                  <title>{`${d.date} : ${d.filled} rempli(s)`}</title>
+                </rect>
+              )}
+            </g>
           );
         })}
-        {data.length > 1 && (
-          <>
-            <polyline fill="none" stroke="#9db89a" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" points={line("sent")} />
-            <polyline fill="none" stroke="#1b3d2f" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" points={line("filled")} />
-          </>
-        )}
       </svg>
       {data.length > 0 && (
         <div className="admin-chart-labels">
@@ -243,7 +249,7 @@ function AdminDashboard({ onLogout }) {
             <h2>Analyses IA</h2>
             <div className="admin-grid">
               <StatCard label="Aujourd'hui" value={formatNum(stats.ai?.today)} />
-              <StatCard label="7 jours" value={formatNum(stats.ai?.last7Days)} sub={`${formatNum(stats.ai?.users7)} comptes`} />
+              <StatCard label="7 jours" value={formatNum(stats.ai?.last7Days)} sub={`${formatNum(stats.ai?.users7)} compte(s)`} />
             </div>
           </section>
         </>
