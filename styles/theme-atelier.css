@@ -2164,3 +2164,69 @@ html.atelier-theme .wp.wp-brief .bf-welcome-lead strong {
   color: var(--ink);
   font-weight: 600;
 }
+
+html.atelier-theme .wp.wp-brief .bf-thanks-success {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  border: none;
+  background: var(--bg);
+}
+
+html.atelier-theme .wp.wp-brief .bf-thanks-hero {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 160px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+html.atelier-theme .wp.wp-brief .bf-thanks-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.35;
+}
+
+html.atelier-theme .wp.wp-brief .bf-thanks-hero-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, var(--bg) 100%);
+}
+
+html.atelier-theme .wp.wp-brief .bf-thanks-success .bf-progress,
+html.atelier-theme .wp.wp-brief .bf-thanks-check,
+html.atelier-theme .wp.wp-brief .bf-thanks-success .bf-title,
+html.atelier-theme .wp.wp-brief .bf-thanks-success .bf-sub,
+html.atelier-theme .wp.wp-brief .bf-thanks-sevya-card {
+  position: relative;
+  z-index: 1;
+}
+
+html.atelier-theme .wp.wp-brief .bf-thanks-check {
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  border: 1px solid var(--sage);
+  color: var(--sage);
+  display: grid;
+  place-items: center;
+  margin: 8px auto 16px;
+}
+
+html.atelier-theme .wp.wp-brief .bf-thanks-sevya-card {
+  margin-top: 28px;
+  padding: 18px 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  text-align: left;
+}
+
+html.atelier-theme .wp.wp-brief .bf-thanks-sevya-lead {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--mute);
+}
