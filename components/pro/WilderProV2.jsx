@@ -19,7 +19,6 @@ import {
   Leaf,
   Sparkles,
   Clock,
-  Copy,
   Check,
   Images,
   SlidersHorizontal,
@@ -2140,8 +2139,6 @@ const SEND_VIA_HELP = {
   sms: "SMS : Messages s’ouvre avec le texte et le lien déjà écrits, vous n’avez qu’à envoyer.",
   email:
     "E-mail : votre messagerie s’ouvre avec le message et le lien déjà rédigés.",
-  qr: "QR code : montrez le code au client pour qu’il ouvre le questionnaire.",
-  copy: "Copier : le lien est copié dans le presse-papiers, à coller où vous voulez.",
 };
 
 function SendSheet({ studio, onClose, onCreated }) {
@@ -2151,8 +2148,6 @@ function SendSheet({ studio, onClose, onCreated }) {
   const [sendVia, setSendVia] = useState("sms");
   const [createdUrl, setCreatedUrl] = useState(null);
   const [createdToken, setCreatedToken] = useState(null);
-  const [copied, setCopied] = useState(false);
-  const [qrDataUrl, setQrDataUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -2162,7 +2157,7 @@ function SendSheet({ studio, onClose, onCreated }) {
   const smsBody = (url) =>
     `Bonjour, préparez notre rendez-vous en 10 min : ${url}`;
 
-  const dispatchSend = async (url, via) => {
+  const dispatchSend = (url, via) => {
     const digits = phone.replace(/\s/g, "");
     if (via === "sms") {
       const q = digits ? `sms:${digits}?&body=` : "sms:?&body=";
@@ -2173,26 +2168,6 @@ function SendSheet({ studio, onClose, onCreated }) {
       window.location.href = `mailto:?subject=${encodeURIComponent(
         "Préparez notre rendez-vous jardin"
       )}&body=${encodeURIComponent(linkMessage(url))}`;
-      return;
-    }
-    if (via === "copy") {
-      navigator.clipboard.writeText(url).then(
-        () => {
-          setCopied(true);
-          window.setTimeout(() => setCopied(false), 2000);
-        },
-        () => setError("Impossible de copier. Sélectionnez le lien manuellement.")
-      );
-      return;
-    }
-    if (via === "qr") {
-      try {
-        const QRCode = (await import("qrcode")).default;
-        const dataUrl = await QRCode.toDataURL(url, { width: 480, margin: 1 });
-        setQrDataUrl(dataUrl);
-      } catch {
-        setError("Impossible de générer le QR code.");
-      }
     }
   };
 
@@ -2212,9 +2187,8 @@ function SendSheet({ studio, onClose, onCreated }) {
     const url = result.link.url;
     setCreatedUrl(url);
     setCreatedToken(result.link.token);
-    setQrDataUrl(null);
     onCreated?.(result.link);
-    await dispatchSend(url, sendVia);
+    dispatchSend(url, sendVia);
   };
 
   const openClientPreview = () => {
@@ -2230,8 +2204,6 @@ function SendSheet({ studio, onClose, onCreated }) {
   const sendChannels = [
     ["sms", "SMS"],
     ["email", "E-mail"],
-    ["qr", "QR code"],
-    ["copy", "Copier"],
   ];
 
   return (
@@ -2286,7 +2258,11 @@ function SendSheet({ studio, onClose, onCreated }) {
         <p className="label" style={{ marginTop: 20, marginBottom: 10 }}>
           Envoyer par
         </p>
-        <div className="wp-send-via" role="group" aria-label="Envoyer par">
+        <div
+          className="wp-send-via wp-send-via--two"
+          role="group"
+          aria-label="Envoyer par"
+        >
           {sendChannels.map(([id, label]) => (
             <button
               key={id}
@@ -2314,41 +2290,6 @@ function SendSheet({ studio, onClose, onCreated }) {
         {createdUrl ? (
           <div className="linkbox" style={{ marginTop: 14 }}>
             <span className="u">{createdUrl.replace(/^https?:\/\//, "")}</span>
-            <button type="button" onClick={() => dispatchSend(createdUrl, "copy")}>
-              {copied ? (
-                <>
-                  <Check size={14} /> Copié
-                </>
-              ) : (
-                <>
-                  <Copy size={14} /> Copier
-                </>
-              )}
-            </button>
-          </div>
-        ) : null}
-
-        {qrDataUrl ? (
-          <div className="wp-send-qr" style={{ marginTop: 16, textAlign: "center" }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={qrDataUrl}
-              alt="QR code du lien client"
-              style={{
-                width: "100%",
-                maxWidth: 280,
-                borderRadius: 16,
-                border: "1px solid var(--line)",
-              }}
-            />
-            <a
-              href={qrDataUrl}
-              download="qr-lien-client.png"
-              className="linebtn"
-              style={{ display: "inline-block", marginTop: 12 }}
-            >
-              Télécharger le QR code
-            </a>
           </div>
         ) : null}
 
