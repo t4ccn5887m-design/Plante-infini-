@@ -30,6 +30,7 @@ import {
   submitClientBrief,
 } from "@/lib/pro/clientBriefApi";
 import ClientBriefPreviewBanner from "@/components/pro/ClientBriefPreviewBanner";
+import { SEVYA_DEMO_RENDU_3D } from "@/lib/sevyaDemoRenders";
 
 const QUESTION_STEPS = 9;
 const THANKS_STEP = 10;
@@ -185,22 +186,36 @@ function StepShell({
 }
 
 function Welcome({ studio, onStart }) {
+  const studioColor = studio?.color || "#C9D6B8";
+  const contact = studio?.contactFirstName || "votre paysagiste";
   return (
     <div className="bf-step bf-welcome">
       <ProgressBar step={0} />
-      <div
-        className="bf-welcome-hero"
-        style={{
-          background: `linear-gradient(150deg, ${studio.color}, #1F2F1D)`,
-        }}
-      >
-        <div className="bf-welcome-logo">{studio.initials}</div>
-        <p className="bf-welcome-kicker">Préparez votre rendez-vous avec</p>
-        <h1>{studio.name}</h1>
-        <p className="bf-welcome-lead">
-          En <strong>3 minutes</strong>, aidez {studio.contactFirstName} à
-          comprendre ce que vous imaginez — avant même le premier RDV.
-        </p>
+      <div className="bf-welcome-card">
+        <div className="bf-welcome-hero">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="bf-welcome-hero-img"
+            src={SEVYA_DEMO_RENDU_3D}
+            alt=""
+          />
+        </div>
+        <div className="bf-welcome-body">
+          <div
+            className="bf-welcome-logo"
+            style={{ background: studioColor, color: "var(--bg)" }}
+          >
+            {studio.initials}
+          </div>
+          <h1 className="bf-welcome-headline">
+            {contact}, de {studio.name}, vous invite à préparer votre jardin.
+          </h1>
+          <p className="bf-welcome-lead">
+            En <strong>3 minutes</strong>, sans compte — choisissez ce qui vous
+            plaît, montrez votre terrain : {contact} arrivera au rendez-vous
+            avec des idées pour vous.
+          </p>
+        </div>
       </div>
       <ul className="bf-reassure">
         <li>

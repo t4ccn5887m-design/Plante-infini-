@@ -54,9 +54,8 @@ export default function App({ Component, pageProps }) {
   );
 
   useEffect(() => {
-    if (isClientBrief) return;
     document.documentElement.classList.toggle("atelier-theme", atelier);
-  }, [atelier, isClientBrief]);
+  }, [atelier]);
 
   useEffect(() => {
     if (isClientBrief) return;
