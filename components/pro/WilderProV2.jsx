@@ -19,7 +19,6 @@ import {
   Leaf,
   Sparkles,
   Clock,
-  Copy,
   Check,
   Images,
   SlidersHorizontal,
@@ -642,7 +641,7 @@ function studioExperienceSummary(studio) {
 }
 
 function studioNotificationsSummary() {
-  return "E-mail · téléphone";
+  return "Bientôt disponible";
 }
 
 const STUDIO_SETTING_ROWS = [
@@ -657,7 +656,7 @@ const STUDIO_SETTING_ROWS = [
   { id: "experience", label: "Expérience", summary: studioExperienceSummary },
   { id: "notifications", label: "Notifications", summary: studioNotificationsSummary },
   { id: "link", label: "Lien client", summary: () => "Aperçu et couleur" },
-  { id: "subscription", label: "Abonnement", summary: () => "Essai · 14 j restants" },
+  { id: "subscription", label: "Abonnement", summary: () => "Version pilote gratuite" },
 ];
 
 function StudioScreen({ studio, onOpenSetting, onSignOut }) {
@@ -1902,12 +1901,9 @@ function SettingsSheet({
           <div className="dlbl">Abonnement</div>
           <div className="plan">
             <div>
-              <div className="pt">Amont Pro</div>
-              <div className="pp">29 € / mois · briefs illimités</div>
+              <div className="pt">Sevya Pro</div>
+              <div className="pp">Version pilote · gratuite pendant la phase de test</div>
             </div>
-            <button className="mng" type="button">
-              Gérer
-            </button>
           </div>
         </div>
         ) : null}
@@ -2143,8 +2139,6 @@ const SEND_VIA_HELP = {
   sms: "SMS : Messages s’ouvre avec le texte et le lien déjà écrits, vous n’avez qu’à envoyer.",
   email:
     "E-mail : votre messagerie s’ouvre avec le message et le lien déjà rédigés.",
-  qr: "QR code : montrez le code au client pour qu’il ouvre le questionnaire.",
-  copy: "Copier : le lien est copié dans le presse-papiers, à coller où vous voulez.",
 };
 
 function SendSheet({ studio, onClose, onCreated }) {
@@ -2154,7 +2148,6 @@ function SendSheet({ studio, onClose, onCreated }) {
   const [sendVia, setSendVia] = useState("sms");
   const [createdUrl, setCreatedUrl] = useState(null);
   const [createdToken, setCreatedToken] = useState(null);
-  const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -2175,21 +2168,6 @@ function SendSheet({ studio, onClose, onCreated }) {
       window.location.href = `mailto:?subject=${encodeURIComponent(
         "Préparez notre rendez-vous jardin"
       )}&body=${encodeURIComponent(linkMessage(url))}`;
-      return;
-    }
-    if (via === "copy") {
-      navigator.clipboard.writeText(url).then(
-        () => {
-          setCopied(true);
-          window.setTimeout(() => setCopied(false), 2000);
-        },
-        () => setError("Impossible de copier. Sélectionnez le lien manuellement.")
-      );
-      return;
-    }
-    if (via === "qr") {
-      const qr = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(url)}`;
-      window.open(qr, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -2226,8 +2204,6 @@ function SendSheet({ studio, onClose, onCreated }) {
   const sendChannels = [
     ["sms", "SMS"],
     ["email", "E-mail"],
-    ["qr", "QR code"],
-    ["copy", "Copier"],
   ];
 
   return (
@@ -2282,7 +2258,11 @@ function SendSheet({ studio, onClose, onCreated }) {
         <p className="label" style={{ marginTop: 20, marginBottom: 10 }}>
           Envoyer par
         </p>
-        <div className="wp-send-via" role="group" aria-label="Envoyer par">
+        <div
+          className="wp-send-via wp-send-via--two"
+          role="group"
+          aria-label="Envoyer par"
+        >
           {sendChannels.map(([id, label]) => (
             <button
               key={id}
@@ -2310,17 +2290,6 @@ function SendSheet({ studio, onClose, onCreated }) {
         {createdUrl ? (
           <div className="linkbox" style={{ marginTop: 14 }}>
             <span className="u">{createdUrl.replace(/^https?:\/\//, "")}</span>
-            <button type="button" onClick={() => dispatchSend(createdUrl, "copy")}>
-              {copied ? (
-                <>
-                  <Check size={14} /> Copié
-                </>
-              ) : (
-                <>
-                  <Copy size={14} /> Copier
-                </>
-              )}
-            </button>
           </div>
         ) : null}
 

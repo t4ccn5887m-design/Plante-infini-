@@ -129,7 +129,11 @@ export default function AccueilDossierScreen({
             className="atelier-jardin-hero__cta"
             onClick={progress.percent >= 100 ? onOpenDossier : onContinueDossier || onOpenDossier}
           >
-            {progress.percent >= 100 ? "Voir mon dossier →" : "Continuer mon dossier →"}
+            {progress.percent === 0
+              ? "Commencer mon dossier →"
+              : progress.percent >= 100
+                ? "Voir mon dossier →"
+                : "Continuer mon dossier →"}
           </button>
         </div>
       </div>

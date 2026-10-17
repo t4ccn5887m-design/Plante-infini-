@@ -277,6 +277,8 @@
 .wp .wp-send-full .field input { background:var(--card); border:1px solid var(--line); border-radius:14px; }
 .wp .wp-send-full .field input:focus { border-color:var(--sage); background:var(--card); }
 .wp .wp-send-via { display:flex; flex-wrap:wrap; gap:8px; }
+.wp .wp-send-via--two { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.wp .wp-send-via--two .wp-send-via-pill { width:100%; justify-content:center; }
 .wp .wp-send-via-pill {
   flex:1; min-width:calc(50% - 8px);
   border:1px solid var(--line); border-radius:99px; padding:11px 12px;
