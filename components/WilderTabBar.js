@@ -40,17 +40,6 @@ function IconDossier({ size = 22 }) {
   );
 }
 
-function IconPartenaires({ size = 22 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={ic}>
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    </svg>
-  );
-}
-
 function TabButton({ active, onClick, label }) {
   return (
     <button
@@ -69,7 +58,6 @@ export default function WilderTabBar({
   onIdees,
   onCoupsDeCoeur,
   onDossier,
-  onPartenaires,
 }) {
   return (
     <nav
@@ -77,7 +65,7 @@ export default function WilderTabBar({
       aria-label="Navigation principale"
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
+        gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
         alignItems: "end",
         boxSizing: "border-box",
       }}
@@ -86,7 +74,6 @@ export default function WilderTabBar({
       <TabButton active={activeNav === "idees"} onClick={onIdees} label="Idées" />
       <TabButton active={activeNav === "coups-de-coeur"} onClick={onCoupsDeCoeur} label="Cœurs" />
       <TabButton active={activeNav === "dossier"} onClick={onDossier} label="Dossier" />
-      <TabButton active={activeNav === "partenaires"} onClick={onPartenaires} label="Partenaires" />
     </nav>
   );
 }

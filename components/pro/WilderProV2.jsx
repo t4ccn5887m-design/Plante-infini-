@@ -642,7 +642,7 @@ function studioExperienceSummary(studio) {
 }
 
 function studioNotificationsSummary() {
-  return "E-mail · téléphone";
+  return "Bientôt disponible";
 }
 
 const STUDIO_SETTING_ROWS = [
@@ -657,7 +657,7 @@ const STUDIO_SETTING_ROWS = [
   { id: "experience", label: "Expérience", summary: studioExperienceSummary },
   { id: "notifications", label: "Notifications", summary: studioNotificationsSummary },
   { id: "link", label: "Lien client", summary: () => "Aperçu et couleur" },
-  { id: "subscription", label: "Abonnement", summary: () => "Essai · 14 j restants" },
+  { id: "subscription", label: "Abonnement", summary: () => "Version pilote gratuite" },
 ];
 
 function StudioScreen({ studio, onOpenSetting, onSignOut }) {
@@ -1902,12 +1902,9 @@ function SettingsSheet({
           <div className="dlbl">Abonnement</div>
           <div className="plan">
             <div>
-              <div className="pt">Amont Pro</div>
-              <div className="pp">29 € / mois · briefs illimités</div>
+              <div className="pt">Sevya Pro</div>
+              <div className="pp">Version pilote · gratuite pendant la phase de test</div>
             </div>
-            <button className="mng" type="button">
-              Gérer
-            </button>
           </div>
         </div>
         ) : null}
@@ -2155,6 +2152,7 @@ function SendSheet({ studio, onClose, onCreated }) {
   const [createdUrl, setCreatedUrl] = useState(null);
   const [createdToken, setCreatedToken] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -2164,7 +2162,7 @@ function SendSheet({ studio, onClose, onCreated }) {
   const smsBody = (url) =>
     `Bonjour, préparez notre rendez-vous en 10 min : ${url}`;
 
-  const dispatchSend = (url, via) => {
+  const dispatchSend = async (url, via) => {
     const digits = phone.replace(/\s/g, "");
     if (via === "sms") {
       const q = digits ? `sms:${digits}?&body=` : "sms:?&body=";
@@ -2188,8 +2186,13 @@ function SendSheet({ studio, onClose, onCreated }) {
       return;
     }
     if (via === "qr") {
-      const qr = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(url)}`;
-      window.open(qr, "_blank", "noopener,noreferrer");
+      try {
+        const QRCode = (await import("qrcode")).default;
+        const dataUrl = await QRCode.toDataURL(url, { width: 480, margin: 1 });
+        setQrDataUrl(dataUrl);
+      } catch {
+        setError("Impossible de générer le QR code.");
+      }
     }
   };
 
@@ -2209,8 +2212,9 @@ function SendSheet({ studio, onClose, onCreated }) {
     const url = result.link.url;
     setCreatedUrl(url);
     setCreatedToken(result.link.token);
+    setQrDataUrl(null);
     onCreated?.(result.link);
-    dispatchSend(url, sendVia);
+    await dispatchSend(url, sendVia);
   };
 
   const openClientPreview = () => {
@@ -2321,6 +2325,30 @@ function SendSheet({ studio, onClose, onCreated }) {
                 </>
               )}
             </button>
+          </div>
+        ) : null}
+
+        {qrDataUrl ? (
+          <div className="wp-send-qr" style={{ marginTop: 16, textAlign: "center" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={qrDataUrl}
+              alt="QR code du lien client"
+              style={{
+                width: "100%",
+                maxWidth: 280,
+                borderRadius: 16,
+                border: "1px solid var(--line)",
+              }}
+            />
+            <a
+              href={qrDataUrl}
+              download="qr-lien-client.png"
+              className="linebtn"
+              style={{ display: "inline-block", marginTop: 12 }}
+            >
+              Télécharger le QR code
+            </a>
           </div>
         ) : null}
 
