@@ -27,7 +27,6 @@ export default function AccueilDossierScreen({
   onOpenMot,
   onOpenQuotidien,
   onOpenAEviter,
-  onOpenExistant,
   onOpenEntretien,
   gardenRefreshTick = 0,
 }) {
@@ -100,7 +99,6 @@ export default function AccueilDossierScreen({
     else if (stepId === "mot-paysagiste") onOpenMot?.();
     else if (stepId === "quotidien") onOpenQuotidien?.();
     else if (stepId === "a-eviter") onOpenAEviter?.();
-    else if (stepId === "existant") onOpenExistant?.();
     else if (stepId === "entretien") onOpenEntretien?.();
   };
 

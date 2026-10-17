@@ -183,7 +183,6 @@ export default function DossierScreen({
   onOpenBudget,
   onOpenQuotidien,
   onOpenAEviter,
-  onOpenExistant,
   onOpenEntretien,
   onOpenProfile,
 }) {
@@ -325,7 +324,6 @@ export default function DossierScreen({
   const quotidienComplete = stepComplete("quotidien");
   const eviterComplete = stepComplete("a-eviter");
   const terrainComplete = stepComplete("terrain");
-  const existantComplete = stepComplete("existant");
   const entretienComplete = stepComplete("entretien");
   const budgetComplete = stepComplete("budget");
 
@@ -353,7 +351,6 @@ export default function DossierScreen({
       onOpen: onOpenTerrain,
       hint: terrainComplete ? `${terrainPhotoCount} photo${terrainPhotoCount > 1 ? "s" : ""}` : null,
     },
-    { id: "existant", label: "Ce qui existe déjà", onOpen: onOpenExistant, hint: existantComplete ? "Fait" : null },
     { id: "entretien", label: "Entretien et calendrier", onOpen: onOpenEntretien, hint: entretienComplete ? "Fait" : null },
     { id: "budget", label: "Budget", onOpen: onOpenBudget, hint: budgetComplete ? budgetDisplayLabel(budgetId) : null },
   ];

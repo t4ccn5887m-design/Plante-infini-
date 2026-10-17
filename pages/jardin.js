@@ -36,7 +36,6 @@ import GardenMotScreen from "@/components/garden/GardenMotScreen";
 import GardenDetailsStepScreen from "@/components/garden/GardenDetailsStepScreen";
 import StepQuotidien, { isQuotidienValid } from "@/components/brief/StepQuotidien";
 import StepAEviter, { isAEviterValid } from "@/components/brief/StepAEviter";
-import StepExistant, { isExistantValid } from "@/components/brief/StepExistant";
 import StepEntretien, { isEntretienValid } from "@/components/brief/StepEntretien";
 import GardenDossierConfirmScreen from "@/components/garden/GardenDossierConfirmScreen";
 import GardenStylesWallScreen from "@/components/garden/GardenStylesWallScreen";
@@ -422,10 +421,6 @@ export default function Wilder() {
         setScreen("garden-terrain");
         return;
       }
-      if (stepId === "existant") {
-        setScreen("garden-existant");
-        return;
-      }
       if (stepId === "entretien") {
         setScreen("garden-entretien");
         return;
@@ -722,7 +717,6 @@ export default function Wilder() {
           onOpenMot={() => openGardenMot("home")}
           onOpenQuotidien={() => openGardenDetailsStep("garden-quotidien", "home")}
           onOpenAEviter={() => openGardenDetailsStep("garden-a-eviter", "home")}
-          onOpenExistant={() => openGardenDetailsStep("garden-existant", "home")}
           onOpenEntretien={() => openGardenDetailsStep("garden-entretien", "home")}
           onContinueDossier={openFirstIncompleteDossierStep}
           accountMenu={accueilDossierHome && !isGuest ? accountMenu : null}
@@ -843,7 +837,6 @@ export default function Wilder() {
           onOpenBudget={openGardenBudget}
           onOpenQuotidien={() => openGardenDetailsStep("garden-quotidien", "brief")}
           onOpenAEviter={() => openGardenDetailsStep("garden-a-eviter", "brief")}
-          onOpenExistant={() => openGardenDetailsStep("garden-existant", "brief")}
           onOpenEntretien={() => openGardenDetailsStep("garden-entretien", "brief")}
           onOpenProfile={requestOpenProfile}
         />
@@ -878,7 +871,6 @@ export default function Wilder() {
     screen === "garden-mot" ||
     screen === "garden-quotidien" ||
     screen === "garden-a-eviter" ||
-    screen === "garden-existant" ||
     screen === "garden-entretien" ||
     screen === "garden-dossier-confirm"
   ) {
@@ -970,33 +962,11 @@ export default function Wilder() {
           )}
         </GardenDetailsStepScreen>
       );
-    } else if (screen === "garden-existant") {
-      title = "Ce qui existe déjà — Sevya";
-      body = (
-        <GardenDetailsStepScreen
-          kicker="Étape 7 · L'existant"
-          title={
-            <>
-              Ce qui existe
-              <br />
-              déjà.
-            </>
-          }
-          subtitle="Si vous ne savez pas, aucun souci : votre paysagiste verra sur place."
-          onBack={closeGardenFlow}
-          valid={isExistantValid}
-          onValidated={() => showDossierStepConfirm("existant")}
-        >
-          {(details, onDetailsChange) => (
-            <StepExistant details={details} onDetailsChange={onDetailsChange} />
-          )}
-        </GardenDetailsStepScreen>
-      );
     } else if (screen === "garden-entretien") {
       title = "Entretien et calendrier — Sevya";
       body = (
         <GardenDetailsStepScreen
-          kicker="Étape 8 · Entretien et calendrier"
+          kicker="Étape 7 · Entretien et calendrier"
           title={
             <>
               Et après
