@@ -128,6 +128,7 @@ export default function ClientBriefPage() {
         </title>
         <meta
           name="description"
+          key="description"
           content="Répondez en 3 min, sans compte ni téléchargement. Votre paysagiste reçoit un brief clair avant le premier rendez-vous."
         />
         <meta name="robots" content="noindex" />

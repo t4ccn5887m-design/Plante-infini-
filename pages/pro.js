@@ -8,6 +8,7 @@ export default function ProPage() {
         <title>Sevya Pro</title>
         <meta
           name="description"
+          key="description"
           content="Sevya Pro — briefs clients pour paysagistes"
         />
         <meta name="robots" content="noindex" />

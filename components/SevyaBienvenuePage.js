@@ -43,6 +43,7 @@ export default function SevyaBienvenuePage() {
         <title>Sevya — Le jardin se prépare avant le rendez-vous</title>
         <meta
           name="description"
+          key="description"
           content="Sevya — idées, coups de cœur et dossier jardin pour particuliers et paysagistes."
         />
         <meta name="robots" content="noindex" />
