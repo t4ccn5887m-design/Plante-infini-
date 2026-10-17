@@ -395,6 +395,17 @@
   align-items:center;
   gap:4px;
 }
+.wp .linkbox .wp-link-copy-btn {
+  background:transparent;
+  border:1px solid var(--line);
+  border-radius:99px;
+  padding:8px 12px;
+  font-size:12px;
+  font-weight:600;
+  color:var(--ink);
+  flex-shrink:0;
+  white-space:nowrap;
+}
 .wp .dhero .acts a.ghost {
   flex:1;
   border-radius:15px;
