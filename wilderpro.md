@@ -2,7 +2,8 @@
 
 > Ce fichier est la mémoire du projet. Toute session Cursor / Claude Code / Claude
 > doit le lire en premier. À garder à jour à chaque décision importante.
-> **Nom officiel : Sevya** (voir §8).
+> **Nom officiel : Sevya** (voir §8). Affichage envisagé : « Sévya » (accent pour la prononciation), URL et code restent sans accent.
+> **Dernière mise à jour : 17 octobre 2026** (voir §20).
 
 ---
 
@@ -195,17 +196,17 @@ Ordre imposé : MVP invité minimaliste **d'abord** → prouver que les pros env
 
 ---
 
-## 12. ⚠️ Prochaine priorité
+## 12. ⚠️ Prochaine priorité (mise à jour 17 oct. 2026)
 
-Le **parcours client du lien** (`/b/[token]`) et le **cœur pro** (auth, liens, briefs, PDF, RDV) sont **faits**.
+Plan complet : doc « Audit Sevya — octobre 2026 » (Claude) + §20 ci-dessous.
 
-**Prochaine priorité MVP :**
+**Définition de « fini » :** un paysagiste peut utiliser Sevya seul avec ses vrais clients, et payer.
 
-1. **Branding du lien client** — couleur + logo studio **persistés** et visibles sur `/b/[token]`.
-2. **Abonnement / facturation** — le pro paie (~29 €/mois).
-3. Ensuite : onboarding studio (zone d’intervention, logo), confirmation d’envoi / notifications, enrichissement terrain sur la fiche.
-
-Ne pas rouvrir monorepo ni casser `/jardin` tant que ces manques MVP ne sont pas traités.
+1. **Brevo** (reporté par Emilien) : e-mail au pro quand un brief est rempli (priorité n°1 produit), et envoi serveur du lien par SMS / e-mail (fonctionne depuis n'importe quel appareil).
+2. **Pilotes** : 3 à 5 paysagistes, gratuitement, avec de vrais clients pendant 1 mois. Question finale : « Tu paierais 29 €/mois ? »
+3. **Page admin Sevya** (remplace les stats Wilder scans/Stripe) pour suivre les pilotes.
+4. **Paiement** seulement si les pilotes disent oui : micro-entreprise (SIRET), Stripe, CGV, adresse pro (domiciliation), relecture juriste.
+5. Ensuite : dette (CSS mort ~85 %, fichiers géants, Sentry), sauvegardes Supabase, ouverture à Google (retirer noindex, robots, sitemap), photos Adobe (licences seulement après les pilotes).
 
 ---
 
@@ -264,3 +265,33 @@ Ne pas rouvrir monorepo ni casser `/jardin` tant que ces manques MVP ne sont pas
 - Réalisations : un style en 1 clic (pour les suggérer au bon client) + interrupteur « visible dans Partenaires ».
 - Maquettes de référence : 29 (pro) et 30 (particulier).
 - Logo validé : le sceau italique (S Cormorant italique dans un double cercle, « SEVYA · LE JARDIN AVANT LE JARDIN »). En petit : S + 1 cercle. Fichiers dans sevya/logo/.
+
+---
+
+## 20. Audit et corrections du 17 octobre 2026
+
+Audit complet fait avec Claude (doc « Audit Sevya — octobre 2026 »). Corrigé et déployé le jour même :
+
+- **Textes faux retirés** côté pro : plus d'« Essai 14 j », de « 29 € / mois », de bouton « Gérer », ni de « Amont Pro ». Abonnement = « Version pilote gratuite », Notifications = « Bientôt disponible ».
+- **Envoi du lien** : uniquement **SMS** et **E-mail** + bouton « Copier le lien » à côté de l'URL. **QR code supprimé** (le client n'est pas à côté du pro avant le RDV ; chaque lien est personnel). Plus aucun appel à api.qrserver.com.
+- **Onglet Partenaires retiré** de la barre particulier (fonction factice, PARTNERS_LIVE = false). Barre : Accueil · Idées · Cœurs · Dossier. Les écrans restent dans le code.
+- **Brief client** : 8 étapes, toutes facultatives (« Passer »), étape « Ce qui existe déjà » supprimée partout. Phrase RGPD avant l'envoi (« transmis uniquement à [studio] »).
+- **Quota IA en base** : `consume_ai_quota` (table `ai_usage`), 10 analyses / compte / jour, appelé avant Claude dans `/api/garden-analysis`. L'ancienne limite en mémoire est supprimée.
+- **Suppression de compte** (RGPD) : `delete_my_account()` + `lib/accountDeletion.js` (photos effacées d'abord via Storage, puis la fonction SQL en une transaction). Lien « Supprimer mon compte » dans le menu compte (particulier) et l'onglet Studio (pro), confirmation en tapant SUPPRIMER. Testé avec un compte jetable. Supprimer un lien client efface aussi ses photos.
+- **Pages légales réécrites** pour Sevya pilote gratuit : éditeur Emilien Gaillard (sans adresse, art. 6-III-2 LCEN, statut non professionnel), hébergeur Vercel, données Supabase **eu-central-2 Zurich (Suisse)**, Anthropic pour les synthèses, CGV = « aucune vente pendant le pilote ». ⚠️ À refaire relire par un juriste + adresse pro avant toute offre payante.
+- **Schéma pro versionné** : `20260719000000_pro_schema_base.sql` (pro_studios, pro_links, pro_briefs, RLS, get_pro_link_by_token, is_valid_brief_token), exporté de la prod. Toutes les migrations pro rejouent sans erreur sur une base vide.
+- **Nettoyage** : photos plein écran allégées dans `public/images/hero/` (accueil 870 → 320 Ko), 2 polices (Fraunces + Inter) au lieu de 4, en-têtes de sécurité (X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy), une seule meta description par page, 4 fichiers morts supprimés, formulaire de connexion pro réaligné.
+- **Catalogue** : 217 fiches ajoutées masquées (`sevya/catalogue-*-ajouts.json`) ; sélections Adobe Stock dans `sevya/adobe-picks-*.json` (229 plantes / 347 ont 2 photos choisies ; 118 plantes d'origine restent à faire). **Ne pas licencier avant les pilotes**, sauf les images du lien client.
+
+**Décisions :**
+- Le QR code ne revient pas. Canaux d'envoi : SMS + e-mail (+ copier).
+- Brevo choisi pour l'envoi serveur (e-mails + SMS, société française), **mis en attente** par Emilien. Remplace la règle « jamais d'envoi automatique payant » du §19 quand il sera branché.
+- Nom affiché « Sévya » envisagé ; vérifier INPI/EUIPO (une société américaine « Sevya » existe, autre métier).
+
+**Méthode de travail (validée le 17 oct.) :** Claude fait lui-même les modifications de code, les vérifie (build + captures sur une copie locale) et les enregistre sur `wilder-pro`. Emilien ne colle dans Cursor que le prompt de mise en prod (tag, merge `--no-ff` vers main, `vercel --prod`). Le SQL de prod est toujours affiché en entier et collé à la main dans Supabase, et versionné dans `supabase/migrations/`.
+
+**Points ouverts :**
+- Supabase est en offre **FREE** : pas de sauvegarde automatique téléchargeable → mettre en place une sauvegarde manuelle.
+- Vérifier que le vrai nom d'Emilien figure dans les réglages du compte Vercel (exigé par la mention légale sans adresse).
+- Page admin encore orientée Wilder (scans, Stripe) → à refaire pour Sevya.
+
