@@ -396,7 +396,6 @@ export default function BriefDetailScreen({
       : deriveVigilance(brief).map((text) => ({ titre: "Point", texte: text }));
 
   const household = normalizedDetails?.household;
-  const existing = normalizedDetails?.existing;
   const upkeep = normalizedDetails?.upkeep;
   const tasteIds = Array.isArray(brief.tastes) ? brief.tastes : [];
   const plantIds = Array.isArray(brief.plants) ? brief.plants : [];
@@ -724,10 +723,7 @@ export default function BriefDetailScreen({
         </div>
       )}
 
-      {(photoUrls.length > 0 ||
-        existing?.orientation ||
-        d.areaRange ||
-        d.utilities) && (
+      {(photoUrls.length > 0 || d.areaRange || d.utilities) && (
         <div className="dcard print-block">
           <div className="dlbl">Le terrain</div>
           {photoUrls.length > 0 ? (
@@ -739,40 +735,10 @@ export default function BriefDetailScreen({
             </div>
           ) : null}
           <div className="facts">
-            {existing?.orientation ? (
-              <div className="row">
-                <span className="k">Orientation</span>
-                <span className="v">{existing.orientation}</span>
-              </div>
-            ) : null}
-            {existing?.soil ? (
-              <div className="row">
-                <span className="k">Sol</span>
-                <span className="v">{existing.soil}</span>
-              </div>
-            ) : null}
-            {existing?.slope ? (
-              <div className="row">
-                <span className="k">Pente</span>
-                <span className="v">{existing.slope}</span>
-              </div>
-            ) : null}
             {d.utilities ? (
               <div className="row">
                 <span className="k">Eau</span>
                 <span className="v">{d.utilities}</span>
-              </div>
-            ) : null}
-            {existing?.keep?.trim() ? (
-              <div className="row">
-                <span className="k">À garder</span>
-                <span className="v">{existing.keep.trim()}</span>
-              </div>
-            ) : null}
-            {existing?.remove?.trim() ? (
-              <div className="row">
-                <span className="k">À enlever</span>
-                <span className="v">{existing.remove.trim()}</span>
               </div>
             ) : null}
             {d.areaRange ? (

@@ -34,7 +34,7 @@ export default function GardenBudgetScreen({ onBack, onValidated }) {
       <div style={{ padding: "0 18px 18px", display: "flex", flexDirection: "column", gap: 16 }}>
         <GardenStepHeader
           onBack={onBack}
-          kicker="Étape 9 · Budget"
+          kicker="Étape 8 · Budget"
           title={
             <>
               Quel budget
