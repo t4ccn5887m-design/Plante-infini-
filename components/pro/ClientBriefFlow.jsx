@@ -621,6 +621,15 @@ function BudgetStep({
         </p>
       ) : null}
       {submitError ? <p className="bf-submit-error">{submitError}</p> : null}
+      {!preview ? (
+        <p className="bf-hint calm" style={{ marginTop: 14, fontSize: 12 }}>
+          En envoyant, vos réponses et vos photos sont transmises uniquement à{" "}
+          {studio?.name?.trim() || "votre paysagiste"}.{" "}
+          <a href="/confidentialite" target="_blank" rel="noopener noreferrer">
+            Vos données
+          </a>
+        </p>
+      ) : null}
     </StepShell>
   );
 }

@@ -7,7 +7,7 @@ export default function CguPage() {
   return (
     <LegalPageLayout
       title="Conditions Générales d'Utilisation"
-      description="CGU de l'application Wilder."
+      description="Conditions générales d'utilisation de Sevya."
       sections={cguSections}
     />
   );
