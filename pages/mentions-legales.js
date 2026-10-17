@@ -7,7 +7,7 @@ export default function MentionsLegalesPage() {
   return (
     <LegalPageLayout
       title="Mentions légales"
-      description="Mentions légales de l'application Wilder."
+      description="Mentions légales de Sevya."
       sections={mentionsLegalesSections}
     />
   );

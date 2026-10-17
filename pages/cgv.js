@@ -7,7 +7,7 @@ export default function CgvPage() {
   return (
     <LegalPageLayout
       title="Conditions Générales de Vente"
-      description="CGV et abonnements Premium Wilder."
+      description="Conditions générales de vente de Sevya."
       sections={cgvSections}
     />
   );

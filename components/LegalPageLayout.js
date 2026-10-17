@@ -14,7 +14,7 @@ export default function LegalPageLayout({ title, sections, description }) {
   return (
     <>
       <Head>
-        <title>{title} — Wilder</title>
+        <title>{title} — Sevya</title>
         {description && <meta name="description" content={description} />}
       </Head>
       <div className="legal-page">
@@ -23,11 +23,8 @@ export default function LegalPageLayout({ title, sections, description }) {
         <div className="legal-page-inner">
           <header className="legal-page-header">
             <Link href="/jardin" className="legal-page-back">
-              ← Retour à Wilder
+              ← Retour à Sevya
             </Link>
-            <p className="legal-page-disclaimer" role="note">
-              À FAIRE VALIDER PAR UN JURISTE — texte non contractuel (premier jet).
-            </p>
             <h1 className="legal-page-title">{title}</h1>
           </header>
 
