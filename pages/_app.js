@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 import "@/styles/theme-atelier.css";
 import "@/styles/pro/wilder-pro.css";
 import Head from "next/head";
-import { Fraunces, Inter, Quicksand, Nunito_Sans } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import AppErrorBoundary from "@/components/AppErrorBoundary";
@@ -26,21 +26,6 @@ const inter = Inter({
   display: "swap",
 });
 
-const quicksand = Quicksand({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-title",
-  display: "swap",
-});
-
-const nunitoSans = Nunito_Sans({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-body",
-  display: "swap",
-});
-
-const ATELIER_THEME_COLOR = "#0F1A14";
 
 function isClientBriefPath(pathname) {
   return typeof pathname === "string" && pathname.startsWith("/b/");
@@ -109,10 +94,8 @@ export default function App({ Component, pageProps }) {
     return () => document.removeEventListener("visibilitychange", onVisible);
   }, [isClientBrief]);
 
-  const fontVars = atelier
-    ? `${fraunces.variable} ${inter.variable}`
-    : `${quicksand.variable} ${nunitoSans.variable}`;
-  const fontClass = atelier ? inter.className : nunitoSans.className;
+  const fontVars = `${fraunces.variable} ${inter.variable}`;
+  const fontClass = inter.className;
 
   return (
     <AppErrorBoundary>
@@ -123,9 +106,6 @@ export default function App({ Component, pageProps }) {
             content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"
             key="viewport"
           />
-          {atelier ? (
-            <meta name="theme-color" content={ATELIER_THEME_COLOR} key="theme-color-atelier" />
-          ) : null}
         </Head>
         <Component {...pageProps} />
         {!isClientBrief && <InstallGuideModalHost />}

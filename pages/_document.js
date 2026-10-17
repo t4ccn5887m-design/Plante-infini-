@@ -43,7 +43,6 @@ class WilderDocument extends Document {
           <meta name="apple-mobile-web-app-title" content={appTitle} />
           <meta name="mobile-web-app-capable" content="yes" />
           <meta name="theme-color" content="#0F1A14" />
-          <meta name="description" content={OG_DESCRIPTION} />
           <meta property="og:type" content="website" />
           <meta property="og:site_name" content={OG_TITLE} />
           <meta property="og:title" content={OG_TITLE} />
