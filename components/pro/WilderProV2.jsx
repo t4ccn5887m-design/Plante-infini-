@@ -2150,6 +2150,7 @@ function SendSheet({ studio, onClose, onCreated }) {
   const [createdToken, setCreatedToken] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   const linkMessage = (url) =>
     `Bonjour,\n\nAvant notre rendez-vous, merci de répondre à ce court questionnaire (10 min, sans compte) :\n${url}\n\nÀ bientôt,\n${studio?.name || ""}`;
@@ -2199,6 +2200,17 @@ function SendSheet({ studio, onClose, onCreated }) {
         : "";
     const path = `/b/${createdToken}?apercu=1`;
     window.open(origin ? `${origin}${path}` : path, "_blank", "noopener,noreferrer");
+  };
+
+  const copyCreatedLink = () => {
+    if (!createdUrl) return;
+    navigator.clipboard.writeText(createdUrl).then(
+      () => {
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 2000);
+      },
+      () => setError("Impossible de copier. Sélectionnez le lien manuellement.")
+    );
   };
 
   const sendChannels = [
@@ -2290,6 +2302,9 @@ function SendSheet({ studio, onClose, onCreated }) {
         {createdUrl ? (
           <div className="linkbox" style={{ marginTop: 14 }}>
             <span className="u">{createdUrl.replace(/^https?:\/\//, "")}</span>
+            <button type="button" className="wp-link-copy-btn" onClick={copyCreatedLink}>
+              {copied ? "Lien copié ✓" : "Copier le lien"}
+            </button>
           </div>
         ) : null}
 
