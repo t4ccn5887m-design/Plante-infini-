@@ -2,11 +2,11 @@
 sevya/realisations
 
 # Médias locaux à la racine du repo (hors public/)
-*.jpeg
-*.jpg
-*.mov
-*.MOV
-*.mp4
+/*.jpeg
+/*.jpg
+/*.mov
+/*.MOV
+/*.mp4
 
 # Outils photo locaux
 scripts/.venv-rembg/
