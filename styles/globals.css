@@ -16135,3 +16135,54 @@ button.theme-grid-card:active {
 [data-theme="dark"] .theme-screen .discovery-gallery-name {
   color: var(--wilder-cream);
 }
+
+/* Admin Sevya — tableau des paysagistes */
+.admin-table-wrap {
+  overflow-x: auto;
+  background: rgba(245, 240, 232, 0.96);
+  border-radius: 16px;
+  padding: 0.25rem 0.5rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  color: #1b3d2f;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.55rem 0.5rem;
+  text-align: right;
+  border-bottom: 1px solid rgba(27, 61, 47, 0.08);
+  white-space: nowrap;
+}
+
+.admin-table th:first-child,
+.admin-table td:first-child {
+  text-align: left;
+  white-space: normal;
+}
+
+.admin-table th {
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(27, 61, 47, 0.6);
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table-sub {
+  display: block;
+  font-size: 0.75rem;
+  color: rgba(27, 61, 47, 0.55);
+}
+
+.admin-chart-labels span span {
+  margin-left: 0.4rem;
+}
