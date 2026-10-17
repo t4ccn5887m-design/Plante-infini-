@@ -5,7 +5,6 @@ import {
   Camera,
   Check,
   ImagePlus,
-  Sparkles,
   X,
 } from "lucide-react";
 import { BRIEF_AMBIANCE_IMAGES, BRIEF_CHOICE_IMAGES } from "@/lib/pro/briefAmbianceImages";
@@ -71,6 +70,19 @@ const LIST_KEYS = ["tastes", "plants", "materials", "priorities", "users", "phot
 
 function storageKey(token) {
   return `wp-client-brief-${token || "test"}`;
+}
+
+/** Évite « Emilien, de Emilien Gaillard… » si le prénom est déjà dans le nom du studio. */
+function studioInviteHeadline(studio) {
+  const name = studio?.name?.trim() || "Votre paysagiste";
+  const first = studio?.contactFirstName?.trim() || "";
+  if (first && name.toLowerCase().includes(first.toLowerCase())) {
+    return `${name} vous invite à préparer votre jardin.`;
+  }
+  if (first) {
+    return `${first}, de ${name}, vous invite à préparer votre jardin.`;
+  }
+  return `${name} vous invite à préparer votre jardin.`;
 }
 
 function normalizeAnswers(raw) {
@@ -188,6 +200,7 @@ function StepShell({
 function Welcome({ studio, onStart }) {
   const studioColor = studio?.color || "#C9D6B8";
   const contact = studio?.contactFirstName || "votre paysagiste";
+  const headline = studioInviteHeadline(studio);
   return (
     <div className="bf-step bf-welcome">
       <ProgressBar step={0} />
@@ -207,9 +220,7 @@ function Welcome({ studio, onStart }) {
           >
             {studio.initials}
           </div>
-          <h1 className="bf-welcome-headline">
-            {contact}, de {studio.name}, vous invite à préparer votre jardin.
-          </h1>
+          <h1 className="bf-welcome-headline">{headline}</h1>
           <p className="bf-welcome-lead">
             En <strong>3 minutes</strong>, sans compte — choisissez ce qui vous
             plaît, montrez votre terrain : {contact} arrivera au rendez-vous
@@ -545,10 +556,18 @@ function BudgetStep({
   studio,
   onSubmit,
   submitting = false,
+  submitPhotoProgress = null,
   submitError = null,
   preview = false,
   ...shell
 }) {
+  const photoHint =
+    submitting &&
+    submitPhotoProgress &&
+    submitPhotoProgress.total > 0
+      ? `Envoi de vos photos (${submitPhotoProgress.current}/${submitPhotoProgress.total})…`
+      : null;
+
   return (
     <StepShell
       {...shell}
@@ -561,7 +580,11 @@ function BudgetStep({
       }
       onSkip={preview || submitting ? undefined : onSubmit}
       nextLabel={
-        preview ? "Aperçu pro" : submitting ? "Envoi…" : "Envoyer mon brief"
+        preview
+          ? "Aperçu pro"
+          : submitting
+            ? "Envoi en cours…"
+            : "Envoyer mon brief"
       }
       onNext={preview ? undefined : onSubmit}
       nextDisabled={preview || submitting}
@@ -594,50 +617,43 @@ function BudgetStep({
           Aperçu pro : rien n&apos;est envoyé au studio.
         </p>
       ) : null}
+      {photoHint ? (
+        <p className="bf-hint calm" style={{ marginTop: 14 }}>
+          {photoHint}
+        </p>
+      ) : null}
       {submitError ? <p className="bf-submit-error">{submitError}</p> : null}
     </StepShell>
   );
 }
 
 function Thanks({ studio }) {
+  const contact = studio?.contactFirstName?.trim() || "Votre paysagiste";
   return (
-    <div className="bf-step bf-thanks">
-      <ProgressBar step={THANKS_STEP} />
-      <div className="bf-thanks-icon">
-        <Sparkles size={28} />
+    <div className="bf-step bf-thanks bf-thanks-success">
+      <div className="bf-thanks-hero" aria-hidden>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={SEVYA_DEMO_RENDU_3D} alt="" className="bf-thanks-hero-img" />
+        <span className="bf-thanks-hero-shade" />
       </div>
-      <h1 className="bf-title">
-        Envoyé à {studio.name}&nbsp;!
-      </h1>
+      <ProgressBar step={THANKS_STEP} />
+      <div className="bf-thanks-check" aria-hidden>
+        <Check size={32} strokeWidth={2} />
+      </div>
+      <h1 className="bf-title">Votre brief est envoyé</h1>
       <p className="bf-sub">
-        {studio.contactFirstName} reçoit votre brief. Vous pourrez en parler
-        sereinement au premier rendez-vous.
+        {contact} le reçoit maintenant. Vous en parlerez ensemble au premier
+        rendez-vous.
       </p>
 
-      <div className="bf-amont">
-        <div className="bf-amont-kicker">Et maintenant</div>
-        <h2 className="bf-amont-title">Continuez sur Amont</h2>
-        <p className="bf-amont-lead">
-          Amont, c&apos;est votre carnet de jardin : scannez des plantes, gardez
-          vos envies, et enrichissez votre brief quand vous voulez.
+      <div className="bf-thanks-sevya-card">
+        <p className="bf-thanks-sevya-lead">
+          Envie d&apos;aller plus loin ? Rassemblez vos idées sur Sevya,
+          gratuitement.
         </p>
-        <ul className="bf-benefits">
-          <li>
-            <Check size={18} /> Gardez une trace de vos envies
-          </li>
-          <li>
-            <Check size={18} /> Enrichissez votre brief quand vous voulez
-          </li>
-          <li>
-            <Check size={18} /> Scannez des plantes et constituez votre carnet
-          </li>
-        </ul>
-        <Link href="/jardin" className="bf-btn primary full">
-          Créer mon carnet Amont →
+        <Link href="/jardin" className="bf-btn secondary full">
+          Découvrir Sevya
         </Link>
-        <p className="bf-thanks-foot">
-          Gratuit · pour aller plus loin après ce premier brief
-        </p>
       </div>
     </div>
   );
@@ -648,6 +664,7 @@ export default function ClientBriefFlow({ token, studio, preview = false }) {
   const [answers, setAnswers] = useState(EMPTY_ANSWERS);
   const [hydrated, setHydrated] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitPhotoProgress, setSubmitPhotoProgress] = useState(null);
   const [submitError, setSubmitError] = useState(null);
   const submittingRef = useRef(false);
 
@@ -725,10 +742,15 @@ export default function ClientBriefFlow({ token, studio, preview = false }) {
     submittingRef.current = true;
     setSubmitting(true);
     setSubmitError(null);
+    setSubmitPhotoProgress(null);
 
     const safe = normalizeAnswers(answers);
     try {
-      const result = await submitClientBrief(token, safe);
+      const result = await submitClientBrief(token, safe, {
+        onUploadProgress: (current, total) => {
+          setSubmitPhotoProgress({ current, total });
+        },
+      });
       if (!result.ok) {
         setSubmitError(clientBriefErrorMessage(result.error));
         return;
@@ -754,11 +776,12 @@ export default function ClientBriefFlow({ token, studio, preview = false }) {
       setAnswers(safe);
       setStep(THANKS_STEP);
     } catch (e) {
-      console.error("[Wilder Pro] submit:", e);
+      console.error("[Client brief] submit:", e);
       setSubmitError(clientBriefErrorMessage("submit_failed"));
     } finally {
       submittingRef.current = false;
       setSubmitting(false);
+      setSubmitPhotoProgress(null);
     }
   }, [answers, studio.name, token, preview]);
 
@@ -888,6 +911,7 @@ export default function ClientBriefFlow({ token, studio, preview = false }) {
               preview={preview}
               onSubmit={submit}
               submitting={submitting}
+              submitPhotoProgress={submitPhotoProgress}
               submitError={submitError}
             />
           )}
