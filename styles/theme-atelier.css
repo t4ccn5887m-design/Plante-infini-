@@ -1237,6 +1237,12 @@ html.atelier-theme .sv-auth-form {
   padding: 0 20px 30px;
 }
 
+/* Pro : le formulaire est dans .sv-auth-body (déjà 20px de marge) — pas de double retrait */
+html.atelier-theme .sv-auth-body .sv-auth-form {
+  padding: 0 0 30px;
+  margin-top: 22px;
+}
+
 html.atelier-theme .sv-field {
   margin: 0 0 12px;
 }
