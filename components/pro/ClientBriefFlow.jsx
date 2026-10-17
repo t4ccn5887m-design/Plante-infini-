@@ -8,10 +8,9 @@ import {
   X,
 } from "lucide-react";
 import { BRIEF_AMBIANCE_IMAGES, BRIEF_CHOICE_IMAGES } from "@/lib/pro/briefAmbianceImages";
-import StepAEviter, { isAEviterValid } from "@/components/brief/StepAEviter";
-import StepEntretien, { isEntretienValid } from "@/components/brief/StepEntretien";
-import StepExistant, { isExistantValid } from "@/components/brief/StepExistant";
-import StepQuotidien, { isQuotidienValid } from "@/components/brief/StepQuotidien";
+import StepAEviter from "@/components/brief/StepAEviter";
+import StepEntretien from "@/components/brief/StepEntretien";
+import StepQuotidien from "@/components/brief/StepQuotidien";
 import {
   EMPTY_BRIEF_DETAILS,
   normalizeBriefDetails,
@@ -29,10 +28,13 @@ import {
   submitClientBrief,
 } from "@/lib/pro/clientBriefApi";
 import ClientBriefPreviewBanner from "@/components/pro/ClientBriefPreviewBanner";
-import { SEVYA_DEMO_RENDU_3D } from "@/lib/sevyaDemoRenders";
+import {
+  SEVYA_DEMO_RENDU_3D,
+  SEVYA_DEMO_RENDU_ALLEE,
+} from "@/lib/sevyaDemoRenders";
 
-const QUESTION_STEPS = 9;
-const THANKS_STEP = 10;
+const QUESTION_STEPS = 8;
+const THANKS_STEP = 9;
 
 const TASTES = TASTE_DEFS.map((t) => ({
   ...t,
@@ -261,7 +263,6 @@ function TasteStep({ answers, setAnswers, ...shell }) {
           {count > 0 ? ` · ${count}` : ""}
         </>
       }
-      nextDisabled={count === 0}
     >
       <div className="bf-taste-grid">
         {TASTES.map((t) => {
@@ -308,7 +309,6 @@ function PlantsMaterialsStep({ answers, setAnswers, ...shell }) {
           {count > 0 ? ` · ${count}` : ""}
         </>
       }
-      nextDisabled={count === 0}
     >
       <div className="bf-section-label">Végétaux</div>
       <div className="bf-choice-grid">
@@ -362,13 +362,11 @@ function PlantsMaterialsStep({ answers, setAnswers, ...shell }) {
 
 function MessageStep({ answers, setAnswers, ...shell }) {
   const message = typeof answers.message === "string" ? answers.message : "";
-  const ok = message.trim().length >= 4;
   return (
     <StepShell
       {...shell}
       title="En quelques mots, votre jardin idéal ?"
       subtitle="Ce que vous voulez y faire, ce qui compte pour vous."
-      nextDisabled={!ok}
     >
       <textarea
         className="bf-textarea"
@@ -646,13 +644,35 @@ function Thanks({ studio }) {
         rendez-vous.
       </p>
 
-      <div className="bf-thanks-sevya-card">
-        <p className="bf-thanks-sevya-lead">
-          Envie d&apos;aller plus loin ? Rassemblez vos idées sur Sevya,
-          gratuitement.
-        </p>
-        <Link href="/jardin" className="bf-btn secondary full">
-          Découvrir Sevya
+      <div className="bf-thanks-promo">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className="bf-thanks-promo-img"
+          src={SEVYA_DEMO_RENDU_ALLEE}
+          alt=""
+        />
+        <h2 className="bf-thanks-promo-title">
+          Et si vous continuiez à rêver votre jardin ?
+        </h2>
+        <ul className="bf-thanks-promo-list">
+          <li>
+            <Check size={16} aria-hidden /> Des centaines d&apos;idées de
+            plantes et de matières
+          </li>
+          <li>
+            <Check size={16} aria-hidden /> Vos coups de cœur rassemblés au
+            même endroit
+          </li>
+          <li>
+            <Check size={16} aria-hidden /> Un dossier prêt pour votre
+            paysagiste
+          </li>
+        </ul>
+        <Link
+          href="/connexion?profil=particulier"
+          className="bf-btn primary full bf-thanks-promo-cta"
+        >
+          Découvrir Sevya, c&apos;est gratuit
         </Link>
       </div>
     </div>
@@ -790,6 +810,8 @@ export default function ClientBriefFlow({ token, studio, preview = false }) {
       studio,
       onBack: back,
       onNext: next,
+      skipLabel: "Passer",
+      onSkip: next,
     }),
     [studio, back, next]
   );
@@ -843,7 +865,6 @@ export default function ClientBriefFlow({ token, studio, preview = false }) {
               step={4}
               title="Qui va vivre ce jardin ?"
               subtitle="Pour qu'il soit pensé pour vous, pas pour une photo."
-              nextDisabled={!isQuotidienValid(answers.details)}
             >
               <StepQuotidien
                 details={answers.details}
@@ -857,7 +878,6 @@ export default function ClientBriefFlow({ token, studio, preview = false }) {
               step={5}
               title="Ce que vous ne voulez pas"
               subtitle="Aussi utile que ce que vous aimez. Plusieurs choix possibles."
-              nextDisabled={!isAEviterValid(answers.details)}
             >
               <StepAEviter
                 details={answers.details}
@@ -877,23 +897,8 @@ export default function ClientBriefFlow({ token, studio, preview = false }) {
             <StepShell
               {...shellBase}
               step={7}
-              title="Ce qui existe déjà"
-              subtitle="Si vous ne savez pas, aucun souci : votre paysagiste verra sur place."
-              nextDisabled={!isExistantValid(answers.details)}
-            >
-              <StepExistant
-                details={answers.details}
-                onDetailsChange={patchDetails}
-              />
-            </StepShell>
-          )}
-          {step === 8 && (
-            <StepShell
-              {...shellBase}
-              step={8}
               title="Entretien et calendrier"
               subtitle="Un jardin se pense aussi pour le temps que vous avez."
-              nextDisabled={!isEntretienValid(answers.details)}
             >
               <StepEntretien
                 details={answers.details}
@@ -901,10 +906,10 @@ export default function ClientBriefFlow({ token, studio, preview = false }) {
               />
             </StepShell>
           )}
-          {step === 9 && (
+          {step === 8 && (
             <BudgetStep
               {...shellBase}
-              step={9}
+              step={8}
               answers={answers}
               setAnswers={setAnswers}
               studio={studio}
