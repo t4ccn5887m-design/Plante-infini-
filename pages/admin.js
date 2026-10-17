@@ -179,6 +179,14 @@ function AdminDashboard({ onLogout }) {
 
       {stats?.globalError && <p className="admin-notice admin-notice--error">{stats.globalError}</p>}
 
+      {stats?.errors?.length > 0 && (
+        <div className="admin-notice admin-notice--error">
+          {stats.errors.map((e) => (
+            <div key={e}>{e}</div>
+          ))}
+        </div>
+      )}
+
       {L && (
         <>
           <section className="admin-section" aria-label="Liens clients">
