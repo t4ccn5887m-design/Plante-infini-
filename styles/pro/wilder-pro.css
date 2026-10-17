@@ -259,6 +259,20 @@
   max-width:55%; text-align:right; line-height:1.25;
 }
 .wp .wp-studio-signout { width:100%; margin-top:28px; border-radius:99px; padding:14px; font-weight:600; }
+.wp .wp-studio-delete-account {
+  display:block;
+  width:100%;
+  margin-top:12px;
+  padding:8px 12px;
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  font-size:13px;
+  font-weight:500;
+  text-align:center;
+  cursor:pointer;
+}
+.wp .wp-studio-delete-account:hover { color:#9B6560; }
 .wp .wp-studio-partners-card {
   width:100%; border:none; border-radius:18px; overflow:hidden; min-height:120px;
   background:var(--card) center/cover no-repeat;

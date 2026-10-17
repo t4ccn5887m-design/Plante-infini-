@@ -41,6 +41,7 @@ import {
   pickNextAppointment,
 } from "@/lib/pro/proLinkBuckets";
 import { signOutCloud } from "@/lib/cloudSync";
+import DeleteAccountSheet from "@/components/DeleteAccountSheet";
 import BriefDetailScreen from "@/components/pro/BriefDetailScreen";
 import {
   createProAppointment,
@@ -660,6 +661,7 @@ const STUDIO_SETTING_ROWS = [
 ];
 
 function StudioScreen({ studio, onOpenSetting, onSignOut }) {
+  const [deleteAccountOpen, setDeleteAccountOpen] = useState(false);
   const contact = studio?.contactFirstName?.trim();
   const zone = studio?.interventionZone?.trim();
   const partnersCode =
@@ -724,6 +726,17 @@ function StudioScreen({ studio, onOpenSetting, onSignOut }) {
       <button type="button" className="linebtn wp-studio-signout" onClick={onSignOut}>
         Se déconnecter
       </button>
+      <button
+        type="button"
+        className="wp-studio-delete-account"
+        onClick={() => setDeleteAccountOpen(true)}
+      >
+        Supprimer mon compte
+      </button>
+      <DeleteAccountSheet
+        open={deleteAccountOpen}
+        onClose={() => setDeleteAccountOpen(false)}
+      />
     </div>
   );
 }
