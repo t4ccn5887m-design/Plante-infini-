@@ -1,4 +1,5 @@
 -- Sevya — cloisonnement Storage (§14 bis) — appliqué à la main dans le SQL Editor le 17/10/2026
+-- NB : dans les sous-requêtes, toujours écrire storage.objects.name (un "name" seul est lu comme pro_studios.name)
 -- 1. pro-project-photos : lecture / modification / suppression limitées au studio du pro
 --    (chemin = {studio_id}/{project_id}/{uuid}.jpg). L'insert existant (déjà cloisonné) n'est pas modifié.
 -- 2. images : lecture publique conservée ; écriture réservée à un compte connecté dans son dossier {user_id}/...
@@ -15,7 +16,7 @@ create policy "pro_project_photos_storage_select"
     bucket_id = 'pro-project-photos'
     and exists (
       select 1 from public.pro_studios s
-      where s.id::text = (storage.foldername(name))[1]
+      where s.id::text = (storage.foldername(storage.objects.name))[1]
         and s.pro_user_id = auth.uid()
     )
   );
@@ -26,7 +27,7 @@ create policy "pro_project_photos_storage_update"
     bucket_id = 'pro-project-photos'
     and exists (
       select 1 from public.pro_studios s
-      where s.id::text = (storage.foldername(name))[1]
+      where s.id::text = (storage.foldername(storage.objects.name))[1]
         and s.pro_user_id = auth.uid()
     )
   )
@@ -34,7 +35,7 @@ create policy "pro_project_photos_storage_update"
     bucket_id = 'pro-project-photos'
     and exists (
       select 1 from public.pro_studios s
-      where s.id::text = (storage.foldername(name))[1]
+      where s.id::text = (storage.foldername(storage.objects.name))[1]
         and s.pro_user_id = auth.uid()
     )
   );
@@ -45,7 +46,7 @@ create policy "pro_project_photos_storage_delete"
     bucket_id = 'pro-project-photos'
     and exists (
       select 1 from public.pro_studios s
-      where s.id::text = (storage.foldername(name))[1]
+      where s.id::text = (storage.foldername(storage.objects.name))[1]
         and s.pro_user_id = auth.uid()
     )
   );
