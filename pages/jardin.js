@@ -629,7 +629,7 @@ export default function Wilder() {
     return () => document.removeEventListener("visibilitychange", onVisible);
   }, []);
 
-  const slogan = t("slogan");
+  const slogan = "Le jardin se prépare avant le rendez-vous";
   const pageTitle = `Sevya — ${slogan}`;
 
   const featureGateOverlay = (
@@ -687,7 +687,7 @@ export default function Wilder() {
       <>
         <Head>
           <title>Sevya</title>
-          <meta name="description" content={slogan} />
+          <meta name="description" content={slogan} key="description" />
         </Head>
         <div className="app-boot-loading" role="status" aria-live="polite" aria-label={t("auth.loading")}>
           <img src="/logowilder.png" alt="" className="app-boot-loading-logo" />
@@ -847,7 +847,7 @@ export default function Wilder() {
       <>
         <Head>
           <title>{pageTitleContent}</title>
-          {screen === "home" && <meta name="description" content={slogan} />}
+          {screen === "home" && <meta name="description" content={slogan} key="description" />}
         </Head>
         <WilderMainLayout
           className="screen-enter-fast"

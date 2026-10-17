@@ -106,6 +106,11 @@ export default function App({ Component, pageProps }) {
             content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"
             key="viewport"
           />
+          <meta
+            name="description"
+            content="Sevya — le jardin se prépare avant le rendez-vous avec votre paysagiste."
+            key="description"
+          />
         </Head>
         <Component {...pageProps} />
         {!isClientBrief && <InstallGuideModalHost />}

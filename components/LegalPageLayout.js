@@ -15,7 +15,7 @@ export default function LegalPageLayout({ title, sections, description }) {
     <>
       <Head>
         <title>{title} — Sevya</title>
-        {description && <meta name="description" content={description} />}
+        {description && <meta name="description" content={description} key="description" />}
       </Head>
       <div className="legal-page">
         <div className="legal-page-bg" aria-hidden="true" />
